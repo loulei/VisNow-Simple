@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="NFD reader" class="ReadNFD">
+    <description value="Reads Numerical Foot Descriptor (NFD) files."/>
+    <outputs>
+        <output name="outRegularField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="NSPACE" value="3"/>
+                <param name="NDIMS" value="1"/>
+                <param name="COORDS" value="true"/>
+            </schema>
+        </output>
+    </outputs>
+</module>
+

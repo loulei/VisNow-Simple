@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='ISO-8859-1'  ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
+         "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+<toc version="2.0">
+    <tocitem text="VisNow" image="toplevelfolder" target="top">
+   
+        <tocitem text="Introduction to VisNow" target="visnow.intro"/>
+
+        <tocitem text="Main window" target="window.intro" expand="false">
+            <tocitem text="Workspace panel" target="window.workspace"/>
+            <tocitem text="Library panel" target="window.library"/>
+            <tocitem text="Module panel" target="window.module"/>
+            <tocitem text="Main menu" target="window.menu"/>
+            <tocitem text="Status bar" target="window.status"/>
+        </tocitem>
+
+        <tocitem text="Common elements" target="common.intro" expand="false">
+            <tocitem text="Data model" target="common.datamodel"/>
+            <tocitem text="Common interfaces" target="common.uiintro" expand="false">
+                <tocitem text="Presentation panel" target="common.presentation.simple"/>
+                <tocitem text="Colormapping panel" target="common.colormappanel.simple"/>
+                <tocitem text="Geometry panel" target="common.geometrypanel.simple"/>
+            </tocitem>
+            <!--
+            <tocitem text="Special widgets" target="widgets.intro" expand="false">
+                <tocitem text="Sliders" target="widgets.sliders.intro">
+                    <tocitem text="Integer slider" target="widgets.sliders.int"/>
+                    <tocitem text="Enhanced integer slider" target="widgets.sliders.enhancedint"/>
+                    <tocitem text="Float slider" target="widgets.sliders.float"/>
+                    <tocitem text="Logarithmic slider" target="widgets.sliders.log"/>
+                    <tocitem text="Subrange slider" target="widgets.sliders.sub"/>
+                    <tocitem text="Sub-subrange slider" target="widgets.sliders.subsub"/>
+                </tocitem>
+            </tocitem>
+            -->
+        </tocitem>
+
+    <% tree modules %>
+        <tocitem text="<$ modules.name $>" target="<$ modules.target $>" expand="false">
+    <$ treecontent $>
+        </tocitem>
+    <% endtree %>
+
+
+    </tocitem>
+</toc>
+

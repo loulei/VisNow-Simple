@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Module - Modify Components/coordinates</title>
+    <style type="text/css">
+        title><style type="text/css">ol{margin:0;padding:0}.c4{max-width:468pt;background-color:#ffffff;padding:72pt 72pt 72pt 72pt}.c1{height:11pt;direction:ltr}.c2{direction:ltr}.c3{font-style:italic}.c0{font-weight:bold}.title{padding-top:0pt;line-height:1.15;text-align:left;color:#000000;font-size:21pt;font-family:"Trebuchet MS";padding-bottom:0pt}.subtitle{padding-top:0pt;line-height:1.15;text-align:left;color:#666666;font-style:italic;font-size:13pt;font-family:"Trebuchet MS";padding-bottom:10pt}li{color:#000000;font-size:11pt;font-family:"Arial"}p{color:#000000;font-size:11pt;margin:0;font-family:"Arial"}h1{padding-top:10pt;line-height:1.15;text-align:left;color:#000000;font-size:16pt;font-family:"Trebuchet MS";padding-bottom:0pt}h2{padding-top:10pt;line-height:1.15;text-align:left;color:#000000;font-size:13pt;font-family:"Trebuchet MS";font-weight:bold;padding-bottom:0pt}h3{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:12pt;font-family:"Trebuchet MS";font-weight:bold;padding-bottom:0pt}h4{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:11pt;text-decoration:underline;font-family:"Trebuchet MS";padding-bottom:0pt}h5{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:11pt;font-family:"Trebuchet MS";padding-bottom:0pt}h6{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-style:italic;font-size:11pt;font-family:"Trebuchet MS";padding-botto        
+    </style>
+  </head>
+  <body>
+      <table width="100%" border="0">
+          <tr>
+              <td align="left">
+                  <img src="../../common/images/horizontal.png" width="200" height="64"/>
+              </td>
+              <td align="right">
+                  <img src="../../common/images/icm_logo.png" width="120" height="64"/>
+              </td>
+          </tr>
+      </table>
+      
+      <h1>Module: Modify Components/coordinates</h1>
+      <p><img src="resources/module_image_pl.edu.icm.visnow.lib.basic.filters.ComponentOperations.png"/><br></p>
+      <p>selects components, converts numeric data types and changes component names<br><br></p>
+      <table border="1">          
+      <tr bgcolor="silver">
+         <th width=150 height="40">input port</th>
+         <th width=150>type</th>
+         <th width=500>description</th>
+         <th width=300>data acceptors</th>
+      </tr>
+<tr>
+         <td valign="top">inField</td>
+         <td valign="top"><font color="#0000ff">VNField</font></td>
+         <td valign="top"></td>
+         <td valign="top"></td>
+      </tr>
+<tr bgcolor="silver">
+         <th height="40">output port</th>
+         <th>type</th>
+         <th>description</th>
+         <th>data schemas</th>
+      </tr>
+<tr>
+         <td valign="top">outField</td>
+         <td valign="top"><font color="#0000ff">VNField</font></td>
+         <td valign="top"></td>
+         <td valign="top"></td>
+      </tr>
+<tr>
+         <td valign="top">regularOutField</td>
+         <td valign="top"><font color="#0088ff">VNRegularField</font></td>
+         <td valign="top"></td>
+         <td valign="top"></td>
+      </tr>
+<tr>
+         <td valign="top">outObj</td>
+         <td valign="top"><font color="#ee0000">VNGeometryObject</font></td>
+         <td valign="top"></td>
+         <td valign="top"></td>
+      </tr>
+</table>
+      <br><br><br>
+      <hr><p class="c2"><span>&nbsp;</span></p><p class="c2"><span class="c0">MODIFY COMPONENTS/COORDINATES</span></p><hr><p class="c2"><span>&nbsp;</span></p><p class="c1"><span class="c0"></span></p><p class="c2"><span>The module selects components, converts numeric data types, assigns minimum and maximum values of scalar field components, performs data masking, defines new mappings from field data, assembles vectors, performs basic vector operations, creates complex components from scalar field components.</span></p><p class="c1"><span></span></p><hr><p class="c2"><span>&nbsp;</span></p><p class="c2"><span class="c0">Input data</span></p><p class="c1"><span class="c0"></span></p><p class="c2"><span>Input is a field.</span></p><p class="c1"><span></span></p><hr><p class="c2"><span>&nbsp;</span></p><p class="c2"><span class="c0">Output data</span></p><p class="c1"><span class="c0"></span></p><p class="c2"><span>Output is a field, a regular field and a geometry object of the field.</span></p><p class="c1"><span></span></p><hr><p class="c2"><span>&nbsp;</span></p><p class="c2"><span class="c0">Computation parameters</span></p><p class="c1"><span class="c0"></span></p><p class="c2"><img height="30" src="resources/images/image05.jpg" width="200"></p><p class="c1"><span class="c0"></span></p><p class="c2"><span>Unless the </span><span class="c0">auto</span><span>&nbsp;check box on the right hand side of the run button is switched on t</span><span>he module is activated by pressing the </span><span class="c0">run</span><span>&nbsp;button. By default </span><span class="c0">auto </span><span>is switched off.</span></p><p class="c1"><span></span></p><p class="c2"><img height="162" src="resources/images/image01.jpg" width="319"></p><p class="c1"><span></span></p><p class="c2"><span>The table in the </span><span class="c0">basic</span><span>&nbsp;part of the user interface contains all components of the input field, together with their minimum and maximum values.</span></p><p class="c1"><span></span></p><p class="c2"><span>Double click on the component name gives the possibility to change the name of the component.</span></p><p class="c1"><span></span></p><p class="c2"><span>For every component the user can choose a numeric conversion in the </span><span class="c0">action</span><span>&nbsp;column: left mouse click causes to appear a drop down list with numeric conversation instructions like </span><span class="c3">noop, to byte, byte normalize, to short, short normalize, to int, to float, to double, log, atan, Null.</span></p><p class="c1"><span class="c3"></span></p><p class="c2"><span>By default all components are retained and passed over to the output field. This is signalized by the check boxes in the </span><span class="c0">retain</span><span>&nbsp;column, which are switched on.</span></p><p class="c1"><span class="c3"></span></p><p class="c2"><span>The user can change minimum and maximum value double clicking at the appropriate place in the </span><span class="c0">min</span><span>&nbsp;or </span><span class="c0">max</span><span>&nbsp;column and typing in a new value. Values below the minimum and above the maximum values are replaced with minimum and maximum values, respectively.</span></p><p class="c1"><span></span></p><p class="c2"><img height="182" src="resources/images/image00.jpg" width="242"></p><p class="c1"><span></span></p><p class="c2"><span>Applying a mask component to a data field allows to draw selected data areas.</span></p><p class="c1"><span></span></p><p class="c2"><span>To do so choose a field component from the </span><span class="c0">mask</span><span>&nbsp;drop down list in the </span><span class="c0">mask</span><span>&nbsp;interface. Corresponding field data below minimum value and above maximum value of the mask component are not drawn.</span></p><p class="c1"><span></span></p><p class="c2"><span>Minimum and maximum values are defined using the min/max slider, or typing the values into the text boxes below the slider.</span></p><p class="c1"><span></span></p><p class="c2"><span>If </span><span class="c0">recompute min/max for data arrays</span><span>&nbsp;check box is on the output data field is recomputed taking into account masking. By default this option is off.</span></p><p class="c1"><span></span></p><p class="c2"><img height="301" src="resources/images/image04.jpg" width="244"></p><p class="c1"><span></span></p><p class="c2"><span>If the </span><span class="c0">set coordinates from data</span><span>&nbsp;option in the </span><span class="c0">coords</span><span>&nbsp;user interface is switched on the user can define a new 2D or 3D mapping declaring new data for x-, y- and z-coordinates.</span></p><p class="c2"><span>To do so choose appropriate data components in the </span><span class="c0">x-, y- and z-coordinate component</span><span>&nbsp;drop down menus.</span></p><p class="c2"><span>Sliders below the drop down menu scale data in the coordinate direction.</span></p><p class="c1"><span></span></p><p class="c2"><span>The </span><span class="c0">add index component</span><span>&nbsp;option ...</span></p><p class="c1"><span></span></p><p class="c2"><img height="299" src="resources/images/image02.jpg" width="240"></p><p class="c1"><span></span></p><p class="c2"><span>The </span><span class="c0">vectors</span><span>&nbsp;user interface allows to construct new vector components</span><span class="c0">&nbsp;</span><span>from scalar field components.</span></p><p class="c2"><span>Double click an empty field in the </span><span class="c0">Name</span><span>&nbsp;column and enter a name for the new vector component. Left mouse click in the appropriate place in the </span><span class="c0">x</span><span>, </span><span class="c0">y</span><span>&nbsp;and </span><span class="c0">z</span><span>&nbsp;column causes to appear a drop down menu with all scalar field components from which the user can choose a component.</span></p><p class="c2"><span>The norm of the vector component is calculated by switching on the last column of the table in this part of the interface.</span></p><p class="c1"><span></span></p><p class="c2"><span>The</span><span class="c0">&nbsp;force 3D vectors</span><span>&nbsp;check box forces the construction of 3D vectors adding zeros in place of non-declared vector components.</span></p><p class="c1"><span></span></p><p class="c2"><span>Switching on appropriate check boxes in a further table several operations for vector components of the input field can be carried out, i.e. calculation of the vector norm, normalizing vectors and splitting vector components.</span></p><p class="c1"><span></span></p><p class="c2"><img height="223" src="resources/images/image03.jpg" width="241"></p><p class="c1"><span></span></p><p class="c2"><span>The </span><span class="c0">complex</span><span>&nbsp;part of the computation interface allows to construct complex components from scalar field components.</span></p><p class="c2"><span>To construct a complex component double click an empty field in the </span><span class="c0">Name</span><span>&nbsp;column and enter a name for the new component. Left mouse click in the appropriate place in the </span><span class="c0">Re</span><span>&nbsp;and </span><span class="c0">Im</span><span>&nbsp;column causes to appear a drop down menu with all scalar components of the input field and allows to choose a component for real and imaginary part of the new component. </span></p><p class="c1"><span></span></p><hr><p class="c2"><span>&nbsp;</span></p><p class="c2"><span class="c0">Presentation parameters</span></p><p class="c1"><span class="c0"></span></p><p class="c2"><span>Presentation tab contents are described in the common interfaces section unter the </span><span class="c0"><a href="../../common/SimplePresentationPanel.html">Presentation Panel</a></span><span>&nbsp;entry.</span></p><p class="c1"><span></span></p><p class="c1"><span></span></p>
+  </body>
+</html>

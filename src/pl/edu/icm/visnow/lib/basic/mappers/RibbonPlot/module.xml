@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="ribbon plot" class="RibbonPlot">
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="NDIMS" value="2"/>
+                <param name="AFFINE" value="true"/>
+            </acceptor>
+        </input>
+    </inputs>
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="NSPACE" value="3"/>
+                <param name="NDIMS" value="3"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>    
+    <parameters>
+    </parameters>
+    <description value="creates a set of plots of slices of a regular 2D field as either ribbons or area type plots"/>
+</module>

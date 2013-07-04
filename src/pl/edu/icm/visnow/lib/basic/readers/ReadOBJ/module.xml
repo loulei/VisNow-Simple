@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="Wavefront OBJ reader" class="ReadOBJ">
+    <reader datatype="Wavefront OBJ"/>
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <schema>
+                <param name="IRREGULAR" value="true"/>
+                <param name="NSPACE" value="3"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>
+    <description value="Reads Wavefront OBJ files."/>
+</module>

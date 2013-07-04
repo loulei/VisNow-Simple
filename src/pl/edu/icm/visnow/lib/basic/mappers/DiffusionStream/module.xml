@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="diffusion stream" class="Streamlines">
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
+            <description value="Input vector field for streamlines"/>
+            <acceptor>
+                <param name="NSPACE" value="3"/>
+                <param name="DATA_VECLEN" value="3"/>
+            </acceptor>
+        </input>
+        <input name="startPoints" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="TRIGGERING">
+            <description value="Input field for streamlines starting points"/>
+            <acceptor>
+                <param name="NSPACE" value="3"/>
+            </acceptor>
+        </input>
+    </inputs>
+    <outputs>
+        <output name="streamlinesField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <description value="Output of streamlines field"/>
+        </output>
+        <output name="flowField" type="pl.edu.icm.visnow.lib.types.VNField">
+            <description value="Output of flow field"/>
+        </output>
+        <geometryOutput>
+            <description value="Output of geometry object for 3D flow"/>
+        </geometryOutput>
+    </outputs>
+    <description value="Creates streamlines of a vector field."/>
+</module>

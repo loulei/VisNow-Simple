@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="Kelvin to Celsius" class="KelvinToCelsius">
+
+    <inputs>
+       <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="REGULAR" value="true"/>
+            </acceptor>
+       </input>
+    </inputs>
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNField">
+        </output>
+        <output name="outRegularField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+        </output>
+    </outputs>
+    <parameters>
+    </parameters>
+    <description value="checks if inField has temperature componnets in Kelvins and converts them to Celsius"/>
+</module>

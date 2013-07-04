@@ -1,0 +1,264 @@
+﻿
+<html><head><title>Data model</title>
+	
+<style type="text/css">
+body{
+	margin:0;
+	padding:0px 20px;
+	font-family: "Arial",sans-serif;
+	font-size:11pt;
+}
+.clear{
+	height:0px;
+	width:100%;
+	clear:both;
+}
+#totaldiv{
+	margin:0 auto;
+}
+
+#footer{
+	text-align:center;
+	font-size:8pt;	
+	margin:40px 0 10px;
+}
+
+.hint{
+	font-family: "Verdana", sans-serif;
+	font-size:10pt;
+	amargin:20px 40px;
+	margin:20px 0;
+	padding:5px;
+	border:1px solid;
+}
+.imgbox{
+	margin:50px auto 60px;
+}
+.imgbox .gap{
+	height:1em;
+	float:left;
+}
+.imgbox img{
+	cursor:pointer;
+	float:left;
+	width:30%;
+}
+.imgbox .gap{
+	width:5%;
+}
+
+.imgbox2 img{
+	position:relative;
+	left:17%;
+}
+.imgbox .caption{
+	text-align:center;
+	font-family: "Verdana", sans-serif;
+	font-size:9pt;
+	font-weight:bold;
+	margin:10px 0 0 0;
+}
+
+a{
+	color:inherit;
+}
+ul,ol{
+	margin:0;
+}
+li{
+	margin:0;
+}
+p{
+	margin:20px 0;
+}
+
+h1,h2,h3,h4{
+	font-weight:bold;
+	margin:0;
+	padding:0;
+}
+h1{	
+	font-size:13pt;
+	border-top:1px solid;
+	border-bottom:1px solid;
+}
+h2{
+	margin-top:40px;
+	font-size:13pt;
+	border-bottom:1px solid;
+}
+h3,h4{
+	margin-top:30px;
+	font-size:11pt;
+}
+</style>
+</head>
+
+<body>
+
+      <table width="100%" border="0">
+          <tr>
+              <td align="left">
+                  <img src="images/horizontal.png" width="200" height="64"/>
+              </td>
+              <td align="right">
+                  <img src="images/icm_logo.png" width="120" height="64"/>
+              </td>
+          </tr>
+      </table>
+
+	<div id="totaldiv">
+<div id="content"><br><br>			<h1>VisNow data model</h1>
+
+				<p>All VisNow modules operate on data types. Modules have input ports, output ports or both. Each input port needs as an input source a data of some particular type. Similarly each output port produces data of some type.</p>
+
+				<p>There are few different data types in VisNow: <em>field</em>, <em>geometry object</em> and <em>basic data types</em>.</p>
+
+			<h2>VisNow field</h2>
+				
+				<p>Main data type in VisNow is <em>VisNow field</em> (or just <em>field</em>).</p>
+				
+				<p><em>VisNow field</em> can represent data obtained from physical experiments, simulations and measurements, both time-dependent and static. Data may come from many different areas like fluid dynamics, medical data, weather records, engineering, etc.</p>
+				
+				<div class="imgbox imgbox3">
+					<img src="./data_types_files/meteonoaxes.png"><div class="gap">&nbsp;</div><img src="./data_types_files/footmedical.png"><div class="gap">&nbsp;</div><img src="./data_types_files/vectorfield.png"> 
+					<div class="clear"></div>
+					<div class="caption">VisNow field examples: meteorological, medical (CT), sample vector field</div>
+				</div>
+
+				<div>In general <em>VisNow field</em> is a set of atom elements (geometry) with some particular properties (<em>components</em>). There are two main types of <em>field</em>:
+					<ul>
+						<li><em>regular field</em> - where atom elements are <em>points</em> on the grid;</li>
+						<li><em>irregular field</em> - where atom elements are basic geometric figures and bodies called <em>cells</em>;</li>
+					</ul>
+				</div>
+
+				<p><em>Regular fields</em> can be loaded and stored in files with .vnf extension.</p>
+				
+				<div class="hint">[Hint: In workspace area:
+					<ul>
+						<li>module ports that represent field are colored in light blue, dark blue or violet;</li>
+						<li>to see field details select: right mouse button on field port / ShowContent. This will be called “content window” later on]</li>
+					</ul>
+				</div>
+
+				<div class="imgbox imgbox2">
+					<img src="./data_types_files/regularexample.png"><div class="gap">&nbsp;</div><img src="./data_types_files/regularexamplecontent.png">
+					<div class="clear"></div>
+					<div class="caption">Sample regular field with corresponding content window: here atom elements are points</div>
+				</div>				
+				<div class="imgbox imgbox2">
+					<img src="./data_types_files/irregularexample.png"><div class="gap">&nbsp;</div><img src="./data_types_files/irregularexamplecontent.png">
+					<div class="clear"></div>
+					<div class="caption">Sample irregular field with corresponding content window: here atom elements are triangles</div>
+				</div>				
+
+				<p><em>VisNow fields</em> are built like on the following charts:</p>
+
+				<p>There are two top-level elements of <em>field</em>: geometry and values (otherwise called <em>components</em>).</p>
+
+
+			<h3>I. Geometry</h3>
+
+				<p>Geometry is representation of <em>field</em> in space (where space can be 2 or 3 dimensional; 2D space is less common but it still appears in some modules e.g., AVS reader, Image reader).</p>
+
+				<p><em>Field</em> is always finite. It consists of finite number of elements and there is need to know what does every single element look like. These elements are described in structure section and their position in the space in coordinates section.</p>
+
+				<h4>Structure</h4>
+
+				<p>Structure describes atom elements of <em>field</em>. There are two different types of <em>field</em>: <em>regular</em> and <em>irregular</em>. And so there are two different types of structure - <em>regular</em> and <em>irregular</em>.</p>
+
+				<p>Case 1. Regular</p>
+
+				<p><em>Field</em> with regular structure is composed of regular, finite lattice of points (1-, 2- or 3-dimensional). It can be square lattice generated from orthonormal basis, but it can be also generated from any other basis. Lattice can be also “bended” in a custom way (see <a href="http://charybda.icm.edu.pl/~mszpak/vnhelp/#coordinates">coordinates</a> section).</p>
+
+				<p>Case 2. Irregular</p>
+
+				<div><em>Field</em> with irregular structure is composed of finite number of <em>cells</em>, which are geometric figures and bodies. These can be:
+					<ul>
+						<li>0-dimensional (points);</li>
+						<li>1-dimensional (segments);</li>
+						<li>2-dimensional (triangles, quads);</li>
+						<li>3-dimensional (tetrahedrons, pyramids, prisms, hexahedrons).</li>
+					</ul>
+				</div>
+
+				<p>All these figures and bodies are built on vertices (see <a href="http://charybda.icm.edu.pl/~mszpak/vnhelp/#coordinates">coordinates</a> section).</p>
+
+				<p>Each <em>cell</em> is a part of exactly one <em>cell set</em> which typically describes some particular piece of the model. For example, if one wants to simulate air flow around wing of the airplane, there will be most likely at least two <em>cell sets</em>: one for wing and one for air around it, which have different physical properties.</p>
+		
+				<h4 id="coordinates">Coordinates</h4>
+
+				<p>Coordinates describe how to arrange atom elements of the <em>field</em> in space.</p>
+
+				<p>Case 1. Regular</p>
+
+				<div><em>Regular field</em> is in general a finite lattice of <em>points</em>. Coordinates of these <em>points</em> can be defined in two ways:
+					<ul>
+						<li>explicitly: where every single <em>point</em> has it's own coordinates defined independently. This allows us to “bend” the lattice. In content window this is called “with explicit coordinates”;</li>
+						<li>generated from basis: coordinates of every single <em>point</em> is calculated from basis vectors (in content window they're called “cell vectors”) and origin vector (in content window it's called “origin”). If origin vector is not defined then [0,0,0]<sup>T</sup> is taken. If basis vectors are not defined then the standard orthonormal basis is taken.</li>
+					</ul>
+				</div>	
+
+				<p>Case 2. Irregular</p>
+
+				<p>In this case coordinates are always defined explicitly. So every single <em>vertex</em> has it's own coordinates defined independently. <em>Vertices</em> build <em>cells</em> of <em>irregular field</em> (<em>vertices</em> are called “nodes” in content window).</p>
+
+			<h3>II. Values / Components</h3>
+
+				<p>Apart from geometry there is also data part which describes state or property of every single element of the <em>field</em>. This can be for example, density, energy, speed, momentum, temperature, altitude, wind, etc. So for each <em>point</em> or <em>cell</em> there is a value which describes this element. This can be scalar quantity (e.g., density, temperature) or vector quantity (e.g., momentum, speed). Additionally, property can be of different numeric type (byte, short, int, float, double, complex) logic type (true / false) or text. These properties are called otherwise <em>components</em>.</p>
+
+
+				<p>Case 1. Regular</p>
+
+				<p><em>Regular field</em> case is simple. For every <em>component</em> there is one value for one <em>point</em> on the <em>field</em>.</p>
+
+				<p>Case 2. Irregular</p>
+
+				<p>In <em>irregular field</em> each component describes either <em>vertices</em> or <em>cells</em> from some particular <em>cell set</em>.</p>
+
+
+			<h3>III. Advanced</h3>
+
+				<ol>
+					<li>Each <em>cell</em> of <em>irregular field</em> (especially 2-dimensional <em>cells</em>) has orientation (front / back side).</li>
+					<li>Each element of <em>field</em> may have optional <em>mask</em> (visible / invisible).</li>
+					<li><em>VisNow field</em> can change over time. Such time-dependent <em>field</em> is organized in <em>time-frames</em> within some arbitrary time range. <em>Frames</em> don't need to be uniformly distributed over time, instead, each <em>frame</em> is described by a single real number which denotes its position on time axis. Only some parts of <em>field</em> can change over time, that is:
+						<ul>
+							<li>coordinates of <em>points</em> / <em>vertices</em> (but only in case if they are defined explicitly);</li>
+							<li><em>mask</em> (so one can show / hide elements over time);</li>
+							<li><em>values</em> / <em>components</em> (change of state / property of the element over time – typical in all time-based simulations).</li>
+						</ul>
+					
+						<p>Data between <em>frames</em> is linearly interpolated. Data outside given time range is taken from the boundary. In content window, time data 	occurrence is denoted by “time range” and “st.” (abbreviation for “number of steps”).</p>
+					</li>
+
+					<li><em>Regular fields</em> support <em>tiles</em>. <em>Tiles</em> are typically used when some large data set is split into smaller, separated parts (which usually goes together with separated input files). These parts (<em>tiles</em>) are 1-, 2- or 3-dimensional boxes (depends on dimension of the <em>field</em>). <em>Field</em> covers one or more <em>tiles</em> (fully or partially).</li>
+				</ol>
+
+			<h3>IV. Miscellaneous</h3>
+
+				<ul>
+					<li>VisNow calculates automatically basic statistics of <em>components</em> and <em>boundary</em> of irregular field (in content window as “min/max” and “boundary” respectively).</li>
+					<li><em>Fields</em>, <em>cell sets</em>, <em>components</em> may have names.</li>
+					<li>“Geometric” and “physical extents” in content window sometimes differs which happens mostly in case of geometrical rescaling of 2D <em>field</em> in 3D space (used mainly in Axes3D module).</li>
+					<li>Coordinates of  <em>points</em> / <em>vertices</em> are always real numbers (32 bit float).</li>
+				</ul>
+
+			<h2>Geometry object</h2>
+
+				<p><em>Geometry object</em> is object passed from any module able to output some graphical content into some viewer module. There are two types of <em>geometry objects</em> 2D and 3D.</p>
+
+				<p class="hint">[Hint: In workspace area, module ports that represent geometry object are colored in red for 3D objects and in orange for 2D objects]</p>
+
+			<h2>Basic data types</h2>
+
+				<p><em>Basic data types</em> like integer or real number are present in some modules.</p>
+
+				<p class="hint">[Hint: In workspace area, module ports that represent basic data types are colored in light or dark grey]</p>
+		</div>
+		<div id="footer">
+			VisNow © 2013 Laboratory of Visual Analyis; Interdisciplinary Centre for Mathematical and Computational Modelling; University of Warsaw
+		</div>
+	</div>
+</body></html>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="field viewer 3D" class="FieldViewer3D">
+
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="NSPACE" value="3"/>
+                <param name="NDIMS" value="3"/>
+                <param name="AFFINE" value="true"/>
+            </acceptor>
+        </input>
+        <input name="inPointsGeometryField" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="TRIGGERING:HIDDEN">
+            <acceptor>
+                <param name="NSPACE" value="3"/>
+                <param name="NDIMS" value="1"/>
+                <param name="COORDS" value="true"/>
+            </acceptor>
+        </input>
+        <input name="inObject" type="pl.edu.icm.visnow.lib.types.VNGeometryObject" modifiers="NORMAL" maxConnections="-1"/>
+    </inputs>
+
+    <outputs>
+        <output name="outPointsGeometryField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="NSPACE" value="3"/>
+                <param name="NDIMS" value="1"/>
+                <param name="COORDS" value="true"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>
+    
+    <parameters>
+
+    </parameters>
+</module>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="iih correction" class="IIH">
+
+    <inputs>
+       <input name="inField" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="REGULAR" value="true"/>
+                <param name="DATA_VECLEN" value="1"/>
+            </acceptor>
+       </input>
+    </inputs>
+
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="IRREGULAR" value="true"/>
+            </schema>
+        </output>
+    </outputs>
+</module>

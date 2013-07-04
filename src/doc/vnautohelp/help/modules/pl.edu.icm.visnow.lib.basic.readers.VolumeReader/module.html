@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Module - Volume Reader</title>
+    <style type="text/css">
+        title><style type="text/css">ol{margin:0;padding:0}.c5{max-width:468pt;background-color:#ffffff;padding:72pt 72pt 72pt 72pt}.c8{list-style-type:disc;margin:0;padding:0}.c7{color:#1155cc;text-decoration:underline}.c4{padding-left:0pt;margin-left:36pt}.c1{font-weight:bold}.c0{direction:ltr}.c6{font-style:italic}.c3{line-height:1.1400000000000001}.c2{height:11pt}.title{padding-top:0pt;line-height:1.15;text-align:left;color:#000000;font-size:21pt;font-family:"Trebuchet MS";padding-bottom:0pt}.subtitle{padding-top:0pt;line-height:1.15;text-align:left;color:#666666;font-style:italic;font-size:13pt;font-family:"Trebuchet MS";padding-bottom:10pt}li{color:#000000;font-size:11pt;font-family:"Arial"}p{color:#000000;font-size:11pt;margin:0;font-family:"Arial"}h1{padding-top:10pt;line-height:1.15;text-align:left;color:#000000;font-size:16pt;font-family:"Trebuchet MS";padding-bottom:0pt}h2{padding-top:10pt;line-height:1.15;text-align:left;color:#000000;font-size:13pt;font-family:"Trebuchet MS";font-weight:bold;padding-bottom:0pt}h3{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:12pt;font-family:"Trebuchet MS";font-weight:bold;padding-bottom:0pt}h4{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:11pt;text-decoration:underline;font-family:"Trebuchet MS";padding-bottom:0pt}h5{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:11pt;font-family:"Trebuchet MS";padding-bottom:0pt}h6{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-style:italic;font-size:11pt;font-family:"Trebuchet MS";padding-botto        
+    </style>
+  </head>
+  <body>
+      <table width="100%" border="0">
+          <tr>
+              <td align="left">
+                  <img src="../../common/images/horizontal.png" width="200" height="64"/>
+              </td>
+              <td align="right">
+                  <img src="../../common/images/icm_logo.png" width="120" height="64"/>
+              </td>
+          </tr>
+      </table>
+      
+      <h1>Module: Volume Reader</h1>
+      <p><img src="resources/module_image_pl.edu.icm.visnow.lib.basic.readers.VolumeReader.png"/><br></p>
+      <p>Reads simple volumetric binary files.<br><br></p>
+      <table border="1">          
+      <tr bgcolor="silver">
+         <th width=150 height="40">input port</th>
+         <th width=150>type</th>
+         <th width=500>description</th>
+         <th width=300>data acceptors</th>
+      </tr>
+<tr bgcolor="silver">
+         <th height="40">output port</th>
+         <th>type</th>
+         <th>description</th>
+         <th>data schemas</th>
+      </tr>
+<tr>
+         <td valign="top">volume</td>
+         <td valign="top"><font color="#0088ff">VNRegularField</font></td>
+         <td valign="top"></td>
+         <td valign="top">Regular Field 3D 3-space with affine geometry <br></td>
+      </tr>
+<tr>
+         <td valign="top">outObj</td>
+         <td valign="top"><font color="#ee0000">VNGeometryObject</font></td>
+         <td valign="top"></td>
+         <td valign="top"></td>
+      </tr>
+</table>
+      <br><br><br>
+      <hr><p class="c0"><span>&nbsp;</span></p><p class="c0"><span class="c1">VOLUME READER</span></p><hr><p class="c0"><span>&nbsp;</span></p><p class="c0 c2"><span class="c1"></span></p><p class="c0"><span>The module reads simple volumetric binary files.</span></p><p class="c0 c2"><span></span></p><hr><p class="c0"><span>&nbsp;</span></p><p class="c0"><span class="c1">Output data</span></p><p class="c0 c2"><span class="c1"></span></p><p class="c0"><span>The output field is regular. A geometry object of the field.</span></p><p class="c0 c2"><span></span></p><hr><p class="c0"><span>&nbsp;</span></p><p class="c0"><span class="c1">Computation parameters</span></p><p class="c0 c2"><span class="c1"></span></p><p class="c0"><img height="275" src="resources/images/image00.jpg" width="233"></p><p class="c0 c2"><span class="c1"></span></p><p class="c0"><span>A radio button panel defines the source of the input data either from </span><span class="c6">file,</span><span>&nbsp;</span><span class="c6">URL </span><span>or</span><span class="c6">&nbsp;grid.</span></p><p class="c0 c2"><span class="c6"></span></p><p class="c0"><span>To select an input file click the </span><span class="c1">browse</span><span>&nbsp;button and select a file in the file browser or type the file name into the text input field below the button.</span></p><p class="c0 c2"><span></span></p><p class="c0"><span>The geometric dimensions of input data are taken </span><span class="c6">from file</span><span>, </span><span class="c6">from indices</span><span>&nbsp;or they are </span><span class="c6">normalized</span><span>&nbsp;or </span><span class="c6">user</span><span>&nbsp;defined.</span></p><p class="c0 c2"><span></span></p><p class="c0"><span>To reread the same input file select the </span><span class="c1">reread</span><span>&nbsp;button.</span></p><p class="c0 c2"><span></span></p><p class="c0"><span>After reading in data from the input file there appears some basic information about the data:</span></p><p class="c0 c2"><span></span></p><ol class="c8" start="1"><li class="c4 c0"><span>field type</span></li><li class="c4 c0"><span>dimensions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li class="c0 c4"><span>physical extents</span></li><li class="c4 c0"><span>component names, component vector length, type, minimum and maximum values</span></li></ol><p class="c0 c2"><span></span></p><p class="c0 c2"><span></span></p><p class="c0"><img height="293" src="resources/images/image01.jpg" width="515"></p><p class="c0 c2"><span></span></p><p class="c0 c2"><span></span></p><hr><p class="c0"><span>&nbsp;</span></p><p class="c0"><span class="c1">Presentation parameters</span></p><p class="c0 c2"><span class="c1"></span></p><p class="c0 c3"><span>Presentation tab contents are described in the common interfaces section unter the </span><span class="c7"><a href="../../common/SimplePresentationPanel.html">Presentation Panel</a></span><span>&nbsp;entry.</span></p><p class="c0 c2"><span></span></p>
+  </body>
+</html>

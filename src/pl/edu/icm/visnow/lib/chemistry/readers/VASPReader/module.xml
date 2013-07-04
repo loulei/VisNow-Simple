@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="VASP density field reader" class="ReadVASPDensityField">
+    <reader datatype="VisNow Field"/>
+    <description value="Reads VASP density data files."/>
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="REGULAR" value="true"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>
+</module>
+

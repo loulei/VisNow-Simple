@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="anisotropic denoiser" class="AnisotropicDenoiser">
+
+    <inputs>
+       <input name="inField" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="NDIMS" value="2"/>
+                <param name="AFFINE" value="true"/>
+            </acceptor>
+            <acceptor>
+                <param name="NDIMS" value="3"/>
+                <param name="AFFINE" value="true"/>
+            </acceptor>
+       </input>
+       <input name="anisotropyField" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="TRIGGERING">
+            <acceptor>
+                <param name="NDIMS" value="2"/>
+                <param name="AFFINE" value="true"/>
+            </acceptor>
+            <acceptor>
+                <param name="NDIMS" value="3"/>
+                <param name="AFFINE" value="true"/>
+            </acceptor>
+       </input>
+    </inputs>
+
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="NDIMS" value="2"/>
+                <param name="AFFINE" value="true"/>
+            </schema>
+            <schema>
+                <param name="NDIMS" value="3"/>
+                <param name="AFFINE" value="true"/>
+            </schema>
+        </output>
+         <output name="weights" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="NDIMS" value="2"/>
+                <param name="AFFINE" value="true"/>
+            </schema>
+            <schema>
+                <param name="NDIMS" value="3"/>
+                <param name="AFFINE" value="true"/>
+            </schema>
+        </output>
+   </outputs>
+    
+    <parameters>
+
+    </parameters>
+</module>

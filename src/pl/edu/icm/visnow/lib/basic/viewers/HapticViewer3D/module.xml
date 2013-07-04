@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="haptic viewer 3D" class="Viewer3D">
+
+    <inputs>
+       <input name="inObject" type="pl.edu.icm.visnow.lib.types.VNGeometryObject" modifiers="NECESSARY:TRIGGERING" maxConnections="-1">
+       </input>
+       <input name="hapticField" type="pl.edu.icm.visnow.lib.types.VNGeometryObject" modifiers="TRIGGERING">
+            <acceptor>
+                <param name="REGULAR" value="true"/>
+                <param name="DATA_VECLEN" value="1,3"/>
+            </acceptor>
+       </input>
+    </inputs>
+    <outputs>
+    </outputs>
+    <parameters>
+    </parameters>
+    <description value="viewer for 3D objects (supporting haptic input devices)"/>
+</module>

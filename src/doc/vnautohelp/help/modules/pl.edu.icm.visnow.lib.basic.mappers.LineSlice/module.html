@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Module - Line Slice</title>
+    <style type="text/css">
+        title><style type="text/css">ol{margin:0;padding:0}.c5{max-width:468pt;background-color:#ffffff;padding:72pt 72pt 72pt 72pt}.c2{height:11pt;direction:ltr}.c3{direction:ltr}.c4{text-align:center}.c0{font-weight:bold}.c1{font-style:italic}.title{padding-top:0pt;line-height:1.15;text-align:left;color:#000000;font-size:21pt;font-family:"Trebuchet MS";padding-bottom:0pt}.subtitle{padding-top:0pt;line-height:1.15;text-align:left;color:#666666;font-style:italic;font-size:13pt;font-family:"Trebuchet MS";padding-bottom:10pt}li{color:#000000;font-size:11pt;font-family:"Arial"}p{color:#000000;font-size:11pt;margin:0;font-family:"Arial"}h1{padding-top:10pt;line-height:1.15;text-align:left;color:#000000;font-size:16pt;font-family:"Trebuchet MS";padding-bottom:0pt}h2{padding-top:10pt;line-height:1.15;text-align:left;color:#000000;font-size:13pt;font-family:"Trebuchet MS";font-weight:bold;padding-bottom:0pt}h3{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:12pt;font-family:"Trebuchet MS";font-weight:bold;padding-bottom:0pt}h4{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:11pt;text-decoration:underline;font-family:"Trebuchet MS";padding-bottom:0pt}h5{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:11pt;font-family:"Trebuchet MS";padding-bottom:0pt}h6{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-style:italic;font-size:11pt;font-family:"Trebuchet MS";padding-botto        
+    </style>
+  </head>
+  <body>
+      <table width="100%" border="0">
+          <tr>
+              <td align="left">
+                  <img src="../../common/images/horizontal.png" width="200" height="64"/>
+              </td>
+              <td align="right">
+                  <img src="../../common/images/icm_logo.png" width="120" height="64"/>
+              </td>
+          </tr>
+      </table>
+      
+      <h1>Module: Line Slice</h1>
+      <p><img src="resources/module_image_pl.edu.icm.visnow.lib.basic.mappers.LineSlice.png"/><br></p>
+      <p>creates a slice of the input along a line<br><br></p>
+      <table border="1">          
+      <tr bgcolor="silver">
+         <th width=150 height="40">input port</th>
+         <th width=150>type</th>
+         <th width=500>description</th>
+         <th width=300>data acceptors</th>
+      </tr>
+<tr>
+         <td valign="top">inField</td>
+         <td valign="top"><font color="#0088ff">VNRegularField</font></td>
+         <td valign="top"></td>
+         <td valign="top">Regular Field 3D <br>Regular Field 2D <br></td>
+      </tr>
+<tr bgcolor="silver">
+         <th height="40">output port</th>
+         <th>type</th>
+         <th>description</th>
+         <th>data schemas</th>
+      </tr>
+<tr>
+         <td valign="top">outField</td>
+         <td valign="top"><font color="#0088ff">VNRegularField</font></td>
+         <td valign="top"></td>
+         <td valign="top"></td>
+      </tr>
+<tr>
+         <td valign="top">outObj</td>
+         <td valign="top"><font color="#ee0000">VNGeometryObject</font></td>
+         <td valign="top"></td>
+         <td valign="top"></td>
+      </tr>
+</table>
+      <br><br><br>
+      <hr><p class="c3"><span>&nbsp;</span></p><p class="c3"><span>&nbsp;</span><span class="c0">LINE SLICE</span></p><hr><p class="c3"><span>&nbsp;</span></p><p class="c2"><span class="c0"></span></p><p class="c3"><span>The line slice module extracts a 1D regular field of input data along a line from a regular 2D or 3D field. The line is parallel to one of the axes.</span></p><p class="c2"><span></span></p><hr><p class="c3"><span>&nbsp;</span></p><p class="c3"><span class="c0">Input data</span></p><p class="c2"><span class="c0"></span></p><p class="c3"><span>The input must contain a regular 2D or 3D field.</span></p><p class="c2"><span></span></p><hr><p class="c3"><span>&nbsp;</span></p><p class="c3"><span class="c0">Output data</span></p><p class="c2"><span class="c0"></span></p><p class="c3"><span>The output is a regular field and a geometry object of the field.</span></p><p class="c2"><span></span></p><hr><p class="c3"><span>&nbsp;</span></p><p class="c3"><span class="c0">Computation parameters</span></p><p class="c3 c4"><img height="505" src="resources/images/image00.jpg" width="220"></p><p class="c3"><span class="c0">Direction</span><span>&nbsp;radio button menu allows to choose t</span><span>he direction </span><span>of the line. In case of 2D input field the user chooses between x- and y-direction, in case of 3D input field the choice is between x-, y- and z-direction.</span></p><p class="c2"><span></span></p><p class="c3"><span>Sliders below the direction radio buttons pick up the </span><span class="c0">placement</span><span>&nbsp;of the line in the remaining dimensions. Text fields below the sliders allow to type in the maximum, minimum and current values.</span></p><p class="c2"><span></span></p><p class="c3"><span>If </span><span class="c0">dynamic sliders</span><span>&nbsp;check box is on, the line location is updated immediately with the slider movement. By default this option is off.</span></p><p class="c2"><span></span></p><hr><p class="c3"><span>&nbsp;</span></p><p class="c3"><span class="c0">Presentation parameters</span></p><p class="c2"><span class="c0"></span></p><p class="c3"><span>Presentation tab contents are described in the common interfaces section unter the </span><span class="c0">Presentation Panel</span><span>&nbsp;entry. T</span><span>here are two parameters which are especially important for lines.</span></p><p class="c2"><span></span></p><p class="c3 c4"><img height="79" src="resources/images/image01.jpg" width="257"></p><p class="c2"><span></span></p><p class="c3"><span>The </span><span class="c0">line width</span><span>&nbsp;slider allows to adjust the width of the lines. A drop down menu allows to choose between different </span><span class="c0">line styles</span><span>&nbsp;</span><span class="c1">solid, dashed, dotted, dashdot</span><span>. The default line style is </span><span class="c1">solid.</span></p><p class="c2"><span class="c1"></span></p><p class="c2"><span></span></p>
+  </body>
+</html>

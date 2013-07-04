@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="coordinate permutation/mirroring" class="ReindexRegularField">
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
+        </input>
+    </inputs>
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>
+    <parameters>
+    </parameters>
+    <description value="TODO"/>
+</module>
+

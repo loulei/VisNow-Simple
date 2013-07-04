@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="convolution" class="Convolution">
+
+    <inputs>
+        <input name="inField1" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="VECLEN" value="1"/>
+            </acceptor>
+        </input>
+        <input name="inField2" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="VECLEN" value="1"/>
+            </acceptor>
+        </input>
+    </inputs>
+
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="VECLEN" value="1"/>
+            </schema>
+        </output>
+    </outputs>
+    
+    <parameters>
+
+    </parameters>
+</module>

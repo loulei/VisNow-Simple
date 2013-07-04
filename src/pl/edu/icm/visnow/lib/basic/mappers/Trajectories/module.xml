@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="trajectories" class="Trajectories">
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
+            <param name="DATA_VECLEN" value="1"/>
+        </input>
+    </inputs>
+
+    <outputs>
+        <output name="trajectoriesField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <schema>
+                <param name="NSPACE" value="3"/>
+                <param name="DATA_VECLEN" value="1"/>
+            </schema>
+        </output>
+        <output name="mappedTrajectoriesField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="NSPACE" value="2"/>
+<!--                <param name="DATA_VECLEN" value="1"/>-->
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>
+    <parameters>
+    </parameters>
+    <description value="Traces geometry trjectories in timeframe fields."/>
+</module>

@@ -1,0 +1,5 @@
+bytes -> ShortArea
+
+new RegularField(int[]{w,h});
+field.addData(DataArray.create(data[]));
+new VNRegularField(field);s

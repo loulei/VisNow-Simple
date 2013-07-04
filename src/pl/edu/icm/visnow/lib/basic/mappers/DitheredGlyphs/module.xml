@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="dithered glyphs" class="DitheredGlyphs">
+
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
+           <acceptor>
+                <param name="REGULAR" value="true"/>
+            </acceptor>
+        </input>
+        </inputs>
+    <outputs>
+        <geometryOutput/>
+    </outputs>
+    <description value="Maps scalar data creating scattered glyphs\n with the density proportional to data values."/>
+</module>

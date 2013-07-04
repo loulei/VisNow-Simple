@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : types.xml
+    Created on : 4 grudzien 2007, 18:52
+    Author     : Hubert Orlik-Grzesik, University of Warsaw, ICM
+    Description:
+-->
+
+<types>
+    
+    <type classname="java.lang.Float" color="#aaa"/>
+    <type classname="java.lang.Double" color="#3fff"/>
+    <type classname="java.lang.Byte" color="#222"/>
+    <type classname="java.lang.Short" color="#444"/>
+    <type classname="java.lang.Integer" color="#666"/>
+    <type classname="java.lang.Long" color="#25b"/>
+    
+    <type classname="java.lang.Boolean" color="#c9f"/>
+    <type classname="java.lang.Object" color="#f66"/>
+    <type classname="java.lang.Void" color="#aac"/>
+
+    <type classname="pl.edu.icm.visnow.lib.types.VNGeometryTransform" color="#800"/>
+    <type classname="pl.edu.icm.visnow.lib.types.VNGeometryObject" color="#e00"/>
+    <type classname="pl.edu.icm.visnow.lib.types.VNRegularField" color="#08f"/>
+    <type classname="pl.edu.icm.visnow.lib.types.VNIrregularField" color="#80f"/>
+    <type classname="pl.edu.icm.visnow.lib.types.VNField" color="#00f"/>
+</types>

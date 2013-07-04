@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Module - Volume Renderer</title>
+    <style type="text/css">
+        title><style type="text/css">ol{margin:0;padding:0}.c6{max-width:468pt;background-color:#ffffff;padding:72pt 72pt 72pt 72pt}.c1{height:11pt;text-align:center}.c4{text-align:center}.c3{font-weight:bold}.c2{height:11pt}.c0{direction:ltr}.c5{font-style:italic}.title{padding-top:24pt;line-height:1.15;text-align:left;color:#000000;font-size:36pt;font-family:"Arial";font-weight:bold;padding-bottom:6pt}.subtitle{padding-top:18pt;line-height:1.15;text-align:left;color:#666666;font-style:italic;font-size:24pt;font-family:"Georgia";padding-bottom:4pt}li{color:#000000;font-size:11pt;font-family:"Arial"}p{color:#000000;font-size:11pt;margin:0;font-family:"Arial"}h1{padding-top:24pt;line-height:1.15;text-align:left;color:#000000;font-size:18pt;font-family:"Arial";font-weight:bold;padding-bottom:6pt}h2{padding-top:18pt;line-height:1.15;text-align:left;color:#000000;font-size:14pt;font-family:"Arial";font-weight:bold;padding-bottom:4pt}h3{padding-top:14pt;line-height:1.15;text-align:left;color:#666666;font-size:12pt;font-family:"Arial";font-weight:bold;padding-bottom:4pt}h4{padding-top:12pt;line-height:1.15;text-align:left;color:#666666;font-style:italic;font-size:11pt;font-family:"Arial";padding-bottom:2pt}h5{padding-top:11pt;line-height:1.15;text-align:left;color:#666666;font-size:10pt;font-family:"Arial";font-weight:bold;padding-bottom:2pt}h6{padding-top:10pt;line-height:1.15;text-align:left;color:#666666;font-style:italic;font-size:10pt;font-family:"Arial";padding-botto        
+    </style>
+  </head>
+  <body>
+      <table width="100%" border="0">
+          <tr>
+              <td align="left">
+                  <img src="../../common/images/horizontal.png" width="200" height="64"/>
+              </td>
+              <td align="right">
+                  <img src="../../common/images/icm_logo.png" width="120" height="64"/>
+              </td>
+          </tr>
+      </table>
+      
+      <h1>Module: Volume Renderer</h1>
+      <p><img src="resources/module_image_pl.edu.icm.visnow.lib.basic.mappers.VolumeRenderer.png"/><br></p>
+      <p>Maps volumetric data using volume rendering algorithm.<br><br></p>
+      <table border="1">          
+      <tr bgcolor="silver">
+         <th width=150 height="40">input port</th>
+         <th width=150>type</th>
+         <th width=500>description</th>
+         <th width=300>data acceptors</th>
+      </tr>
+<tr>
+         <td valign="top">inField</td>
+         <td valign="top"><font color="#0088ff">VNRegularField</font></td>
+         <td valign="top">Input for volume data to render</td>
+         <td valign="top">Regular Field 3D 3-space with affine geometry <br>at least one scalar component<br></td>
+      </tr>
+<tr bgcolor="silver">
+         <th height="40">output port</th>
+         <th>type</th>
+         <th>description</th>
+         <th>data schemas</th>
+      </tr>
+<tr>
+         <td valign="top">croppedField</td>
+         <td valign="top"><font color="#0088ff">VNRegularField</font></td>
+         <td valign="top">Output of cropped field</td>
+         <td valign="top">Regular Field 3D 3-space with affine geometry <br></td>
+      </tr>
+<tr>
+         <td valign="top">outObj</td>
+         <td valign="top"><font color="#ee0000">VNGeometryObject</font></td>
+         <td valign="top">Output of geometry object for 3D rendered volume</td>
+         <td valign="top"></td>
+      </tr>
+</table>
+      <br><br><br>
+      <hr><p class="c0"><span>&nbsp;</span></p><p class="c0"><span class="c3">VOLUME RENDERER</span></p><hr><p class="c0"><span>&nbsp;</span></p><p class="c0"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p><p class="c0"><span>Volume rendering is a set of techniques used to display a 2D projection of a 3D discretely sampled data set.</span></p><p class="c0 c1"><span></span></p><hr><p class="c0"><span>&nbsp;</span></p><p class="c0"><span class="c3">Input data</span></p><p class="c2 c0"><span class="c3"></span></p><p class="c0"><span>At input the module requires a regular 3D 3-space field with affine geometry with at least one scalar component.</span></p><p class="c2 c0"><span></span></p><hr><p class="c0"><span>&nbsp;</span></p><p class="c0"><span class="c3">Output data</span></p><p class="c2 c0"><span class="c3"></span></p><p class="c0"><span>At output the module delivers a regular 3D 3-space field with affine geometry and a geometry object.</span></p><p class="c0 c2"><span></span></p><hr><p class="c0"><span>&nbsp;</span></p><p class="c0"><span class="c3">Transparency map</span></p><p class="c2 c0"><span></span></p><p class="c0 c4"><img height="386" src="resources/images/image01.jpg" width="246"></p><p class="c2 c0"><span></span></p><p class="c0"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p><p class="c0"><span>The </span><span class="c3">Transparency component </span><span>drop down list defines the component delivered with the input field which decides about the transparency of the VNGeometryObject at output. By default the first component in the list is used. Choosing </span><span class="c5">null ...</span></p><p class="c2 c0"><span class="c5"></span></p><p class="c0"><span>The </span><span class="c3">mapped data range</span><span>&nbsp;slider allows the user to cut the range of the transparency component from below and above. For values below or above the range the minimum or maximum range value is used, respectively. By default the whole range is used.</span></p><p class="c2 c0"><span></span></p><p class="c0"><span>The </span><span class="c3">transparency map</span><span>&nbsp;defines opacity at the y-axis dependently on the transparency component value on the x-axis. The red colored opacity function is editable by dragging mouse button on the transparency map field: left mouse button for free drawing, Shift+left mouse button for drawing a straight line, right mouse button for smoothing.</span></p><p class="c0"><span>The effective opacity value is represented by the gray colored line which is proportional to the red line with a factor between 0 and 1 to be choosen by the y-slider. The x-slider allows to cut the value range from below setting effecitve opacity zero for values below the minimum value. The bar below the transparency map illustrates choosen values for transparency and color.</span></p><p class="c0"><span>In the background of the transparency map the histogram of transparency component values is presented.</span></p><p class="c0"><span>Finally, the user can choose between several predefined transparency maps.</span></p><p class="c2 c0"><span></span></p><p class="c2 c0"><span></span></p><hr><p class="c0"><span>&nbsp;</span></p><p class="c0"><span class="c3">Data Volume Crop</span></p><p class="c4 c0"><img height="245" src="resources/images/image00.jpg" width="245"></p><p class="c2 c0"><span></span></p><p class="c0"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p><p class="c0"><span>The </span><span class="c3">data volume crop</span><span>&nbsp;sliders allow to crop the field in x-, y- and z-direction from above and below. </span><span class="c3">Update cropped field extends</span><span>&nbsp;check box freshens up minimum and maximum values of data. </span><span class="c3">Output cropped field</span><span>&nbsp;button exports the cropped field to data output.</span></p><p class="c2 c0"><span></span></p><p class="c2 c0"><span></span></p><p class="c2 c0"><span></span></p>
+  </body>
+</html>

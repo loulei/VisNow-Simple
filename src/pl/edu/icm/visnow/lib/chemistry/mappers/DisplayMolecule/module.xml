@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="display molecule" class="DisplayMolecule">
+    <inputs>
+        <input name="Molecule" type="pl.edu.icm.visnow.lib.chemistry.types.VNMolecule" modifiers="NECESSARY:TRIGGERING"></input>
+        <input name="Coordinates" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="REGULAR" value="true"/>
+            </acceptor>
+        </input>
+    </inputs>
+    <outputs>
+        <output name="Selection" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="REGULAR" value="true"/>
+                <param name="NDIMS" value="1"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>    
+    <parameters>
+    </parameters>
+</module>
