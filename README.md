@@ -18,9 +18,14 @@ keynotes:
  - Network creation support
  - Multifunctional modules
  - Module-Object-Interface connection
- 
- More information and download of binary installers at project webpage:
- 
+
+
+More information and download of binary installers at project webpage:
+
       http://visnow.icm.edu.pl
 
-      
+To build VisNow Simple clone the repository to your local hard drive and
+run 'ant' in root direcory of the cloned repo.
+
+VisNow Simple requires Java3D v1.5.2  and Java Advanced Imaging libraries to run.
+Use JRE 1.6 for best stability.
