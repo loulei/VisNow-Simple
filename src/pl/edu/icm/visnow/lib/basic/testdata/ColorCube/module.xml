@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="color cube" class="ColorCube">
+    <testdata/>
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <schema>
+                <param name="NSPACE" value="3"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>
+    <description value="A node colored cube for explanation of colorspaces"/>
+</module>
+

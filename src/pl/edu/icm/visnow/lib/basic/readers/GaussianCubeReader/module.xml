@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="Gaussian cube reader" class="GaussianCubeReader">
+    <reader datatype="Gaussian cube file"/>
+    <description value="Reads Gaussian cube data files."/>
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="REGULAR" value="true"/>
+                <param name="NDIMS" value="3"/>
+                <param name="DATA_VECLEN" value="1"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>
+</module>
+

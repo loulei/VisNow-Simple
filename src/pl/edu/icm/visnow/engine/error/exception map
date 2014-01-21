@@ -1,0 +1,20 @@
+VN Exception
+- System
+  - Engine
+    - Wrong state
+  - Config
+- Module
+- Outer
+  - IOException
+  - DataException
+
+VN Runtime Exception
+- Module
+  - Carefree
+
+
+
+
+ZASADY:
+- metoda może rzucać tylko VNException (wszystko opakowane)
+- łapiemy zbiorczo gdzieś wysoko (sprecyzuj!!)

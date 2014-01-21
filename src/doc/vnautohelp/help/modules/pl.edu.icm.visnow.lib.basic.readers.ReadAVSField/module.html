@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Module - AVS Field Reader</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style type="text/css">
+        ol{margin:0;padding:0}.c0{padding-left:0pt;direction:ltr;margin-left:36pt}.c2{list-style-type:disc;margin:0;padding:0}.c8{max-width:468pt;background-color:#ffffff;padding:72pt 72pt 72pt 72pt}.c6{color:#1155cc;text-decoration:underline}.c5{height:11pt}.c1{direction:ltr}.c4{font-style:italic}.c7{line-height:1.1400000000000001}.c3{font-weight:bold}.title{padding-top:0pt;line-height:1.15;text-align:left;color:#000000;font-size:21pt;font-family:"Trebuchet MS";padding-bottom:0pt}.subtitle{padding-top:0pt;line-height:1.15;text-align:left;color:#666666;font-style:italic;font-size:13pt;font-family:"Trebuchet MS";padding-bottom:10pt}li{color:#000000;font-size:11pt;font-family:"Arial"}p{color:#000000;font-size:11pt;margin:0;font-family:"Arial"}h1{padding-top:10pt;line-height:1.15;text-align:left;color:#000000;font-size:16pt;font-family:"Trebuchet MS";padding-bottom:0pt}h2{padding-top:10pt;line-height:1.15;text-align:left;color:#000000;font-size:13pt;font-family:"Trebuchet MS";font-weight:bold;padding-bottom:0pt}h3{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:12pt;font-family:"Trebuchet MS";font-weight:bold;padding-bottom:0pt}h4{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:11pt;text-decoration:underline;font-family:"Trebuchet MS";padding-bottom:0pt}h5{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:11pt;font-family:"Trebuchet MS";padding-bottom:0pt}h6{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-style:italic;font-size:11pt;font-family:"Trebuchet MS";padding-bottom:0pt}        
+    </style>
+  </head>
+  <body>
+      <table width="100%" border="0">
+          <tr>
+              <td align="left">
+                  <img src="../../common/images/horizontal.png" width="200" height="64"/>
+              </td>
+              <td align="right">
+                  <img src="../../common/images/icm_logo.png" width="120" height="64"/>
+              </td>
+          </tr>
+      </table>
+      
+      <h1>Module: AVS Field Reader</h1>
+      <p><img src="resources/module_image_pl.edu.icm.visnow.lib.basic.readers.ReadAVSField.png"/><br></p>
+      <p>Reads AVS/Express field files.<br><br></p>
+      <table border="1">          
+      <tr bgcolor="silver">
+         <th width=150 height="40">input port</th>
+         <th width=150>type</th>
+         <th width=500>description</th>
+         <th width=300>data acceptors</th>
+      </tr>
+<tr bgcolor="silver">
+         <th height="40">output port</th>
+         <th>type</th>
+         <th>description</th>
+         <th>data schemas</th>
+      </tr>
+<tr>
+         <td valign="top">outField</td>
+         <td valign="top"><font color="#0088ff">VNRegularField</font></td>
+         <td valign="top"></td>
+         <td valign="top">Regular Field <br></td>
+      </tr>
+<tr>
+         <td valign="top">outObj</td>
+         <td valign="top"><font color="#ee0000">VNGeometryObject</font></td>
+         <td valign="top"></td>
+         <td valign="top"></td>
+      </tr>
+</table>
+      <br><br><br>
+      <hr><p class="c1"><span>&nbsp;</span></p><p class="c1"><span class="c3">AVS FIELD READER</span></p><hr><p class="c1"><span>&nbsp;</span></p><p class="c5 c1"><span></span></p><p class="c1"><span>The module reads AVS/Express field data files.</span></p><p class="c5 c1"><span></span></p><hr><p class="c1"><span>&nbsp;</span></p><p class="c1"><span class="c3">Output data</span></p><p class="c5 c1"><span class="c3"></span></p><p class="c1"><span>The output field is regular. A geometry object of the field.</span></p><p class="c5 c1"><span></span></p><hr><p class="c1"><span>&nbsp;</span></p><p class="c1"><span class="c3">Computation parameters</span></p><p class="c1 c5"><span class="c3"></span></p><p class="c1"><img height="141" src="resources/images/image00.jpg" width="238"></p><p class="c5 c1"><span class="c3"></span></p><p class="c1"><span>To select an input file click the </span><span class="c3">browse </span><span>button and select a file in the file browser or type the file name into the text input field below the button.</span></p><p class="c5 c1"><span></span></p><p class="c1"><span>A radio button panel defines the binary data type as </span><span class="c4">XDR (big endian), X86 (little endian), local native</span><span>&nbsp;or </span><span class="c4">file specified</span><span>.</span></p><p class="c5 c1"><span></span></p><p class="c1"><span>The </span><span class="c3">show</span><span>&nbsp;check box ....?</span></p><p class="c5 c1"><span></span></p><p class="c1"><span>To reread the same input file select the </span><span class="c3">reread</span><span>&nbsp;button.</span></p><p class="c5 c1"><span></span></p><p class="c1"><span>After reading in data from the input file there appears some basic information about the data:</span></p><p class="c5 c1"><span></span></p><ol class="c2" start="1"><li class="c0"><span>field type</span></li><li class="c0"><span>dimensions</span></li><li class="c0"><span>physical extents</span></li><li class="c0"><span>component names, component vector length, type, minimum and maximum values</span></li></ol><p class="c5 c1"><span></span></p><p class="c5 c1"><span></span></p><p class="c5 c1"><span></span></p><p class="c5 c1"><span></span></p><p class="c5 c1"><span></span></p><p class="c1"><img height="317" src="resources/images/image01.jpg" width="504"></p><p class="c5 c1"><span></span></p><hr><p class="c1"><span>&nbsp;</span></p><p class="c1"><span class="c3">Presentation parameters</span></p><p class="c5 c1"><span class="c3"></span></p><p class="c1 c7"><span>Presentation tab contents are described in the common interfaces section unter the </span><span class="c6"><a href="../../common/SimplePresentationPanel.html">Presentation Panel</a></span><span>&nbsp;entry.</span></p><p class="c5 c1"><span></span></p>
+  </body>
+</html>

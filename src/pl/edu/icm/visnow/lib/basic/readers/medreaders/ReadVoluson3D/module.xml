@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="Voluson 3D reader" class="ReadVoluson3D">
+    <reader datatype="GE Voluson file"/>
+    <description value="Reads GE Voluson 3D ultrasound data files."/>
+    <outputs>
+        <output name="outEchoField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="DATA_VECLEN" value="1"/>
+            </schema>
+        </output>
+        <output name="outDopplerField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="DATA_VECLEN" value="1"/>
+            </schema>
+        </output>
+        <output name="outInterpolatedField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="DATA_VECLEN" value="1"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>
+</module>
+

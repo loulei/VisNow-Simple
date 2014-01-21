@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+<mapID target="visnow.nohelp" url="help/nohelp.html" />
+
+<mapID target="toplevelfolder" url="help/common/images/vn16.png" />
+<mapID target="top" url="help/top.html" />
+<mapID target="visnow.intro" url="help/intro.html" />
+
+<mapID target="modules.intro" url="help/modulesIntro.html" />
+
+<mapID target="common.intro" url="help/common/intro.html" />
+<mapID target="common.uiintro" url="help/common/uiintro.html" />
+<mapID target="common.componentselector" url="help/common/component_selector.html" />
+<mapID target="common.presentation.simple" url="help/common/PresentationPanel/simple/PresentationPanelSimple.html" />
+<mapID target="common.colormapeditor.simple" url="help/common/ColormapEditor/simple/ColormapEditorSimple.html" />
+<mapID target="common.datamodel" url="help/common/DataModel.html" />
+
+<mapID target="window.intro" url="help/window/GUI_MainWindow/GUI_MainWindow.html" />
+<mapID target="window.workspace" url="help/window/GUI_WorkspacePanel/GUI_WorkspacePanel.html" />
+<mapID target="window.library" url="help/window/GUI_LibraryPanel/GUI_LibraryPanel.html" />
+<mapID target="window.module" url="help/window/GUI_ModulePanel/GUI_ModulePanel.html" />
+<mapID target="window.menu" url="help/window/GUI_MenuBarTabs/GUI_MenuBarTabs.html" />
+<mapID target="window.status" url="help/window/GUI_StatusBar/GUI_StatusBar.html" />
+<mapID target="window.preferences" url="help/window/GUI_Preferences/GUI_Preferences.html" />
+
+<mapID target="widgets.intro" url="help/widgets/intro.html" />
+<mapID target="widgets.sliders.intro" url="help/widgets/sliders/intro.html" />
+<mapID target="widgets.sliders.int" url="help/widgets/sliders/integer_slider.html" />
+<mapID target="widgets.sliders.enhancedint" url="help/widgets/sliders/enhanced_integer_slider.html" />
+<mapID target="widgets.sliders.float" url="help/widgets/sliders/float_slider.html" />
+<mapID target="widgets.sliders.log" url="help/widgets/sliders/logarithmic_slider.html" />
+<mapID target="widgets.sliders.sub" url="help/widgets/sliders/subrange_slider.html" />
+<mapID target="widgets.sliders.subsub" url="help/widgets/sliders/subsubrange_slider.html" />
+
+<% for varDir in folders %>
+<mapID target="<$ varDir $>" url="help/modules/<$ varDir $>.html" />
+<% endfor %>
+
+
+<% for varMod in modules %>
+<mapID target="<$ varMod.class $>" url="help/modules/<$ varMod.class $>/module.html" />
+<% endfor %>
+
+</map>

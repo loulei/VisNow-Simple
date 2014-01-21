@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='utf-8'?>
+<application name="Untitled(1)">
+    <libraries>
+        <library name="internal"/>
+    </libraries>
+    <modules>
+        <module name="DoNothingSlowly[9]" classname="pl.edu.icm.visnow.lib.test.DoNothingSlowly" library="internal" x="225" y="345">
+        </module>
+        <module name="DoNothingSlowly[2]" classname="pl.edu.icm.visnow.lib.test.DoNothingSlowly" library="internal" x="82" y="108">
+        </module>
+        <module name="DoNothingSlowly[1]" classname="pl.edu.icm.visnow.lib.test.DoNothingSlowly" library="internal" x="81" y="26">
+        </module>
+        <module name="DoNothingSlowly[6]" classname="pl.edu.icm.visnow.lib.test.DoNothingSlowly" library="internal" x="486" y="191">
+        </module>
+        <module name="DoNothingSlowly[3]" classname="pl.edu.icm.visnow.lib.test.DoNothingSlowly" library="internal" x="486" y="97">
+        </module>
+        <module name="DoNothingSlowly[8]" classname="pl.edu.icm.visnow.lib.test.DoNothingSlowly" library="internal" x="486" y="343">
+        </module>
+        <module name="DoNothingSlowly[4]" classname="pl.edu.icm.visnow.lib.test.DoNothingSlowly" library="internal" x="28" y="195">
+        </module>
+        <module name="DoNothingSlowly[7]" classname="pl.edu.icm.visnow.lib.test.DoNothingSlowly" library="internal" x="265" y="276">
+        </module>
+        <module name="DoNothingSlowly[5]" classname="pl.edu.icm.visnow.lib.test.DoNothingSlowly" library="internal" x="266" y="193">
+        </module>
+        <module name="DoNothingSlowly[10]" classname="pl.edu.icm.visnow.lib.test.DoNothingSlowly" library="internal" x="225" y="434">
+        </module>
+    </modules>
+    <links>
+        <link>
+            <output module="DoNothingSlowly[2]" port="actionOutput"/>
+            <input module="DoNothingSlowly[4]" port="actionInput"/>
+        </link>
+        <link>
+            <output module="DoNothingSlowly[2]" port="actionOutput"/>
+            <input module="DoNothingSlowly[5]" port="actionInput"/>
+        </link>
+        <link>
+            <output module="DoNothingSlowly[5]" port="actionOutput"/>
+            <input module="DoNothingSlowly[7]" port="actionInput"/>
+        </link>
+        <link>
+            <output module="DoNothingSlowly[1]" port="actionOutput"/>
+            <input module="DoNothingSlowly[3]" port="actionInput"/>
+        </link>
+        <link>
+            <output module="DoNothingSlowly[3]" port="actionOutput"/>
+            <input module="DoNothingSlowly[6]" port="actionInput"/>
+        </link>
+        <link>
+            <output module="DoNothingSlowly[1]" port="actionOutput"/>
+            <input module="DoNothingSlowly[2]" port="actionInput"/>
+        </link>
+        <link>
+            <output module="DoNothingSlowly[7]" port="actionOutput"/>
+            <input module="DoNothingSlowly[8]" port="actionInput"/>
+        </link>
+        <link>
+            <output module="DoNothingSlowly[7]" port="actionOutput"/>
+            <input module="DoNothingSlowly[9]" port="actionInput"/>
+        </link>
+        <link>
+            <output module="DoNothingSlowly[6]" port="actionOutput"/>
+            <input module="DoNothingSlowly[8]" port="actionInput"/>
+        </link>
+        <link>
+            <output module="DoNothingSlowly[9]" port="actionOutput"/>
+            <input module="DoNothingSlowly[10]" port="actionInput"/>
+        </link>
+    </links>
+</application>

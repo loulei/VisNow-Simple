@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="old VTK data reader" class="ReadVTK">
+    <reader datatype="VTK file"/>
+    <description value="Reads VTK data file (with limitations due to different data structures)"/>
+    <outputs>
+        <output name="outRegularField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="REGULAR" value="true"/>
+                <param name="NDIMS" value="3"/>
+                <param name="NSPACE" value="3"/>
+            </schema>
+        </output>
+        <output name="outIrregularField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <schema>
+                <param name="IRREGULAR" value="true"/>
+                <param name="NSPACE" value="3"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>
+</module>
+

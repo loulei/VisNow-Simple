@@ -1,0 +1,257 @@
+<?xml version='1.0' encoding='ISO-8859-1'  ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
+         "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+<toc version="2.0">
+    <tocitem text="VisNow" image="toplevelfolder" target="top">
+   
+        <tocitem text="Introduction to VisNow" target="visnow.intro"/>
+
+        <tocitem text="Main window" target="window.intro" expand="false">
+            <tocitem text="Workspace panel" target="window.workspace"/>
+            <tocitem text="Library panel" target="window.library"/>
+            <tocitem text="Module panel" target="window.module"/>
+            <tocitem text="Main menu" target="window.menu"/>
+            <tocitem text="Status bar" target="window.status"/>
+        </tocitem>
+        <tocitem text="Preferences" target="window.preferences"/>
+
+        <tocitem text="Common elements" target="common.intro" expand="false">
+            <tocitem text="Data model" target="common.datamodel"/>
+            <tocitem text="Common interfaces" target="common.uiintro" expand="false">
+                <tocitem text="Presentation panel" target="common.presentation.simple"/>
+                <tocitem text="Colormap editor" target="common.colormapeditor.pro"/>
+            </tocitem>
+            
+        </tocitem>
+
+<tocitem text="Modules" target="" expand="false">
+    <tocitem text="readers" target="pl.edu.icm.visnow.lib.basic.readers.help_folder" expand="false">
+    <tocitem text="regular data readers" target="pl.edu.icm.visnow.lib.basic.readers.regular_help_folder" expand="false">
+    <tocitem text="VisNow Field Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadVisNowField" expand="false">
+    
+        </tocitem>
+<tocitem text="Image Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadImage" expand="false">
+    
+        </tocitem>
+<tocitem text="VTK File Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadVTK" expand="false">
+    
+        </tocitem>
+<tocitem text="Volume Reader" target="pl.edu.icm.visnow.lib.basic.readers.VolumeReader" expand="false">
+    
+        </tocitem>
+<tocitem text="AVS Field Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadAVSField" expand="false">
+    
+        </tocitem>
+<tocitem text="CSV Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadCSV" expand="false">
+    
+        </tocitem>
+
+        </tocitem>
+<tocitem text="irregular data readers" target="pl.edu.icm.visnow.lib.basic.readers.irregular_help_folder" expand="false">
+    <tocitem text="VisNow Field Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadVisNowField" expand="false">
+    
+        </tocitem>
+<tocitem text="UCD Data Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadUCD" expand="false">
+    
+        </tocitem>
+<tocitem text="VTK File Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadVTK" expand="false">
+    
+        </tocitem>
+<tocitem text="Wavefront OBJ Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadOBJ" expand="false">
+    
+        </tocitem>
+<tocitem text="GADGET-2 Reader" target="pl.edu.icm.visnow.lib.basic.readers.ExtendedReadGADGET2" expand="false">
+    
+        </tocitem>
+<tocitem text="ANSYS Fluent Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadFluent" expand="false">
+    
+        </tocitem>
+<tocitem text="STL Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadSTL" expand="false">
+    
+        </tocitem>
+
+        </tocitem>
+<tocitem text="medical data readers" target="pl.edu.icm.visnow.lib.basic.readers.medreaders.help_folder" expand="false">
+    <tocitem text="DICOM Reader" target="pl.edu.icm.visnow.lib.basic.readers.medreaders.ReadDICOM" expand="false">
+    
+        </tocitem>
+
+        </tocitem>
+
+        </tocitem>
+<tocitem text="test objects" target="pl.edu.icm.visnow.lib.basic.testdata.help_folder" expand="false">
+    <tocitem text="Color Cube" target="pl.edu.icm.visnow.lib.basic.testdata.ColorCube" expand="false">
+    
+        </tocitem>
+<tocitem text="Test Cells" target="pl.edu.icm.visnow.lib.basic.testdata.TestCells" expand="false">
+    
+        </tocitem>
+<tocitem text="Test Line Mesh" target="pl.edu.icm.visnow.lib.basic.testdata.TestLineMesh" expand="false">
+    
+        </tocitem>
+<tocitem text="Test Points" target="pl.edu.icm.visnow.lib.basic.testdata.TestPoints" expand="false">
+    
+        </tocitem>
+<tocitem text="Test Regular Field 2D" target="pl.edu.icm.visnow.lib.basic.testdata.TestRegularField2D" expand="false">
+    
+        </tocitem>
+<tocitem text="Test Regular Field 3D" target="pl.edu.icm.visnow.lib.basic.testdata.TestRegularField3D" expand="false">
+    
+        </tocitem>
+
+        </tocitem>
+<tocitem text="utilities" target="pl.edu.icm.visnow.lib.basic.utilities.help_folder" expand="false">
+    <tocitem text="Anisotropic Denoiser" target="pl.edu.icm.visnow.lib.basic.filters.AnisotropicDenoiser" expand="false">
+    
+        </tocitem>
+<tocitem text="Boundary Cells" target="pl.edu.icm.visnow.lib.basic.filters.Boundaries" expand="false">
+    
+        </tocitem>
+<tocitem text="Correlation Analysis" target="pl.edu.icm.visnow.lib.basic.filters.CorrelationAnalysis" expand="false">
+    
+        </tocitem>
+<tocitem text="Create Radial Coordinates" target="pl.edu.icm.visnow.lib.basic.filters.RadialCoordinates" expand="false">
+    
+        </tocitem>
+<tocitem text="Crop/downsize Regular Field" target="pl.edu.icm.visnow.lib.basic.filters.CropDown" expand="false">
+    
+        </tocitem>
+<tocitem text="Differential Operations" target="pl.edu.icm.visnow.lib.basic.filters.RegularFieldDifferentialOperations" expand="false">
+    
+        </tocitem>
+<tocitem text="Field Statistics" target="pl.edu.icm.visnow.lib.basic.utilities.FieldStats" expand="false">
+    
+        </tocitem>
+<tocitem text="Fourier Transform" target="pl.edu.icm.visnow.lib.basic.filters.FFT" expand="false">
+    
+        </tocitem>
+<tocitem text="Gaussian Smoothing" target="pl.edu.icm.visnow.lib.basic.filters.GaussianFilter" expand="false">
+    
+        </tocitem>
+<tocitem text="Interpolate To Regular Mesh" target="pl.edu.icm.visnow.lib.basic.filters.InterpolationToRegularField" expand="false">
+    
+        </tocitem>
+<tocitem text="Modify Components/coordinates" target="pl.edu.icm.visnow.lib.basic.filters.ComponentOperations" expand="false">
+    
+        </tocitem>
+<tocitem text="Morphological Operations" target="pl.edu.icm.visnow.lib.basic.filters.LocalOperations" expand="false">
+    
+        </tocitem>
+<tocitem text="Multicomponent Histogram" target="pl.edu.icm.visnow.lib.basic.filters.MulticomponentHistogram" expand="false">
+    
+        </tocitem>
+<tocitem text="Smooth And Downsize" target="pl.edu.icm.visnow.lib.basic.filters.SmoothDown" expand="false">
+    
+        </tocitem>
+<tocitem text="Spline Interpolation" target="pl.edu.icm.visnow.lib.basic.filters.SplineInterpolation" expand="false">
+    
+        </tocitem>
+<tocitem text="Time Select/animate" target="pl.edu.icm.visnow.lib.basic.mappers.ObjectFlow" expand="false">
+    
+        </tocitem>
+<tocitem text="Triangulate Field" target="pl.edu.icm.visnow.lib.basic.filters.Triangulation" expand="false">
+    
+        </tocitem>
+
+        </tocitem>
+<tocitem text="mappers" target="pl.edu.icm.visnow.lib.basic.mappers.help_folder" expand="false">
+    <tocitem text="Animated Stream" target="pl.edu.icm.visnow.lib.basic.mappers.AnimatedStream" expand="false">
+    
+        </tocitem>
+<tocitem text="Axes 3D" target="pl.edu.icm.visnow.lib.basic.mappers.Axes3D" expand="false">
+    
+        </tocitem>
+<tocitem text="Cell Centers" target="pl.edu.icm.visnow.lib.basic.mappers.CellCenters" expand="false">
+    
+        </tocitem>
+<tocitem text="Coordinate Displacement" target="pl.edu.icm.visnow.lib.basic.mappers.VectorFieldDisplacement" expand="false">
+    
+        </tocitem>
+<tocitem text="Field Mapper" target="pl.edu.icm.visnow.lib.basic.mappers.FieldMapper" expand="false">
+    
+        </tocitem>
+<tocitem text="Glyphs" target="pl.edu.icm.visnow.lib.basic.mappers.Glyphs" expand="false">
+    
+        </tocitem>
+<tocitem text="Graph 1D Object" target="pl.edu.icm.visnow.lib.basic.mappers.Graph" expand="false">
+    
+        </tocitem>
+<tocitem text="Graph 3D" target="pl.edu.icm.visnow.lib.basic.mappers.Graph3D" expand="false">
+    
+        </tocitem>
+<tocitem text="Interpolated Field Slice" target="pl.edu.icm.visnow.lib.basic.mappers.InterpolatedSlice" expand="false">
+    
+        </tocitem>
+<tocitem text="Irregular Field Slice" target="pl.edu.icm.visnow.lib.basic.mappers.PlanarSlice" expand="false">
+    
+        </tocitem>
+<tocitem text="Isolines" target="pl.edu.icm.visnow.lib.basic.mappers.Isolines" expand="false">
+    
+        </tocitem>
+<tocitem text="Isosurface" target="pl.edu.icm.visnow.lib.basic.mappers.Isosurface" expand="false">
+    
+        </tocitem>
+<tocitem text="Line Slice" target="pl.edu.icm.visnow.lib.basic.mappers.LineSlice" expand="false">
+    
+        </tocitem>
+<tocitem text="Regular Field Slice" target="pl.edu.icm.visnow.lib.basic.mappers.RegularFieldSlice" expand="false">
+    
+        </tocitem>
+<tocitem text="Ribbon Plot" target="pl.edu.icm.visnow.lib.basic.mappers.RibbonPlot" expand="false">
+    
+        </tocitem>
+<tocitem text="Shrink Cells" target="pl.edu.icm.visnow.lib.basic.mappers.ScaleCells" expand="false">
+    
+        </tocitem>
+<tocitem text="Streamlines" target="pl.edu.icm.visnow.lib.basic.mappers.Streamlines" expand="false">
+    
+        </tocitem>
+<tocitem text="Surface Components" target="pl.edu.icm.visnow.lib.basic.mappers.SurfaceComponents" expand="false">
+    
+        </tocitem>
+<tocitem text="Text Glyphs" target="pl.edu.icm.visnow.lib.basic.mappers.TextGlyphs" expand="false">
+    
+        </tocitem>
+<tocitem text="Time Select/animate" target="pl.edu.icm.visnow.lib.basic.mappers.ObjectFlow" expand="false">
+    
+        </tocitem>
+<tocitem text="Tubes" target="pl.edu.icm.visnow.lib.basic.mappers.TubeGlyphs" expand="false">
+    
+        </tocitem>
+<tocitem text="Volume Renderer" target="pl.edu.icm.visnow.lib.basic.mappers.VolumeRenderer" expand="false">
+    
+        </tocitem>
+
+        </tocitem>
+<tocitem text="writers" target="pl.edu.icm.visnow.lib.basic.writers.help_folder" expand="false">
+    <tocitem text="Write Volume" target="pl.edu.icm.visnow.lib.basic.writers.VolumeWriter" expand="false">
+    
+        </tocitem>
+<tocitem text="Write Field" target="pl.edu.icm.visnow.lib.basic.writers.FieldWriter" expand="false">
+    
+        </tocitem>
+<tocitem text="Write AVS UCD File" target="pl.edu.icm.visnow.lib.basic.writers.UCDWriter" expand="false">
+    
+        </tocitem>
+<tocitem text="Write Wavefront OBJ" target="pl.edu.icm.visnow.lib.basic.writers.WriteOBJ" expand="false">
+    
+        </tocitem>
+
+        </tocitem>
+<tocitem text="Viewer 2D" target="pl.edu.icm.visnow.lib.basic.viewers.Viewer2D" expand="false">
+    
+        </tocitem>
+<tocitem text="Viewer 3D" target="pl.edu.icm.visnow.lib.basic.viewers.Viewer3D" expand="false">
+    
+        </tocitem>
+<tocitem text="Field Viewer 3D" target="pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D" expand="false">
+    
+        </tocitem>
+<tocitem text="Field Viewer 1D" target="pl.edu.icm.visnow.lib.basic.viewers.FieldViewer1D" expand="false">
+    
+        </tocitem>
+
+        </tocitem>
+</tocitem>
+</toc>
