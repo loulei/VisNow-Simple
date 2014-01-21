@@ -1,3 +1,0 @@
-
-1) interaction diagram for registering and unregistering using a device
-

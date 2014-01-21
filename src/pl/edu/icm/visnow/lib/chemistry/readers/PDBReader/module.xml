@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<module name="PDB molecule reader" class="PDBMoleculeReader">
-    <inputs>
-    </inputs>
-    <outputs>
-        <output name="Molecule" type="pl.edu.icm.visnow.lib.chemistry.types.VNMolecule"></output>
-    </outputs>    
-</module>
