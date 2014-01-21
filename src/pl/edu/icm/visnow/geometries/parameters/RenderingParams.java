@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,7 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.geometries.parameters;
 
@@ -41,6 +43,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
 import javax.media.j3d.Material;
+import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.TransparencyAttributes;
 import javax.vecmath.Color3f;
 import pl.edu.icm.visnow.geometries.objects.GeometryObject;
@@ -66,10 +69,6 @@ public class RenderingParams implements Cloneable, AbstractRenderingParams
    protected static final Color3f defAmbientColor = new Color3f(.5f, .5f, .5f);
    protected static final Color3f defDiffuseColor = new Color3f(.5f, .5f, .5f);
    protected static final Color3f defSpecularColor = new Color3f(.2f, .2f, .2f);
-//   protected static final float defTransparency = 0.f;
-//   protected static final float defShininess = 1;
-//   protected static final float defLineThickness = 1.f;
-//   protected static final int defLineStyle = LineAttributes.PATTERN_SOLID;
    protected static final Font defAnnoFont = new Font("Dialog", Font.PLAIN, 10);
 
    protected int displayMode = SURFACE | IMAGE;
@@ -88,6 +87,7 @@ public class RenderingParams implements Cloneable, AbstractRenderingParams
    protected GeometryParent object = null;
    protected RenderingParams parentParams = null;
    protected Color bgrColor = Color.BLACK;
+   protected Color3f bgrColor3f = new Color3f(bgrColor);
    protected boolean lineLighting = false;
    protected boolean ignoreMask = false;
    protected boolean inherited = true;
@@ -122,7 +122,9 @@ public class RenderingParams implements Cloneable, AbstractRenderingParams
       boolean detach = detachUserData(appearance.getUserData()); 
       if (appearance != null && appearance.getPolygonAttributes() != null)
       {
+         appearance.getPolygonAttributes().setCullFace(PolygonAttributes.CULL_NONE);
          appearance.getPolygonAttributes().setPolygonOffset(surfaceOffset);
+         appearance.getPolygonAttributes().setBackFaceNormalFlip(false);
          fireStateChanged(RenderEvent.GEOMETRY);
       }
       if(detach) attachUserData(appearance.getUserData());
@@ -133,7 +135,7 @@ public class RenderingParams implements Cloneable, AbstractRenderingParams
       this();
       this.object = object;
    }
-
+   
    @Override
    public String toString()
    {
@@ -268,6 +270,7 @@ public class RenderingParams implements Cloneable, AbstractRenderingParams
    public void setDiffuseColor(Color3f diffuseColor)
    {       
       material.setDiffuseColor(diffuseColor);
+      lineAppearance.getColoringAttributes().setColor(diffuseColor);
       fireStateChanged(RenderEvent.COLORS);
    }
 
@@ -519,7 +522,11 @@ public class RenderingParams implements Cloneable, AbstractRenderingParams
    @Override
    public void setBackgroundColor(Color backgroundColor)
    {
-      setDiffuseColor(new Color3f( bgrColor.getColorComponents(null)));
+      bgrColor3f = new Color3f(backgroundColor);
+      setDiffuseColor(bgrColor3f);
+      material.setDiffuseColor(bgrColor3f);
+      material.setAmbientColor(bgrColor3f);
+      material.setEmissiveColor(bgrColor3f);
    }
 
    @Override
@@ -537,6 +544,15 @@ public class RenderingParams implements Cloneable, AbstractRenderingParams
          appearance.setMaterial(null);
       else
          appearance.setMaterial(material);
+      if (shadingMode == BACKGROUND)
+      {
+         if (appearance != null && appearance.getColoringAttributes() != null)
+            appearance.getColoringAttributes().setColor(bgrColor3f);
+         setDiffuseColor(bgrColor3f);
+         material.setDiffuseColor(bgrColor3f);
+         material.setAmbientColor(bgrColor3f);
+         material.setEmissiveColor(bgrColor3f);
+      }
       fireStateChanged(RenderEvent.GEOMETRY);
       if(detach) attachUserData(appearance.getUserData());
    }
@@ -667,7 +683,8 @@ public class RenderingParams implements Cloneable, AbstractRenderingParams
    @Override
    public synchronized void addRenderEventListener(RenderEventListener listener)
    {
-      renderEventListenerList.add(listener);
+      if(!renderEventListenerList.contains(listener))
+        renderEventListenerList.add(listener);
    }
 
    /**
@@ -683,7 +700,6 @@ public class RenderingParams implements Cloneable, AbstractRenderingParams
    /**
     * Notifies all registered listeners about the event.
     *
-    * @param object Parameter #1 of the <CODE>ChangeEvent<CODE> constructor.
     */
    @Override
    public void fireStateChanged(int change)

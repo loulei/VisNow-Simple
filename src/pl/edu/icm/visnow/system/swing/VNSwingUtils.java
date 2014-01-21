@@ -185,9 +185,9 @@ public class VNSwingUtils {
     public final static Color STATE_PROGRESS    = color(8,12,0);
     public final static Color STATE_PROPAGATING = color(0,0,12);
 
-    public final static Color SATURATION_NOTLINKED = color(9,0,0);
+    public final static Color SATURATION_NOTLINKED = color(0,0,13);
     public final static Color SATURATION_NODATA    = color(13,11,0);
-    public final static Color SATURATION_WRONGDATA = color(14,0,0);
+    public final static Color SATURATION_WRONGDATA = color(13,0,0);
     public final static Color SATURATION_OK        = color(15,15,15);
 
 

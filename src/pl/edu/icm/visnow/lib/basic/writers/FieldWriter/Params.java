@@ -52,7 +52,7 @@ public class Params extends Parameters
    {
       new ParameterEgg<String>("fileName", ParameterType.dependent, ""),
       new ParameterEgg<Boolean>("ascii", ParameterType.dependent, false),
-      new ParameterEgg<Boolean>("singleFile", ParameterType.dependent, true),
+      new ParameterEgg<Boolean>("singleFile", ParameterType.dependent, false),
       new ParameterEgg<Boolean>("AVS", ParameterType.dependent, false),
    };
 
@@ -61,6 +61,13 @@ public class Params extends Parameters
       super(eggs);
    }
 
+   public Params(String path, boolean ascii, boolean avsFormat)
+   {
+      super(eggs);
+      setFileName(path);
+      setAscii(ascii);
+      setAVS(avsFormat);
+   }
 
     public String getFileName() {
         return (String)getValue("fileName");

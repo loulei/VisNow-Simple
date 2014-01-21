@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,7 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.basic.mappers.TextGlyphs;
 
@@ -66,7 +68,7 @@ public class TextGlyphs extends VisualizationModule //implements RenderWindowLis
    private Field inField = null;
    private boolean fromIn = false;
    private GlyphsObject glyphObj = new GlyphsObject();
-   
+
    public TextGlyphs()
    {
       parameters = params = new Params();
@@ -79,8 +81,8 @@ public class TextGlyphs extends VisualizationModule //implements RenderWindowLis
                glyphObj.update(inField, params);
          }
       });
-      
-      SwingInstancer.swingRun(new Runnable()
+
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          @Override
          public void run()
@@ -91,28 +93,31 @@ public class TextGlyphs extends VisualizationModule //implements RenderWindowLis
          }
       });
    }
-   
+
   @Override
-   public void onInitFinished()
+   public void onInitFinishedLocal()
    {
        outObj = glyphObj;
        outObj.setCreator(this);
-       outObj.getGeometryObj().setUserData(getName());
        setOutputValue("outObj", new VNGeometryObject(outObj));
    }
 
    @Override
    public void onActive()
    {
-      if (getInputFirstValue("inField") != null && 
-          ((VNField) getInputFirstValue("inField")).getField() != null &&
-          ((VNField) getInputFirstValue("inField")).getField() != inField)
+      if (getInputFirstValue("inField") != null &&
+          ((VNField) getInputFirstValue("inField")).getField() != null)
       {
          params.setActive(false);
          fromIn = true;
-         inField = ((VNField) getInputFirstValue("inField")).getField();
-         ui.setInData(inField, dataMappingParams);
-         params.setChange(Params.COUNT_CHANGED);
+         if (((VNField) getInputFirstValue("inField")).getField() != inField)
+         {
+            inField = ((VNField) getInputFirstValue("inField")).getField();
+            ui.setInData(inField, dataMappingParams);
+            params.setChange(Params.COUNT_CHANGED);
+         }
+         else
+            params.setChange(Params.GLYPHS_CHANGED);
          params.setActive(true);
          fromIn = false;
       }

@@ -63,7 +63,8 @@ public class TabbedUI extends javax.swing.JPanel
       tabbedPane.removeAll();
       for (int i = 0; i < tabs.size(); i++)
       {
-         tabbedPane.addTab(tabs.get(i).getTitle(), tabs.get(i));
+         if(tabs.get(i).isActive())
+            tabbedPane.addTab(tabs.get(i).getTitle(), tabs.get(i));
       }
    }
 
@@ -86,6 +87,12 @@ public class TabbedUI extends javax.swing.JPanel
       updateGUI();
    }
 
+   public void removeAllUITabs()
+   {
+      tabs.clear();
+      updateGUI();
+   }
+   
    public void removeUITab(String title)
    {
       removeUITab(getUITab(title));
@@ -102,7 +109,7 @@ public class TabbedUI extends javax.swing.JPanel
       }
       return addUITab(new UITab(title));
    }
-
+  
    public void addUIToTab(JPanel ui, String title)
    {
       getUITab(title).addUI(ui);
@@ -114,6 +121,12 @@ public class TabbedUI extends javax.swing.JPanel
       getUITab(title).addUI(ui);
       updateGUI();
    }
+   
+    public void setUITabActive(String position, boolean vis) {
+        getUITab(position).setActive(vis);
+        updateGUI();
+    }
+   
 
    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -124,7 +137,6 @@ public class TabbedUI extends javax.swing.JPanel
         setBackground(java.awt.SystemColor.control);
         setMaximumSize(new java.awt.Dimension(230, 2147483647));
         setMinimumSize(new java.awt.Dimension(230, 7));
-        setPreferredSize(new java.awt.Dimension(230, 650));
         setLayout(new java.awt.BorderLayout());
 
         tabbedPane.setBackground(java.awt.SystemColor.control);
@@ -133,4 +145,5 @@ public class TabbedUI extends javax.swing.JPanel
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane tabbedPane;
     // End of variables declaration//GEN-END:variables
+
 }

@@ -6,7 +6,14 @@
        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
             <acceptor>
                 <param name="REGULAR" value="true"/>
+                <param name="AFFINE" value="true"/>
+                <param name="NDIMS" value="3"/>             
             </acceptor>
+            <acceptor>
+                <param name="REGULAR" value="true"/>
+                <param name="AFFINE" value="true"/>
+                <param name="NDIMS" value="2"/>             
+            </acceptor>            
        </input>
     </inputs>
 

@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,7 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.basic.filters.CropDown;
 
@@ -41,11 +43,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import pl.edu.icm.visnow.datasets.RegularField;
 import pl.edu.icm.visnow.datasets.TimeData;
-import pl.edu.icm.visnow.datasets.dataarrays.ComplexDataArray;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
 import pl.edu.icm.visnow.engine.core.InputEgg;
-import pl.edu.icm.visnow.engine.core.ModuleCore;
 import pl.edu.icm.visnow.engine.core.OutputEgg;
+import pl.edu.icm.visnow.lib.templates.visualization.modules.RegularOutFieldVisualizationModule;
 import pl.edu.icm.visnow.lib.types.VNRegularField;
 import static pl.edu.icm.visnow.lib.utils.CropDown.*;
 import pl.edu.icm.visnow.lib.utils.SwingInstancer;
@@ -54,22 +55,24 @@ import pl.edu.icm.visnow.lib.utils.SwingInstancer;
  *
  * @author  Krzysztof S. Nowinski, University of Warsaw, ICM
  */
-public class CropDown extends ModuleCore
+public class CropDown extends RegularOutFieldVisualizationModule
 {
 
    public static InputEgg[] inputEggs = null;
    public static OutputEgg[] outputEggs = null;   
-   protected GUI ui = null;
+
+   protected CropDownGUI computeUI = null;
    protected RegularField inField = null;
-   protected RegularField outField = null;
-   protected Params params = new Params();
+   protected CropDownParams params = null;
    protected int[] lastDims = {-1, -1, -1};
    protected boolean ignoreUI = false;
 
    public CropDown()
    {
+      parameters = params =  new CropDownParams();
       params.addChangeListener(new ChangeListener()
       {
+         @Override
          public void stateChanged(ChangeEvent evt)
          {
             if (ignoreUI)
@@ -77,14 +80,16 @@ public class CropDown extends ModuleCore
             startAction();
          }
       });
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
+         @Override
          public void run()
          {
-            ui = new GUI();
+           computeUI  = new CropDownGUI();
          }
       });
-      ui.setParams(params);
+      computeUI.setParams(params);
+      ui.addComputeGUI(computeUI);
       setPanel(ui);
    }
 
@@ -102,7 +107,7 @@ public class CropDown extends ModuleCore
          if (lastDims == null || i >= lastDims.length || dims[i] != lastDims[i])
          {
             ignoreUI = true;
-            ui.setInField(inField);
+            computeUI.setInField(inField);
             ignoreUI = false;
          System.arraycopy(dims, 0, lastDims, 0, dims.length);
             break;
@@ -154,5 +159,8 @@ public class CropDown extends ModuleCore
          outField.addData(outDta);
       }
       setOutputValue("outField", new VNRegularField(outField));
+      prepareOutputGeometry();
+      show();
+              
    }
 }

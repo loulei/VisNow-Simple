@@ -43,7 +43,7 @@ import pl.edu.icm.visnow.gui.widgets.FileErrorFrame;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 abstract public class Reader
 {

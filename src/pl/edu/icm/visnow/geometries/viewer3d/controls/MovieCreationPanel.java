@@ -1,39 +1,42 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+ Copyright (C) 2006-2013 University of Warsaw, ICM
 
-This file is part of GNU Classpath.
+ This file is part of GNU Classpath.
 
-GNU Classpath is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+ GNU Classpath is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
 
-GNU Classpath is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
+ GNU Classpath is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+ You should have received a copy of the GNU General Public License
+ along with GNU Classpath; see the file COPYING.  If not, write to the
+ University of Warsaw, Interdisciplinary Centre for Mathematical and
+ Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
-Linking this library statically or dynamically with other modules is
-making a combined work based on this library.  Thus, the terms and
-conditions of the GNU General Public License cover the whole
-combination.
+ Linking this library statically or dynamically with other modules is
+ making a combined work based on this library.  Thus, the terms and
+ conditions of the GNU General Public License cover the whole
+ combination.
 
-As a special exception, the copyright holders of this library give you
-permission to link this library with independent modules to produce an
-executable, regardless of the license terms of these independent
-modules, and to copy and distribute the resulting executable under
-terms of your choice, provided that you also meet, for each linked
-independent module, the terms and conditions of the license of that
-module.  An independent module is a module which is not derived from
-or based on this library.  If you modify this library, you may extend
-this exception to your version of the library, but you are not
-obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+ As a special exception, the copyright holders of this library give you
+ permission to link this library with independent modules to produce an
+ executable, regardless of the license terms of these independent
+ modules, and to copy and distribute the resulting executable under
+ terms of your choice, provided that you also meet, for each linked
+ independent module, the terms and conditions of the license of that
+ module.  An independent module is a module which is not derived from
+ or based on this library.  If you modify this library, you may extend
+ this exception to your version of the library, but you are not
+ obligated to do so.  If you do not wish to do so, delete this
+ exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.geometries.viewer3d.controls;
 
@@ -54,7 +57,7 @@ import pl.edu.icm.visnow.geometries.viewer3d.Display3DPanel;
  */
 public class MovieCreationPanel extends javax.swing.JPanel
 {
-   private File workDir = new File("/tmp"); 
+   private File workDir = new File("/tmp");
    private String baseWorkFileName = "/tmp/";
    private int currentFrame = 0;
    private static DecimalFormat intf  = new DecimalFormat("000000");
@@ -63,17 +66,17 @@ public class MovieCreationPanel extends javax.swing.JPanel
    private int width = 0;
    private int height = 0;
    private String currentFrameFileName = null;
-   private int[][] resolutions = 
-  {{ 176, 144}, 
-   { 352, 288}, 
-   { 704, 576}, 
-   { 320, 240}, 
-   { 640, 480}, 
-   { 800, 600}, 
-   {1024, 768}, 
-   {1600, 1200}, 
-   {1280, 1024}, 
-   { 852, 480}, 
+   private int[][] resolutions =
+  {{ 176, 144},
+   { 352, 288},
+   { 704, 576},
+   { 320, 240},
+   { 640, 480},
+   { 800, 600},
+   {1024, 768},
+   {1600, 1200},
+   {1280, 1024},
+   { 852, 480},
    {1280, 720},
    {1920, 1080},
   };
@@ -84,289 +87,392 @@ public class MovieCreationPanel extends javax.swing.JPanel
       formatGroup.add(jpegToggle);
       formatGroup.add(yuvToggle);
    }
-   
+
    /** This method is called from within the constructor to
     * initialize the form.
     * WARNING: Do NOT modify this code. The content of this method is
     * always regenerated by the Form Editor.
     */
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
+   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+   private void initComponents()
+   {
+      java.awt.GridBagConstraints gridBagConstraints;
 
-        dirChooser = new javax.swing.JFileChooser();
-        formatGroup = new javax.swing.ButtonGroup();
-        storeToggle = new javax.swing.JToggleButton();
-        clearButton = new javax.swing.JButton();
-        currentFileLabel = new javax.swing.JLabel();
-        currentFileField = new javax.swing.JTextField();
-        compileButton = new javax.swing.JButton();
-        movieSizeField = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        movieNameField = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        workDirButton = new javax.swing.JButton();
-        clearTmpButton = new javax.swing.JButton();
-        resolutionsCombo = new javax.swing.JComboBox();
-        jPanel1 = new javax.swing.JPanel();
-        jpegToggle = new javax.swing.JRadioButton();
-        yuvToggle = new javax.swing.JRadioButton();
-        widthField = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        heightField = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
+      dirChooser = new javax.swing.JFileChooser();
+      formatGroup = new javax.swing.ButtonGroup();
+      mpegInfoFrame = new javax.swing.JFrame();
+      jScrollPane1 = new javax.swing.JScrollPane();
+      jPanel3 = new javax.swing.JPanel();
+      mpegSysOutLabel = new javax.swing.JLabel();
+      clearAndCloseButton = new javax.swing.JButton();
+      closeButton = new javax.swing.JButton();
+      jScrollPane2 = new javax.swing.JScrollPane();
+      jPanel4 = new javax.swing.JPanel();
+      mpegSysErrLabel = new javax.swing.JLabel();
+      storeToggle = new javax.swing.JToggleButton();
+      clearButton = new javax.swing.JButton();
+      currentFileLabel = new javax.swing.JLabel();
+      currentFileField = new javax.swing.JTextField();
+      compileButton = new javax.swing.JButton();
+      movieSizeField = new javax.swing.JTextField();
+      jLabel1 = new javax.swing.JLabel();
+      movieNameField = new javax.swing.JTextField();
+      jLabel2 = new javax.swing.JLabel();
+      jPanel2 = new javax.swing.JPanel();
+      workDirButton = new javax.swing.JButton();
+      clearTmpButton = new javax.swing.JButton();
+      resolutionsCombo = new javax.swing.JComboBox();
+      jPanel1 = new javax.swing.JPanel();
+      jpegToggle = new javax.swing.JRadioButton();
+      yuvToggle = new javax.swing.JRadioButton();
+      widthField = new javax.swing.JTextField();
+      jLabel3 = new javax.swing.JLabel();
+      heightField = new javax.swing.JTextField();
+      jLabel4 = new javax.swing.JLabel();
 
-        dirChooser.setCurrentDirectory(new java.io.File("/tmp"));
-        dirChooser.setDialogTitle("movie work directory");
-        dirChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
+      dirChooser.setCurrentDirectory(new java.io.File("/tmp"));
+      dirChooser.setDialogTitle("movie work directory");
+      dirChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
 
-        setMinimumSize(new java.awt.Dimension(373, 262));
-        setPreferredSize(new java.awt.Dimension(567, 262));
-        setLayout(new java.awt.GridBagLayout());
+      mpegInfoFrame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+      mpegInfoFrame.getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        storeToggle.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        storeToggle.setText("store frames");
-        storeToggle.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        storeToggle.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                storeToggleActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        add(storeToggle, gridBagConstraints);
+      jPanel3.setLayout(new java.awt.BorderLayout());
 
-        clearButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        clearButton.setText("clear frames");
-        clearButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        clearButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearButtonActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        add(clearButton, gridBagConstraints);
+      mpegSysOutLabel.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      mpegSysOutLabel.setText("jLabel5");
+      mpegSysOutLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+      mpegSysOutLabel.setMaximumSize(new java.awt.Dimension(300, 400));
+      jPanel3.add(mpegSysOutLabel, java.awt.BorderLayout.CENTER);
 
-        currentFileLabel.setText("current frame");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 6);
-        add(currentFileLabel, gridBagConstraints);
+      jScrollPane1.setViewportView(jPanel3);
 
-        currentFileField.setText(null);
-        currentFileField.setMinimumSize(new java.awt.Dimension(4, 24));
-        currentFileField.setPreferredSize(new java.awt.Dimension(300, 24));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(currentFileField, gridBagConstraints);
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridwidth = 2;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+      gridBagConstraints.weighty = 1.0;
+      mpegInfoFrame.getContentPane().add(jScrollPane1, gridBagConstraints);
 
-        compileButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        compileButton.setText("compile movie");
-        compileButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                compileButtonActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weighty = 1.0;
-        add(compileButton, gridBagConstraints);
-
-        movieSizeField.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
-        movieSizeField.setMinimumSize(new java.awt.Dimension(4, 24));
-        movieSizeField.setPreferredSize(new java.awt.Dimension(4, 24));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        add(movieSizeField, gridBagConstraints);
-
-        jLabel1.setText("size (MB)");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 6);
-        add(jLabel1, gridBagConstraints);
-
-        movieNameField.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
-        movieNameField.setText("movie.mpg");
-        movieNameField.setMinimumSize(new java.awt.Dimension(4, 24));
-        movieNameField.setPreferredSize(new java.awt.Dimension(63, 24));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        add(movieNameField, gridBagConstraints);
-
-        jLabel2.setText("movie file");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 6);
-        add(jLabel2, gridBagConstraints);
-
-        jPanel2.setLayout(new java.awt.GridLayout(1, 0));
-
-        workDirButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        workDirButton.setText("work directory");
-        workDirButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        workDirButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                workDirButtonActionPerformed(evt);
-            }
-        });
-        jPanel2.add(workDirButton);
-
-        clearTmpButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        clearTmpButton.setText("clear tmp files");
-        clearTmpButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        clearTmpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearTmpButtonActionPerformed(evt);
-            }
-        });
-        jPanel2.add(clearTmpButton);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        add(jPanel2, gridBagConstraints);
-
-        resolutionsCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "qcif (176x144)", "cif (352x288)", "4cif (704x576)", "qvga (320x240)", "vga (640x480)", "svga (800x600)", "xga (1024x768)", "uxga (1600x1200)", "sxga (1280x1024)", "480p (852x480)", "720p (1280x720)", "1080p (1920x1080)", " " }));
-        resolutionsCombo.setSelectedIndex(5);
-        resolutionsCombo.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "movie resolution", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-        resolutionsCombo.setPreferredSize(new java.awt.Dimension(140, 48));
-        resolutionsCombo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                resolutionsComboActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
-        add(resolutionsCombo, gridBagConstraints);
-
-        jPanel1.setLayout(new java.awt.GridBagLayout());
-
-        jpegToggle.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        jpegToggle.setSelected(true);
-        jpegToggle.setText("jpeg");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(4, 25, 0, 0);
-        jPanel1.add(jpegToggle, gridBagConstraints);
-
-        yuvToggle.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        yuvToggle.setText("YUV");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(4, 25, 0, 0);
-        jPanel1.add(yuvToggle, gridBagConstraints);
-
-        widthField.setText("800");
-        widthField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                widthFieldActionPerformed(evt);
-            }
-        });
-        widthField.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                widthFieldFocusLost(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
-        jPanel1.add(widthField, gridBagConstraints);
-
-        jLabel3.setText("width");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 4);
-        jPanel1.add(jLabel3, gridBagConstraints);
-
-        heightField.setText("600");
-        heightField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                heightFieldActionPerformed(evt);
-            }
-        });
-        heightField.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                heightFieldFocusLost(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
-        jPanel1.add(heightField, gridBagConstraints);
-
-        jLabel4.setText("height");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 4);
-        jPanel1.add(jLabel4, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(jPanel1, gridBagConstraints);
-    }// </editor-fold>//GEN-END:initComponents
-
-   private void clearTmpButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_clearTmpButtonActionPerformed
-   {//GEN-HEADEREND:event_clearTmpButtonActionPerformed
-     String[] tmpFileList = workDir.list(new FilenameFilter() {
-
-         public boolean accept(File dir, String name) {
-             if (name.endsWith(".jpg") || name.endsWith(".Y") || name.endsWith(".U") ||
-                 name.endsWith(".V"))
-                 return true;
-             return false;
-         }
-     });
-      for (int i=0; i<tmpFileList.length; i++)
+      clearAndCloseButton.setText("clear temporary files and close");
+      clearAndCloseButton.addActionListener(new java.awt.event.ActionListener()
       {
-         File f = new File(baseWorkFileName+tmpFileList[i]);
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            clearAndCloseButtonActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 2;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.weightx = 0.5;
+      mpegInfoFrame.getContentPane().add(clearAndCloseButton, gridBagConstraints);
+
+      closeButton.setText("close");
+      closeButton.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            closeButtonActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 1;
+      gridBagConstraints.gridy = 2;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.weightx = 0.5;
+      mpegInfoFrame.getContentPane().add(closeButton, gridBagConstraints);
+
+      jPanel4.setLayout(new java.awt.BorderLayout());
+
+      mpegSysErrLabel.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      mpegSysErrLabel.setForeground(new java.awt.Color(153, 0, 0));
+      mpegSysErrLabel.setText("jLabel5");
+      mpegSysErrLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+      mpegSysErrLabel.setMaximumSize(new java.awt.Dimension(300, 400));
+      jPanel4.add(mpegSysErrLabel, java.awt.BorderLayout.CENTER);
+
+      jScrollPane2.setViewportView(jPanel4);
+
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 1;
+      gridBagConstraints.gridwidth = 2;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+      gridBagConstraints.weighty = 1.0;
+      mpegInfoFrame.getContentPane().add(jScrollPane2, gridBagConstraints);
+
+      setMinimumSize(new java.awt.Dimension(373, 262));
+      setPreferredSize(new java.awt.Dimension(567, 262));
+      setLayout(new java.awt.GridBagLayout());
+
+      storeToggle.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      storeToggle.setText("store frames");
+      storeToggle.setMargin(new java.awt.Insets(2, 2, 2, 2));
+      storeToggle.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            storeToggleActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 3;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.weightx = 1.0;
+      add(storeToggle, gridBagConstraints);
+
+      clearButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      clearButton.setText("clear frames");
+      clearButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
+      clearButton.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            clearButtonActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 1;
+      gridBagConstraints.gridy = 3;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.weightx = 1.0;
+      add(clearButton, gridBagConstraints);
+
+      currentFileLabel.setText("current frame");
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 4;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+      gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 6);
+      add(currentFileLabel, gridBagConstraints);
+
+      currentFileField.setText(null);
+      currentFileField.setMinimumSize(new java.awt.Dimension(4, 24));
+      currentFileField.setPreferredSize(new java.awt.Dimension(300, 24));
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 1;
+      gridBagConstraints.gridy = 4;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      add(currentFileField, gridBagConstraints);
+
+      compileButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      compileButton.setText("compile movie");
+      compileButton.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            compileButtonActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 7;
+      gridBagConstraints.gridwidth = 2;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.weighty = 1.0;
+      add(compileButton, gridBagConstraints);
+
+      movieSizeField.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
+      movieSizeField.setMinimumSize(new java.awt.Dimension(4, 24));
+      movieSizeField.setPreferredSize(new java.awt.Dimension(4, 24));
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 1;
+      gridBagConstraints.gridy = 6;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+      add(movieSizeField, gridBagConstraints);
+
+      jLabel1.setText("size (MB)");
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 6;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+      gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 6);
+      add(jLabel1, gridBagConstraints);
+
+      movieNameField.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
+      movieNameField.setText("movie.mpg");
+      movieNameField.setMinimumSize(new java.awt.Dimension(4, 24));
+      movieNameField.setPreferredSize(new java.awt.Dimension(63, 24));
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 1;
+      gridBagConstraints.gridy = 5;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+      add(movieNameField, gridBagConstraints);
+
+      jLabel2.setText("movie file");
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 5;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+      gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 6);
+      add(jLabel2, gridBagConstraints);
+
+      jPanel2.setLayout(new java.awt.GridLayout(1, 0));
+
+      workDirButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      workDirButton.setText("work directory");
+      workDirButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
+      workDirButton.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            workDirButtonActionPerformed(evt);
+         }
+      });
+      jPanel2.add(workDirButton);
+
+      clearTmpButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      clearTmpButton.setText("clear tmp files");
+      clearTmpButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
+      clearTmpButton.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            clearTmpButtonActionPerformed(evt);
+         }
+      });
+      jPanel2.add(clearTmpButton);
+
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridwidth = 2;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+      add(jPanel2, gridBagConstraints);
+
+      resolutionsCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "qcif (176x144)", "cif (352x288)", "4cif (704x576)", "qvga (320x240)", "vga (640x480)", "svga (800x600)", "xga (1024x768)", "uxga (1600x1200)", "sxga (1280x1024)", "480p (852x480)", "720p (1280x720)", "1080p (1920x1080)", " " }));
+      resolutionsCombo.setSelectedIndex(5);
+      resolutionsCombo.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "movie resolution", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+      resolutionsCombo.setPreferredSize(new java.awt.Dimension(140, 48));
+      resolutionsCombo.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            resolutionsComboActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 1;
+      gridBagConstraints.gridwidth = 2;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+      gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
+      add(resolutionsCombo, gridBagConstraints);
+
+      jPanel1.setLayout(new java.awt.GridBagLayout());
+
+      jpegToggle.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      jpegToggle.setSelected(true);
+      jpegToggle.setText("jpeg");
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 2;
+      gridBagConstraints.gridy = 0;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.insets = new java.awt.Insets(4, 25, 0, 0);
+      jPanel1.add(jpegToggle, gridBagConstraints);
+
+      yuvToggle.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      yuvToggle.setText("YUV");
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 2;
+      gridBagConstraints.gridy = 1;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.insets = new java.awt.Insets(4, 25, 0, 0);
+      jPanel1.add(yuvToggle, gridBagConstraints);
+
+      widthField.setText("800");
+      widthField.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            widthFieldActionPerformed(evt);
+         }
+      });
+      widthField.addFocusListener(new java.awt.event.FocusAdapter()
+      {
+         public void focusLost(java.awt.event.FocusEvent evt)
+         {
+            widthFieldFocusLost(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 1;
+      gridBagConstraints.gridy = 0;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.weightx = 1.0;
+      gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+      jPanel1.add(widthField, gridBagConstraints);
+
+      jLabel3.setText("width");
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 0;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+      gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 4);
+      jPanel1.add(jLabel3, gridBagConstraints);
+
+      heightField.setText("600");
+      heightField.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            heightFieldActionPerformed(evt);
+         }
+      });
+      heightField.addFocusListener(new java.awt.event.FocusAdapter()
+      {
+         public void focusLost(java.awt.event.FocusEvent evt)
+         {
+            heightFieldFocusLost(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 1;
+      gridBagConstraints.gridy = 1;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+      jPanel1.add(heightField, gridBagConstraints);
+
+      jLabel4.setText("height");
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 1;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+      gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 4);
+      jPanel1.add(jLabel4, gridBagConstraints);
+
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 2;
+      gridBagConstraints.gridwidth = 2;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      add(jPanel1, gridBagConstraints);
+   }// </editor-fold>//GEN-END:initComponents
+
+   private void clearTmpFiles()
+   {
+      String[] tmpFileList = workDir.list(new FilenameFilter()
+      {
+         public boolean accept(File dir, String name)
+         {
+            if (name.endsWith(".jpg") || name.endsWith(".Y") || name.endsWith(".U")
+                    || name.endsWith(".V"))
+               return true;
+            return false;
+         }
+      });
+      for (int i = 0; i < tmpFileList.length; i++)
+      {
+         File f = new File(baseWorkFileName + tmpFileList[i]);
          if (f.exists())
             f.delete();
       }
-      
+   }
+
+   private void clearTmpButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_clearTmpButtonActionPerformed
+   {//GEN-HEADEREND:event_clearTmpButtonActionPerformed
+       clearTmpFiles();
    }//GEN-LAST:event_clearTmpButtonActionPerformed
 
    private void compileButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_compileButtonActionPerformed
@@ -386,7 +492,7 @@ public class MovieCreationPanel extends javax.swing.JPanel
             u = 1024;
          if (!Character.isDigit(s.charAt(l)))
             t = s.substring(0, l);
-         else 
+         else
             t = s;
          try
          {
@@ -396,7 +502,7 @@ public class MovieCreationPanel extends javax.swing.JPanel
          {
             size = 0;
          }
-      }   
+      }
       int bitrate = 5000;
       if (size != 0)
       {
@@ -405,37 +511,44 @@ public class MovieCreationPanel extends javax.swing.JPanel
             bitrate = 10000;
       }
       if (yuvToggle.isSelected())
-         cmdline =  "ffmpeg  -f image2 -i " + baseWorkFileName +"%6d.Y -b "+
+         cmdline =  "ffmpeg  -f image2 -i " + baseWorkFileName +"%06d.Y -b "+
                     bitrate+"k -y "+workDir+File.separator+movieNameField.getText();
       else
-         cmdline = "ffmpeg  -f image2 -i " + baseWorkFileName +"%6d.jpg -b "+ 
-                 bitrate +  "k -y  "+workDir+File.separator+movieNameField.getText();   
-      System.out.println("executing "+cmdline);
+         cmdline = "ffmpeg  -f image2 -i " + baseWorkFileName +"%06d.jpg -b "+
+                 bitrate +  "k -y  "+workDir+File.separator+movieNameField.getText();
+      mpegInfoFrame.setSize(500,300);
+      mpegInfoFrame.setVisible(true);
       new Thread(new Runnable() {
          public void run() {
             try
             {
                String line;
+               StringBuilder outStr = new StringBuilder("<html><font color=\"blue\">executing </font> "+cmdline);
+               StringBuilder errStr = new StringBuilder("<html>");
+               mpegSysOutLabel.setText(outStr.toString()+"</html>");
                Process p = Runtime.getRuntime().exec(cmdline);
                BufferedReader input =
                   new BufferedReader(new InputStreamReader(p.getInputStream()));
                while ((line = input.readLine()) != null)
                {
-                  System.out.println(line);
+                  outStr.append("<p>"+line);
+                   mpegSysOutLabel.setText(outStr.toString()+"</html>");
                }
                input.close();
                BufferedReader errorInput =
                   new BufferedReader(new InputStreamReader(p.getErrorStream()));
                while ((line = errorInput.readLine()) != null)
                {
-                  System.out.println(line);
+                   errStr.append("<p>"+line);
+                   mpegSysErrLabel.setText(errStr.toString()+"</html>");
                }
                input.close();
-               System.out.println("exit "+p.exitValue());
+               outStr.append("<p><font color=\"blue\">exit "+p.exitValue()+"</font>");
+               mpegSysOutLabel.setText(outStr.toString()+"</html>");
             }
             catch (Exception err)
             {
-               
+
             }
          }
       }).start();
@@ -489,7 +602,7 @@ public class MovieCreationPanel extends javax.swing.JPanel
       {
          boolean success = (dirChooser.getSelectedFile().isDirectory()||
                  (new File(dirChooser.getSelectedFile().getAbsolutePath()).mkdirs()));
-         if (success) 
+         if (success)
          {
             workDir = new File(dirChooser.getSelectedFile().getAbsolutePath());
             baseWorkFileName = dirChooser.getSelectedFile().getAbsolutePath()+"/";
@@ -522,7 +635,18 @@ public class MovieCreationPanel extends javax.swing.JPanel
     private void heightFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_heightFieldFocusLost
         updatePanelSize();
     }//GEN-LAST:event_heightFieldFocusLost
-   
+
+   private void clearAndCloseButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_clearAndCloseButtonActionPerformed
+   {//GEN-HEADEREND:event_clearAndCloseButtonActionPerformed
+      clearTmpFiles();
+      mpegInfoFrame.setVisible(false);
+   }//GEN-LAST:event_clearAndCloseButtonActionPerformed
+
+   private void closeButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_closeButtonActionPerformed
+   {//GEN-HEADEREND:event_closeButtonActionPerformed
+      mpegInfoFrame.setVisible(false);
+   }//GEN-LAST:event_closeButtonActionPerformed
+
    public void setCurrentFrame(int currentFrame)
    {
       this.currentFrame = currentFrame;
@@ -541,7 +665,7 @@ public class MovieCreationPanel extends javax.swing.JPanel
    {
       this.panel = panel;
    }
-   
+
    public String getCurrentFrameFileName()
    {
       if (jpegToggle.isSelected())
@@ -552,7 +676,7 @@ public class MovieCreationPanel extends javax.swing.JPanel
       currentFrame += 1;
       return currentFrameFileName;
    }
-   
+
    public String getGenericFrameFileName()
    {
       return baseWorkFileName;
@@ -569,32 +693,41 @@ public class MovieCreationPanel extends javax.swing.JPanel
       currentFrame += 1;
       return c;
    }
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton clearButton;
-    private javax.swing.JButton clearTmpButton;
-    private javax.swing.JButton compileButton;
-    private javax.swing.JTextField currentFileField;
-    private javax.swing.JLabel currentFileLabel;
-    private javax.swing.JFileChooser dirChooser;
-    private javax.swing.ButtonGroup formatGroup;
-    private javax.swing.JTextField heightField;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JRadioButton jpegToggle;
-    private javax.swing.JTextField movieNameField;
-    private javax.swing.JTextField movieSizeField;
-    private javax.swing.JComboBox resolutionsCombo;
-    private javax.swing.JToggleButton storeToggle;
-    private javax.swing.JTextField widthField;
-    private javax.swing.JButton workDirButton;
-    private javax.swing.JRadioButton yuvToggle;
-    // End of variables declaration//GEN-END:variables
- 
-    
+   // Variables declaration - do not modify//GEN-BEGIN:variables
+   private javax.swing.JButton clearAndCloseButton;
+   private javax.swing.JButton clearButton;
+   private javax.swing.JButton clearTmpButton;
+   private javax.swing.JButton closeButton;
+   private javax.swing.JButton compileButton;
+   private javax.swing.JTextField currentFileField;
+   private javax.swing.JLabel currentFileLabel;
+   private javax.swing.JFileChooser dirChooser;
+   private javax.swing.ButtonGroup formatGroup;
+   private javax.swing.JTextField heightField;
+   private javax.swing.JLabel jLabel1;
+   private javax.swing.JLabel jLabel2;
+   private javax.swing.JLabel jLabel3;
+   private javax.swing.JLabel jLabel4;
+   private javax.swing.JPanel jPanel1;
+   private javax.swing.JPanel jPanel2;
+   private javax.swing.JPanel jPanel3;
+   private javax.swing.JPanel jPanel4;
+   private javax.swing.JScrollPane jScrollPane1;
+   private javax.swing.JScrollPane jScrollPane2;
+   private javax.swing.JRadioButton jpegToggle;
+   private javax.swing.JTextField movieNameField;
+   private javax.swing.JTextField movieSizeField;
+   private javax.swing.JFrame mpegInfoFrame;
+   private javax.swing.JLabel mpegSysErrLabel;
+   private javax.swing.JLabel mpegSysOutLabel;
+   private javax.swing.JComboBox resolutionsCombo;
+   private javax.swing.JToggleButton storeToggle;
+   private javax.swing.JTextField widthField;
+   private javax.swing.JButton workDirButton;
+   private javax.swing.JRadioButton yuvToggle;
+   // End of variables declaration//GEN-END:variables
+
+
  private void updatePanelSize() {
         int w = width;
         int h = height;
@@ -607,7 +740,7 @@ public class MovieCreationPanel extends javax.swing.JPanel
         }
 
         if (width == w && height == h) {
-            return;            
+            return;
         }
         width = w;
         height = h;
@@ -621,5 +754,5 @@ public class MovieCreationPanel extends javax.swing.JPanel
             p = p.getParent();
         };
         ((Window) p).pack();
-    }    
+    }
 }

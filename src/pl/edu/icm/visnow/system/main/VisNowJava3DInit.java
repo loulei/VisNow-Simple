@@ -43,6 +43,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.apache.log4j.Logger;
+import static pl.edu.icm.visnow.system.main.VisNow.getOsType;
 
 /**
  * @author  Bartosz Borucki (babor@icm.edu.pl)
@@ -103,24 +104,26 @@ public class VisNowJava3DInit {
             template.setSceneAntialiasing(javax.media.j3d.GraphicsConfigTemplate3D.PREFERRED);
 
             GraphicsConfiguration gcfg = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getBestConfiguration(template);
-            javax.media.j3d.Canvas3D c3d = new javax.media.j3d.Canvas3D(gcfg);
-            Map c3dMap = c3d.queryProperties();
-            Set<String> c3dMapKeys = c3dMap.keySet();
-            Iterator<String> c3dMapKeysI = c3dMapKeys.iterator();
+            if (getOsType() != VisNow.OsType.OS_MAC) {
+                    javax.media.j3d.Canvas3D c3d = new javax.media.j3d.Canvas3D(gcfg);
+                    Map c3dMap = c3d.queryProperties();
+                    Set<String> c3dMapKeys = c3dMap.keySet();
+                    Iterator<String> c3dMapKeysI = c3dMapKeys.iterator();
 
 
-            logger.info(" * Canvas3D properties:");
-            if (debug) {
-                String key;
-                while (c3dMapKeysI.hasNext()) {
-                    key = c3dMapKeysI.next();
-                    logger.info("    " + key + " = " + c3dMap.get(key));
-                }
-                logger.info("");
-            } else {
-                logger.info("    renderer version = " + c3dMap.get("native.version"));
-                logger.info("    stereoAvailable = " + c3dMap.get("stereoAvailable"));
-                logger.info("    sceneAntialiasingAvailable = " + c3dMap.get("sceneAntialiasingAvailable"));
+                    logger.info(" * Canvas3D properties:");
+                    if (debug) {
+                        String key;
+                        while (c3dMapKeysI.hasNext()) {
+                            key = c3dMapKeysI.next();
+                            logger.info("    " + key + " = " + c3dMap.get(key));
+                        }
+                        logger.info("");
+                    } else {
+                        logger.info("    renderer version = " + c3dMap.get("native.version"));
+                        logger.info("    stereoAvailable = " + c3dMap.get("stereoAvailable"));
+                        logger.info("    sceneAntialiasingAvailable = " + c3dMap.get("sceneAntialiasingAvailable"));
+                    }
             }
             logger.info("------------------------------------------");
             logger.info("");

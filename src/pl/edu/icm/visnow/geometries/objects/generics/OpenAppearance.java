@@ -38,6 +38,7 @@ exception statement from your version. */
 package pl.edu.icm.visnow.geometries.objects.generics;
 
 import javax.media.j3d.Appearance;
+import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.TextureAttributes;
 
 /**
@@ -65,6 +66,7 @@ public class OpenAppearance extends Appearance
       setCapability(Appearance.ALLOW_MATERIAL_WRITE);
       setCapability(Appearance.ALLOW_TEXTURE_READ);
       setCapability(Appearance.ALLOW_TEXTURE_WRITE);
+      setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
       setMaterial(new OpenMaterial());
       setTransparencyAttributes(new OpenTransparencyAttributes());
       setLineAttributes(new OpenLineAttributes());
@@ -77,6 +79,7 @@ public class OpenAppearance extends Appearance
    @Override
    public OpenAppearance cloneNodeComponent(boolean forceDuplicate)
    {
+//      getPolygonAttributes().setCapability(PolygonAttributes.);
       OpenAppearance openAppearance = new OpenAppearance();
       openAppearance.duplicateNodeComponent(this, forceDuplicate);
       return openAppearance;

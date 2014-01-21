@@ -40,6 +40,7 @@ package pl.edu.icm.visnow.application.libraries;
 import pl.edu.icm.visnow.engine.core.CoreName;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Vector;
 import pl.edu.icm.visnow.application.application.Application;
 import pl.edu.icm.visnow.engine.core.ModuleCore;
 import pl.edu.icm.visnow.engine.exception.VNException;
@@ -55,8 +56,6 @@ public class Libraries implements Iterable<LibraryRoot> {
 
 
     public final static String DATA_LIBRARY = "data";
-    /* TODO remove library */
-
     private Application application;
 
     public ModuleCore generateCore(CoreName coreName) throws VNException{
@@ -71,11 +70,17 @@ public class Libraries implements Iterable<LibraryRoot> {
     public HashMap<String, LibraryRoot> getLibraries() {return libraries;}
     public LibraryRoot getLibrary(String name) {return libraries.get(name);}
     public void addLibrary(String name, LibraryRoot root) {libraries.put(name, root);}
+    public void deleteLibrary(String name) {libraries.remove(name);}
 
     public Libraries(Application application) {
         this.libraries = new HashMap<String, LibraryRoot> ();
         this.application = application;
-        libraries.put("internal", VisNow.get().getMainLibraries().getInternalLibrary());
+        //libraries.put("internal", VisNow.get().getMainLibraries().getInternalLibrary());
+         Vector<LibraryRoot> vnlibs = VisNow.get().getMainLibraries().getLibraries();
+         for (int i = 0; i < vnlibs.size(); i++) {
+             libraries.put(vnlibs.get(i).getName(), vnlibs.get(i));                        
+        }
+        
     }
 
     public Iterator<LibraryRoot> iterator() {

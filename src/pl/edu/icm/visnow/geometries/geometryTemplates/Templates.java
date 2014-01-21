@@ -242,6 +242,9 @@ public class Templates
       }
    }
 
+   /**
+    * A diamond glyph.
+    */
    public static class DiamondTemplate extends Glyph
    {
 

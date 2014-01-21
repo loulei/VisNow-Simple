@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,9 +35,16 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.basic.readers.ReadVisNowField;
 
+import pl.edu.icm.visnow.lib.basic.readers.ReadVisNowField.utils.Skip;
+import pl.edu.icm.visnow.lib.basic.readers.ReadVisNowField.utils.SkipSchema;
+import pl.edu.icm.visnow.lib.basic.readers.ReadVisNowField.utils.TimestepSchema;
+import pl.edu.icm.visnow.lib.basic.readers.ReadVisNowField.utils.DataFileSchema;
+import pl.edu.icm.visnow.lib.basic.readers.ReadVisNowField.utils.FileSectionSchema;
+import pl.edu.icm.visnow.lib.basic.readers.ReadVisNowField.utils.FilePartSchema;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
@@ -45,18 +53,18 @@ import java.util.Scanner;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
-import pl.edu.icm.visnow.datasets.RegularField;
+import pl.edu.icm.visnow.datasets.Field;
 import pl.edu.icm.visnow.gui.widgets.FileErrorFrame;
-import pl.edu.icm.visnow.lib.utils.io.*;
+import pl.edu.icm.visnow.lib.basic.readers.ReadVisNowField.utils.FieldIOSchema;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public class ReadFile implements Runnable
 {
-   protected RegularField outField = null;
-   protected RegularFieldIOSchema schema = null;
+   protected Field outField = null;
+   protected FieldIOSchema schema = null;
    protected FileErrorFrame errorFrame = null;
    protected DataFileSchema fileSchema = null;
    protected LineNumberReader reader = null;
@@ -68,7 +76,7 @@ public class ReadFile implements Runnable
    protected URLConnection urlConnection;
    protected URL url;
 
-   public ReadFile(RegularField outField, RegularFieldIOSchema schema, int file, boolean isURL,
+   public ReadFile(Field outField, FieldIOSchema schema, int file, boolean isURL,
            FileErrorFrame errorFrame)
    {
       this.outField = outField;
@@ -111,7 +119,14 @@ public class ReadFile implements Runnable
                if (isURL)
                   inStream = new MemoryCacheImageInputStream(urlConnection.getInputStream());
                else
-                  inStream = new FileImageInputStream(new File(filePath));
+                  try
+                  {
+                     inStream = new FileImageInputStream(new File(filePath));
+                  } catch (Exception e)
+                  {
+                     outputError("cannot open " + filePath,"", -1, null);
+                  }
+                  
                if (fileSchema.getType() == DataFileSchema.BIG_ENDIAN)
                   inStream.setByteOrder(ByteOrder.BIG_ENDIAN);
                else
@@ -134,7 +149,7 @@ public class ReadFile implements Runnable
                input = scanner;
                break;
          }
-         sectionReader = new FileSectionReader(outField, schema, reader, inStream, scanner, fileSchema.getType());
+         sectionReader = new FileSectionReader(outField, schema, reader, inStream, scanner, fileSchema.getType(), filePath);
       } catch (FileNotFoundException e)
       {
          outputError("cannot open " + filePath,"", -1, null);
@@ -160,6 +175,7 @@ public class ReadFile implements Runnable
          //e.printStackTrace();   
    }
    
+   @Override
    public void run()
    {
       try
@@ -169,9 +185,9 @@ public class ReadFile implements Runnable
             FilePartSchema partSchema = fileSchema.getPartSchema(part);
             if (partSchema instanceof SkipSchema)
                Skip.skip((SkipSchema)partSchema, input);
-            if (partSchema instanceof FileSectionSchema)
+            else if (partSchema instanceof FileSectionSchema)
             {  
-               sectionReader.setSectionSchema((FileSectionSchema)partSchema, 0);
+               sectionReader.setSectionSchema((FileSectionSchema)partSchema, 0, fileSchema.getDecimalSeparator());
                if (sectionReader.readSection() > 1)
                   return;
                fileSchema.setLastRead(0);
@@ -191,7 +207,7 @@ public class ReadFile implements Runnable
                      if (fps instanceof SkipSchema)
                         Skip.skip((SkipSchema)fps, input);
                      if (fps instanceof FileSectionSchema)
-                        sectionReader.setSectionSchema((FileSectionSchema)fps, stime + iStep * dt);
+                        sectionReader.setSectionSchema((FileSectionSchema)fps, stime + iStep * dt, fileSchema.getDecimalSeparator());
                      if (sectionReader.readSection() > 1)
                         break time_loop;
                   }
@@ -211,9 +227,9 @@ public class ReadFile implements Runnable
       catch (IOException e)
       {
          if (reader != null)
-            outputError("error in data file " + filePath, "" , reader.getLineNumber(), null);
+            outputError("error in " + filePath, "" , reader.getLineNumber(), null);
          if (inStream != null)
-            outputError("cerror in " + filePath,"", -1, null);
+            outputError("error in data file " + filePath,"", -1, null);
       }
    }
     

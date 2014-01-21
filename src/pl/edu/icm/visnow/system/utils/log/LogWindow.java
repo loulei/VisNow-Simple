@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JScrollBar;
 import javax.swing.SwingUtilities;
@@ -98,6 +99,7 @@ public class LogWindow extends javax.swing.JFrame {
     
     private LogWindow() {
         initComponents();
+        setIconImage(new ImageIcon(getClass().getResource("/pl/edu/icm/visnow/gui/icons/big/visnow.png")).getImage());
         //add checkboxes for filtering levels
         for (LogLine.Level level: LogLine.Level.values()) {
             JCheckBox cb = new StatusCheckBox(level.name(),true,LogWindowColorRenderer.colorMap.get(level));
@@ -263,6 +265,7 @@ public class LogWindow extends javax.swing.JFrame {
             }
         });
 
+        logLinesList.setFont(new java.awt.Font("Monospaced", 0, 10)); // NOI18N
         logLinesScrollPane.setViewportView(logLinesList);
 
         jTextArea1.setColumns(20);

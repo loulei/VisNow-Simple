@@ -632,7 +632,7 @@ public class Core
          System.out.println("bad min/max_ext line");
       }
 
-      outField.setPts(pts);
+      outField.setExtents(pts);
       if (char12present && !variablesDefined)
       {
          int b;
@@ -694,7 +694,7 @@ public class Core
                   for (int i = 0; i < nspace; i++)
                      for (int j = 0; j < 2; j++)
                         pts[j][i] = inStream.readFloat();
-                  outField.setPts(pts);
+                  outField.setExtents(pts);
                   return outField;
                } catch (EOFException ex)
                {

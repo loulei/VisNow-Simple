@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,8 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.lib.basic.filters.LocalOperations;
 
@@ -56,7 +59,7 @@ import pl.edu.icm.visnow.lib.utils.SwingInstancer;
 
 public class LocalOperations extends RegularOutFieldVisualizationModule
 {
-   
+
    public static InputEgg[] inputEggs = null;
    public static OutputEgg[] outputEggs = null;
    protected GUI computeUI = null;
@@ -64,7 +67,7 @@ public class LocalOperations extends RegularOutFieldVisualizationModule
    protected Params params;
    protected LocalOps ops = null;
    protected boolean fromUI = false;
-   
+
    public LocalOperations()
    {
       parameters = params = new Params();
@@ -76,7 +79,7 @@ public class LocalOperations extends RegularOutFieldVisualizationModule
              startAction();
          }
       });
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          public void run()
          {
@@ -87,20 +90,20 @@ public class LocalOperations extends RegularOutFieldVisualizationModule
       ui.addComputeGUI(computeUI);
       setPanel(ui);
    }
-   
-   
+
+
    public void progress(int n)
    {
       setProgress((float)n/(inField.getDims()[2]-2*params.getRadius()));
    }
-   
+
    public void update()
    {
       if (inField.getDims().length==3)
          ops = new LocalOps3D();
       else if (inField.getDims().length==2)
          ops = new LocalOps2D();
-      else 
+      else
          return;
       outField = ops.compute(inField, params);
       if (!prepareOutputGeometry())
@@ -108,7 +111,7 @@ public class LocalOperations extends RegularOutFieldVisualizationModule
       show();
       setOutputValue("outField", new VNRegularField(outField));
    }
-   
+
    @Override
    public void onActive()
    {

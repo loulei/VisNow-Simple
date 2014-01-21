@@ -37,9 +37,9 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.engine.main;
 
+import java.util.ArrayList;
 import pl.edu.icm.visnow.engine.core.Output;
 import pl.edu.icm.visnow.engine.core.Input;
-import java.util.Vector;
 import javax.swing.JOptionPane;
 import pl.edu.icm.visnow.engine.Engine;
 import pl.edu.icm.visnow.engine.element.Element;
@@ -59,7 +59,7 @@ public class ModuleElement extends Element {
     protected int ready_wait;
     protected int action_wait;
     protected int done_wait;
-    protected Vector<Element> predecessors;
+    protected ArrayList<Element> predecessors;
 
     //<editor-fold defaultstate="collapsed" desc=" [VAR] ModuleBox ">
     private ModuleBox moduleBox;
@@ -69,16 +69,21 @@ public class ModuleElement extends Element {
     //</editor-fold>
 
     private ModuleSaturation saturation;
+    private Input saturationReasonInput;
     public ModuleSaturation getSaturation() {return saturation;}
-    public void setSaturation(ModuleSaturation saturation) {
+    public Input getSaturationReasonInput() {return saturationReasonInput;}
+    public void setSaturation(ModuleSaturation saturation, Input saturationReasonInput) {
+        //System.err.println("module "+this.getName()+" setting saturation to "+saturation);
         this.saturation = saturation;
+        this.saturationReasonInput = saturationReasonInput;        
+        moduleBox.getCore().onSaturationChange(saturation, saturationReasonInput);
         this.fireElementSaturationListeners();
     }
 
     private boolean checkSaturationType(InputSaturation in, ModuleSaturation mod) {
         for(Input input: this.getModuleBox().getInputs()) {
             if(input.getInputSaturation() == in) {
-                this.setSaturation(mod);
+                this.setSaturation(mod, input);
                 return true;
             }
         }
@@ -93,7 +98,7 @@ public class ModuleElement extends Element {
         //System.out.println("no NL");
         if(checkSaturationType(InputSaturation.noData, ModuleSaturation.noData)) return;
         //System.out.println("no ND");
-        this.setSaturation(ModuleSaturation.ok);
+        this.setSaturation(ModuleSaturation.ok, null);
     }
 
     public ModuleElement(ModuleBox moduleBox) {
@@ -101,12 +106,13 @@ public class ModuleElement extends Element {
         this.killer = moduleBox.getEngine();
         //System.out.println("new element");
         this.moduleBox = moduleBox;
-        this.predecessors = new Vector<Element>();
+        this.predecessors = new ArrayList<Element>();
         this.ready_wait = 0;
         this.done_wait = 0;
     }
 
     //<editor-fold defaultstate="collapsed" desc=" onNotify ">
+    @Override
     protected void onNotifyMessage(Message message) throws VNSystemEngineStateException, VNSystemEngineException {
         //this.getModuleBox().getEngine().writeFlow(this+" : notify");
         if(getElementState()==ElementState.notifying) {
@@ -224,6 +230,7 @@ public class ModuleElement extends Element {
         //this.getModuleBox().getEngine()writeFlow(this+" : action");
         if(getElementState() == ElementState.propagating) {
             java.awt.EventQueue.invokeLater(new Runnable() {
+                @Override
                 public void run() {JOptionPane.showMessageDialog(null, "Network error #1A ignored.");}
             });
             return;
@@ -250,6 +257,7 @@ public class ModuleElement extends Element {
     }
 
 
+    @Override
     protected void onInactionMessage(Message message) throws VNSystemEngineStateException, VNSystemEngineException {
 //        this.getModuleBox().getEngine().writeFlow(this+" : inaction");
         if(getElementState() != ElementState.ready)
@@ -411,27 +419,10 @@ public class ModuleElement extends Element {
     }
     //</editor-fold>
 
+    @Override
     protected void onKillMessage() {
         
     }
-
-//    @Override
-//    protected void onOtherMessage(Message message) {
-//        switch(message.getType()) {
-//            case Message.START_ACTION:
-//                onStartActionMessage(message);
-//                return;
-//        }
-//
-//    }
-//
-//    protected void onStartActionMessage(Message message) {
-//
-//        for(Output output: getModuleBoxEgg().getOutputs()) {
-//            output.getQueue().put(new Message(this, Message.NOTIFY));
-//        }
-//
-//    }
 
     private void killFromModule(Exception e, String functionName) {
         Displayer.ddisplay(42, e, this,
@@ -444,9 +435,6 @@ public class ModuleElement extends Element {
         setElementState(ElementState.passive);        
         //this.getModuleBox().getEngine().getApplication().doTheMainReset();
     }
-
-
-
 
     @Override
     protected void setElementState(ElementState state) {

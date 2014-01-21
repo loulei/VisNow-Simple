@@ -51,7 +51,6 @@ import pl.edu.icm.visnow.geometries.objects.GeometryObject;
 import pl.edu.icm.visnow.geometries.objects.GeometryParent;
 import pl.edu.icm.visnow.geometries.objects.IrregularFieldGeometry;
 import pl.edu.icm.visnow.geometries.objects.generics.OpenBranchGroup;
-import pl.edu.icm.visnow.geometries.parameters.DataMappingParams;
 import pl.edu.icm.visnow.geometries.parameters.IrregularFieldDisplayParams;
 import pl.edu.icm.visnow.geometries.parameters.RenderingParams;
 import pl.edu.icm.visnow.geometries.viewer3d.eventslisteners.pick.Pick3DListener;
@@ -81,7 +80,7 @@ public abstract class IrregularOutField1DVisualizationModule extends ModuleCore
    /** Creates a new instance of VisualizationModule */
    public IrregularOutField1DVisualizationModule()
    {
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          public void run()
          {
@@ -92,14 +91,9 @@ public abstract class IrregularOutField1DVisualizationModule extends ModuleCore
       outObj.setName("object"+timestamp);
    }
    
-   public void show(DataMappingParams params)
-   {
-   }
-   
    @Override
    public void onInitFinished()
    {
-      outObj.getGeometryObj().setUserData(getName());
       irregularFieldGeometry = new IrregularFieldGeometry();
       irregularFieldGeometry.getGeometryObj2DStruct().setParentModulePort(getName() + ".out.outObj");
       setOutputValue("outObj", new VNGeometryObject(outObj, irregularFieldGeometry.getGeometryObj2DStruct()));
@@ -200,7 +194,7 @@ public abstract class IrregularOutField1DVisualizationModule extends ModuleCore
           //set default display params
           defaultDisplayParams();
                   
-          SwingInstancer.swingRun(new Runnable()
+          SwingInstancer.swingRunAndWait(new Runnable()
           {
              public void run()
              {         

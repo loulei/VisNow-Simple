@@ -4,7 +4,6 @@
        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNIrregularField" modifiers="NECESSARY:TRIGGERING">
             <acceptor>
                 <param name="IRREGULAR" value="true"/>
-                <param name="NDIMS" value="3"/>
             </acceptor>
        </input>
     </inputs>

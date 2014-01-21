@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="PAC reader" class="ReadPAC">
+    <description value="Reads Points and Connections (PAC) files ."/>
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <schema>
+                <param name="NSPACE" value="3"/>
+                <param name="CELLS_POINT" value="true"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>
+</module>
+

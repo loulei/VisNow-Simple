@@ -40,6 +40,7 @@ package pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -65,6 +66,9 @@ import pl.edu.icm.visnow.system.main.VisNow;
 public final class FieldDisplay3DFrame extends javax.swing.JFrame
 {
 
+   public static final int MODE_3D = 0;
+   public static final int MODE_2D = 1;
+   private int mode = MODE_3D;
    public static final int VIEWPORT_SETUP_QUAD = 0;
    public static final int VIEWPORT_SETUP_DOUBLE_HORIZ = 1;
    public static final int VIEWPORT_SETUP_DOUBLE_VERT = 2;
@@ -112,7 +116,7 @@ public final class FieldDisplay3DFrame extends javax.swing.JFrame
 
    public void updateGUI()
    {
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
 
             @Override
@@ -190,7 +194,15 @@ public final class FieldDisplay3DFrame extends javax.swing.JFrame
 
    public final void setDefaultViewportSetup()
    {
-      setViewportSetup(VIEWPORT_SETUP_QUAD);
+      switch(mode) {
+          case MODE_3D:
+              setViewportSetup(VIEWPORT_SETUP_QUAD);
+              break;              
+          case MODE_2D:
+              setSingleSetup(ViewPanel.VIEW_2D);
+              params.setScalingMode(OrthosliceViewPanel.SCALING_AUTO);
+              break;              
+      }
    }
 
    public synchronized void setViewportConents(int viewport, int contentType)
@@ -662,8 +674,6 @@ public final class FieldDisplay3DFrame extends javax.swing.JFrame
         setIconImage(new ImageIcon(getClass().getResource("/pl/edu/icm/visnow/gui/icons/big/visnow.png")).getImage());
         setMinimumSize(new java.awt.Dimension(724, 550));
         getContentPane().setLayout(new java.awt.GridBagLayout());
-
-        tabbedUI.setPreferredSize(new java.awt.Dimension(250, 650));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -889,6 +899,7 @@ public final class FieldDisplay3DFrame extends javax.swing.JFrame
         gridBagConstraints.weighty = 1.0;
         rightPanel.add(displayPanel, gridBagConstraints);
 
+        graphicToolbar.setFloatable(false);
         graphicToolbar.setRollover(true);
 
         graphicToolsGroup.add(pointToolButton);
@@ -1441,7 +1452,7 @@ public final class FieldDisplay3DFrame extends javax.swing.JFrame
 
    public void insertUI(final JPanel panel, final String title)
    {
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          @Override
          public void run()
@@ -1453,7 +1464,7 @@ public final class FieldDisplay3DFrame extends javax.swing.JFrame
    
    public void addUI(final JPanel panel, final String position)
    {
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          @Override
          public void run()
@@ -1463,9 +1474,33 @@ public final class FieldDisplay3DFrame extends javax.swing.JFrame
       });
    }
 
+   public void setUIVisible(final String position, final boolean vis)
+   {
+//      SwingInstancer.swingRunAndWait(new Runnable()
+//      {
+//         @Override
+//         public void run()
+//         {
+            tabbedUI.setUITabActive(position, vis);
+//         }
+//      });
+   }
+   
+   public void removeAllUIPages()
+   {
+      SwingInstancer.swingRunAndWait(new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            tabbedUI.removeAllUITabs();
+         }
+      });
+   }
+   
    public void addUIPage(final JPanel panel, final String title)
    {
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
 
             @Override
@@ -1675,4 +1710,54 @@ public final class FieldDisplay3DFrame extends javax.swing.JFrame
       return statusBar;
    }
 
+    /**
+     * @return the mode
+     */
+    public int getMode() {
+        return mode;
+    }
+
+    /**
+     * @param mode the mode to set
+     */
+    public void setMode(int mode) {
+        this.mode = mode;
+        updateMode();
+    }
+
+    private void updateMode() {
+        setDefaultViewportSetup();
+        switch(mode) {
+            case MODE_3D:
+                resetAxesButton.setVisible(true);
+                show3DPlanesButton.setVisible(true);
+                autoLocateDividersButton.setVisible(true);
+                modeCustomOrthoSliceButton.setVisible(true);
+                modeCustomSliceButton.setVisible(true);
+                modeOrthosliceButton.setVisible(true);
+                jSeparator3.setVisible(true);
+                sliceLinesLabel.setVisible(true);
+                sliceLinesModeCB.setVisible(true);
+                jSeparator7.setVisible(true);
+                interpolationButton.setVisible(true);
+                
+                viewMenu.setVisible(true);
+                break;
+            case MODE_2D:
+                resetAxesButton.setVisible(false);
+                show3DPlanesButton.setVisible(false);
+                autoLocateDividersButton.setVisible(false);
+                modeCustomOrthoSliceButton.setVisible(false);
+                modeCustomSliceButton.setVisible(false);
+                modeOrthosliceButton.setVisible(false);
+                jSeparator3.setVisible(false);
+                sliceLinesLabel.setVisible(false);
+                sliceLinesModeCB.setVisible(false);
+                jSeparator7.setVisible(false);
+                interpolationButton.setVisible(false);
+                
+                viewMenu.setVisible(false);
+                break;                
+        }
+    }
 }

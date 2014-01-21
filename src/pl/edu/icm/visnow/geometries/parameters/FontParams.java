@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,8 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.geometries.parameters;
 
@@ -47,7 +50,7 @@ import pl.edu.icm.visnow.geometries.utils.transform.LocalToWindow;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public class FontParams
 {
@@ -60,16 +63,16 @@ public class FontParams
    private int fontType = Font.PLAIN;
    private Color color = Color.WHITE;
    private float colorCorrection = 1;
-   
-   
+
+
    public void createFontMetrics(LocalToWindow localToWindow, int w, int h)
    {
       fontSize = Math.max(5, (int)(h * size));
       float z = localToWindow.transformPt(new double[] {0,0,0}, new int[2]);
       float[] xl = localToWindow.reverseTransformPt(w / 2, (h - fontSize) / 2, z);
       float[] xu = localToWindow.reverseTransformPt(w / 2, (h + fontSize) / 2, z);
-      font3DSize = (float)(Math.sqrt((xu[0] - xl[0]) * (xu[0] - xl[0]) + 
-                                     (xu[1] - xl[1]) * (xu[1] - xl[1]) + 
+      font3DSize = (float)(Math.sqrt((xu[0] - xl[0]) * (xu[0] - xl[0]) +
+                                     (xu[1] - xl[1]) * (xu[1] - xl[1]) +
                                      (xu[2] - xl[2]) * (xu[2] - xl[2])));
    }
 
@@ -82,7 +85,7 @@ public class FontParams
    {
       return color;
    }
-   
+
    public Color3f getColor3f()
    {
       return new Color3f(color);
@@ -109,7 +112,7 @@ public class FontParams
       this.fontType = fontType;
       fireStateChanged();
    }
-   
+
    /**
     * Get the value of font2D
     *
@@ -144,7 +147,7 @@ public class FontParams
    {
       return font3DSize;
    }
-   
+
    /**
     * Set the value of fontName
     *
@@ -210,7 +213,7 @@ public class FontParams
       else      fontType &= ~Font.BOLD;
       fireStateChanged();
    }
-   
+
    public void setItalic(boolean italic)
    {
       if (italic) fontType |= Font.ITALIC;
@@ -268,7 +271,7 @@ public class FontParams
    {
       ChangeEvent e = new ChangeEvent(this);
       for (int i = 0; i < changeListenerList.size(); i++) {
-          changeListenerList.get(i).stateChanged(e);          
+          changeListenerList.get(i).stateChanged(e);
        }
    }
 

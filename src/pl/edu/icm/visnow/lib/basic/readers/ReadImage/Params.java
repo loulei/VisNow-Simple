@@ -64,7 +64,8 @@ public class Params extends Parameters
         new ParameterEgg<Integer>("type", ParameterType.independent, InputSource.FILE),
         new ParameterEgg<Boolean>("URL", ParameterType.independent, false),
         new ParameterEgg<Boolean>("grayscale", ParameterType.independent, false),
-        new ParameterEgg<float[]>("rgb", ParameterType.filename, null)
+        new ParameterEgg<float[]>("rgb", ParameterType.filename, null),
+        new ParameterEgg<Boolean>("sequenceMode", ParameterType.independent, false)        
     };
 
     public String[] getFiles() {
@@ -115,6 +116,16 @@ public class Params extends Parameters
     {
        setValue("grayscale", grayscale);
        fireStateChanged();
+    }
+    
+    public boolean isSequenceMode()
+    {
+       return (Boolean)getValue("sequenceMode");
+    }
+
+    public void setSequenceMode(boolean sequenceMode)
+    {
+       setValue("sequenceMode", sequenceMode);
     }
     
     public float[] getRGBWeights() {

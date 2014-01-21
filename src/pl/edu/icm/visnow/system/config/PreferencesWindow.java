@@ -50,8 +50,7 @@ public class PreferencesWindow extends javax.swing.JFrame {
     private PreferencesFavoriteFoldersPanel folders = new PreferencesFavoriteFoldersPanel();
     private PreferencesRecentPanel recent = new PreferencesRecentPanel();
     private PropertiesEditorPanel properties = new PropertiesEditorPanel();
-
-    /* TODO */
+    private PreferencesPluginsPanel plugins = new PreferencesPluginsPanel();
 
     /** Creates new form PreferencesWindow */
     public PreferencesWindow() {
@@ -61,16 +60,17 @@ public class PreferencesWindow extends javax.swing.JFrame {
         
         tabs.removeAll();
         tabs.add(properties, "Properties");
-        tabs.add(folders, "Favorite folders");
-        tabs.add(recent, "Recent");
+        //tabs.add(folders, "Favorite folders");
+        //tabs.add(recent, "Recent");
+        tabs.add(plugins, "Plugins");
         
     }
     
     public void init() {
-        //userDirectoryField.setText(VisNow.get().getMainConfig().getVN2UserFolder());
-        folders.init();
-        recent.init();
+        //folders.init();
+        //recent.init();
         properties.init();
+        plugins.init();
 
         this.setVisible(true);
     }
@@ -91,8 +91,8 @@ public class PreferencesWindow extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("VisNow Preferences");
-        setMinimumSize(new java.awt.Dimension(550, 350));
-        setPreferredSize(new java.awt.Dimension(600, 370));
+        setMinimumSize(new java.awt.Dimension(640, 480));
+        setPreferredSize(new java.awt.Dimension(640, 480));
 
         tabs.setMinimumSize(new java.awt.Dimension(260, 320));
         tabs.setPreferredSize(new java.awt.Dimension(290, 350));
@@ -125,7 +125,7 @@ public class PreferencesWindow extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(402, Short.MAX_VALUE)
+                .addContainerGap(423, Short.MAX_VALUE)
                 .addComponent(okButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(applyButton)
@@ -143,15 +143,13 @@ public class PreferencesWindow extends javax.swing.JFrame {
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.SOUTH);
 
-        setSize(new java.awt.Dimension(611, 450));
+        setSize(new java.awt.Dimension(655, 559));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void apply() {
-//        VisNow.get().getConfig().getConfigMap().getProperty("UserFolder").setValue(userDirectoryField.getText());
-//        VisNow.get().getConfig().getConfigMap().save();
-        
         properties.apply();
+        plugins.apply();
     }
     
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed

@@ -20,7 +20,7 @@
         <output name="streamlinesField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
             <description value="Output of streamlines field"/>
         </output>
-        <output name="flowField" type="pl.edu.icm.visnow.lib.types.VNField">
+        <output name="flowField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
             <description value="Output of flow field"/>
         </output>
         <geometryOutput>

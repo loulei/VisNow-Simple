@@ -43,11 +43,11 @@ import pl.edu.icm.visnow.geometries.viewer3d.eventslisteners.render.RenderEventL
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public class TransparencyParams
 {
-   private int component = 0;
+   private int component = -1;
    private int[] map = new int[256];
    private float dataLow = 0;
    private float dataUp = 255;
@@ -132,6 +132,11 @@ public class TransparencyParams
          fireStateChanged();
    }
 
+   public void setActiveValue(boolean active)
+   {
+      this.active = active;
+   }
+   
 
    /**
     * Get the value of adjusting

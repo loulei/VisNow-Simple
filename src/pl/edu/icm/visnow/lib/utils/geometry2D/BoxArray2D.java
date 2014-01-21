@@ -96,11 +96,11 @@ public class BoxArray2D extends Array2D {
                         
             pij1 = new Point2D.Double(0, 0);
             pxy1 = tr.transform(pij1, pxy1);
-            pij2 = new Point2D.Double(0, width);
+            pij2 = new Point2D.Double(0, height);
             pxy2 = tr.transform(pij2, pxy2);                    
-            pij3 = new Point2D.Double(height, width);
+            pij3 = new Point2D.Double(width, height);
             pxy3 = tr.transform(pij3, pxy3);                    
-            pij4 = new Point2D.Double(height, 0);
+            pij4 = new Point2D.Double(width, 0);
             pxy4 = tr.transform(pij4, pxy4);                    
 
             img_g2d.setColor(Color.white);

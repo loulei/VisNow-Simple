@@ -39,6 +39,7 @@ package pl.edu.icm.visnow.lib.basic.filters.RegularFieldDifferentialOperations;
 
 import javax.swing.JTable;
 import pl.edu.icm.visnow.datasets.RegularField;
+import pl.edu.icm.visnow.system.main.VisNow;
 
 
 /**
@@ -74,7 +75,6 @@ public class GUI extends javax.swing.JPanel
    public GUI()
    {
       initComponents();
-      threadsField.setText(""+Runtime.getRuntime().availableProcessors());
       for (int i = 1; i < 7; i++)
          scalarComponentTable.getColumnModel().getColumn(i).setPreferredWidth(preferredScalarComponentTableColumnWidth[i]);
       scalarComponentTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -95,8 +95,6 @@ public class GUI extends javax.swing.JPanel
         jScrollPane1 = new javax.swing.JScrollPane();
         scalarComponentTable = new javax.swing.JTable();
         computeButton = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        threadsField = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         vectorComponentTable = new javax.swing.JTable();
         autoRunBox = new javax.swing.JCheckBox();
@@ -153,29 +151,6 @@ public class GUI extends javax.swing.JPanel
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         add(computeButton, gridBagConstraints);
-
-        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        jLabel2.setText("number of threads");
-        jLabel2.setMaximumSize(new java.awt.Dimension(45, 15));
-        jLabel2.setMinimumSize(new java.awt.Dimension(45, 15));
-        jLabel2.setPreferredSize(new java.awt.Dimension(45, 15));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
-        add(jLabel2, gridBagConstraints);
-
-        threadsField.setText("1");
-        threadsField.setMinimumSize(new java.awt.Dimension(40, 19));
-        threadsField.setPreferredSize(new java.awt.Dimension(42, 19));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 0.4;
-        add(threadsField, gridBagConstraints);
 
         jScrollPane2.setMinimumSize(new java.awt.Dimension(180, 110));
         jScrollPane2.setPreferredSize(new java.awt.Dimension(220, 150));
@@ -240,7 +215,7 @@ public class GUI extends javax.swing.JPanel
          return;
       try
       {
-         params.setThreads(Integer.parseInt(threadsField.getText()));
+         params.setThreads(VisNow.availableProcessors());
       } catch (NumberFormatException e)
       {
          params.setThreads(1);
@@ -346,12 +321,10 @@ public class GUI extends javax.swing.JPanel
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox autoRunBox;
     private javax.swing.JButton computeButton;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable scalarComponentTable;
-    private javax.swing.JTextField threadsField;
     private javax.swing.JTable vectorComponentTable;
     // End of variables declaration//GEN-END:variables
    

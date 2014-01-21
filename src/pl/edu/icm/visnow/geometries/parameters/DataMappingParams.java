@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,8 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.geometries.parameters;
 
@@ -177,13 +180,13 @@ public class DataMappingParams implements Cloneable, AbstractDataMappingParams
          for (int i = 0; i < set.getNData(); i++)
             if (set.getData(i).isSimpleNumeric())
             {
-               colorMap0Params.setDataComponent(i);
-               colorMap1Params.setDataComponent(i);
-               redParams.setDataComponent(i);
-               greenParams.setDataComponent(i);
-               blueParams.setDataComponent(i);
-               satParams.setDataComponent(i);
-               valParams.setDataComponent(i);
+               colorMap0Params.setDataComponent(i, set.getData(i).getMinv(), set.getData(i).getMaxv());
+               colorMap1Params.setDataComponent(i, set.getData(i).getMinv(), set.getData(i).getMaxv());
+               redParams.setDataComponent(i, set.getData(i).getMinv(), set.getData(i).getMaxv());
+               greenParams.setDataComponent(i, set.getData(i).getMinv(), set.getData(i).getMaxv());
+               blueParams.setDataComponent(i, set.getData(i).getMinv(), set.getData(i).getMaxv());
+               satParams.setDataComponent(i, set.getData(i).getMinv(), set.getData(i).getMaxv());
+               valParams.setDataComponent(i, set.getData(i).getMinv(), set.getData(i).getMaxv());
                colormapLegendParameters.setColormapLow(set.getData(i).getMinv());
                colormapLegendParameters.setColormapUp(set.getData(i).getMaxv());
                colormapLegendParameters.setColorMapLookup(colorMap0Params.getRGBColorTable());
@@ -192,13 +195,13 @@ public class DataMappingParams implements Cloneable, AbstractDataMappingParams
                                                    colorMap0Params.getDataComponent() >= 0);
                return;
             }
-      colorMap0Params.setDataComponent(-1);
-      colorMap1Params.setDataComponent(-1);
-      redParams.setDataComponent(-1);
-      greenParams.setDataComponent(-1);
-      blueParams.setDataComponent(-1);
-      satParams.setDataComponent(-1);
-      valParams.setDataComponent(-1);
+      colorMap0Params.setDataComponent(-1,0,0);
+      colorMap1Params.setDataComponent(-1,0,0);
+      redParams.setDataComponent(-1,0,0);
+      greenParams.setDataComponent(-1,0,0);
+      blueParams.setDataComponent(-1,0,0);
+      satParams.setDataComponent(-1,0,0);
+      valParams.setDataComponent(-1,0,0);
       colormapLegendParameters.setEnabled(false);
    }
 
@@ -218,13 +221,13 @@ public class DataMappingParams implements Cloneable, AbstractDataMappingParams
       for (int i = 0; i < field.getNData(); i++)
          if (field.getData(i).isSimpleNumeric())
          {
-            colorMap0Params.setDataComponent(i);
-            colorMap1Params.setDataComponent(i);
-            redParams.setDataComponent(i);
-            greenParams.setDataComponent(i);
-            blueParams.setDataComponent(i);
-            satParams.setDataComponent(i);
-            valParams.setDataComponent(i);
+            colorMap0Params.setDataComponent(i, field.getData(i).getMinv(), field.getData(i).getMaxv());            
+            colorMap1Params.setDataComponent(i, field.getData(i).getMinv(), field.getData(i).getMaxv());
+            redParams.setDataComponent(i, field.getData(i).getMinv(), field.getData(i).getMaxv());
+            greenParams.setDataComponent(i, field.getData(i).getMinv(), field.getData(i).getMaxv());
+            blueParams.setDataComponent(i, field.getData(i).getMinv(), field.getData(i).getMaxv());
+            satParams.setDataComponent(i, field.getData(i).getMinv(), field.getData(i).getMaxv());
+            valParams.setDataComponent(i, field.getData(i).getMinv(), field.getData(i).getMaxv());
             colormapLegendParameters.setColormapLow(field.getData(i).getMinv());
             colormapLegendParameters.setColormapUp(field.getData(i).getMaxv());
             colormapLegendParameters.setColorMapLookup(colorMap0Params.getRGBColorTable());
@@ -233,13 +236,13 @@ public class DataMappingParams implements Cloneable, AbstractDataMappingParams
                                                 colorMap0Params.getDataComponent() >= 0);
             return true;
          }
-      colorMap0Params.setDataComponent(-1);
-      colorMap1Params.setDataComponent(-1);
-      redParams.setDataComponent(-1);
-      greenParams.setDataComponent(-1);
-      blueParams.setDataComponent(-1);
-      satParams.setDataComponent(-1);
-      valParams.setDataComponent(-1);
+      colorMap0Params.setDataComponent(-1,0,0);
+      colorMap1Params.setDataComponent(-1,0,0);
+      redParams.setDataComponent(-1,0,0);
+      greenParams.setDataComponent(-1,0,0);
+      blueParams.setDataComponent(-1,0,0);
+      satParams.setDataComponent(-1,0,0);
+      valParams.setDataComponent(-1,0,0);
       colormapLegendParameters.setEnabled(false);
       return false;
    }
@@ -482,8 +485,8 @@ public class DataMappingParams implements Cloneable, AbstractDataMappingParams
    @Override
    public synchronized void addRenderEventListener(RenderEventListener listener)
    {
-//      VisNowCallTrace.trace();
-      renderEventListenerList.add(listener);
+      if(!renderEventListenerList.contains(listener)) 
+            renderEventListenerList.add(listener);
    }
 
    /**

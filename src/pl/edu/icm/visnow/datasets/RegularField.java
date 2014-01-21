@@ -1,5 +1,6 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+Copyright (C) 2006-2013 University of Warsaw, ICM
 
 This file is part of GNU Classpath.
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -33,11 +34,15 @@ module.  An independent module is a module which is not derived from
 or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+exception statement from your version.
+*/
+//</editor-fold>
 
 package pl.edu.icm.visnow.datasets;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import org.apache.log4j.Logger;
 import pl.edu.icm.visnow.datasets.cells.Cell;
 import pl.edu.icm.visnow.datasets.cells.RegularHex;
 import pl.edu.icm.visnow.datasets.cells.Tetra;
@@ -55,6 +60,8 @@ import pl.edu.icm.visnow.lib.utils.numeric.NumericalMethods;
  */
 public class RegularField extends Field implements Serializable
 {
+    private static final Logger LOGGER = Logger.getLogger(RegularField.class);
+    
    public static final short[][] partNeighbDist = 
      {{}, {3, 3}, {4, 3, 4, 3, 3, 4, 3, 4}, 
       {   4,    4, 3, 4,    4,  
@@ -68,11 +75,47 @@ public class RegularField extends Field implements Serializable
    
    private static final long serialVersionUID = -6060827781890957096L;
    private static final int MAXCELLDIM = 100;
-   protected int[] dims               = null;
-   protected float[][] affine         = new float[4][3];
-   protected float[][] invAffine      = new float[3][3];
-   protected float[][] rectilinarCoords = new float[3][];
-   protected float[] coordsFromAffine = null;
+    protected int[] dims = null;
+    /** An array (4x3) containing 4 columns - elementary cell vectors v0, v1, v2 and the origin
+     * point.
+     * <p/>
+     * It is used to convert: set of indexes -> point coordinates:<br/>
+     * <code>i,j,k</code> node from data array has coordinates:<br/>
+     * <code>o + v0*i + v1*j + v2*k</code> in local coordinates (o - origin).
+     * <pre>
+     * +-              -+   +- -+   +-                          -+
+     * |            |   |   | i |   | i*v0x + j*v1x + k*v2x + ox |
+     * | v0  v1  v2 | o | . | j | = | i*v0y + j*v1y + k*v2y + oy | = i*v0 + j*v1 + k*v2 + o
+     * |            |   |   | k |   | i*v0z + j*v1z + k*v2z + oz |
+     * +-              -+   | 1 |   +-                          -+
+     *                      +- -+
+     * </pre>
+     * <pre>
+     * affine[i] = v_i (i-th column)
+     * affine[3] = origin</pre>
+     * <p/>
+     * NOTE: Used when coords == null.
+     * <p/>
+     * @see Field#coords
+     */
+    protected float[][] affine = new float[4][3];
+    /** Inversion of v0, v1, v2 array (3x3 matrix) computed automatically when affine is set (invAffine * affine
+     * = I). Used to convert:
+     * point coordincates -> set of indexes (float values)
+     * <pre>
+     *                                     +- -+
+     *                                     | i |
+     *      invAffine * (point - origin) = | j |,
+     *                                     | k |
+     *                                     +- -+
+     * </pre>
+     * <code>i, j, k</code> - indexes, float values (for interpolation)
+     * <p/>
+     * <code>invAffine[i]</code> - i-th column (? - TODO to be confirmed)
+     */
+    protected float[][] invAffine = new float[3][3];
+    protected float[][] rectilinarCoords = new float[3][];
+    protected float[] coordsFromAffine = null;
    protected int[] cellExtentsDown    = new int[3];
    protected int[] cellExtentsDims    = new int[3];
    protected int[][] treeCells        = new int[3][];
@@ -81,41 +124,21 @@ public class RegularField extends Field implements Serializable
    protected int[] partNeighbOffsets;
    protected int[] strictNeighbOffsets;
    
-   public RegularField()
-   {
-      schema = new RegularFieldSchema();
-   }
-   /**
-    * Creates a new <code>RegularField</code> object.
-    * 
-    * @param	inData	The inData.
-    */
-   public RegularField(byte[] inData)
-   {
-      schema = new RegularFieldSchema();
-      setDims(new int[] {0xff & inData[2], 0xff & inData[1], 0xff & inData[0]});
-
-      byte[] data0 = new byte[nNodes];
-      for (int i = 0, l = 3; i < nNodes; i++, l++)
-         data0[i] = inData[l];
-      data.add(DataArray.create(data0, 1, "vol0"));
-   }
-   
+     
    /** Creates a new instance of ExampleField */
    public RegularField(int[] dims)
    {
-      schema = new RegularFieldSchema();
-      setDims(dims);
-      nNodes = 1;
-      for (int i = 0; i < dims.length; i++)
-         nNodes*=dims[i];
-      nSpace = dims.length;
-      affineFromPoints();
-      computeInvAffine();
+      this(dims, true);
    }
    
    public RegularField(int[] dims, boolean normalize)
    {
+      if(dims == null) throw new IllegalArgumentException("dims cannot be null");
+      for(int i = 0; i < dims.length; i++) {
+          if(dims[i] <= 1) {
+              throw new IllegalArgumentException("All values in array dims must be greater than 1");
+          }
+      }
       schema = new RegularFieldSchema();
       setDims(dims);
       nNodes = 1;
@@ -129,12 +152,18 @@ public class RegularField extends Field implements Serializable
          extents[1][2] = dims[2] - 1.f;
          extents[0][0] = extents[0][1] = extents[0][2] = 0;
       }
-      affineFromPoints();
+      affineFromExtents();
       computeInvAffine();
    }
 
    public RegularField(int[] dims, float[][] pts)
    {
+      if(dims == null) throw new IllegalArgumentException("dims cannot be null");
+      for(int i = 0; i < dims.length; i++) {
+          if(dims[i] <= 1) {
+              throw new IllegalArgumentException("All values in array dims must be greater than 1");
+          }
+      }
       schema = new RegularFieldSchema();
       setDims(dims);
       this.extents  = pts;
@@ -142,7 +171,7 @@ public class RegularField extends Field implements Serializable
       for (int i = 0; i < dims.length; i++)
          nNodes*=dims[i];
       nSpace = pts[0].length;
-      affineFromPoints();
+      affineFromExtents();
       computeInvAffine();
    }
    
@@ -166,14 +195,18 @@ public class RegularField extends Field implements Serializable
    public String shortDescription()
    {
       StringBuilder s = new StringBuilder();
+      s.append("<html>");
       for (int i = 0; i < dims.length; i++)
          if (i > 0)
             s.append("x").append(dims[i]);
          else
-            s.append("<html>").append(dims[i]);
+            s.append(dims[i]);
+      if(coords != null)
+          s.append("<br>coords");
       if (getNFrames() > 1)
-         s.append("<p>").append(getNFrames()).append(" timesteps");
-      s.append("").append(data.size()).append(" components</html>");
+         s.append("<br>").append(getNFrames()).append(" timesteps");
+      s.append("<br>").append(getNData()).append(" components");
+      s.append("</html>");
       return s.toString();
    }
    
@@ -208,6 +241,9 @@ public class RegularField extends Field implements Serializable
             s.append(":");
             s.append(VNFloatFormatter.defaultRangeFormat(getEndTime()));
             s.append(timeUnit);
+            s.append("</p><p>current time: ");
+            s.append(VNFloatFormatter.defaultRangeFormat(getCurrentTime()));
+            s.append(""+timeUnit+"</p>");
         }
         s.append("<p>dimensions = {").append(dims[0]);
         if (dims.length > 1) {
@@ -220,7 +256,7 @@ public class RegularField extends Field implements Serializable
         
         s.append("<p>geometric extents</p>");
         for (int i = 0; i < nSpace; i++) {
-            s.append("<p>[");
+            s.append("<p>").append(i==0?"x":(i==1?"y":"z")).append(": [");
             s.append(VNFloatFormatter.defaultRangeFormat(extents[0][i]));
             s.append(", ");
             s.append(VNFloatFormatter.defaultRangeFormat(extents[1][i]));
@@ -228,7 +264,7 @@ public class RegularField extends Field implements Serializable
         }
         s.append("<p>physical extents</p>");
         for (int i = 0; i < nSpace; i++) {
-            s.append("<p>[");
+            s.append("<p>").append(i==0?"x":(i==1?"y":"z")).append(": [");
             s.append(VNFloatFormatter.defaultRangeFormat(physExts[0][i]));
             s.append(", ");
             s.append(VNFloatFormatter.defaultRangeFormat(physExts[1][i]));
@@ -292,6 +328,8 @@ public class RegularField extends Field implements Serializable
       clone.setAffine(this.affine);
       if (this.timeCoords != null && !timeCoords.isEmpty())
          clone.setCoords(this.timeCoords);
+      if (this.timeMask != null && !timeMask.isEmpty())
+         clone.setTimeMask(this.timeMask);
       return clone;
    }
 
@@ -324,7 +362,7 @@ public class RegularField extends Field implements Serializable
       return (RegularFieldSchema)schema;
    }
    
-   private void affineFromPoints()
+   private void affineFromExtents()
    {
       for (int i = 0; i < extents[0].length; i++)
       {
@@ -363,10 +401,33 @@ public class RegularField extends Field implements Serializable
       return cellNodeOffsets;
    }
    
+   /**
+    * Returns matrix of size dim + 1 x dim:
+    * each spanning vector in one row and translation vector in last row.
+    * @return 
+    */
    @SuppressWarnings("ReturnOfCollectionOrArrayField")
    public float[][] getAffine()
    {
       return affine;
+   }
+   
+   /**
+    * Calculates and returns norm of affine vectors. These values are not cached, so they are calculated in every call to this method.
+    */
+   public double[] getAffineNorm() {
+       int dim = affine.length - 1; //assuming that affine.length - 1 and affine[0..n].length are equal
+       
+       double[] norm = new double[dim];
+       
+       for (int i = 0; i < dim; i++) {
+           double sum = 0;
+           for (int j = 0; j< dim; j++)
+               sum += affine[i][j] * affine[i][j];
+           norm[i] = Math.sqrt(sum);
+       }
+       
+       return norm;
    }
    
    @SuppressWarnings("ReturnOfCollectionOrArrayField")
@@ -374,6 +435,88 @@ public class RegularField extends Field implements Serializable
    {
       return invAffine;
    }
+   
+    /**
+     * Computes affine * indexes - this will compute local coordinates of a point from indexes
+     * given.
+     * <p/>
+     * NOT TESTED YET. Please test before using and remove this comment.
+     * <p/>
+     * @param inIndexes float[4] with indexes, the last number should be 1, see {@link #affine}
+     * @param outPoint  float[3] result - indexes (float values!)
+     */
+    public void multAffineByIndexes4(float[] inIndexes, float[] outPoint) {
+        for (int j = 0; j < 3; ++j) {
+            outPoint[j] = 0;
+            for (int i = 0; i < 4; ++i) {
+                outPoint[j] += affine[i][j] * inIndexes[i];
+            }
+        }
+    }
+
+    /**
+     * Computes
+     * <code>affine * inIndexes</code> - this will compute local coordinates of a point from given
+     * indexes.
+     * <p/>
+     * NOT TESTED YET. Please test before using and remove this comment.
+     * <p/>
+     * @param inIndexes float[3] with indexes (only 3 coordinates, the 4th is assumed to be 1)
+     * @param outPoint  float[3] result - indexes (float values!)
+     */
+    public void multAffineByIndexes3(float[] inIndexes, float[] outPoint) {
+        multMatrix43ByVector31(affine, inIndexes, outPoint);
+    }
+
+    /**
+     * Computes
+     * <code>invAffine * inPoint</code> - this will compute indexes from a given point.
+     * <p/>
+     * NOT TESTED YET. Please test before using and remove this comment.
+     * <p/>
+     * @param inIndexes float[3] with indexes (only 3 coordinates, the 4th is assumed to be 1)
+     * @param outPoint  float[3] result - indexes (float values!)
+     */
+    public void multInvAffineByPoint(float[] inPoint, float[] outIndexes) {
+        multMatrix33ByVector3(invAffine, inPoint, outIndexes);
+    }
+
+    /**
+     * Multipies a 4x3 matrix by vector of length 3 (sic!) - the 4th coordinate is assumed to be 1
+     * <p/>
+     * NOT TESTED YET. Please test before using and remove this comment.
+     * <p/>
+     * @param in_matrix  float[4][3] matrix
+     * @param in_vector  float[3] vector (1 is assumed as the 4th coord.)
+     * @param out_vector = matrx * (vector (and 1 on the 4th coord.) ) - out param
+     */
+    public static void multMatrix43ByVector31(float[][] in_matrix, float[] in_vector, float[] out_vector) {
+        for (int j = 0; j < 3; ++j) {
+            out_vector[j] = 0;
+            for (int i = 0; i < 3; ++i) {
+                out_vector[j] += in_matrix[i][j] * in_vector[i];
+            }
+            out_vector[j] += in_matrix[3][j] * 1; // 4th coord
+        }
+    }
+
+    /**
+     * Multipies a 3x3 matrix by vector of length 3
+     * <p/>
+     * NOT TESTED YET. Please test before using and remove this comment.
+     * <p/>
+     * @param in_matrix  float[3][3] matrix
+     * @param in_vector  float[3] vector
+     * @param out_vector = matrx * vector - out param
+     */
+    public static void multMatrix33ByVector3(float[][] in_matrix, float[] in_vector, float[] out_vector) {
+        for (int j = 0; j < 3; ++j) {
+            out_vector[j] = 0;
+            for (int i = 0; i < 3; ++i) {
+                out_vector[j] += in_matrix[i][j] * in_vector[i];
+            }
+        }
+    }
 
    @SuppressWarnings("AssignmentToCollectionOrArrayFieldFromParameter")
    public void setAffine(float[][] affine)
@@ -406,6 +549,114 @@ public class RegularField extends Field implements Serializable
       computeInvAffine();
    }
    
+//   ADDED BY Babor for future solving of #463
+//   Question is how to solve physical extents...
+//    
+//    @Override
+//   public void updateExtents() {
+//       updateExtents(false);
+//   }
+//
+//    @Override
+//   public void updateExtents(boolean ignoreMask)
+//   {
+//       extents = new float[][]{{Float.MAX_VALUE,Float.MAX_VALUE,Float.MAX_VALUE},{-Float.MAX_VALUE,-Float.MAX_VALUE,-Float.MAX_VALUE}};
+//       if (timeCoords == null || timeCoords.isEmpty()) {
+//           //affine field
+//           
+//           if(ignoreMask || timeMask != null) {
+//                //affine extents with no mask
+//                float t;
+//                for (int i = 0; i < extents[0].length; i++)
+//                {
+//                   extents[0][i] = extents[1][i] = affine[3][i];
+//                   for (int x = 0; x < 2; x++)
+//                      for (int y = 0; y < 2; y++)
+//                         for (int z = 0; z < 2; z++)
+//                         {
+//                            t = affine[3][i] + x * (dims[0] - 1) * affine[0][i];
+//                            if (dims.length > 1)
+//                               t += y * (dims[1] - 1) * affine[1][i];
+//                            if (dims.length > 2)
+//                               t += z * (dims[2] - 1) * affine[2][i];
+//
+//                            if (t < extents[0][i])
+//                               extents[0][i] = t;
+//                            if (t > extents[1][i])
+//                               extents[1][i] = t;
+//                         }
+//                }               
+//           } else {
+//               //affine extents with mask
+//                float f;
+//                int nValid = 0;
+//                for (int k = 0; k < timeMask.size(); k++)
+//                {
+//                   boolean[] currentMask = null;
+//                   if (!ignoreMask && timeMask != null)
+//                      currentMask = timeMask.getData(timeCoords.getTime(k));
+//                   float[] c = getCoordsFromAffine();
+//                   for (int i = 0; i < nNodes; i++)
+//                   {
+//                      if (currentMask != null && !currentMask[i])
+//                         continue;  //skip invalid nodes
+//                      nValid += 1;
+//                      for (int j = 0; j < 3; j++)
+//                      {
+//                         f = c[i * 3 + j];
+//                         if (extents[0][j] > f) extents[0][j] = f;
+//                         if (extents[1][j] < f) extents[1][j] = f;
+//                      }
+//                   }
+//                }
+//                if (nValid == 0)
+//                   for (int i = 0; i < 3; i++)
+//                   {
+//                      extents[1][i] = 1;
+//                      extents[0][i] = -1;
+//                   }
+//           }
+//           
+//       } else {
+//           //field with coords
+//            for (int i = 0; i < nSpace; i++) {
+//                extents[0][i] = Float.MAX_VALUE;
+//                extents[1][i] = -Float.MAX_VALUE;
+//            }
+//
+//           float f;
+//           int nValid = 0;
+//           for (int k = 0; k < timeCoords.size(); k++)
+//           {
+//              boolean[] currentMask = null;
+//              if (!ignoreMask && timeMask != null)
+//                 currentMask = timeMask.getData(timeCoords.getTime(k));
+//              float[] c = timeCoords.get(k);
+//              for (int i = 0; i < nNodes; i++)
+//              {
+//                 if (currentMask != null && !currentMask[i])
+//                    continue;  //skip invalid nodes
+//                 nValid += 1;
+//                 for (int j = 0; j < nSpace; j++)
+//                 {
+//                    f = c[i * nSpace + j];
+//                    if (extents[0][j] > f) extents[0][j] = f;
+//                    if (extents[1][j] < f) extents[1][j] = f;
+//                 }
+//              }
+//           }
+//           if (nValid == 0)
+//              for (int i = 0; i < 3; i++)
+//              {
+//                 extents[1][i] = 1;
+//                 extents[0][i] = -1;
+//              }
+//       }
+//
+//       physExtsFromExts();
+//   }
+   
+   
    private void computeInvAffine()
    {
       float[][] a =  new float[3][3];
@@ -422,6 +673,54 @@ public class RegularField extends Field implements Serializable
       return this.dims;
    }
    
+   /**
+    * Returns number of dims. This method is equivalent to {@code getDims().length}
+    */
+   public int getDimNum() {
+       return dims.length;
+   }
+   
+   /**
+    * Returns dims separated by {@code separator}.
+    * @return 
+    */
+   public String getDimsString(String separator) {
+       //remove sqares (added by default by Array.toString)
+       //replace default ", " separator with one passed in arguments
+       return Arrays.toString(dims).replaceAll("[\\[\\]]", "").replaceAll("\\,\\s", separator);
+   }
+   
+   /**
+    * When field is of affine type then return cell volume (in respective dimension):
+    * <ul>
+    * <li>1D - length of span vector (which is just absolute value of one number anyway)
+    * <li>2D - area of parallelogram spanned by spanning vectors
+    * <li>3D - volume of parallelepiped spanned by spanning vector.
+    * 
+    * If field is coords-like then throws IllegalStateException.
+    * 
+    * @throws IllegalStateException if field is of coords-type
+    */
+   public double getCellVolume()
+   {
+      if (getCoords() != null)
+         throw new IllegalStateException("Cell volume is not defined for coords-like field");
+      switch (dims.length)
+      {
+      case 1:
+         return Math.abs(affine[0][0]);
+      case 2:
+         return Math.abs(affine[0][0] * affine[1][1] - affine[0][1] * affine[1][0]);
+      case 3:
+         return Math.abs(affine[0][0] * affine[1][1] * affine[2][2]
+                 + affine[0][1] * affine[1][2] * affine[2][0]
+                 + affine[0][2] * affine[1][0] * affine[2][1]
+                 - affine[0][0] * affine[1][2] * affine[2][1]
+                 - affine[0][1] * affine[1][0] * affine[2][2]
+                 - affine[0][2] * affine[1][1] * affine[2][0]);
+      }
+      return 0;
+   }
    //~--- set methods --------------------------------------------------------
    
    /**
@@ -429,7 +728,7 @@ public class RegularField extends Field implements Serializable
     * @param dims New value of property dims.
     */
    @SuppressWarnings("AssignmentToCollectionOrArrayFieldFromParameter")
-   public final void setDims(int[] dims)
+   protected void setDims(int[] dims)
    {
       this.dims = dims;
       nNodes = 1;
@@ -449,7 +748,7 @@ public class RegularField extends Field implements Serializable
            extents[1][i] = 0.0f;           
        }
       ((RegularFieldSchema)schema).setNDims(dims.length);
-      affineFromPoints();
+      affineFromExtents();
       switch (dims.length)
       {
          case 3:
@@ -513,12 +812,13 @@ public class RegularField extends Field implements Serializable
     * Setter for property extents.
     * @param extents New value of property extents.
     */
-   public void setPts(float[][] pts)
+    @Override
+   public void setExtents(float[][] extents)
    {
-      this.extents = pts;
+      this.extents = extents;
       for (int i = 0; i < 2; i++)
-         System.arraycopy(pts[i], 0, physExts[i], 0, pts[0].length);
-      affineFromPoints();
+         System.arraycopy(extents[i], 0, physExts[i], 0, extents[0].length);
+      affineFromExtents();
    }
    
    public void setScale(float[] scale)
@@ -547,7 +847,7 @@ public class RegularField extends Field implements Serializable
          extents[0][1] = -extents[1][1];
          extents[0][2] = -extents[1][2];
       }
-      affineFromPoints();
+      affineFromExtents();
    }
    
    public void setRectilinearCoords(int coord, float[] c)
@@ -563,7 +863,7 @@ public class RegularField extends Field implements Serializable
          if (extents[0][coord] > f) extents[0][coord] = f;
          if (extents[1][coord] < f) extents[1][coord] = f;
       }
-      affineFromPoints();
+      affineFromExtents();
    }
    
    public float[] getNodeCoords(int n)
@@ -572,7 +872,7 @@ public class RegularField extends Field implements Serializable
       {
          float[] crds = new float[nSpace];
          for (int i = 0, j = n * nSpace; i < crds.length; i++, j++)
-            crds[i] = timeCoords.get(currentFrame)[j];
+            crds[i] = timeCoords.getData(currentTime)[j];
       }
       int i, j, k;
       switch (dims.length)
@@ -592,26 +892,31 @@ public class RegularField extends Field implements Serializable
       }
    }
 
+   /** Returns interpolated data from an array and given <b>float indexes</b> */
    public byte[] getInterpolatedData(byte[] data, float u, float v, float w)
    {
        return RegularFieldInterpolator.getInterpolatedData(data, this.dims, u, v, w);
    }
 
+   /** Returns interpolated data from an array and given <b>float indexes</b> */
    public short[] getInterpolatedData(short[] data, float u, float v, float w)
    {
        return RegularFieldInterpolator.getInterpolatedData(data, this.dims, u, v, w);
    }
 
+   /** Returns interpolated data from an array and given <b>float indexes</b> */
    public int[] getInterpolatedData(int[] data, float u, float v, float w)
    {
        return RegularFieldInterpolator.getInterpolatedData(data, this.dims, u, v, w);
    }
    
+   /** Returns interpolated data from an array and given <b>float indexes</b> */
    public float[] getInterpolatedData(float[] data, float u, float v, float w)
    {
        return RegularFieldInterpolator.getInterpolatedData(data, this.dims, u, v, w);
    }
 
+   /** Returns interpolated data from an array and given <b>float indexes</b> */
    public double[] getInterpolatedData(double[] data, float u, float v, float w)
    {
        return RegularFieldInterpolator.getInterpolatedData(data, this.dims, u, v, w);
@@ -628,7 +933,7 @@ public class RegularField extends Field implements Serializable
             c[l] = affine[3][l]+u*affine[0][l];
       else
          for (int i = 0, j = u*nSpace; i < c.length; i++, j++)
-            c[i] = timeCoords.get(currentFrame)[j];
+            c[i] = timeCoords.getData(currentTime)[j];
       return c;
    }
    
@@ -644,7 +949,7 @@ public class RegularField extends Field implements Serializable
             c[l] = affine[3][l]+u*affine[0][l]+v*affine[1][l];
       else
          for (int i = 0, j = (v*dims[0] + u) * nSpace; i < c.length; i++, j++)
-            c[i] = timeCoords.get(currentFrame)[j];
+            c[i] = timeCoords.getData(currentTime)[j];
       return c;
    }
     
@@ -661,7 +966,7 @@ public class RegularField extends Field implements Serializable
             c[l] = affine[3][l]+u*affine[0][l]+v*affine[1][l]+w*affine[2][l];
       else
          for (int i = 0, j = ((w*dims[1] + v)*dims[0] + u) * nSpace; i < c.length; i++, j++)
-            c[i] = timeCoords.get(currentFrame)[j];
+            c[i] = timeCoords.getData(currentTime)[j];
       return c;
    }
 
@@ -678,7 +983,7 @@ public class RegularField extends Field implements Serializable
             c[l] = affine[3][l]+u*affine[0][l];
          return c;
       }
-      return getInterpolatedData(timeCoords.get(currentFrame), u, 0.f, 0.f);
+      return getInterpolatedData(timeCoords.getData(currentTime), u, 0.f, 0.f);
    }
    
    public float[] getGridCoords(float u, float v)
@@ -694,7 +999,7 @@ public class RegularField extends Field implements Serializable
             c[l] = affine[3][l]+u*affine[0][l]+v*affine[1][l];
          return c;
       }
-      return getInterpolatedData(timeCoords.get(currentFrame), u, v, 0.f);
+      return getInterpolatedData(timeCoords.getData(currentTime), u, v, 0.f);
    }
    
    public float[] getGridCoords(float u, float v, float w)
@@ -711,7 +1016,7 @@ public class RegularField extends Field implements Serializable
             c[l] = affine[3][l]+u*affine[0][l]+v*affine[1][l]+w*affine[2][l];
          return c;
       }
-      return getInterpolatedData(timeCoords.get(currentFrame), u, v, w);
+      return getInterpolatedData(timeCoords.getData(currentTime), u, v, w);
    }
 
    public float[] get2DSliceData(int comp, int ind, int s)
@@ -1005,6 +1310,7 @@ public class RegularField extends Field implements Serializable
       throw new UnsupportedOperationException("Not supported yet.");
    }
    
+    @Override
    public boolean isStructureCompatibleWith(Field f)
    {
       if (!(f instanceof RegularField)) return false;
@@ -1012,6 +1318,14 @@ public class RegularField extends Field implements Serializable
       if (rf.getDims().length != dims.length) return false;
       for (int i = 0; i < dims.length; i++)
          if (dims[i] != rf.getDims()[i]) return false;
+      return true;
+   }
+
+   public boolean isDimensionCompatibleWith(Field f)
+   {
+      if (!(f instanceof RegularField)) return false;
+      RegularField rf = (RegularField) f;
+      if (rf.getDims().length != dims.length) return false;
       return true;
    }
    
@@ -1129,78 +1443,6 @@ public class RegularField extends Field implements Serializable
          return coordsFromAffine;
       return updateCoordsFromAffine();
    }
-//   
-//   public void computeNormals()
-//   {
-//      boolean newNormals = false;
-//      if (dims.length != 2)
-//         return;
-//      if (getData("normals") != null && getData("normals").getFData() != null && getData("normals").getFData().length == 3 * nNodes)
-//         normals = getData("normals").getFData();
-//      else
-//      {
-//         float[] normals = new float[3 * nNodes];
-//         newNormals = true;
-//      }
-//      if (timeCoords == null || timeCoords.isEmpty())
-//      {
-//         float[] h = new float[3];
-//         h[0] = affine[0][1] * affine[1][2] - affine[0][2] * affine[1][1];
-//         h[1] = affine[0][2] * affine[1][0] - affine[0][0] * affine[1][2];
-//         h[2] = affine[0][0] * affine[1][1] - affine[0][1] * affine[1][0];
-//         float r = (float) (Math.sqrt(h[0] * h[0] + h[1] * h[1] + h[2] * h[2]));
-//         for (int i = 0; i < h.length; i++)
-//            h[i] /= r;
-//         for (int i = 0, k = 0; i < nNodes; i++)
-//            for (int j = 0; j < h.length; j++, k++)
-//               normals[k] = h[j];
-//      } else if (nSpace == 2)
-//         for (int i = 0; i < nNodes; i++)
-//         {
-//            normals[3*i] = normals[3*i+1] = 0;
-//            normals[3*i+2] = 1;
-//         }
-//      else
-//      {
-//         float[] c = timeCoords.get(currentFrame);
-//         float[] u = new float[3];
-//         float[] v = new float[3];
-//         float[] h = new float[3];
-//         int n = 3 * dims[0];
-//         for (int i = 0, k = 0; i < dims[1]; i++)
-//         {
-//            for (int j = 0; j < dims[0]; j++, k += 3)
-//            {
-//               if (i == 0)
-//                  for (int l = 0; l < 3; l++)
-//                     v[l] = c[k + n + l] - c[k + l];
-//               else if (i == dims[1] - 1)
-//                  for (int l = 0; l < 3; l++)
-//                     v[l] = c[k + l] - c[k - n + l];
-//               else
-//                  for (int l = 0; l < 3; l++)
-//                     v[l] = c[k + n + l] - c[k - n + l];
-//               if (j == 0)
-//                  for (int l = 0; l < 3; l++)
-//                     u[l] = c[k + 3 + l] - c[k + l];
-//               else if (j == dims[0] - 1)
-//                  for (int l = 0; l < 3; l++)
-//                     u[l] = c[k + l] - c[k - 3 + l];
-//               else
-//                  for (int l = 0; l < 3; l++)
-//                     u[l] = c[k + 3 + l] - c[k - 3 + l];
-//               h[0] = u[1] * v[2] - u[2] * v[1];
-//               h[1] = u[2] * v[0] - u[0] * v[2];
-//               h[2] = u[0] * v[1] - u[1] * v[0];
-//               float r = (float) (Math.sqrt(h[0] * h[0] + h[1] * h[1] + h[2] * h[2]));
-//               for (int l = 0; l < 3; l++)
-//                  normals[k + l] = h[l] / r;
-//            }
-//         }
-//      }
-//      if (newNormals)
-//         addData(DataArray.create(normals, 3, "normals"));
-//   }
 
    @Override
    @SuppressWarnings("ReturnOfCollectionOrArrayField")
@@ -1229,7 +1471,7 @@ public class RegularField extends Field implements Serializable
          }
       else
       {
-         float[] c = timeCoords.get(currentFrame);
+         float[] c = timeCoords.getData(currentTime);
          float[] u = new float[3];
          float[] v = new float[3];
          float[] h = new float[3];
@@ -1268,6 +1510,7 @@ public class RegularField extends Field implements Serializable
       return normals;
    }
    
+   @Override
    public void setNormals(float[] normals)
    {
       
@@ -1413,9 +1656,10 @@ public class RegularField extends Field implements Serializable
       return ind;
    }
 
+   @Override
    public void createGeoTree()
    {
-      float[] c = timeCoords.get(currentFrame);
+      float[] c = timeCoords.getData(currentTime);
       
       if (dims.length != 3)
          return;
@@ -1495,7 +1739,7 @@ public class RegularField extends Field implements Serializable
    {
       if (p == null || p.length != 3)
          return null;
-      float[] c = timeCoords.get(currentFrame);
+      float[] c = timeCoords.getData(currentTime);
 cellsLoop:
       for (int i = 0; i < cells.length; i++)
       {
@@ -1548,6 +1792,7 @@ boxesLoop:
       return null;
    }  
 
+   @Override
    public SimplexPosition getFieldCoords(float[] p)
    {
       return getFieldCoords(p, geoTree.getCells(p));
@@ -1555,7 +1800,7 @@ boxesLoop:
 
    public boolean getFieldCoords(float[] p, SimplexPosition result)
    {
-      float[] c = timeCoords.get(currentFrame);
+      float[] c = timeCoords.getData(currentTime);
       Cell[] tets;
       float[] res;
       res = bCoords((Tetra)result.simplex, p);
@@ -1724,8 +1969,7 @@ boxesLoop:
       
    public IrregularField triangulate()
    {
-      IrregularField outField = new IrregularField();
-      outField.setNNodes(nNodes);
+      IrregularField outField = new IrregularField(nNodes);
       if (timeCoords != null && !timeCoords.isEmpty())
          outField.setCoords(timeCoords);
       else
@@ -1772,6 +2016,202 @@ boxesLoop:
       outField.setExtents(extents);
       return outField;
    }
+   
+   @Override
+   public int[] getIndices(int axis) {
+       if(axis < 0 || axis > dims.length)
+           return null;
+       
+       int[] out = new int[nNodes];
+       switch(dims.length) {
+           case 1:               
+               for (int i = 0; i < dims[0]; i++) {
+                   out[i] = i;                   
+               }
+               break;
+           case 2:
+               switch(axis) {
+                   case 0:
+                        for (int j = 0, l = 0; j < dims[1]; j++) {
+                             for (int i = 0; i < dims[0]; i++, l++) {
+                                 out[l] = i;                   
+                             }
+                        }
+                       break;
+                   case 1:
+                        for (int j = 0, l = 0; j < dims[1]; j++) {
+                             for (int i = 0; i < dims[0]; i++, l++) {
+                                 out[l] = j;                   
+                             }
+                        }
+                       break;
+               }
+               break;
+           case 3:
+               switch(axis) {
+                   case 0:
+                       for (int k = 0, l = 0; k < dims[2]; k++) {
+                            for (int j = 0; j < dims[1]; j++) {
+                                 for (int i = 0; i < dims[0]; i++, l++) {
+                                     out[l] = i;                   
+                                 }
+                            }
+                       }
+                       break;
+                   case 1:
+                       for (int k = 0, l = 0; k < dims[2]; k++) {
+                            for (int j = 0; j < dims[1]; j++) {
+                                 for (int i = 0; i < dims[0]; i++, l++) {
+                                     out[l] = j;                   
+                                 }
+                            }
+                       }
+                       break;
+                   case 2:
+                       for (int k = 0, l = 0; k < dims[2]; k++) {
+                            for (int j = 0; j < dims[1]; j++) {
+                                 for (int i = 0; i < dims[0]; i++, l++) {
+                                     out[l] = k;                   
+                                 }
+                            }
+                       }
+                       break;
+               }
+               break;
+       }
+       return out;
+   }
+   
+   @Override
+   public float[] getFIndices(int axis) {
+       if(axis < 0 || axis > dims.length)
+           return null;
+       
+       float[] out = new float[nNodes];
+       switch(dims.length) {
+           case 1:               
+               for (int i = 0; i < dims[0]; i++) {
+                   out[i] = i;                   
+               }
+               break;
+           case 2:
+               switch(axis) {
+                   case 0:
+                        for (int j = 0, l = 0; j < dims[1]; j++) {
+                             for (int i = 0; i < dims[0]; i++, l++) {
+                                 out[l] = i;                   
+                             }
+                        }
+                       break;
+                   case 1:
+                        for (int j = 0, l = 0; j < dims[1]; j++) {
+                             for (int i = 0; i < dims[0]; i++, l++) {
+                                 out[l] = j;                   
+                             }
+                        }
+                       break;
+               }
+               break;
+           case 3:
+               switch(axis) {
+                   case 0:
+                       for (int k = 0, l = 0; k < dims[2]; k++) {
+                            for (int j = 0; j < dims[1]; j++) {
+                                 for (int i = 0; i < dims[0]; i++, l++) {
+                                     out[l] = i;                   
+                                 }
+                            }
+                       }
+                       break;
+                   case 1:
+                       for (int k = 0, l = 0; k < dims[2]; k++) {
+                            for (int j = 0; j < dims[1]; j++) {
+                                 for (int i = 0; i < dims[0]; i++, l++) {
+                                     out[l] = j;                   
+                                 }
+                            }
+                       }
+                       break;
+                   case 2:
+                       for (int k = 0, l = 0; k < dims[2]; k++) {
+                            for (int j = 0; j < dims[1]; j++) {
+                                 for (int i = 0; i < dims[0]; i++, l++) {
+                                     out[l] = k;                   
+                                 }
+                            }
+                       }
+                       break;
+               }
+               break;
+       }
+       return out;       
+   }
+   
+   @Override
+   public double[] getDIndices(int axis) {
+       if(axis < 0 || axis > dims.length)
+           return null;
+       
+       double[] out = new double[nNodes];
+       switch(dims.length) {
+           case 1:               
+               for (int i = 0; i < dims[0]; i++) {
+                   out[i] = i;                   
+               }
+               break;
+           case 2:
+               switch(axis) {
+                   case 0:
+                        for (int j = 0, l = 0; j < dims[1]; j++) {
+                             for (int i = 0; i < dims[0]; i++, l++) {
+                                 out[l] = i;                   
+                             }
+                        }
+                       break;
+                   case 1:
+                        for (int j = 0, l = 0; j < dims[1]; j++) {
+                             for (int i = 0; i < dims[0]; i++, l++) {
+                                 out[l] = j;                   
+                             }
+                        }
+                       break;
+               }
+               break;
+           case 3:
+               switch(axis) {
+                   case 0:
+                       for (int k = 0, l = 0; k < dims[2]; k++) {
+                            for (int j = 0; j < dims[1]; j++) {
+                                 for (int i = 0; i < dims[0]; i++, l++) {
+                                     out[l] = i;                   
+                                 }
+                            }
+                       }
+                       break;
+                   case 1:
+                       for (int k = 0, l = 0; k < dims[2]; k++) {
+                            for (int j = 0; j < dims[1]; j++) {
+                                 for (int i = 0; i < dims[0]; i++, l++) {
+                                     out[l] = j;                   
+                                 }
+                            }
+                       }
+                       break;
+                   case 2:
+                       for (int k = 0, l = 0; k < dims[2]; k++) {
+                            for (int j = 0; j < dims[1]; j++) {
+                                 for (int i = 0; i < dims[0]; i++, l++) {
+                                     out[l] = k;                   
+                                 }
+                            }
+                       }
+                       break;
+               }
+               break;
+       }
+       return out;
+   }
+
    
 }
 

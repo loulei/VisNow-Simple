@@ -45,6 +45,7 @@ import pl.edu.icm.visnow.engine.core.LinkFace;
 import pl.edu.icm.visnow.engine.core.ModuleCore;
 import pl.edu.icm.visnow.engine.core.OutputEgg;
 import pl.edu.icm.visnow.lib.types.VNGeometryObject;
+import pl.edu.icm.visnow.lib.utils.SwingInstancer;
 import pl.edu.icm.visnow.lib.utils.geometry2D.GeometryObject2DStruct;
 import pl.edu.icm.visnow.lib.utils.geometry2D.TransformedGeometryObject2D;
 import pl.edu.icm.visnow.system.main.VisNow;
@@ -58,82 +59,104 @@ public class Viewer2D extends ModuleCore {
 
     private Display2DFrame window;
     private GUI ui;
-    private int stamper = 0;
 
     /**
      * Creates a new instance of Viewer2D
      */
-    public Viewer2D() {
-         ui = new GUI();
-         ui.addChangeListener(new ChangeListener() {
-
+    public Viewer2D() {        
+        SwingInstancer.swingRunAndWait(new Runnable() {
             @Override
-            public void stateChanged(ChangeEvent e) {
+            public void run() {
+                ui = new GUI();
+                ui.addChangeListener(new ChangeListener() {
+
+                   @Override
+                   public void stateChanged(ChangeEvent e) {
+                       window.setVisible(true);
+                   }
+                });
+                window = new Display2DFrame();
+                window.setBounds(0, 20, VisNow.displayWidth, VisNow.displayHeight);
+                window.setTitle("Viewer 2D");
                 window.setVisible(true);
+                setPanel(ui);                
             }
         });
-         window = new Display2DFrame();
-         window.setBounds(0, 20, VisNow.displayWidth, VisNow.displayHeight);
-         window.setTitle("Viewer 2D");
-         window.setVisible(true);
-         setPanel(ui);
+        
     }
 
     public static InputEgg[] inputEggs = null;
     public static OutputEgg[] outputEggs = null;
 
-    public static boolean isViewer() {
+    @Override
+    public boolean isViewer() {
         return true;
     }
 
     @Override
     public void onDelete() {
-        window.getDisplayPanel().clearAllGeometry();
-        window.dispose();
+        SwingInstancer.swingRunAndWait(new Runnable() {
+            @Override
+            public void run() {
+                window.getDisplayPanel().clearAllGeometry();
+                window.dispose();
+            }
+        });
     }
 
     @Override
     public void onActive() {
-        window.setVisible(true);       
-        String tmpName;
-        Vector<Object> ins = getInputValues("inObject");
-        GeometryObject2DStruct struct;
-        Object obj;
-        for (int i = 0; i < ins.size(); i++) {
-            obj = ins.get(i);
-            if(obj == null || !(obj instanceof VNGeometryObject) || ((VNGeometryObject)obj).getGeometryObject2DStruct() == null)
-                continue;
-            
-            struct = ((VNGeometryObject) obj).getGeometryObject2DStruct();
-            if (window.getDisplayPanel().getChildByParentModulePort(struct.getParentModulePort()) == null) {
-                TransformedGeometryObject2D trobj = new TransformedGeometryObject2D(struct);
-                String tmp = struct.getParentModulePort().substring(0, struct.getParentModulePort().indexOf("."));
-                if (!trobj.getName().contains(tmp)) {
-                    trobj.setName(trobj.getName() + " (" + tmp + ")");
-                }
+        if (!window.isVisible())
+            window.setVisible(true);
+        SwingInstancer.swingRunAndWait(new Runnable() {
+            @Override
+            public void run() {
+                String tmpName;
+                Vector<Object> ins = getInputValues("inObject");
+                GeometryObject2DStruct struct;
+                Object obj;
+                for (int i = 0; i < ins.size(); i++) {
+                    obj = ins.get(i);
+                    if (obj == null || !(obj instanceof VNGeometryObject) || ((VNGeometryObject) obj).getGeometryObject2DStruct() == null) {
+                        continue;
+                    }
 
-                trobj.setParentModulePort(struct.getParentModulePort());
-                window.getDisplayPanel().addChild(trobj);
-            } else {
-                tmpName = window.getDisplayPanel().getChildByParentModulePort(struct.getParentModulePort()).getName();
-                window.getDisplayPanel().getChildByParentModulePort(struct.getParentModulePort()).updateWithStruct(struct);
-                String tmp2 = struct.getName() + " (" + struct.getParentModulePort().substring(0, struct.getParentModulePort().indexOf(".")) + ")";
-                if (!tmpName.equals(tmp2)) {
-                    tmpName = new String(tmp2);
+                    struct = ((VNGeometryObject) obj).getGeometryObject2DStruct();
+                    if (window.getDisplayPanel().getChildByParentModulePort(struct.getParentModulePort()) == null) {
+                        TransformedGeometryObject2D trobj = new TransformedGeometryObject2D(struct);
+                        String tmp = struct.getParentModulePort().substring(0, struct.getParentModulePort().indexOf("."));
+                        if (!trobj.getName().contains(tmp)) {
+                            trobj.setName(trobj.getName() + " (" + tmp + ")");
+                        }
+
+                        trobj.setParentModulePort(struct.getParentModulePort());
+                        window.getDisplayPanel().addChild(trobj);
+                    } else {
+                        tmpName = window.getDisplayPanel().getChildByParentModulePort(struct.getParentModulePort()).getName();
+                        window.getDisplayPanel().getChildByParentModulePort(struct.getParentModulePort()).updateWithStruct(struct);
+                        String tmp2 = struct.getName() + " (" + struct.getParentModulePort().substring(0, struct.getParentModulePort().indexOf(".")) + ")";
+                        if (!tmpName.equals(tmp2)) {
+                            tmpName = new String(tmp2);
+                        }
+                        window.getDisplayPanel().getChildByParentModulePort(struct.getParentModulePort()).setName(tmpName);
+                        window.getDisplayPanel().update();
+                    }
                 }
-                window.getDisplayPanel().getChildByParentModulePort(struct.getParentModulePort()).setName(tmpName);
-                window.getDisplayPanel().update();
             }
-        }
-
+        });
     }
 
     @Override
     public void onInputDetach(LinkFace link) {
-        TransformedGeometryObject2D tobj = window.getDisplayPanel().getChildByParentModulePort("" + link.getOutput());
+        final TransformedGeometryObject2D tobj = window.getDisplayPanel().getChildByParentModulePort("" + link.getOutput());
         if(tobj != null) {
-            window.getDisplayPanel().removeChild(tobj);
-            tobj.getGeometryObject2DStruct().removeChangeListener(object2DChangedListener);
+            SwingInstancer.swingRunAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    window.getDisplayPanel().removeChild(tobj);
+                    tobj.getGeometryObject2DStruct().removeChangeListener(object2DChangedListener);
+                }
+            });        
         }
 
     }
@@ -147,35 +170,30 @@ public class Viewer2D extends ModuleCore {
 
         if (ins.get(ins.size() - 1) == null) {
             return;
-        }
-
-        TransformedGeometryObject2D obj = null;
+        }        
         GeometryObject2DStruct struct = ((VNGeometryObject) ins.get(ins.size() - 1)).getGeometryObject2DStruct();
         if (struct == null) {
             return;
         }
-
-        struct.addChangeListener(object2DChangedListener);
-        
-        obj = new TransformedGeometryObject2D(struct);
-
+        struct.addChangeListener(object2DChangedListener);        
+        final TransformedGeometryObject2D obj = new TransformedGeometryObject2D(struct);
         if (!obj.getName().contains(link.getName().getOutputModule())) {
             obj.setName(obj.getName() + " (" + link.getName().getOutputModule() + ")");
         }
-
-        if(obj != null)
-            window.getDisplayPanel().addChild(obj);
-        
-        window.getDisplayPanel().reset();
+        SwingInstancer.swingRunAndWait(new Runnable() {
+            @Override
+            public void run() {
+                window.getDisplayPanel().addChild(obj);        
+                window.getDisplayPanel().reset();                
+            }
+        });        
     }
 
     private ChangeListener object2DChangedListener = new ChangeListener() {
-
         @Override
         public void stateChanged(ChangeEvent e) {
             onActive();
         }
     };
-
 }
 

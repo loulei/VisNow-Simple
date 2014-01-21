@@ -46,7 +46,7 @@ import pl.edu.icm.visnow.lib.utils.IntDataCache;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public class CellCache 
 {

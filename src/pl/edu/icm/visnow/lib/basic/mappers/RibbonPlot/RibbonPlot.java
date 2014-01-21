@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,8 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.lib.basic.mappers.RibbonPlot;
 
@@ -48,7 +51,10 @@ import pl.edu.icm.visnow.engine.core.InputEgg;
 import pl.edu.icm.visnow.engine.core.OutputEgg;
 import pl.edu.icm.visnow.gui.events.FloatValueModificationEvent;
 import pl.edu.icm.visnow.datasets.RegularField;
+import pl.edu.icm.visnow.geometries.objects.GeometryObject;
+import pl.edu.icm.visnow.geometries.parameters.AbstractRenderingParams;
 import pl.edu.icm.visnow.gui.events.FloatValueModificationListener;
+import pl.edu.icm.visnow.lib.basic.mappers.Axes3D.Axes3DObject;
 import pl.edu.icm.visnow.lib.templates.visualization.modules.IrregularOutFieldVisualizationModule;
 import pl.edu.icm.visnow.lib.types.VNRegularField;
 import pl.edu.icm.visnow.lib.utils.SwingInstancer;
@@ -78,21 +84,28 @@ public class RibbonPlot extends IrregularOutFieldVisualizationModule
    protected float[][] physExtents = new float[2][3];
    protected boolean lastRibbon = true;
    protected RegularField outBox = new RegularField(new int[] {2,2,2});
+   protected pl.edu.icm.visnow.lib.basic.mappers.Axes3D.Axes3DObject axesObj = null;
+   protected pl.edu.icm.visnow.lib.basic.mappers.Axes3D.Axes3DParams axesParams = 
+           new pl.edu.icm.visnow.lib.basic.mappers.Axes3D.Axes3DParams();
 
    public RibbonPlot()
    {
       parameters = params = new Params();
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
-
          public void run()
          {
             computeUI = new GUI();
          }
       });
       computeUI.setParams(params);
+      computeUI.getAxesGUI().setParams(axesParams);
       ui.addComputeGUI(computeUI);
       outObj.setName("ribbon plot");
+      axesObj = new Axes3DObject();
+      axesObj.setName("axes3D");
+      outObj.addChild(axesObj);
+      
       params.addChangeListener(new ChangeListener()
       {
          public void stateChanged(ChangeEvent evt)
@@ -100,14 +113,21 @@ public class RibbonPlot extends IrregularOutFieldVisualizationModule
             fromUI = true;
             if (ignoreUI)
                return;
-            if ((params.isAdjusting() || params.isRibbon() != lastRibbon)
-                    && irregularFieldGeometry != null)
+            if (computeUI.isAdjusting())
             {
                updateCoords();
                irregularFieldGeometry.updateCoords();
             } else
                startAction();
             lastRibbon = params.isRibbon();
+         }
+      });
+      axesParams.addChangeListener(new ChangeListener()
+      {
+         public void stateChanged(ChangeEvent evt)
+         {
+            if (params.showAxes())
+               axesObj.update(outBox, axesParams);
          }
       });
       setPanel(ui);
@@ -248,6 +268,38 @@ public class RibbonPlot extends IrregularOutFieldVisualizationModule
       outField.setPhysExts(physExtents);
       
    }
+   
+   protected void show()
+   {
+      if (outField.getNCellSets() > 1)
+      {
+         outObj.fireStopRendering();
+      }
+      outObj.clearGeometries2D();
+      irregularFieldGeometry.updateGeometry();
+      outObj.addGeometry2D(irregularFieldGeometry.getColormapLegend());
+      for (int i = 0; i < outField.getNCellSets(); i++)
+      {
+         outObj.addGeometry2D(irregularFieldGeometry.getColormapLegend(i));
+      }
+      outObj.setExtents(outBox.getExtents());
+      if (params.showAxes())
+      {
+         axesObj.update(outBox, axesParams);
+         outObj.addChild(axesObj);
+      }
+      try
+      {
+         Thread.sleep(100);
+      } catch (InterruptedException ex)
+      {
+      }
+      if (outField.getNCellSets() > 1)
+      {
+         outObj.fireStartRendering();
+      }
+   }
+
 
    @Override
    public void onActive()
@@ -260,8 +312,8 @@ public class RibbonPlot extends IrregularOutFieldVisualizationModule
       if (inFld == null)
          return;
       RegularField in = inFld.getField();
-      if (in == null || in.getNData() < 1
-              || in.getDims().length != 2 || in.getDims()[0] < 2 || in.getDims()[1] < 2)
+      if (in == null || in.getNData() < 1 || 
+          in.getDims().length != 2 || in.getDims()[0] < 2 || in.getDims()[1] < 2)
          return;
       if (in != inField || lastAxis != params.getAxis())
       {
@@ -276,24 +328,23 @@ public class RibbonPlot extends IrregularOutFieldVisualizationModule
             newField = true;
          inField = in;
          inDims = inField.getDims();
-         if (newField)
-         {
-            axis = lastAxis = params.getAxis();
-            outField = new IrregularField();
-            outField.setNSpace(3);
-            outField.setNNodes(2 * inField.getNNodes());
-            coords = new float[3 * outField.getNNodes()];
-            outField.setCoords(coords);
-            updateCells();
-            CellArray ribbons = new CellArray(Cell.QUAD, cells, orientations, null);
-            CellArray ribbonEdges = new CellArray(Cell.SEGMENT, edges, edgeOrientations, null);
-            CellSet cs = new CellSet();
-            cs.setCellArray(ribbons);
-            cs.setBoundaryCellArray(ribbons);
-            cs.setCellArray(ribbonEdges);
-            cs.setBoundaryCellArray(ribbonEdges);
-            outField.addCellSet(cs);
-         }
+      }
+//      if (newField)
+//      {
+         axis = lastAxis = params.getAxis();
+         outField = new IrregularField(2 * inField.getNNodes());
+         outField.setNSpace(3);
+         coords = new float[3 * outField.getNNodes()];
+         outField.setCoords(coords);
+         updateCells();
+         CellArray ribbons = new CellArray(Cell.QUAD, cells, orientations, null);
+         CellArray ribbonEdges = new CellArray(Cell.SEGMENT, edges, edgeOrientations, null);
+         CellSet cs = new CellSet();
+         cs.setCellArray(ribbons);
+         cs.setBoundaryCellArray(ribbons);
+         cs.setCellArray(ribbonEdges);
+         cs.setBoundaryCellArray(ribbonEdges);
+         outField.addCellSet(cs);
          for (DataArray dta : inField.getDataArrays())
             if (dta.isSimpleNumeric() && dta.getVeclen() == 1)
                switch (axis)
@@ -384,22 +435,32 @@ public class RibbonPlot extends IrregularOutFieldVisualizationModule
                   }
                   break;
                }
-         updateCoords();
-         outBox.setExtents(extents);
-         if (params.isZFromData())
-         {
-            float[][] phExts = new float[2][3];
-            float[][] exts = outField.getExtents();
-            for (int i = 0; i < 2; i++)
-               System.arraycopy(exts[i], 0, phExts[i], 0, 2);
-            phExts[0][2] = inField.getData(params.getComponent()).getPhysMin();
-            phExts[1][2] = inField.getData(params.getComponent()).getPhysMax();
-            outBox.setPhysExts(phExts);
-         }
-         setOutputValue("outField", new VNRegularField(outBox));
-         prepareOutputGeometry();
-         show();
-      }
+//      }
+      updateCoords();
+      outBox.setExtents(extents);
+      float[][] phExts = new float[2][3];
+      float[][] exts = outField.getExtents();
+      for (int i = 0; i < 2; i++)
+         System.arraycopy(exts[i], 0, phExts[i], 0, 2);
+      phExts[0][2] = inField.getData(params.getComponent()).getPhysMin();
+      phExts[1][2] = inField.getData(params.getComponent()).getPhysMax();
+      outBox.setPhysExts(phExts);
+      setOutputValue("outField", new VNRegularField(outBox));
+      axesObj.update(outBox, axesParams);
+      computeUI.getAxesGUI().setInfield(outBox);
+      prepareOutputGeometry();
       
+      if (params.isRibbon())
+      {
+         irregularFieldGeometry.getFieldDisplayParams().setShadingMode(AbstractRenderingParams.GOURAUD_SHADED);
+         irregularFieldGeometry.getFieldDisplayParams().setDisplayMode(renderingParams.getDisplayMode() & ~AbstractRenderingParams.EDGES);
+      }
+      else
+      {
+         irregularFieldGeometry.getFieldDisplayParams().setShadingMode(AbstractRenderingParams.BACKGROUND);
+         irregularFieldGeometry.getFieldDisplayParams().setDisplayMode(renderingParams.getDisplayMode() | AbstractRenderingParams.EDGES);
+      }
+      show();
    }
+
 }

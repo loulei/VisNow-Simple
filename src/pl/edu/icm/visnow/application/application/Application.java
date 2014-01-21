@@ -40,10 +40,9 @@ package pl.edu.icm.visnow.application.application;
 import java.awt.Point;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.concurrent.Semaphore;
+import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 import pl.edu.icm.visnow.application.area.Area;
 import pl.edu.icm.visnow.application.frames.ApplicationFrame2;
@@ -57,6 +56,8 @@ import pl.edu.icm.visnow.engine.commands.ModuleDeleteCommand;
 import pl.edu.icm.visnow.engine.core.CoreName;
 import pl.edu.icm.visnow.engine.logging.VNLogger;
 import pl.edu.icm.visnow.engine.main.ModuleBox;
+import pl.edu.icm.visnow.system.config.MainConfig;
+import pl.edu.icm.visnow.system.main.VisNow;
 
 /**
  *
@@ -65,6 +66,14 @@ import pl.edu.icm.visnow.engine.main.ModuleBox;
 public class Application
 {
 
+    public static enum ApplicationStatus {
+      OK,
+      WARNING,
+      ERROR
+    };
+
+
+    
    private Libraries libraries;
    private Engine engine;
    private History history;
@@ -164,10 +173,21 @@ public class Application
       return title;
    }
 
-   public void setTitle(String title)
-   {
-      this.title = title;
-   }
+       
+    /**
+     * Sets application title and corresponding application tab label to <code>title</code>
+    */
+    public void setTitle(String title) {
+        this.title = title;
+        
+        final Application thisApplication = this;
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                VisNow.get().getMainWindow().getApplicationsPanel().updateApplicationTabTitle(thisApplication);
+            }
+        });
+    }
 
    public String getFilePath()
    {
@@ -175,7 +195,11 @@ public class Application
    }
    private Thread engineThread;
 
-   public Application(String title)
+   public Application(String title) {
+       this(title, true);
+   }
+   
+   public Application(String title, boolean disableStartupViewers)
    {
       this.libraries = new Libraries(this);
       this.engine = new Engine(this);
@@ -194,14 +218,33 @@ public class Application
 
       engineThread = new Thread(getEngine(), "VN-Engine");
       engineThread.start();
+      
+      if(!disableStartupViewers)
+        initViewers();
    }
 
    public Application(String title, File file)
    {
-      this(title);
+      this(title, true);
       this.filePath = file.getPath();
    }
 
+    private void initViewers() {
+        MainConfig mainConfig = VisNow.get().getMainConfig();
+        if (mainConfig.isStartupViewer3D()) {
+            addInitViewerByName("viewer 3D", "pl.edu.icm.visnow.lib.basic.viewers.Viewer3D.Viewer3D");
+        }
+        if (mainConfig.isStartupOrthoViewer3D()) {
+            addInitViewerByName("orthoviewer 3D", "pl.edu.icm.visnow.lib.basic.viewers.MultiViewer3D.Viewer3D");
+        }
+        if (mainConfig.isStartupViewer2D()) {
+            addInitViewerByName("viewer 2D", "pl.edu.icm.visnow.lib.basic.viewers.Viewer2D.Viewer2D");
+        }
+        if (mainConfig.isStartupFieldViewer3D()) {
+            addInitViewerByName("field viewer 3D", "pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D.FieldViewer3D");
+        }
+    }
+   
    public boolean save()
    {
       return saveAs(new File(filePath));
@@ -297,7 +340,7 @@ public class Application
    {
       this.getEngine().correctModuleCount(c);
    }
-   private Point initPoint = new Point(200, 460);
+   private Point initPoint = new Point(200, 440);
    int initCounter = 0;
 
    public void addInitViewerByName(String name, String module)
@@ -309,6 +352,7 @@ public class Application
       this.executor.execute(viewerAddCommand);
       initPoint = new Point(initPoint.x - 80, initPoint.y - 70);
       initCounter++;
+      this.setNoChanged();
    }
 
    public void addModuleByName(String name, String module, Point pt)
@@ -340,4 +384,33 @@ public class Application
          newPoint = new Point(20, newPoint.y - 50);
       }
    }
+   
+    private ApplicationStatus applicationStatus = ApplicationStatus.OK;
+
+    public ApplicationStatus getStatus() {
+        return applicationStatus;
+    }
+
+    public void setStatus(ApplicationStatus status) {
+        this.applicationStatus = status;
+        fireStatusChanged();
+    }
+    
+    protected transient ArrayList<ApplicationStatusChangeListener> applicationStatusChangeListenerList = new ArrayList<ApplicationStatusChangeListener>();
+
+    public synchronized void addStatusChangeListener(ApplicationStatusChangeListener listener) {
+        applicationStatusChangeListenerList.add(listener);
+    }
+
+    public synchronized void removeStatusChangeListener(ApplicationStatusChangeListener listener) {
+        applicationStatusChangeListenerList.remove(listener);
+    }
+
+    public void fireStatusChanged() {
+        ApplicationStatusChangeEvent e = new ApplicationStatusChangeEvent(applicationStatus, this);
+        for (int i = 0; i < applicationStatusChangeListenerList.size(); i++) {
+            applicationStatusChangeListenerList.get(i).applicationStatusChanged(e);
+        }
+    }
+   
 }

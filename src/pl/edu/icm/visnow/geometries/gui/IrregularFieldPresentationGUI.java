@@ -37,14 +37,22 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.geometries.gui;
 
+import java.awt.CardLayout;
 import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Vector3f;
-import pl.edu.icm.visnow.datasets.Field;
+import pl.edu.icm.visnow.datasets.IrregularField;
 import pl.edu.icm.visnow.geometries.objects.SignalingTransform3D;
 import pl.edu.icm.visnow.geometries.parameters.IrregularFieldDisplayParams;
 import pl.edu.icm.visnow.lib.gui.ChangeFiringGUI;
 import pl.edu.icm.visnow.system.main.VisNow;
+import static java.awt.GridBagConstraints.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 
 /**
  *
@@ -53,7 +61,7 @@ import pl.edu.icm.visnow.system.main.VisNow;
 public class IrregularFieldPresentationGUI extends javax.swing.JPanel
 {
    private boolean debug = VisNow.isDebug();
-   protected Field inField = null;
+   protected IrregularField inField = null;
    protected int nScalarComps = 0;
    protected int nScalarCellComps = 0;
    protected boolean active = true;
@@ -71,7 +79,7 @@ public class IrregularFieldPresentationGUI extends javax.swing.JPanel
    }
    
    
-   public IrregularFieldPresentationGUI(Field inField, IrregularFieldDisplayParams params)
+   public IrregularFieldPresentationGUI(IrregularField inField, IrregularFieldDisplayParams params)
    {
       initComponents();
       active = false;
@@ -80,58 +88,30 @@ public class IrregularFieldPresentationGUI extends javax.swing.JPanel
       this.params = params;
       this.inField = inField;
       dataMappingGUI.setInData(inField, params);
-      transformPanel.setTransformParams(params.getTransformParams());
-      transformPanel.setTransSensitivity(inField.getDiameter()/500);
+      transformGUI.setTransformParams(params.getTransformParams());
+      transformGUI.setTransSensitivity(inField.getDiameter()/500);
       displayPropertiesGUI.setRenderingParams(params);
+      displayPropertiesGUI.setNDims(inField.getNCellDims());
       active = true;
    }
 
-   public void setPresentation(boolean simple)
-   {
-      GridBagConstraints gridBagConstraints;
-      if (simple)
-      {
-         remove(mainPane);
-         mainPane.removeAll();
-         dataMappingGUI.setPresentation(simple);
-         displayPropertiesGUI.setPresentation(simple);
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 0;
-         gridBagConstraints.gridy = 1;
-         gridBagConstraints.weightx = 1.0;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-         add(dataMappingGUI, gridBagConstraints);
-         if (dataMappingGUI.isTransparencyStartNull())
-         {
-            gridBagConstraints = new java.awt.GridBagConstraints();
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 2;
-            gridBagConstraints.weightx = 1.0;
-            gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-            add(displayPropertiesGUI, gridBagConstraints);
-         }
-      }
-      else
-      {
-         remove(dataMappingGUI);
-         if (dataMappingGUI.isTransparencyStartNull())
-            remove(displayPropertiesGUI);
-         dataMappingGUI.setPresentation(simple);
-         displayPropertiesGUI.setPresentation(simple);
-         mainPane.addTab("datamap", dataMappingGUI);
-         mainPane.addTab("display", displayPropertiesGUI);
-         mainPane.addTab("transform", transformPanel);
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 0;
-         gridBagConstraints.gridy = 1;
-         gridBagConstraints.weightx = 1.0;
-         gridBagConstraints.weighty = 1.0;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-         add(mainPane, gridBagConstraints);
-      }
-      revalidate();
-      repaint();
-   }
+    public void setPresentation(boolean simple) {
+        Insets insets0 = new Insets(0, 0, 0, 0);
+        dataMappingGUI.setPresentation(simple);
+        displayPropertiesGUI.setPresentation(simple);
+
+        if (simple) {
+            simplePanel.add(dataMappingGUI, new GridBagConstraints(0, 1, 1, 1, 1, 0, NORTH, HORIZONTAL, insets0, 0, 0));
+            if (dataMappingGUI.isTransparencyStartNull())
+                simplePanel.add(displayPropertiesGUI, new GridBagConstraints(0, 2, 1, 1, 1, 0, NORTH, HORIZONTAL, insets0, 0, 0));
+        } else {
+            dataMappingPanel.add(dataMappingGUI, java.awt.BorderLayout.NORTH);
+            displayPropertiesPanel.add(displayPropertiesGUI, java.awt.BorderLayout.NORTH);
+        }
+        ((CardLayout) getLayout()).show(this, simple ? "simpleUI" : "extendedUI");        
+        revalidate();
+        repaint();
+    }
 
    
    /** This method is called from within the constructor to
@@ -139,49 +119,79 @@ public class IrregularFieldPresentationGUI extends javax.swing.JPanel
     * WARNING: Do NOT modify this code. The content of this method is
     * always regenerated by the Form Editor.
     */
-   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-   private void initComponents()
-   {
-      java.awt.GridBagConstraints gridBagConstraints;
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-      mainPane = new javax.swing.JTabbedPane();
-      dataMappingGUI = new pl.edu.icm.visnow.geometries.gui.DataMappingGUI();
-      displayPropertiesGUI = new pl.edu.icm.visnow.geometries.gui.DisplayPropertiesGUI();
-      transformPanel = new pl.edu.icm.visnow.geometries.gui.TransformPanel();
+        extendedTabbedPane = new javax.swing.JTabbedPane();
+        dataMappingScrollPane = new javax.swing.JScrollPane();
+        dataMappingPanel = new javax.swing.JPanel();
+        dataMappingGUI = new pl.edu.icm.visnow.geometries.gui.DataMappingGUI();
+        displayPropertiesScrollPane = new javax.swing.JScrollPane();
+        displayPropertiesPanel = new javax.swing.JPanel();
+        displayPropertiesGUI = new pl.edu.icm.visnow.geometries.gui.DisplayPropertiesGUI();
+        transformScrollPane = new javax.swing.JScrollPane();
+        transformPanel = new javax.swing.JPanel();
+        transformGUI = new pl.edu.icm.visnow.geometries.gui.TransformPanel();
+        simpleScrollPane = new javax.swing.JScrollPane();
+        simplePanel = new javax.swing.JPanel();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
-      setMinimumSize(new java.awt.Dimension(200, 720));
-      setName(""); // NOI18N
-      setPreferredSize(new java.awt.Dimension(235, 760));
-      setRequestFocusEnabled(false);
-      setLayout(new java.awt.GridBagLayout());
+        setName(""); // NOI18N
+        setRequestFocusEnabled(false);
+        setLayout(new java.awt.CardLayout());
 
-      mainPane.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
-      mainPane.setMinimumSize(new java.awt.Dimension(200, 565));
-      mainPane.setPreferredSize(new java.awt.Dimension(235, 565));
+        extendedTabbedPane.setToolTipText("regular field presentation");
+        extendedTabbedPane.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
 
-      dataMappingGUI.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
-      mainPane.addTab("datamap", dataMappingGUI);
+        dataMappingScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-      displayPropertiesGUI.setMinimumSize(new java.awt.Dimension(200, 590));
-      displayPropertiesGUI.setPreferredSize(new java.awt.Dimension(235, 590));
-      mainPane.addTab("display", displayPropertiesGUI);
+        dataMappingPanel.setLayout(new java.awt.BorderLayout());
 
-      transformPanel.setMinimumSize(new java.awt.Dimension(200, 590));
-      transformPanel.setPreferredSize(new java.awt.Dimension(235, 590));
-      mainPane.addTab("transforms", transformPanel);
+        dataMappingGUI.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
+        dataMappingPanel.add(dataMappingGUI, java.awt.BorderLayout.NORTH);
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.weighty = 1.0;
-      add(mainPane, gridBagConstraints);
-   }// </editor-fold>//GEN-END:initComponents
+        dataMappingScrollPane.setViewportView(dataMappingPanel);
+
+        extendedTabbedPane.addTab("datamap", dataMappingScrollPane);
+
+        displayPropertiesScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        displayPropertiesPanel.setLayout(new java.awt.BorderLayout());
+        displayPropertiesPanel.add(displayPropertiesGUI, java.awt.BorderLayout.NORTH);
+
+        displayPropertiesScrollPane.setViewportView(displayPropertiesPanel);
+
+        extendedTabbedPane.addTab("display", displayPropertiesScrollPane);
+
+        transformScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        transformPanel.setLayout(new java.awt.BorderLayout());
+        transformPanel.add(transformGUI, java.awt.BorderLayout.NORTH);
+
+        transformScrollPane.setViewportView(transformPanel);
+
+        extendedTabbedPane.addTab("transform", transformScrollPane);
+
+        add(extendedTabbedPane, "extendedUI");
+
+        simpleScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        simplePanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 99;
+        gridBagConstraints.weighty = 1.0;
+        simplePanel.add(filler1, gridBagConstraints);
+
+        simpleScrollPane.setViewportView(simplePanel);
+
+        add(simpleScrollPane, "simpleUI");
+    }// </editor-fold>//GEN-END:initComponents
 
    public void setSignalingTransform(SignalingTransform3D sigTrans)
    {
-      transformPanel.setSigTrans(sigTrans);
+      transformGUI.setSigTrans(sigTrans);
    }
 
    public void fireStateChanged()
@@ -198,10 +208,46 @@ public class IrregularFieldPresentationGUI extends javax.swing.JPanel
       return displayPropertiesGUI;
    }
 
-   // Variables declaration - do not modify//GEN-BEGIN:variables
-   private pl.edu.icm.visnow.geometries.gui.DataMappingGUI dataMappingGUI;
-   private pl.edu.icm.visnow.geometries.gui.DisplayPropertiesGUI displayPropertiesGUI;
-   private javax.swing.JTabbedPane mainPane;
-   private pl.edu.icm.visnow.geometries.gui.TransformPanel transformPanel;
-   // End of variables declaration//GEN-END:variables
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private pl.edu.icm.visnow.geometries.gui.DataMappingGUI dataMappingGUI;
+    private javax.swing.JPanel dataMappingPanel;
+    private javax.swing.JScrollPane dataMappingScrollPane;
+    private pl.edu.icm.visnow.geometries.gui.DisplayPropertiesGUI displayPropertiesGUI;
+    private javax.swing.JPanel displayPropertiesPanel;
+    private javax.swing.JScrollPane displayPropertiesScrollPane;
+    private javax.swing.JTabbedPane extendedTabbedPane;
+    private javax.swing.Box.Filler filler1;
+    private javax.swing.JPanel simplePanel;
+    private javax.swing.JScrollPane simpleScrollPane;
+    private pl.edu.icm.visnow.geometries.gui.TransformPanel transformGUI;
+    private javax.swing.JPanel transformPanel;
+    private javax.swing.JScrollPane transformScrollPane;
+    // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the dataMappingGUI
+     */
+    public pl.edu.icm.visnow.geometries.gui.DataMappingGUI getDataMappingGUI() {
+        return dataMappingGUI;
+    }
+
+    public static void main(String[] args) {
+        UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(4,0,0,0));
+        
+        JFrame f = new JFrame();
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        final IrregularFieldPresentationGUI p = new IrregularFieldPresentationGUI();
+        f.add(p);
+        f.pack();
+        f.addComponentListener(new ComponentAdapter() {
+            private boolean toggleSimple = true;
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                p.setPresentation(toggleSimple);
+                toggleSimple = !toggleSimple;
+            }
+        });
+        f.setVisible(true);
+    }
 }

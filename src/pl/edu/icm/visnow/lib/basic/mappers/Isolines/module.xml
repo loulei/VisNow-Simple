@@ -6,9 +6,11 @@
             <acceptor>
                 <param name="REGULAR" value="true"/>
                 <param name="NDIMS" value="2"/>
+                <param name="DATA_TYPE" value="SimpleNumeric"/>
             </acceptor>
             <acceptor>
                 <param name="IRREGULAR" value="true"/>
+                <param name="DATA_TYPE" value="SimpleNumeric"/>
             </acceptor>
         </input>
     </inputs>

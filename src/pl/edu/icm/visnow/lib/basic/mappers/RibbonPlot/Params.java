@@ -1,5 +1,6 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+Copyright (C) 2006-2013 University of Warsaw, ICM
 
 This file is part of GNU Classpath.
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -33,7 +34,9 @@ module.  An independent module is a module which is not derived from
 or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+exception statement from your version.
+*/
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.basic.mappers.RibbonPlot;
 
@@ -52,9 +55,8 @@ public class Params extends Parameters
    protected static final String DIRECTION = "direction";
    protected static final String SCALE = "scale";
    protected static final String RIBBON = "ribbon";
+   protected static final String AXES = "axes";
    protected static final String ZERO_BASED = "zeroBased";
-   protected static final String ADJUSTING = "adjusting";
-   protected static final String Z_FROM_DATA = "z from data";
 
    public Params()
    {
@@ -66,9 +68,8 @@ public class Params extends Parameters
       new ParameterEgg<Integer>(DIRECTION, ParameterType.dependent, 0),
       new ParameterEgg<Float>(SCALE, ParameterType.dependent, 0f),
       new ParameterEgg<Boolean>(RIBBON, ParameterType.independent, true),
-      new ParameterEgg<Boolean>(ZERO_BASED, ParameterType.independent, true),
-      new ParameterEgg<Boolean>(ADJUSTING, ParameterType.independent, false),
-      new ParameterEgg<Boolean>(Z_FROM_DATA, ParameterType.independent, true)
+      new ParameterEgg<Boolean>(AXES, ParameterType.independent, false),
+      new ParameterEgg<Boolean>(ZERO_BASED, ParameterType.independent, true)
    };
 
    public int getComponent()
@@ -114,6 +115,17 @@ public class Params extends Parameters
       setValue(RIBBON, ribbon);
       fireStateChanged();
    }
+   
+   public boolean showAxes()
+   {
+      return (Boolean) getValue(AXES);
+   }
+
+   public void setShowAxes(boolean axes)
+   {
+      setValue(AXES, axes);
+      fireStateChanged();
+   }
 
    public boolean isZeroBased()
    {
@@ -126,24 +138,4 @@ public class Params extends Parameters
       fireStateChanged();
    }
 
-   public boolean isAdjusting()
-   {
-      return (Boolean) getValue(ADJUSTING);
-   }
-
-   public void setAdjusting(boolean adjusting)
-   {
-      setValue(ADJUSTING, adjusting);
-   }
-
-   public boolean isZFromData()
-   {
-      return (Boolean) getValue(Z_FROM_DATA);
-   }
-
-   public void setZFromData(boolean val)
-   {
-      setValue(Z_FROM_DATA, val);
-      fireStateChanged();
-   }
 }

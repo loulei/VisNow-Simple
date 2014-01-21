@@ -4,11 +4,17 @@
     <reader datatype="VisNow Field"/>
     <description value="Reads VisNow Field (VNF) data files."/>
     <outputs>
-        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+        <output name="regularOutField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
             <schema>
                 <param name="REGULAR" value="true"/>
             </schema>
         </output>
+        <output name="irregularOutField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <schema>
+                <param name="IRREGULAR" value="true"/>
+            </schema>
+        </output>
+        
         <geometryOutput/>
     </outputs>
 </module>

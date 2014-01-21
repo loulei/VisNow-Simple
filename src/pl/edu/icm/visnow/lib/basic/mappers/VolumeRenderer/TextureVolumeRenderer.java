@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,8 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.lib.basic.mappers.VolumeRenderer;
 
@@ -41,8 +44,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import javax.media.j3d.*;
 import javax.vecmath.Color3f;
-import pl.edu.icm.visnow.datamaps.ColorMapManager;
-import pl.edu.icm.visnow.datamaps.colormap2d.ColorMap2D;
 import pl.edu.icm.visnow.datasets.RegularField;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
 import pl.edu.icm.visnow.geometries.objects.generics.OpenAppearance;
@@ -60,8 +61,8 @@ import pl.edu.icm.visnow.system.main.VisNow;
  *
  * @author  Krzysztof S. Nowinski, University of Warsaw, ICM
  */
-public final class TextureVolumeRenderer extends OpenBranchGroup {
-
+public final class TextureVolumeRenderer extends OpenBranchGroup 
+{
     private RegularField inField;
     private QuadArray[][] volMeshes = new QuadArray[3][2];
     private int n2, n1, n0;       //real data array dims
@@ -84,7 +85,7 @@ public final class TextureVolumeRenderer extends OpenBranchGroup {
     private TransformGroup tg = null;
     private BufferedImage[] texImages;
     private int[][] texSlices;
-    private int nThreads = Runtime.getRuntime().availableProcessors();
+    private int nThreads = VisNow.availableProcessors();
     private int[] textureImageData = null;
     private Runtime runtime = Runtime.getRuntime();
     long used = (runtime.totalMemory() - runtime.freeMemory()) / 1024;
@@ -94,9 +95,8 @@ public final class TextureVolumeRenderer extends OpenBranchGroup {
         this.setCapability(BranchGroup.ALLOW_LOCAL_TO_VWORLD_READ);
         this.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
         this.setCapability(BranchGroup.ALLOW_DETACH);
-        for (int i = 0; i < trMap.length; i++) {
+        for (int i = 0; i < trMap.length; i++) 
             trMap[i] = (byte) (i / 3);
-        }
         tr = new OpenShape3D();
         this.inField = inField;
         this.params = params;
@@ -104,27 +104,24 @@ public final class TextureVolumeRenderer extends OpenBranchGroup {
 
         int[] dims = inField.getDims();
         int i, k;
-        n2 = dims[2];
-        n1 = dims[1];
-        n0 = dims[0];
-        if (needPow2Textures) {
+        nn2 = n2 = dims[2];
+        nn1 = n1 = dims[1];
+        nn0 = n0 = dims[0];
+        if (needPow2Textures) 
+        {
             nn0 = nn1 = nn2 = 0;
-            for (i = 0, k = 1; i < 20; i++, k *= 2) {
-                if (k >= n0 && nn0 == 0) nn0 = k;
-                if (k >= n1 && nn1 == 0) nn1 = k;
-                if (k >= n2 && nn2 == 0) nn2 = k;
+            for (i = 0, k = 1; i < 20; i++, k *= 2) 
+            {
+                if (k >= n0 && k < 2 * n0) nn0 = k;
+                if (k >= n1 && k < 2 * n1) nn1 = k;
+                if (k >= n2 && k < 2 * n2) nn2 = k;
             }
-        } else {
-            nn0 = n0;
-            nn1 = n1;
-            nn2 = n2;
-        }
+        } 
         OpenMaterial mat = new OpenMaterial(new Color3f(0.7f, 0.7f, 0.7f),
                                             new Color3f(0.1f, 0.1f, 0.1f),
                                             new Color3f(1.0f, 1.0f, 1.0f),
                                             new Color3f(0.7f, 0.7f, 0.7f),
                                             .5f, OpenMaterial.AMBIENT_AND_DIFFUSE);
-
 
         int nn = n0;
         if (nn < n1) {
@@ -476,7 +473,7 @@ public final class TextureVolumeRenderer extends OpenBranchGroup {
             if (kend > nn2) kend = nn2;
             for (int i = kstart; i < kend; i++) {
                 int[] texSlice = texSlices[i];
-                ColorMapper.map(inField, dataMappingParams, i * nn0 * nn1, (i + 1) * nn0 * nn1, byteColorSlice);
+                ColorMapper.map(inField, dataMappingParams, i * nn0 * nn1, (i + 1) * nn0 * nn1, 0, new Color3f(0,0,0), byteColorSlice);
                 for (int j = 0; j < nn0 * nn1; j++)
                     texSlice[j] = (texSlice[j] & 0xff000000) | 
                                  ((byteColorSlice[4 * j] & 0xff) << 16) | 
@@ -541,48 +538,10 @@ public final class TextureVolumeRenderer extends OpenBranchGroup {
         updateObjectTexture();
     }
 
-    private class MapTexture implements Runnable {
-
-        int nThreads = 1;
-        int iThread = 0;
-        byte[] byteColorSlice = null;
-
-        public MapTexture(int nThreads, int iThread) {
-            this.nThreads = nThreads;
-            this.iThread = iThread;
-            byteColorSlice = new byte[4 * nn0 * nn1];
-        }
-
-        @Override
-        public void run() {
-            int dk = nn2 / nThreads;
-            int kstart = iThread * dk + Math.min(iThread, nn2 % nThreads);
-            int kend = (iThread + 1) * dk + Math.min(iThread + 1, nn2 % nThreads);
-            if (kend > nn2) kend = nn2;
-            for (int i = kstart; i < kend; i++) {
-                int[] texSlice = texSlices[i];
-                ColorMapper.map(inField, dataMappingParams, i * nn0 * nn1, (i + 1) * nn0 * nn1, byteColorSlice);
-                for (int j = 0; j < nn0 * nn1; j++)
-                    texSlice[j] = (texSlice[j] & 0xff000000) | ((byteColorSlice[4 * j] & 0xff) << 16)
-                            | ((byteColorSlice[4 * j + 1] & 0xff) << 8) | (byteColorSlice[4 * j + 2] & 0xff);
-                mapTransparency(i * nn0 * nn1, texSlice);
-                texImages[i].setRGB(0, 0, nn0, nn1, texSlice, 0, nn0);
-            }
-        }
-    }
-
     public void updateTexture() {
         checkTexImages();
-        Thread[] workThreads = new Thread[nThreads];
-        for (int iThread = 0; iThread < nThreads; iThread++) {
-            workThreads[iThread] = new Thread(new MapTexture(nThreads, iThread));
-            workThreads[iThread].start();
-        }
-        for (int i = 0; i < workThreads.length; i++)
-            try {
-                workThreads[i].join();
-            } catch (Exception e) {
-            }
+        updateTextureColors();
+        updateTextureTransparency();
         updateObjectTexture();
     }
 
@@ -856,9 +815,8 @@ public final class TextureVolumeRenderer extends OpenBranchGroup {
     }
 
     public void setTranspComp(int c) {
-        if (c < 0 || c >= inField.getNData()) {
+        if (c < 0 || c >= inField.getNData())
             return;
-        }
         updateTexture();
         ap.setTexture(tx3d);
     }
@@ -887,324 +845,4 @@ public final class TextureVolumeRenderer extends OpenBranchGroup {
         return tg;
     }
 
-    private int[] mapColorTransparency(int start, int[] colors) {
-        int nColors = ColorMapManager.SAMPLING;
-        int mColors = 0;
-        ColorMap2D colorMap2D = null;
-        int[] texData = null;
-        if (colors == null || colors.length != nn0 * nn1)
-            colors = new int[nn0 * nn1];
-        for (int i = 0; i < colors.length; i++)
-            colors[i] = 0;
-        DataArray uData = inField.getData(dataMappingParams.getUParams().getDataComponent());
-        DataArray vData = inField.getData(dataMappingParams.getVParams().getDataComponent());
-        if (!dataMappingParams.isUseColormap2D() && dataMappingParams.getTextureImage() == null
-                || uData == null || vData == null)
-            return colors;
-        if (dataMappingParams.isUseColormap2D()) {
-            colorMap2D = (ColorMap2D) ColorMapManager.getInstance().getColorMap2DListModel().getElementAt(dataMappingParams.getColorMap2DIndex());
-            texData = colorMap2D.getARGBColorTable();
-            nColors = ColorMapManager.SAMPLING;
-            mColors = ColorMapManager.SAMPLING;
-        } else {
-            BufferedImage textureImage = dataMappingParams.getTextureImage();
-            mColors = textureImage.getHeight();
-            nColors = textureImage.getWidth();
-            texData = textureImage.getRGB(0, 0, nColors, mColors, null, 0, 1);
-        }
-        float low = uData.getMinv();
-        float d = nColors / (uData.getMaxv() - low);
-        if (uData.getVeclen() == 1)
-            switch (uData.getType()) {
-                case DataArray.FIELD_DATA_BYTE:
-                    byte[] bData = uData.getBData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            int k = (int) (d * ((0xff & bData[l]) - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > nColors)
-                                k = nColors;
-                            colors[m] = k;
-                        }
-                    break;
-                case DataArray.FIELD_DATA_SHORT:
-                    short[] sData = uData.getSData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            int k = (int) (d * (sData[l] - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > nColors)
-                                k = nColors;
-                            colors[m] = k;
-                        }
-                    break;
-                case DataArray.FIELD_DATA_INT:
-                    int[] iData = uData.getIData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            int k = (int) (d * (iData[l] - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > nColors)
-                                k = nColors;
-                            colors[m] = k;
-                        }
-                    break;
-                case DataArray.FIELD_DATA_FLOAT:
-                    float[] fData = uData.getFData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            int k = (int) (d * (fData[l] - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > nColors)
-                                k = nColors;
-                            colors[m] = k;
-                        }
-                    break;
-                case DataArray.FIELD_DATA_DOUBLE:
-                    double[] dData = uData.getDData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            int k = (int) (d * (dData[l] - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > nColors)
-                                k = nColors;
-                            colors[m] = k;
-                        }
-                    break;
-            }
-        else {
-            double v;
-            int vl = uData.getVeclen();
-            switch (uData.getType()) {
-                case DataArray.FIELD_DATA_BYTE:
-                    byte[] bData = uData.getBData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            v = 0;
-                            for (int p = 0, k = vl * l; p < vl; p++, k++)
-                                v += (0xff & bData[k]) * (0xff & bData[k]);
-                            int k = (int) (d * (Math.sqrt(v) - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > nColors)
-                                k = nColors;
-                            colors[m] = k;
-                        }
-                    break;
-                case DataArray.FIELD_DATA_SHORT:
-                    short[] sData = uData.getSData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            v = 0;
-                            for (int p = 0, k = vl * l; p < vl; p++, k++)
-                                v += sData[k] * sData[k];
-                            int k = (int) (d * (Math.sqrt(v) - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > nColors)
-                                k = nColors;
-                            colors[m] = k;
-                        }
-                    break;
-                case DataArray.FIELD_DATA_INT:
-                    int[] iData = uData.getIData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            v = 0;
-                            for (int p = 0, k = vl * l; p < vl; p++, k++)
-                                v += iData[k] * iData[k];
-                            int k = (int) (d * (Math.sqrt(v) - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > nColors)
-                                k = nColors;
-                            colors[m] = k;
-                        }
-                    break;
-                case DataArray.FIELD_DATA_FLOAT:
-                    float[] fData = uData.getFData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            v = 0;
-                            for (int p = 0, k = vl * l; p < vl; p++, k++)
-                                v += fData[k] * fData[k];
-                            int k = (int) (d * (Math.sqrt(v) - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > nColors)
-                                k = nColors;
-                            colors[m] = k;
-                        }
-                    break;
-                case DataArray.FIELD_DATA_DOUBLE:
-                    double[] dData = uData.getDData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            v = 0;
-                            for (int p = 0, k = vl * l; p < vl; p++, k++)
-                                v += dData[k] * dData[k];
-                            int k = (int) (d * (Math.sqrt(v) - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > nColors)
-                                k = nColors;
-                            colors[m] = k;
-                        }
-                    break;
-            }
-        }
-
-        low = vData.getMinv();
-        d = mColors / (vData.getMaxv() - low);
-        if (vData.getVeclen() == 1)
-            switch (vData.getType()) {
-                case DataArray.FIELD_DATA_BYTE:
-                    byte[] bData = vData.getBData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            int k = (int) (d * ((0xff & bData[l]) - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > mColors)
-                                k = mColors;
-                            colors[m] = texData[k * nColors + colors[m]];
-                        }
-                    break;
-                case DataArray.FIELD_DATA_SHORT:
-                    short[] sData = vData.getSData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            int k = (int) (d * (sData[l] - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > mColors)
-                                k = mColors;
-                            colors[m] = texData[k * nColors + colors[m]];
-                        }
-                    break;
-                case DataArray.FIELD_DATA_INT:
-                    int[] iData = vData.getIData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            int k = (int) (d * (iData[l] - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > mColors)
-                                k = mColors;
-                            colors[m] = texData[k * nColors + colors[m]];
-                        }
-                    break;
-                case DataArray.FIELD_DATA_FLOAT:
-                    float[] fData = vData.getFData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            int k = (int) (d * (fData[l] - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > mColors)
-                                k = mColors;
-                            colors[m] = texData[k * nColors + colors[m]];
-                        }
-                    break;
-                case DataArray.FIELD_DATA_DOUBLE:
-                    double[] dData = vData.getDData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            int k = (int) (d * (dData[l] - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > mColors)
-                                k = mColors;
-                            colors[m] = texData[k * nColors + colors[m]];
-                        }
-                    break;
-            }
-        else {
-            double v;
-            int vl = vData.getVeclen();
-            switch (vData.getType()) {
-                case DataArray.FIELD_DATA_BYTE:
-                    byte[] bData = vData.getBData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            v = 0;
-                            for (int p = 0, k = vl * l; p < vl; p++, k++)
-                                v += (0xff & bData[k]) * (0xff & bData[k]);
-                            int k = (int) (d * (Math.sqrt(v) - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > mColors)
-                                k = mColors;
-                            colors[m] = texData[k * nColors + colors[m]];
-                        }
-                    break;
-                case DataArray.FIELD_DATA_SHORT:
-                    short[] sData = vData.getSData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            v = 0;
-                            for (int p = 0, k = vl * l; p < vl; p++, k++)
-                                v += sData[k] * sData[k];
-                            int k = (int) (d * (Math.sqrt(v) - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > mColors)
-                                k = mColors;
-                            colors[m] = texData[k * nColors + colors[m]];
-                        }
-                    break;
-                case DataArray.FIELD_DATA_INT:
-                    int[] iData = vData.getIData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            v = 0;
-                            for (int p = 0, k = vl * l; p < vl; p++, k++)
-                                v += iData[k] * iData[k];
-                            int k = (int) (d * (Math.sqrt(v) - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > mColors)
-                                k = mColors;
-                            colors[m] = texData[k * nColors + colors[m]];
-                        }
-                    break;
-                case DataArray.FIELD_DATA_FLOAT:
-                    float[] fData = vData.getFData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            v = 0;
-                            for (int p = 0, k = vl * l; p < vl; p++, k++)
-                                v += fData[k] * fData[k];
-                            int k = (int) (d * (Math.sqrt(v) - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > mColors)
-                                k = mColors;
-                            colors[m] = texData[k * nColors + colors[m]];
-                        }
-                    break;
-                case DataArray.FIELD_DATA_DOUBLE:
-                    double[] dData = vData.getDData();
-                    for (int i = 0, l = start, m = 0; i < n1; i++, m += nn0 - n0)
-                        for (int j = 0; j < n0; j++, l++, m++) {
-                            v = 0;
-                            for (int p = 0, k = vl * l; p < vl; p++, k++)
-                                v += dData[k] * dData[k];
-                            int k = (int) (d * (Math.sqrt(v) - low));
-                            if (k < 0)
-                                k = 0;
-                            if (k > mColors)
-                                k = mColors;
-                            colors[m] = texData[k * nColors + colors[m]];
-                        }
-                    break;
-            }
-        }
-        return colors;
-    }
 }

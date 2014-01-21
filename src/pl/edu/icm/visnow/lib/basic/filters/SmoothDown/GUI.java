@@ -36,6 +36,9 @@ obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
 
 package pl.edu.icm.visnow.lib.basic.filters.SmoothDown;
+
+import pl.edu.icm.visnow.system.main.VisNow;
+
 public class GUI extends javax.swing.JPanel
 {
 
@@ -68,8 +71,6 @@ public class GUI extends javax.swing.JPanel
 
         runButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        threadsSpinner = new javax.swing.JSpinner();
         downsizeUI = new pl.edu.icm.visnow.lib.gui.DownsizeUI();
         sigmaSlider = new pl.edu.icm.visnow.gui.widgets.FloatSlider();
 
@@ -85,11 +86,11 @@ public class GUI extends javax.swing.JPanel
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 310;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 0, 0);
         add(runButton, gridBagConstraints);
 
@@ -103,47 +104,24 @@ public class GUI extends javax.swing.JPanel
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 152, Short.MAX_VALUE)
+            .addGap(0, 180, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         add(jPanel1, gridBagConstraints);
-
-        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        jLabel2.setText("number of threads");
-        jLabel2.setMaximumSize(new java.awt.Dimension(120, 15));
-        jLabel2.setMinimumSize(new java.awt.Dimension(100, 15));
-        jLabel2.setPreferredSize(new java.awt.Dimension(100, 15));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(7, 0, 0, 5);
-        add(jLabel2, gridBagConstraints);
-
-        threadsSpinner.setModel(new javax.swing.SpinnerNumberModel(Runtime.getRuntime().availableProcessors(), 1, Runtime.getRuntime().availableProcessors(), 1));
-        threadsSpinner.setMinimumSize(new java.awt.Dimension(58, 20));
-        threadsSpinner.setPreferredSize(new java.awt.Dimension(58, 20));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(8, 0, 0, 0);
-        add(threadsSpinner, gridBagConstraints);
 
         downsizeUI.setMinimumSize(new java.awt.Dimension(113, 70));
         downsizeUI.setPreferredSize(new java.awt.Dimension(113, 70));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 1, 0, 1);
         add(downsizeUI, gridBagConstraints);
 
@@ -154,9 +132,9 @@ public class GUI extends javax.swing.JPanel
         sigmaSlider.setVal(1.0F);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
         add(sigmaSlider, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -164,17 +142,15 @@ public class GUI extends javax.swing.JPanel
     {//GEN-HEADEREND:event_runButtonActionPerformed
        params.setDownsize(downsizeUI.getDownsize());
        params.setSigma(sigmaSlider.getVal());
-       params.setNThreads((Integer)threadsSpinner.getValue());
+       params.setNThreads(VisNow.availableProcessors());
        params.fireStateChanged();
     }//GEN-LAST:event_runButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private pl.edu.icm.visnow.lib.gui.DownsizeUI downsizeUI;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton runButton;
     private pl.edu.icm.visnow.gui.widgets.FloatSlider sigmaSlider;
-    private javax.swing.JSpinner threadsSpinner;
     // End of variables declaration//GEN-END:variables
 
 }

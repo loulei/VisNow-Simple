@@ -43,7 +43,6 @@ import java.util.HashMap;
 import javax.swing.JPanel;
 import org.w3c.dom.Node;
 import pl.edu.icm.visnow.application.application.Application;
-import pl.edu.icm.visnow.application.frames.tabs.MRootsPanel;
 import pl.edu.icm.visnow.system.main.VisNow;
 import pl.edu.icm.visnow.system.swing.split.FAreaMajor;
 import pl.edu.icm.visnow.system.swing.split.FSplitListener;
@@ -84,7 +83,6 @@ public class ApplicationFrame2 extends JPanel
       Node xml = VisNow.get().getMainConfig().getWindowXML();
       HashMap<String, Component> map = new HashMap<String, Component>();
       map.put("Application", frames.getTitlePanel());
-      map.put("Roots", new MRootsPanel());
       map.put("Workspace", frames.getApplication().getArea().getPanel());
       map.put("Ports", frames.getModulePanel());
       map.put("UI", frames.getGuiPanel());
@@ -100,7 +98,6 @@ public class ApplicationFrame2 extends JPanel
 //        System.out.println(xml.getNodeName());
 
 //        major.addBox("Application", frames.getTitlePanel());
-//        major.addBox("Roots",new MRootsPanel());
 //        major.addBox("Workspace",frames.getApplication().getArea().getPanel());
 
 //        major.addBox(new FBox("Ports",frames.getModulePanel()),FAreaMajor.leftD);
@@ -141,11 +138,7 @@ public class ApplicationFrame2 extends JPanel
     this.leftTabs.add(frames.getGuiPanel(), "UI");
     this.leftTabs.add(frames.getModulePanel(), "Ports");
     this.rightTabs.add(frames.getLibrariesPanel(), "Library");
-    //this.rightTabs.add(frames.getMasterLibrariesPanel(), "Libraries");
     this.rightTabs.add(frames.getTitlePanel(), "Application");
-    this.rightTabs.add(
-    new MRootsPanel(), "Lib");
-    //frames.getRootsPanel(), "LIB");
 
     bigSplitPane.setRightComponent(frames.getApplication().getArea().getPanel());
     //mainPanel.add(frames.getScenePanel(), BorderLayout.CENTER);

@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,9 +35,13 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.lib.templates.visualization.modules;
+import org.apache.log4j.Logger;
 import pl.edu.icm.visnow.datasets.RegularField;
+import pl.edu.icm.visnow.geometries.objects.Geometry2D;
 import pl.edu.icm.visnow.geometries.objects.RegularField1DGeometry;
 import pl.edu.icm.visnow.geometries.objects.RegularField2DGeometry;
 import pl.edu.icm.visnow.geometries.objects.RegularField3DGeometry;
@@ -50,14 +55,16 @@ import pl.edu.icm.visnow.lib.utils.TimeStamper;
 
 
 /**
- *
+ * Class which is extended by most (maybe all?) modules that output regular field.
+ * 
  * @author  Krzysztof S. Nowinski, University of Warsaw, ICM
  * @author  Bartosz Borucki, University of Warsaw, ICM
  * 
  */
+
 public abstract class RegularOutFieldVisualizationModule extends VisualizationModule
 {
-
+    private static final Logger LOGGER = Logger.getLogger(RegularOutFieldVisualizationModule.class);
    protected RegularField outField                          = null;
    protected RegularFieldGeometry regularFieldGeometry      = null;
    protected RegularFieldDisplayParams fieldDisplayParams   = null;
@@ -68,7 +75,7 @@ public abstract class RegularOutFieldVisualizationModule extends VisualizationMo
    /** Creates a new instance of VisualizationModule */
    public RegularOutFieldVisualizationModule()
    {
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          @Override
          public void run()
@@ -91,7 +98,8 @@ public abstract class RegularOutFieldVisualizationModule extends VisualizationMo
       }
       outObj.clearGeometries2D();
       regularFieldGeometry.updateGeometry();
-      outObj.addGeometry2D(regularFieldGeometry.getColormapLegend());
+      for (Geometry2D geom2D : regularFieldGeometry.getGeometries2D())
+         outObj.addGeometry2D(geom2D);
       outObj.setExtents(outField.getExtents());
    }
 
@@ -121,10 +129,14 @@ public abstract class RegularOutFieldVisualizationModule extends VisualizationMo
       }
       regularFieldGeometry.setField(outField);
       fieldDisplayParams = regularFieldGeometry.getFieldDisplayParams();
-      
+      //new params should be true if field has changed its size
+      //TODO: test it for java3d problems (remove ui update)
+      outObj.clearBgrColorListeners();
+      outObj.addBgrColorListener(regularFieldGeometry.getBackgroundColorListener());
+       LOGGER.debug(newParams);
       if (newParams) {          
          defaultDisplayParams();          
-         SwingInstancer.swingRun(new Runnable()
+         SwingInstancer.swingRunAndWait(new Runnable()
          {
          @Override
             public void run()

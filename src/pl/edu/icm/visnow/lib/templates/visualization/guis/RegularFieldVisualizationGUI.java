@@ -37,6 +37,10 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.lib.templates.visualization.guis;
 
+import java.awt.GridBagConstraints;
+import static java.awt.GridBagConstraints.NORTH;
+import static java.awt.GridBagConstraints.BOTH;
+import java.awt.Insets;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 import pl.edu.icm.visnow.datasets.RegularField;
@@ -56,6 +60,8 @@ public class RegularFieldVisualizationGUI extends javax.swing.JPanel {
     /** Creates new form IrregularFieldVisualizationGUI */
     public RegularFieldVisualizationGUI() {
         initComponents();
+        guiPresentationButton.setState(VisNow.guiLevel);
+        guiPresentationButton.setVisible(VisNow.allowGUISwitch);        
     }
 
     /** This method is called from within the constructor to
@@ -66,16 +72,29 @@ public class RegularFieldVisualizationGUI extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
+        computeScrollPane = new javax.swing.JScrollPane();
+        computePanel = new javax.swing.JPanel();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         mainPane = new javax.swing.JTabbedPane();
         presentationPanel = new pl.edu.icm.visnow.geometries.gui.RegularFieldPresentationGUI();
         guiPresentationButton = new MultistateButton(new String[]{"show simple GUI","show expert GUI"}, null);
 
-        setMinimumSize(new java.awt.Dimension(180, 300));
-        setOpaque(false);
-        setPreferredSize(new java.awt.Dimension(226, 900));
+        computeScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        computePanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.weighty = 1.0;
+        computePanel.add(filler1, gridBagConstraints);
+
+        computeScrollPane.setViewportView(computePanel);
+
         setLayout(new java.awt.BorderLayout());
 
+        mainPane.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
         mainPane.addTab("presentation", presentationPanel);
 
         add(mainPane, java.awt.BorderLayout.CENTER);
@@ -101,7 +120,8 @@ public class RegularFieldVisualizationGUI extends javax.swing.JPanel {
 
    public void addComputeGUI(JPanel gui)
    {
-      mainPane.insertTab("computation", null, gui, "", 0);
+      computePanel.add(gui, new GridBagConstraints(0, 0, 1, 1, 1, 0, NORTH, BOTH, new Insets(0, 0, 0, 0), 0, 0));
+      mainPane.insertTab("computation", null, computeScrollPane, "", 0);
       mainPane.setSelectedIndex(0);
       if (gui instanceof VariablePresentation)
          addChangeListener(((VariablePresentation)gui).getPresentationListener());
@@ -159,6 +179,9 @@ public class RegularFieldVisualizationGUI extends javax.swing.JPanel {
    }
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel computePanel;
+    private javax.swing.JScrollPane computeScrollPane;
+    private javax.swing.Box.Filler filler1;
     private pl.edu.icm.visnow.gui.widgets.MultistateButton guiPresentationButton;
     private javax.swing.JTabbedPane mainPane;
     private pl.edu.icm.visnow.geometries.gui.RegularFieldPresentationGUI presentationPanel;

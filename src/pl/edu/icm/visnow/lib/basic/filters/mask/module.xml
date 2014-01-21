@@ -14,7 +14,6 @@
                 <param name="NDIMS" value="3"/>
             </schema>
         </output>
-        <geometryOutput/>
     </outputs>
     <parameters>
     </parameters>

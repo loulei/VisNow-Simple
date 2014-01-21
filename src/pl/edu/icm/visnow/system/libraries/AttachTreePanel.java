@@ -102,7 +102,7 @@ public class AttachTreePanel extends javax.swing.JMenuItem {
                     AttachTreePanel.this.panel.getPopupMenu().setVisible(false);
                     VisNow.get().getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     VisNow.get().getMainWindow().repaint();
-                    SwingInstancer.swingRun(new Runnable() {
+                    SwingInstancer.swingRunAndWait(new Runnable() {
                         @Override
                         public void run() {
                             if (tn.isLeaf() && ptn.getUserObject() instanceof LibraryCore) {

@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Module - Field Viewer 3D</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <style type="text/css">
                 
     </style>
@@ -20,7 +21,7 @@
       
       <h1>Module: Field Viewer 3D</h1>
       <p><img src="resources/module_image_pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D.png"/><br></p>
-      <p><br><br></p>
+      <p>Viewer for 2D and 3D regular fields<br><br></p>
       <table border="1">          
       <tr bgcolor="silver">
          <th width=150 height="40">input port</th>
@@ -31,14 +32,14 @@
 <tr>
          <td valign="top">inField</td>
          <td valign="top"><font color="#0088ff">VNRegularField</font></td>
-         <td valign="top"></td>
+         <td valign="top">Input for 3D regular field to view</td>
          <td valign="top">Regular Field 3D 3-space with affine geometry <br></td>
       </tr>
 <tr>
          <td valign="top">inPointsGeometryField</td>
-         <td valign="top"><font color="#0088ff">VNRegularField</font></td>
-         <td valign="top"></td>
-         <td valign="top">Regular Field 1D 3-space with explicit coordinates <br></td>
+         <td valign="top"><font color="#8800ff">VNIrregularField</font></td>
+         <td valign="top">Input for points field</td>
+         <td valign="top">Irregular Field 3-space <br>with POINT cells<br></td>
       </tr>
 <tr>
          <td valign="top">inObject</td>
@@ -54,9 +55,9 @@
       </tr>
 <tr>
          <td valign="top">outPointsGeometryField</td>
-         <td valign="top"><font color="#0088ff">VNRegularField</font></td>
-         <td valign="top"></td>
-         <td valign="top">Regular Field 1D 3-space with explicit coordinates <br></td>
+         <td valign="top"><font color="#8800ff">VNIrregularField</font></td>
+         <td valign="top">Output for selected points and connections</td>
+         <td valign="top">Irregular Field 3-space<br>0 cell sets<br>with POINT cells<br></td>
       </tr>
 </table>
       <br><br><br>

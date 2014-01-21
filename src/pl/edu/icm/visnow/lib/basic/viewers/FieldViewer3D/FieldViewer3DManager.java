@@ -734,9 +734,9 @@ public class FieldViewer3DManager implements DataProviderListener, GlobalParamsL
             float[] v = ((CustomPlaneChangedViewPanelEvent)e).getVector();
             dataProviderParams.setCustomPlaneParams(p, v);
 
-        } else if(e instanceof PointsConnectionsCalculablesAddedOrthoPanelEvent) {
+        } else if(e instanceof PCCAddedOrthoPanelEvent) {
 
-            PointsConnectionsCalculablesAddedOrthoPanelEvent pac = (PointsConnectionsCalculablesAddedOrthoPanelEvent)e;
+            PCCAddedOrthoPanelEvent pac = (PCCAddedOrthoPanelEvent)e;
             int[] ptsIndices = geometryParams.addPoints(pac.getPoints());
             if(ptsIndices != null) {
                 int[][] cns = pac.getConnections();
@@ -750,6 +750,23 @@ public class FieldViewer3DManager implements DataProviderListener, GlobalParamsL
                 cp.setPointDescriptors(geometryParams.getPointsDescriptors(ptsIndices));
                 calculableParams.addCalculableParameter(cp);
             }
+        } else if(e instanceof PCCAddedCustomOrthoPanelEvent) {
+
+            PCCAddedCustomOrthoPanelEvent pac = (PCCAddedCustomOrthoPanelEvent)e;
+            int[] ptsIndices = geometryParams.addPoints(pac.getPoints());
+            if(ptsIndices != null) {
+                int[][] cns = pac.getConnections();
+                if(cns != null)
+                    for (int i = 0; i < cns.length; i++) {
+                        geometryParams.addConnection(geometryParams.getPointsDescriptor(ptsIndices[cns[i][0]]), geometryParams.getPointsDescriptor(ptsIndices[cns[i][1]]));
+                    }
+            }
+            CalculableParameter cp = pac.getCalculable();
+            if(cp != null) {
+                cp.setPointDescriptors(geometryParams.getPointsDescriptors(ptsIndices));
+                calculableParams.addCalculableParameter(cp);
+            }
+
 
         } else if(e instanceof GeometryPointSelectedOrthoPanelEvent) {
 
@@ -772,17 +789,19 @@ public class FieldViewer3DManager implements DataProviderListener, GlobalParamsL
             float newLow, newUp;
             if(dataProvider.getInField() == null)
                 return;
+            
             float d = (dataProvider.getInField().getData(dataProviderParams.getSingleComponent()).getMaxv() - dataProvider.getInField().getData(dataProviderParams.getSingleComponent()).getMinv())/500.0f;
             newLow = dataProviderParams.getDataMappingParams().getColorMap0Params().getDataMin() + d*((MappingRangeChangedOrthoPanelEvent)e).getDCenter() - d*((MappingRangeChangedOrthoPanelEvent)e).getDWidth()/2;
             newUp = dataProviderParams.getDataMappingParams().getColorMap0Params().getDataMax() + d*((MappingRangeChangedOrthoPanelEvent)e).getDCenter() + d*((MappingRangeChangedOrthoPanelEvent)e).getDWidth()/2;
+            if((newUp - newLow) >= 0) {
+                if(newUp > dataProvider.getInField().getData(dataProviderParams.getSingleComponent()).getMaxv())
+                    newUp = dataProvider.getInField().getData(dataProviderParams.getSingleComponent()).getMaxv();
 
-            if(newUp > dataProvider.getInField().getData(dataProviderParams.getSingleComponent()).getMaxv())
-                newUp = dataProvider.getInField().getData(dataProviderParams.getSingleComponent()).getMaxv();
+                if(newLow < dataProvider.getInField().getData(dataProviderParams.getSingleComponent()).getMinv())
+                    newLow = dataProvider.getInField().getData(dataProviderParams.getSingleComponent()).getMinv();
 
-            if(newLow < dataProvider.getInField().getData(dataProviderParams.getSingleComponent()).getMinv())
-                newLow = dataProvider.getInField().getData(dataProviderParams.getSingleComponent()).getMinv();
-
-            dataProviderParams.getDataMappingParams().getColorMap0Params().setDataMinMax(newLow, newUp);
+                dataProviderParams.getDataMappingParams().getColorMap0Params().setDataMinMax(newLow, newUp);
+            }
 
         } else if(e instanceof ZoomChangedOrthoPanelEvent) {
 

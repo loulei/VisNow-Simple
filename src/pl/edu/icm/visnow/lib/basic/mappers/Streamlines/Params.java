@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,8 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.lib.basic.mappers.Streamlines;
 
@@ -52,7 +55,7 @@ public class Params extends Parameters
    private static ParameterEgg[] eggs = new ParameterEgg[]
    {
       new ParameterEgg<Integer>("vectorComponent", ParameterType.dependent, -1),
-      new ParameterEgg<int[]>("down", ParameterType.dependent, new int[] { 5, 5, 5}),
+      new ParameterEgg<int[]>("down", ParameterType.dependent, null),
       new ParameterEgg<Integer>("downsize", ParameterType.dependent, 100),
       new ParameterEgg<Float>("step", ParameterType.dependent, .002f),
       new ParameterEgg<Integer>("nForwardSteps", ParameterType.dependent, 500),
@@ -62,6 +65,7 @@ public class Params extends Parameters
    public Params()
    {
       super(eggs);
+      setValue("down", new int[] { 5, 5, 5});
    }
 
    public int getDownsize()
@@ -71,7 +75,7 @@ public class Params extends Parameters
 
    public void setDownsize(int downsize)
    {
-      if (downsize != this.getValue("downsize"))
+      if (downsize != getDownsize())
          dowsizeChanged = true;
       setValue("downsize",downsize);
    }

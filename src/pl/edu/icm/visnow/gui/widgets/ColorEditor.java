@@ -43,7 +43,9 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+//import javax.swing.JFrame;
 import javax.swing.JPanel;
+//import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.vecmath.Color3f;
@@ -113,6 +115,12 @@ public class ColorEditor extends JPanel
             fireStateChanged();
             colorDialog.setVisible(false);
          }
+         
+         @Override
+         public void mouseExited(java.awt.event.MouseEvent evt)
+         {
+            colorDialog.setVisible(false);
+         }
       });
       jPanel1.add(colorSelector, BorderLayout.CENTER);
    }
@@ -180,8 +188,8 @@ public class ColorEditor extends JPanel
         colorDialog.setBounds(new java.awt.Rectangle(200, 200, 254, 154));
         colorDialog.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         colorDialog.setName("colorDialog"); // NOI18N
-        colorDialog.setResizable(false);
         colorDialog.setUndecorated(true);
+        colorDialog.setResizable(false);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel2.setName("jPanel2"); // NOI18N
@@ -203,8 +211,8 @@ public class ColorEditor extends JPanel
         colorDialog.getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
 
         setToolTipText("<html>drag left MB to change brightness<p>drag right MB to change hue and saturation<p>click to open color chooser"); // NOI18N
-        setMinimumSize(new java.awt.Dimension(60, 21));
-        setPreferredSize(new java.awt.Dimension(100, 21));
+        setMinimumSize(new java.awt.Dimension(50, 21));
+        setPreferredSize(new java.awt.Dimension(50, 21));
         addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 formMouseClicked(evt);
@@ -348,6 +356,7 @@ public class ColorEditor extends JPanel
       adjusting = false;
       fireStateChanged();
    }//GEN-LAST:event_formMouseReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JFrame colorDialog;
     protected javax.swing.JPanel jPanel1;
@@ -419,4 +428,15 @@ public class ColorEditor extends JPanel
    {
       return enabled;
    }
+   
+ 
+//    public static void main(String[] args) {
+//        JFrame f = new JFrame();
+//        
+//        f.add(new ColorEditor());
+//        f.pack();
+//        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//        f.setVisible(true);
+//                
+//    }
 }

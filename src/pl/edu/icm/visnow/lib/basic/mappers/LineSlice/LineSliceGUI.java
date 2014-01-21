@@ -37,6 +37,9 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.lib.basic.mappers.LineSlice;
 
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
+
 public class LineSliceGUI extends javax.swing.JPanel
 {
    protected LineSliceParams params = null;
@@ -59,115 +62,112 @@ public class LineSliceGUI extends javax.swing.JPanel
         java.awt.GridBagConstraints gridBagConstraints;
 
         axisGroup = new javax.swing.ButtonGroup();
-        xRadioButton = new javax.swing.JRadioButton();
-        yRadioButton = new javax.swing.JRadioButton();
-        zRadioButton = new javax.swing.JRadioButton();
-        dynSlidersBox = new javax.swing.JCheckBox();
-        jPanel2 = new javax.swing.JPanel();
-        xSlider = new pl.edu.icm.visnow.gui.widgets.EnhancedVerticalIntSlider();
-        ySlider = new pl.edu.icm.visnow.gui.widgets.EnhancedVerticalIntSlider();
-        zSlider = new pl.edu.icm.visnow.gui.widgets.EnhancedVerticalIntSlider();
-        jPanel1 = new javax.swing.JPanel();
+        iRadioButton = new javax.swing.JRadioButton();
+        jRadioButton = new javax.swing.JRadioButton();
+        kRadioButton = new javax.swing.JRadioButton();
+        iSlider = new pl.edu.icm.visnow.gui.widgets.EnhancedVerticalIntSlider();
+        jSlider = new pl.edu.icm.visnow.gui.widgets.EnhancedVerticalIntSlider();
+        kSlider = new pl.edu.icm.visnow.gui.widgets.EnhancedVerticalIntSlider();
         recomputeMinMaxCB = new javax.swing.JCheckBox();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
 
-        setMinimumSize(new java.awt.Dimension(220, 480));
-        setPreferredSize(new java.awt.Dimension(242, 494));
         setLayout(new java.awt.GridBagLayout());
 
-        axisGroup.add(xRadioButton);
-        xRadioButton.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-        xRadioButton.setSelected(true);
+        axisGroup.add(iRadioButton);
+        iRadioButton.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        iRadioButton.setSelected(true);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("pl/edu/icm/visnow/lib/basic/mappers/LineSlice/Bundle"); // NOI18N
-        xRadioButton.setText(bundle.getString("LineSliceGUI.xRadioButton.text_1")); // NOI18N
-        xRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        iRadioButton.setText(bundle.getString("LineSliceGUI.iRadioButton.text_1")); // NOI18N
+        iRadioButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        iRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                xRadioButtonActionPerformed(evt);
+                iRadioButtonActionPerformed(evt);
             }
         });
-        add(xRadioButton, new java.awt.GridBagConstraints());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        add(iRadioButton, gridBagConstraints);
 
-        axisGroup.add(yRadioButton);
-        yRadioButton.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-        yRadioButton.setText(bundle.getString("LineSliceGUI.yRadioButton.text_1")); // NOI18N
-        yRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        axisGroup.add(jRadioButton);
+        jRadioButton.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jRadioButton.setText(bundle.getString("LineSliceGUI.jRadioButton.text_1")); // NOI18N
+        jRadioButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                yRadioButtonActionPerformed(evt);
+                jRadioButtonActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
-        add(yRadioButton, gridBagConstraints);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        add(jRadioButton, gridBagConstraints);
 
-        axisGroup.add(zRadioButton);
-        zRadioButton.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-        zRadioButton.setText(bundle.getString("LineSliceGUI.zRadioButton.text_1")); // NOI18N
-        zRadioButton.setEnabled(false);
-        zRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        axisGroup.add(kRadioButton);
+        kRadioButton.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        kRadioButton.setText(bundle.getString("LineSliceGUI.kRadioButton.text_1")); // NOI18N
+        kRadioButton.setEnabled(false);
+        kRadioButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        kRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                zRadioButtonActionPerformed(evt);
+                kRadioButtonActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
-        add(zRadioButton, gridBagConstraints);
-
-        dynSlidersBox.setText(bundle.getString("LineSliceGUI.dynSlidersBox.text_1")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 0);
-        add(dynSlidersBox, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1.0;
-        add(jPanel2, gridBagConstraints);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        add(kRadioButton, gridBagConstraints);
 
-        xSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+        iSlider.setMinimumSize(new java.awt.Dimension(10, 250));
+        iSlider.setPreferredSize(new java.awt.Dimension(60, 250));
+        iSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                xSliderStateChanged(evt);
+                iSliderStateChanged(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1.0;
-        add(xSlider, gridBagConstraints);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        add(iSlider, gridBagConstraints);
 
-        ySlider.addChangeListener(new javax.swing.event.ChangeListener() {
+        jSlider.setMinimumSize(new java.awt.Dimension(10, 250));
+        jSlider.setPreferredSize(new java.awt.Dimension(60, 250));
+        jSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                ySliderStateChanged(evt);
+                jSliderStateChanged(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        add(ySlider, gridBagConstraints);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        add(jSlider, gridBagConstraints);
 
-        zSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+        kSlider.setMinimumSize(new java.awt.Dimension(10, 250));
+        kSlider.setPreferredSize(new java.awt.Dimension(60, 250));
+        kSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                zSliderStateChanged(evt);
+                kSliderStateChanged(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        add(zSlider, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        add(jPanel1, gridBagConstraints);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        add(kSlider, gridBagConstraints);
 
         recomputeMinMaxCB.setText(bundle.getString("LineSliceGUI.recomputeMinMaxCB.text")); // NOI18N
+        recomputeMinMaxCB.setEnabled(false);
         recomputeMinMaxCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 recomputeMinMaxCBActionPerformed(evt);
@@ -177,43 +177,51 @@ public class LineSliceGUI extends javax.swing.JPanel
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 0);
         add(recomputeMinMaxCB, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.weighty = 1.0;
+        add(filler1, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        add(filler3, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void xRadioButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_xRadioButtonActionPerformed
-    {//GEN-HEADEREND:event_xRadioButtonActionPerformed
+    private void iRadioButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_iRadioButtonActionPerformed
+    {//GEN-HEADEREND:event_iRadioButtonActionPerformed
        updateAxis();
-}//GEN-LAST:event_xRadioButtonActionPerformed
+}//GEN-LAST:event_iRadioButtonActionPerformed
 
-    private void yRadioButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_yRadioButtonActionPerformed
-    {//GEN-HEADEREND:event_yRadioButtonActionPerformed
+    private void jRadioButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jRadioButtonActionPerformed
+    {//GEN-HEADEREND:event_jRadioButtonActionPerformed
        updateAxis();
-}//GEN-LAST:event_yRadioButtonActionPerformed
+}//GEN-LAST:event_jRadioButtonActionPerformed
 
-    private void zRadioButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_zRadioButtonActionPerformed
-    {//GEN-HEADEREND:event_zRadioButtonActionPerformed
+    private void kRadioButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_kRadioButtonActionPerformed
+    {//GEN-HEADEREND:event_kRadioButtonActionPerformed
        updateAxis();
-}//GEN-LAST:event_zRadioButtonActionPerformed
+}//GEN-LAST:event_kRadioButtonActionPerformed
 
-    private void xSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_xSliderStateChanged
-    {//GEN-HEADEREND:event_xSliderStateChanged
-       if (!xSlider.isAdjusting() || dynSlidersBox.isSelected())
-          params.setXCoord(xSlider.getVal()); 
-    }//GEN-LAST:event_xSliderStateChanged
+    private void iSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_iSliderStateChanged
+    {//GEN-HEADEREND:event_iSliderStateChanged
+        params.setXCoord(iSlider.getVal()); 
+    }//GEN-LAST:event_iSliderStateChanged
 
-    private void ySliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_ySliderStateChanged
-    {//GEN-HEADEREND:event_ySliderStateChanged
-       if (!ySlider.isAdjusting() || dynSlidersBox.isSelected())
-          params.setYCoord(ySlider.getVal());
-    }//GEN-LAST:event_ySliderStateChanged
+    private void jSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_jSliderStateChanged
+    {//GEN-HEADEREND:event_jSliderStateChanged
+        params.setYCoord(jSlider.getVal());
+    }//GEN-LAST:event_jSliderStateChanged
 
-    private void zSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_zSliderStateChanged
-    {//GEN-HEADEREND:event_zSliderStateChanged
-       if (!zSlider.isAdjusting() || dynSlidersBox.isSelected())
-          params.setZCoord(zSlider.getVal()); 
-    }//GEN-LAST:event_zSliderStateChanged
+    private void kSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_kSliderStateChanged
+    {//GEN-HEADEREND:event_kSliderStateChanged
+        params.setZCoord(kSlider.getVal()); 
+    }//GEN-LAST:event_kSliderStateChanged
 
     private void recomputeMinMaxCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recomputeMinMaxCBActionPerformed
         params.setRecalculateMinMax(recomputeMinMaxCB.isSelected());
@@ -221,12 +229,12 @@ public class LineSliceGUI extends javax.swing.JPanel
 
     private void updateAxis()
     {
-       xSlider.setEnabled(!xRadioButton.isSelected());
-       ySlider.setEnabled(!yRadioButton.isSelected());
-       zSlider.setEnabled(!zRadioButton.isSelected() && dims.length > 2);
-       if (xRadioButton.isSelected())
+       iSlider.setEnabled(!iRadioButton.isSelected());
+       jSlider.setEnabled(!jRadioButton.isSelected());
+       kSlider.setEnabled(!kRadioButton.isSelected() && dims.length > 2);
+       if (iRadioButton.isSelected())
           params.setAxis(0);
-       else if (yRadioButton.isSelected())
+       else if (jRadioButton.isSelected())
           params.setAxis(1);
        else
           params.setAxis(2);
@@ -248,33 +256,33 @@ public class LineSliceGUI extends javax.swing.JPanel
             return;
       }
       params.setActive(false);
-      xSlider.setEnabled(false);
-      zSlider.setVisible(dims.length>2);
-      zSlider.setEnabled(dims.length>2);
-      zRadioButton.setVisible(dims.length>2);
-      zRadioButton.setEnabled(dims.length>2);
-      ySlider.setVisible(dims.length>1);
-      yRadioButton.setVisible(dims.length>1);
+      iSlider.setEnabled(false);
+      kSlider.setVisible(dims.length>2);
+      kSlider.setEnabled(dims.length>2);
+      kRadioButton.setVisible(dims.length>2);
+      kRadioButton.setEnabled(dims.length>2);
+      jSlider.setVisible(dims.length>1);
+      jRadioButton.setVisible(dims.length>1);
       this.dims = dims;
-      xRadioButton.setSelected(true);
-      xSlider.setMax(dims[0]-1);
-      if (xSlider.getVal()>dims[0]-1)
-         xSlider.setVal(dims[0]/2);
-      ySlider.setMax(dims[1]-1);
-      if (ySlider.getVal()>dims[1]-1)
-         ySlider.setVal(dims[1]/2);
+      iRadioButton.setSelected(true);
+      iSlider.setMax(dims[0]-1);
+      if (iSlider.getVal()>dims[0]-1)
+         iSlider.setVal(dims[0]/2);
+      jSlider.setMax(dims[1]-1);
+      if (jSlider.getVal()>dims[1]-1)
+         jSlider.setVal(dims[1]/2);
       if (dims.length>2)
       {
-         zSlider.setMax(dims[2]-1);
-         if (zSlider.getVal()>dims[2]-1)
-            zSlider.setVal(dims[2]/2);
+         kSlider.setMax(dims[2]-1);
+         if (kSlider.getVal()>dims[2]-1)
+            kSlider.setVal(dims[2]/2);
       }
-      params.setXCoord(xSlider.getVal());
-      params.setYCoord(ySlider.getVal());
-      params.setZCoord(zSlider.getVal());
-      if (xRadioButton.isSelected())
+      params.setXCoord(iSlider.getVal());
+      params.setYCoord(jSlider.getVal());
+      params.setZCoord(kSlider.getVal());
+      if (iRadioButton.isSelected())
          params.setAxis(0);
-      else if (yRadioButton.isSelected())
+      else if (jRadioButton.isSelected())
          params.setAxis(1);
       else
          params.setAxis(2);
@@ -283,15 +291,23 @@ public class LineSliceGUI extends javax.swing.JPanel
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup axisGroup;
-    private javax.swing.JCheckBox dynSlidersBox;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.Box.Filler filler1;
+    private javax.swing.Box.Filler filler3;
+    private javax.swing.JRadioButton iRadioButton;
+    private pl.edu.icm.visnow.gui.widgets.EnhancedVerticalIntSlider iSlider;
+    private javax.swing.JRadioButton jRadioButton;
+    private pl.edu.icm.visnow.gui.widgets.EnhancedVerticalIntSlider jSlider;
+    private javax.swing.JRadioButton kRadioButton;
+    private pl.edu.icm.visnow.gui.widgets.EnhancedVerticalIntSlider kSlider;
     private javax.swing.JCheckBox recomputeMinMaxCB;
-    private javax.swing.JRadioButton xRadioButton;
-    private pl.edu.icm.visnow.gui.widgets.EnhancedVerticalIntSlider xSlider;
-    private javax.swing.JRadioButton yRadioButton;
-    private pl.edu.icm.visnow.gui.widgets.EnhancedVerticalIntSlider ySlider;
-    private javax.swing.JRadioButton zRadioButton;
-    private pl.edu.icm.visnow.gui.widgets.EnhancedVerticalIntSlider zSlider;
     // End of variables declaration//GEN-END:variables
+    
+    public static void main(String[] args) {
+        JFrame f = new JFrame();
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        final LineSliceGUI p = new LineSliceGUI();
+        f.add(p);
+        f.pack();
+        f.setVisible(true);
+    }
 }

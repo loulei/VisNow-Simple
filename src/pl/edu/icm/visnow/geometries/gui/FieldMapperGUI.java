@@ -66,33 +66,6 @@ public class FieldMapperGUI extends javax.swing.JPanel implements ChangeFiringGU
         redisplay();
     }
     
-   public FieldMapperGUI(Field inField, IrregularFieldDisplayParams params)
-   {
-      initComponents();
-      CardLayout cl = (CardLayout) getLayout();
-      cellSetPresentationGUIs.clear();
-      irregularFieldDisplayParams = params;
-      if (inField instanceof IrregularField)
-      {
-         regularInField = null;
-         irregularInField = (IrregularField)inField;
-         for (int i = 0; i < irregularInField.getNCellSets(); i++)
-         {
-            CellSetPresentationGUI csGUI = new CellSetPresentationGUI(irregularInField.getCellSet(i), inField, params.getCellSetDisplayParameters(i));
-            cellSetPresentationGUIs.add(csGUI);
-         }
-         redisplay();
-         cl.show(this, "irregular");
-      } else
-      {
-         irregularInField = null;
-         regularInField = (RegularField) inField;
-         regularFieldPresentationGUI.setInField(regularInField);
-         cl.show(this, "regular");
-      }
-      redisplay();
-   }
-
    public void setInData(Field inField, IrregularFieldDisplayParams params)
    {
       CardLayout cl = (CardLayout) getLayout();

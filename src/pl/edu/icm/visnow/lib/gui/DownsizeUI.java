@@ -39,7 +39,11 @@ package pl.edu.icm.visnow.lib.gui;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import pl.edu.icm.visnow.lib.utils.SwingInstancer;
@@ -69,119 +73,17 @@ public class DownsizeUI extends javax.swing.JPanel
       initComponents();
    }
 
-   public void setPresentation(boolean simple)
-   {
-      GridBagConstraints gridBagConstraints;
-      Dimension simpleDim = new Dimension(200, 45);
-      Dimension expertDim = new Dimension(220, 60);
-      if (simple)
-      {
-         this.removeAll();
-         setMinimumSize(simpleDim);
-         setPreferredSize(simpleDim);
-         setMaximumSize(simpleDim);
+   public void setPresentation(boolean simple) {
 
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 1;
-         gridBagConstraints.gridy = 0;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-         gridBagConstraints.weightx = 1.0;
-         gridBagConstraints.weighty = 1.0;
-         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
-         add(noDownButton, gridBagConstraints);
-
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 0;
-         gridBagConstraints.gridy = 0;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-         gridBagConstraints.weightx = 1.0;
-         gridBagConstraints.weighty = 1.0;
-         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
-         add(defaultButton, gridBagConstraints);
-      } else
-      {
-         this.removeAll();
-         setMinimumSize(expertDim);
-         setPreferredSize(expertDim);
-         setMaximumSize(expertDim);
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 0;
-         gridBagConstraints.gridy = 0;
-         gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 8);
-         add(jLabel1, gridBagConstraints);
-
-         jLabel2.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-         jLabel2.setText("y");
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 2;
-         gridBagConstraints.gridy = 0;
-         gridBagConstraints.insets = new java.awt.Insets(0, 8, 0, 8);
-         add(jLabel2, gridBagConstraints);
-
-         jLabel3.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-         jLabel3.setText("z");
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 4;
-         gridBagConstraints.gridy = 0;
-         gridBagConstraints.insets = new java.awt.Insets(0, 8, 0, 8);
-         add(jLabel3, gridBagConstraints);
-
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 1;
-         gridBagConstraints.gridy = 0;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-         gridBagConstraints.weightx = 1.0;
-         add(xSpinner, gridBagConstraints);
-
-         ySpinner.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-         ySpinner.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(3), Integer.valueOf(1), null, Integer.valueOf(1)));
-         ySpinner.addChangeListener(new javax.swing.event.ChangeListener()
-         {
-            public void stateChanged(javax.swing.event.ChangeEvent evt)
-            {
-               ySpinnerStateChanged(evt);
-            }
-         });
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 3;
-         gridBagConstraints.gridy = 0;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-         gridBagConstraints.weightx = 1.0;
-         add(ySpinner, gridBagConstraints);
-
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 5;
-         gridBagConstraints.gridy = 0;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-         gridBagConstraints.weightx = 1.0;
-         add(zSpinner, gridBagConstraints);
-
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 2;
-         gridBagConstraints.gridy = 1;
-         gridBagConstraints.gridwidth = 2;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
-         add(noDownButton, gridBagConstraints);
-
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 4;
-         gridBagConstraints.gridy = 1;
-         gridBagConstraints.gridwidth = 2;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
-         add(defaultButton, gridBagConstraints);
-
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 0;
-         gridBagConstraints.gridy = 1;
-         gridBagConstraints.gridwidth = 2;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
-         add(autoBox, gridBagConstraints);
-      }
-      validate();
-   }
+        autoBox.setVisible(!simple);
+        xLabel.setVisible(!simple);
+        yLabel.setVisible(!simple);
+        zLabel.setVisible(!simple);
+        xSpinner.setVisible(!simple);
+        ySpinner.setVisible(!simple);
+        zSpinner.setVisible(!simple);
+        revalidate();
+    }
 
    /**
     * This method is called from within the constructor to initialize the form.
@@ -192,9 +94,9 @@ public class DownsizeUI extends javax.swing.JPanel
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        xLabel = new javax.swing.JLabel();
+        yLabel = new javax.swing.JLabel();
+        zLabel = new javax.swing.JLabel();
         xSpinner = new javax.swing.JSpinner();
         ySpinner = new javax.swing.JSpinner();
         zSpinner = new javax.swing.JSpinner();
@@ -202,36 +104,33 @@ public class DownsizeUI extends javax.swing.JPanel
         defaultButton = new javax.swing.JButton();
         autoBox = new javax.swing.JToggleButton();
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder("downsize"));
-        setMinimumSize(new java.awt.Dimension(150, 55));
-        setName(""); // NOI18N
+        setBorder(javax.swing.BorderFactory.createTitledBorder(null, "downsize", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
         setOpaque(false);
-        setPreferredSize(new java.awt.Dimension(200, 60));
         setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        jLabel1.setText("x");
+        xLabel.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        xLabel.setText("x");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 8);
-        add(jLabel1, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 3);
+        add(xLabel, gridBagConstraints);
 
-        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        jLabel2.setText("y");
+        yLabel.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        yLabel.setText("y");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 8, 0, 8);
-        add(jLabel2, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 3);
+        add(yLabel, gridBagConstraints);
 
-        jLabel3.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        jLabel3.setText("z");
+        zLabel.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        zLabel.setText("z");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 8, 0, 8);
-        add(jLabel3, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 3);
+        add(zLabel, gridBagConstraints);
 
         xSpinner.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         xSpinner.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(3), Integer.valueOf(1), null, Integer.valueOf(1)));
@@ -288,6 +187,8 @@ public class DownsizeUI extends javax.swing.JPanel
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
         add(noDownButton, gridBagConstraints);
 
@@ -303,7 +204,9 @@ public class DownsizeUI extends javax.swing.JPanel
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
         add(defaultButton, gridBagConstraints);
 
@@ -320,7 +223,9 @@ public class DownsizeUI extends javax.swing.JPanel
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
         add(autoBox, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
@@ -369,24 +274,22 @@ public class DownsizeUI extends javax.swing.JPanel
 
    private void updateSpinners()
    {
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          public void run()
          {
             active = false;
             xSpinner.setValue(DownsizeUI.this.downsize[0]);
-            if (DownsizeUI.this.downsize.length > 1)
-            {
-               ySpinner.setValue(DownsizeUI.this.downsize[1]);
-               ySpinner.setVisible(true);
-            } else
-               ySpinner.setVisible(false);
-            if (DownsizeUI.this.downsize.length > 2)
-            {
-               zSpinner.setValue(DownsizeUI.this.downsize[2]);
-               zSpinner.setVisible(true);
-            } else
-               zSpinner.setVisible(false);
+            int downsizeDim = DownsizeUI.this.downsize.length;
+            if (downsizeDim > 1) ySpinner.setValue(DownsizeUI.this.downsize[1]);
+            if (downsizeDim > 2) zSpinner.setValue(DownsizeUI.this.downsize[2]);
+            
+            ySpinner.setVisible(downsizeDim > 1);
+            yLabel.setVisible(downsizeDim > 1);
+
+            zSpinner.setVisible(downsizeDim > 2);
+            zLabel.setVisible(downsizeDim > 2);
+
             active = true;
             fireStateChanged();
          }
@@ -403,6 +306,18 @@ public class DownsizeUI extends javax.swing.JPanel
       System.arraycopy(downsize, 0, defaultDownsize, 0, downsize.length);
       updateSpinners();
    }
+   
+   public void setDownsize(int[] downsize, int[] defaultDownsize)
+   {
+      if (downsize == null || downsize.length <= 0 || downsize.length > 3)
+         return;
+      this.downsize = new int[downsize.length];
+      this.defaultDownsize = new int[defaultDownsize.length];
+      System.arraycopy(downsize, 0, this.downsize, 0, downsize.length);
+      System.arraycopy(defaultDownsize, 0, this.defaultDownsize, 0, downsize.length);
+      updateSpinners();
+   }
+   
    /**
     * Utility field holding list of ChangeListeners.
     */
@@ -449,12 +364,31 @@ public class DownsizeUI extends javax.swing.JPanel
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton autoBox;
     private javax.swing.JButton defaultButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JButton noDownButton;
+    private javax.swing.JLabel xLabel;
     private javax.swing.JSpinner xSpinner;
+    private javax.swing.JLabel yLabel;
     private javax.swing.JSpinner ySpinner;
+    private javax.swing.JLabel zLabel;
     private javax.swing.JSpinner zSpinner;
     // End of variables declaration//GEN-END:variables
+
+    public static void main(String[] args) {
+        JFrame f = new JFrame();
+        final DownsizeUI p = new DownsizeUI();
+        f.add(p);
+        f.pack();
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        f.addComponentListener(new ComponentAdapter() {
+            private boolean toggleSimple = true;
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                p.setPresentation(toggleSimple);
+                toggleSimple = !toggleSimple;
+            }
+        });
+        
+        f.setVisible(true);
+    }
+
 }

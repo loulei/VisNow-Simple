@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,12 +35,16 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.lib.utils;
 
+import java.util.Scanner;
+
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public class FloatFormats
 {
@@ -73,5 +78,17 @@ public class FloatFormats
    public static String xformat(float x)
    {
       return xeformat((int) (Math.log10(x) + 100.1) - 100);
+   }
+   
+   public static void main(String[] args)
+   {
+      float x = 1;
+      Scanner in = new Scanner(System.in);
+      while (x != 0)
+      {
+         System.out.print("enter float number: ");
+         x = Float.parseFloat(in.nextLine().trim());
+         System.out.println("You entered : " + String.format(format(x) + "   " + xformat(x), x,x));
+      }
    }
 }

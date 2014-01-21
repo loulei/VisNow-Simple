@@ -71,30 +71,8 @@ public class GUI extends javax.swing.JPanel
    public GUI()
    {
       initComponents();
-      for (int i = 0; i < downTexts.length; i++)
-      {
-         downLabels.put(i, new JLabel(downTexts[i]));
-         downLabels.get(i).setFont(new java.awt.Font("Dialog", 0, 8));
-      }
-      downsizeSlider.setLabelTable(downLabels);
-      mapComboBox.setScalarComponentsOnly(true);
-      mapComboBox.setTitle("glyph size component");
-      thrComponentSelector.setAddNullComponent(true);
-      thrComponentSelector.setScalarComponentsOnly(true);
-      thrComponentSelector.setTitle("glyph threshold component");
-      fontGUI.setInitType(true);
-      regularFieldDownsizeUI.addChangeListener(new ChangeListener()
-      {
+      postInitComponents();
 
-         @Override
-         public void stateChanged(ChangeEvent e)
-         {
-            params.setActive(false);
-            downsize = regularFieldDownsizeUI.getDownsize();
-            params.setDown(downsize);
-            params.setActive(true);
-         }
-      });
    }
 
    /** This method is called from within the constructor to
@@ -106,32 +84,32 @@ public class GUI extends javax.swing.JPanel
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel4 = new javax.swing.JPanel();
+        mapComboBox = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
         jPanel5 = new javax.swing.JPanel();
         downsizeSlider = new javax.swing.JSlider();
         regularFieldDownsizeUI = new pl.edu.icm.visnow.lib.gui.DownsizeUI();
-        mapComboBox = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
-        thrSlider = new pl.edu.icm.visnow.gui.widgets.FloatSlider();
-        thrComponentSelector = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
-        jPanel7 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         formatField = new javax.swing.JTextField();
         fontGUI = new pl.edu.icm.visnow.geometries.gui.FontGUI();
+        thrComponentSelector = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
+        thrSlider = new pl.edu.icm.visnow.gui.widgets.FloatSlider();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
-        setMinimumSize(new java.awt.Dimension(150, 675));
-        setOpaque(false);
-        setPreferredSize(new java.awt.Dimension(200, 810));
         setLayout(new java.awt.GridBagLayout());
 
-        jTabbedPane1.setMinimumSize(new java.awt.Dimension(175, 550));
-        jTabbedPane1.setPreferredSize(new java.awt.Dimension(200, 800));
+        mapComboBox.setNumericComponentsOnly(false);
+        mapComboBox.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                mapComboBoxStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        add(mapComboBox, gridBagConstraints);
 
-        jPanel4.setMinimumSize(new java.awt.Dimension(212, 440));
-        jPanel4.setPreferredSize(new java.awt.Dimension(495, 450));
-        jPanel4.setLayout(new java.awt.GridBagLayout());
-
-        jPanel5.setMinimumSize(new java.awt.Dimension(10, 65));
         jPanel5.setOpaque(false);
         jPanel5.setLayout(new java.awt.CardLayout());
 
@@ -156,34 +134,34 @@ public class GUI extends javax.swing.JPanel
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        jPanel4.add(jPanel5, gridBagConstraints);
+        add(jPanel5, gridBagConstraints);
 
-        mapComboBox.setNumericComponentsOnly(false);
-        mapComboBox.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                mapComboBoxStateChanged(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        jPanel4.add(mapComboBox, gridBagConstraints);
-
-        thrSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "threshold", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-        thrSlider.setMinimumSize(new java.awt.Dimension(90, 65));
-        thrSlider.setPreferredSize(new java.awt.Dimension(200, 65));
-        thrSlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                thrSliderStateChanged(evt);
-            }
-        });
+        jLabel1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jLabel1.setText("number format");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        add(jLabel1, gridBagConstraints);
+
+        formatField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                formatFieldActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        add(formatField, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        jPanel4.add(thrSlider, gridBagConstraints);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(fontGUI, gridBagConstraints);
 
         thrComponentSelector.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -195,51 +173,56 @@ public class GUI extends javax.swing.JPanel
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        jPanel4.add(thrComponentSelector, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1.0;
-        jPanel4.add(jPanel7, gridBagConstraints);
+        add(thrComponentSelector, gridBagConstraints);
 
-        jLabel1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        jLabel1.setText("number format");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        jPanel4.add(jLabel1, gridBagConstraints);
-
-        formatField.setText("%4.1f");
-        formatField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                formatFieldActionPerformed(evt);
+        thrSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "threshold", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        thrSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                thrSliderStateChanged(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        jPanel4.add(formatField, gridBagConstraints);
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        add(thrSlider, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        jPanel4.add(fontGUI, gridBagConstraints);
-
-        jTabbedPane1.addTab("glyphs", jPanel4);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        add(jTabbedPane1, gridBagConstraints);
+        gridBagConstraints.weighty = 1.0;
+        add(filler1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Additional initialization of components that can't be made from NetBeans GUI including:
+     * set text format to default
+     */
+    private void postInitComponents() {
+        //TODO: call updateUI from or other method dedicated to update UI (like after loading network from vna)
+        formatField.setText(params.getFormat());
+        
+        for (int i = 0; i < downTexts.length; i++) {
+            downLabels.put(i, new JLabel(downTexts[i]));
+            downLabels.get(i).setFont(new java.awt.Font("Dialog", 0, 8));
+        }
+        downsizeSlider.setLabelTable(downLabels);
+        mapComboBox.setScalarComponentsOnly(true);
+        mapComboBox.setTitle("glyph size component");
+        thrComponentSelector.setAddNullComponent(true);
+        thrComponentSelector.setScalarComponentsOnly(true);
+        thrComponentSelector.setTitle("glyph threshold component");
+        fontGUI.setInitType(true);
+        regularFieldDownsizeUI.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                params.setActive(false);
+                downsize = regularFieldDownsizeUI.getDownsize();
+                params.setDown(downsize);
+                params.setActive(true);
+            }
+        });
+    }
+    
 private void downsizeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_downsizeSliderStateChanged
    if (!downsizeSlider.getValueIsAdjusting())
       params.setDownsize(down[downsizeSlider.getValue()]);
@@ -247,13 +230,14 @@ private void downsizeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GE
 
 private void mapComboBoxStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_mapComboBoxStateChanged
 {//GEN-HEADEREND:event_mapComboBoxStateChanged
-   params.setActive(false);
+    params.setActive(false);
    int m = mapComboBox.getComponent();
    params.setComponent(m);
    if (m >= 0)
    {
       thrSlider.setMin(inField.getData(m).getMinv());
       thrSlider.setMax(inField.getData(m).getMaxv());
+      //setScaleMinMax();
    }
    params.setActive(true);
 }//GEN-LAST:event_mapComboBoxStateChanged
@@ -333,13 +317,11 @@ private void formatFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIR
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider downsizeSlider;
+    private javax.swing.Box.Filler filler1;
     private pl.edu.icm.visnow.geometries.gui.FontGUI fontGUI;
     private javax.swing.JTextField formatField;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private pl.edu.icm.visnow.lib.gui.DataComponentSelector mapComboBox;
     private pl.edu.icm.visnow.lib.gui.DownsizeUI regularFieldDownsizeUI;
     private pl.edu.icm.visnow.lib.gui.DataComponentSelector thrComponentSelector;

@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,13 +35,20 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.geometries.gui;
 
 import java.awt.CardLayout;
+import java.awt.Insets;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import pl.edu.icm.visnow.datasets.CellSet;
@@ -92,14 +100,12 @@ public class IrregularFieldMapperGUI extends javax.swing.JPanel implements Chang
         pane = new javax.swing.JPanel();
         irregularFieldPresentationGUI = new pl.edu.icm.visnow.geometries.gui.IrregularFieldPresentationGUI();
 
-        setMinimumSize(new java.awt.Dimension(200, 800));
-        setPreferredSize(new java.awt.Dimension(235, 800));
         setRequestFocusEnabled(false);
         setLayout(new java.awt.GridBagLayout());
 
-        jScrollPane2.setMinimumSize(new java.awt.Dimension(200, 66));
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(50, 100));
         jScrollPane2.setOpaque(false);
-        jScrollPane2.setPreferredSize(new java.awt.Dimension(235, 66));
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(50, 100));
 
         cellSetList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
@@ -110,13 +116,11 @@ public class IrregularFieldMapperGUI extends javax.swing.JPanel implements Chang
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         add(jScrollPane2, gridBagConstraints);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel1.setMinimumSize(new java.awt.Dimension(200, 24));
-        jPanel1.setPreferredSize(new java.awt.Dimension(235, 24));
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
@@ -150,12 +154,10 @@ public class IrregularFieldMapperGUI extends javax.swing.JPanel implements Chang
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         add(jPanel1, gridBagConstraints);
 
-        pane.setMinimumSize(new java.awt.Dimension(200, 620));
-        pane.setPreferredSize(new java.awt.Dimension(235, 620));
         pane.setLayout(new java.awt.CardLayout());
 
         irregularFieldPresentationGUI.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -165,7 +167,7 @@ public class IrregularFieldMapperGUI extends javax.swing.JPanel implements Chang
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         add(pane, gridBagConstraints);
@@ -188,7 +190,7 @@ public class IrregularFieldMapperGUI extends javax.swing.JPanel implements Chang
       inField = inFld;
       params = p;
       log.debug("start new params");
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          public void run()
          {
@@ -281,7 +283,7 @@ public class IrregularFieldMapperGUI extends javax.swing.JPanel implements Chang
 
    public void updateCellSetList()
    {
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          @Override
          public void run()
@@ -327,4 +329,25 @@ public class IrregularFieldMapperGUI extends javax.swing.JPanel implements Chang
     private javax.swing.JPanel pane;
     private javax.swing.JComboBox pickIndicatorCombo;
     // End of variables declaration//GEN-END:variables
+
+    public static void main(String[] args) {
+        UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(4,0,0,0));
+        
+        JFrame f = new JFrame();
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        final IrregularFieldMapperGUI p = new IrregularFieldMapperGUI();
+        f.add(p);
+        f.pack();
+        f.addComponentListener(new ComponentAdapter() {
+            private boolean toggleSimple = true;
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                p.setPresentation(toggleSimple);
+                toggleSimple = !toggleSimple;
+            }
+        });
+        f.setVisible(true);
+    }
+
 }

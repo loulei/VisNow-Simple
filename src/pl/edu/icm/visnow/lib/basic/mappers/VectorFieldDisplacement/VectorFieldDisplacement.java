@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,7 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.basic.mappers.VectorFieldDisplacement;
 
@@ -42,13 +44,14 @@ import javax.swing.event.ChangeListener;
 import pl.edu.icm.visnow.datasets.Field;
 import pl.edu.icm.visnow.datasets.IrregularField;
 import pl.edu.icm.visnow.datasets.RegularField;
+import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
 import pl.edu.icm.visnow.engine.core.InputEgg;
 import pl.edu.icm.visnow.engine.core.OutputEgg;
 import pl.edu.icm.visnow.geometries.viewer3d.eventslisteners.render.FrameRenderedListener;
 import pl.edu.icm.visnow.lib.templates.visualization.modules.OutFieldVisualizationModule;
 import pl.edu.icm.visnow.lib.types.VNRegularField;
 import pl.edu.icm.visnow.lib.types.VNField;
-import pl.edu.icm.visnow.lib.types.VNGeometryObject;
+import pl.edu.icm.visnow.lib.types.VNIrregularField;
 import pl.edu.icm.visnow.lib.utils.SwingInstancer;
 
 /**
@@ -75,9 +78,10 @@ public class VectorFieldDisplacement extends OutFieldVisualizationModule
       outObj.setName("displacement");
       params.addChangeListener(new ChangeListener()
       {
+         @Override
          public void stateChanged(ChangeEvent evt)
          {
-            if(ignoreUI)
+            if(ignoreUI || inField == null)
                return;
             updateCoords();
             fromGUI = true;
@@ -86,8 +90,9 @@ public class VectorFieldDisplacement extends OutFieldVisualizationModule
                startAction();
          }
       });
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
+         @Override
          public void run()
          {
             computeUI = new GUI();
@@ -101,61 +106,21 @@ public class VectorFieldDisplacement extends OutFieldVisualizationModule
    public static InputEgg[] inputEggs = null;
    public static OutputEgg[] outputEggs = null;
 
-   @Override
-   public void onInitFinished()
-   {
-      outObj.setCreator(this);
-      outObj.getGeometryObj().setUserData(getName());
-      setOutputValue("outObj", new VNGeometryObject(outObj));
-   }
-
    private void updateCoords()
    {
       float scale = params.getScale();
-      float[] v = inField.getData(params.getVectorComponent()).getFData();
-      if (inCoords != null)
+      DataArray da = inField.getData(params.getVectorComponent());
+      float[] v = da.getFData();
+      if (da.getVeclen() == 3)
          for (int i = 0; i < coords.length; i++)
             coords[i] = inCoords[i] + scale * v[i];
-      else if (inField instanceof RegularField)
+      else
       {
-         int[] dims = inRegularField.getDims();
-         if (dims == null)
-            return;
-         float[][] affine = inRegularField.getAffine();
-         float[] c = new float[3];
-         float[] d = new float[3];
-         switch (dims.length)
-         {
-         case 3:
-            for (int i = 0, l = 0; i < dims[2]; i++)
-            {
-               for (int j = 0; j < 3; j++)
-                  c[j] = affine[3][j] + i * affine[2][j];
-               for (int j = 0; j < dims[1]; j++)
-               {
-                  for (int k = 0; k < 3; k++)
-                     d[k] = c[k] + j * affine[1][k];
-                  for (int k = 0; k < dims[0]; k++)
-                     for (int m = 0; m < 3; m++, l++)
-                        coords[l] = d[m] + k * affine[0][m] + scale * v[l];
-               }
-            }
-            break;
-         case 2:
-            for (int i = 0, l = 0; i < dims[1]; i++)
-            {
-               for (int j = 0; j < 3; j++)
-                  c[j] = affine[3][j] + i * affine[1][j];
-               for (int j = 0; j < dims[0]; j++)
-                  for (int k = 0; k < 3; k++, l++)
-                     coords[l] = c[k] + j * affine[0][k] + scale * v[l];
-            }
-            break;
-         case 1:
-            for (int i = 0, l = 0; i < dims[0]; i++)
-               for (int k = 0; k < 3; k++, l++)
-                  coords[l] = affine[3][k] + i * affine[0][k] + scale * v[l];
-         }
+         int n = inField.getNNodes();
+         int m = Math.min(3, da.getVeclen());
+         for (int i = 0, k = 0, l = 0; i < n; i++, k += 3, l += da.getVeclen())
+            for (int j = 0; j < m; j++)
+                coords[k + j] = inCoords[k + j] + scale * v[l + j];
       }
    }
 
@@ -180,7 +145,9 @@ public class VectorFieldDisplacement extends OutFieldVisualizationModule
             inField = newInField;
             int cmp = -1;
             for (int i = 0; i < inField.getNData(); i++)
-               if (inField.getData(i).getVeclen() == inField.getNSpace())
+               if (inField.getData(i).isSimpleNumeric() &&
+                   inField.getData(i).getVeclen() > 1 &&
+                   inField.getData(i).getVeclen() <= 3)
                {
                   cmp = i;
                   break;
@@ -189,6 +156,7 @@ public class VectorFieldDisplacement extends OutFieldVisualizationModule
                return;
             updateUI();
             outField = inField.clone();
+            outField.setNSpace(3);
             if (inField instanceof RegularField)
             {
                inRegularField = (RegularField) inField;
@@ -197,7 +165,7 @@ public class VectorFieldDisplacement extends OutFieldVisualizationModule
                if (inRegularField.getCoords() != null)
                   inCoords = inRegularField.getCoords();
                else
-                  inCoords = null;
+                  inCoords = inRegularField.getCoordsFromAffine();
             } else
             {
                inIrregularField = (IrregularField) inField;
@@ -206,22 +174,26 @@ public class VectorFieldDisplacement extends OutFieldVisualizationModule
             }
             outField.clearCoords();
             coords = new float[3*outField.getNNodes()];
-            if (inCoords != null)
-               System.arraycopy(inCoords, 0, coords, 0, inCoords.length);
-            else 
-            {
-               coords = ((RegularField)inField).getCoordsFromAffine();
-            }
+            System.arraycopy(inCoords, 0, coords, 0, inCoords.length);
             outField.setCoords(coords);
             prepareOutputGeometry();
          }
       }
       if (inField.getData(params.getVectorComponent()) != null &&
-          inField.getData(params.getVectorComponent()).getVeclen() == 3)
+          inField.getData(params.getVectorComponent()).getVeclen() > 1 &&
+          inField.getData(params.getVectorComponent()).getVeclen() <= 3)
          updateCoords();
-      if (inField instanceof RegularField)
-         setOutputValue("regularOutField", new VNRegularField(outRegularField));
-      setOutputValue("outField", new VNField(outField));
+
+      if (outField != null && outField instanceof RegularField) {
+          setOutputValue("outRegularField", new VNRegularField((RegularField)outField));
+          setOutputValue("outIrregularField", null);
+      } else if(outField != null && outField instanceof IrregularField) {
+          setOutputValue("outRegularField", null);
+          setOutputValue("outIrregularField", new VNIrregularField((IrregularField)outField));
+      } else {
+          setOutputValue("outRegularField", null);
+          setOutputValue("outIrregularField", null);
+      }      
       show();
       fromGUI = false;
    }

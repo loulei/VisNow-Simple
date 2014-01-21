@@ -37,16 +37,26 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.application.area;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.Timer;
+import org.apache.log4j.Logger;
 import pl.edu.icm.visnow.application.area.widgets.BgPanel;
 import pl.edu.icm.visnow.application.area.widgets.DataPanel;
 import pl.edu.icm.visnow.application.area.widgets.LinkPanel;
 import pl.edu.icm.visnow.application.area.widgets.ModulePanel;
 import pl.edu.icm.visnow.application.area.widgets.PortPanel;
+import pl.edu.icm.visnow.lib.types.VNField;
 
 
 /**
@@ -54,6 +64,7 @@ import pl.edu.icm.visnow.application.area.widgets.PortPanel;
  * @author Hubert Orlik-Grzesik, University of Warsaw, ICM
  */
 public class AreaPanelMouseEvents implements MouseListener, MouseMotionListener {
+    private static final Logger LOGGER = Logger.getLogger(AreaPanelMouseEvents.class);
 
     //<editor-fold defaultstate="collapsed" desc=" AreaPanel ">
     private AreaPanel areaPanel;
@@ -67,6 +78,7 @@ public class AreaPanelMouseEvents implements MouseListener, MouseMotionListener 
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc=" MouseClicked ">
+    @Override
     public void mouseClicked(MouseEvent e) {
         areaPanel.requestFocusInWindow();
         Component c = areaPanel.getAreaComponentAt(e.getPoint());
@@ -86,16 +98,27 @@ public class AreaPanelMouseEvents implements MouseListener, MouseMotionListener 
            //TODO? Powinno dzialac.
         }
         if(c == areaPanel.getBgPanel()) {
-
             if(e.isMetaDown())
                 areaPanel.showMenu(e.getPoint());
         }
+
+        //close tooltip on click
+        if(mouseOverLinkPanel) {
+            mouseOverLinkPanel = false;
+            mouseOverLinkPanelTimer.stop();
+            if(currentLinkPanel != null) {
+                areaPanel.removeFloatingComponent();
+            }
+            currentLinkPanel = null;
+        }        
+        
     }
     //</editor-fold>
 
 
 
     //<editor-fold defaultstate="collapsed" desc=" MousePressed ">
+    @Override
     public void mousePressed(MouseEvent e) {
         areaPanel.requestFocusInWindow();
         //areaPanel.getArea().getOutput().selectNull();
@@ -160,54 +183,122 @@ public class AreaPanelMouseEvents implements MouseListener, MouseMotionListener 
     }
 
     public void bgPanelPressed(MouseEvent e, BgPanel panel) {        
-        //areaPanel.getArea().getOutput().selectNull();        
-        //areaPanel.repaint();
         
-        //this.areaPanel.getArea().getOutput().select((ModulePanel)null, false);
     }
     //</editor-fold>
 
+    @Override
     public void mouseReleased(MouseEvent e) {
         areaPanel.requestFocusInWindow();
         areaPanel.getInternalManager().mouseReleased(e.isControlDown());
         areaPanel.repaint();
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
         
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
-        
+        if(mouseOverLinkPanel) {
+            mouseOverLinkPanel = false;
+            mouseOverLinkPanelTimer.stop();
+            if(currentLinkPanel != null) {
+                areaPanel.removeFloatingComponent();
+            }
+            currentLinkPanel = null;
+        }        
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
         areaPanel.requestFocusInWindow();
         areaPanel.getInternalManager().mouseDragged(e.getX(), e.getY());//.continueDragging(e.isControlDown());
-        //areaPanel.getInternalManager().mouseConnectionMoved(e.getPoint());
         areaPanel.repaint();
     }
 
     public void mouseDragged(PortPanel p, MouseEvent e) {
         areaPanel.requestFocusInWindow();
         areaPanel.getInternalManager().mouseDragged(e.getX() + p.getTotalX(), e.getY()+p.getTotalY());//.continueDragging(e.isControlDown());
-        //areaPanel.getInternalManager().mouseConnectionMoved(e.getPoint());
         areaPanel.repaint();
     }
 
     public void mousePortDragged(PortPanel p, MouseEvent e) {
         areaPanel.requestFocusInWindow();
         areaPanel.getInternalManager().mouseDragged(e.getX() + p.getTotalX(), e.getY()+p.getTotalY());//.continueDragging(e.isControlDown());
-//        areaPanel.getInternalManager().mouseConnectionMoved(
-//                new Point(
-//                e.getPoint().x + p.getTotalX(),
-//                e.getPoint().y + p.getTotalY()
-//                ));
         areaPanel.repaint();
     }
 
+    private boolean mouseOverLinkPanel = false;
+    private int mouseOverLinkPanelTooltipDelay = 1000;
+    private LinkPanel currentLinkPanel = null;
+    private Point mouseOverLinkPanelPosition = new Point(0, 0);
+    private JLabel mouseOverLinkPanelTooltipLabel = new JLabel();
+    private Timer mouseOverLinkPanelTimer = new Timer(mouseOverLinkPanelTooltipDelay, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if(currentLinkPanel != null) {
+                            Object obj = currentLinkPanel.getLink().getOutput().getValue();
+                            if(obj instanceof VNField) {                                
+                                if(((VNField)obj).getField() != null)
+                                    mouseOverLinkPanelTooltipLabel.setText(((VNField)obj).getField().shortDescription());
+                                else
+                                    mouseOverLinkPanelTooltipLabel.setText("no data");
+                                mouseOverLinkPanelTooltipLabel.setForeground(Color.BLACK);
+                                mouseOverLinkPanelTooltipLabel.setOpaque(true);
+                                mouseOverLinkPanelTooltipLabel.setBackground(new Color(255,255,200));
+                                mouseOverLinkPanelTooltipLabel.setBorder(BorderFactory.createLineBorder(Color.WHITE));                                                                
+                                mouseOverLinkPanelTooltipLabel.setBounds(mouseOverLinkPanelPosition.x, mouseOverLinkPanelPosition.y, mouseOverLinkPanelTooltipLabel.getPreferredSize().width, mouseOverLinkPanelTooltipLabel.getPreferredSize().height);
+                                areaPanel.setFloatingComponent(mouseOverLinkPanelTooltipLabel, mouseOverLinkPanelPosition);
+                            }
+                        }
+                        mouseOverLinkPanelTimer.stop();
+                    }
+                });
+    
+    @Override
     public void mouseMoved(MouseEvent e) {
         areaPanel.requestFocusInWindow();
+        
+        Component c = areaPanel.getAreaComponentAt(e.getPoint());
+        if(!(c instanceof LinkPanel) || (currentLinkPanel != null && c != currentLinkPanel)) {        
+            if(mouseOverLinkPanel) {
+                mouseOverLinkPanel = false;
+                mouseOverLinkPanelTimer.stop();
+                if(currentLinkPanel != null) {
+                    areaPanel.removeFloatingComponent();
+                }
+                currentLinkPanel = null;
+            }            
+        }
+        
+        if(c instanceof LinkPanel) {
+            Point p = new Point(e.getLocationOnScreen().x + 15, 
+                                e.getLocationOnScreen().y + 15);
+            int width = mouseOverLinkPanelTooltipLabel.getPreferredSize().width;
+            int height = mouseOverLinkPanelTooltipLabel.getPreferredSize().height;
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            if (p.x + width > screenSize.getWidth())
+               p.x = (int) screenSize.getWidth() - width;
+            if (p.y + height > screenSize.getHeight())
+               p.y = (int) screenSize.getHeight() - height;            
+            mouseOverLinkPanelTooltipLabel.setBounds(p.x, p.y, width, height);                
+            mouseOverLinkPanelPosition.setLocation(p);                                
+            
+            
+            if(!mouseOverLinkPanel || c != currentLinkPanel) {
+                mouseOverLinkPanel = true;
+                currentLinkPanel = (LinkPanel)c;
+                mouseOverLinkPanelTimer.restart();
+            }
+            
+            if(mouseOverLinkPanel && currentLinkPanel != null) {
+                areaPanel.setFloatingComponentPosition(mouseOverLinkPanelPosition);
+            }
+        }
+        
+        
     }
 
 

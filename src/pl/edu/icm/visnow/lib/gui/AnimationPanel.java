@@ -1,44 +1,44 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+ Copyright (C) 2006-2013 University of Warsaw, ICM
 
-This file is part of GNU Classpath.
+ This file is part of GNU Classpath.
 
-GNU Classpath is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+ GNU Classpath is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
 
-GNU Classpath is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
+ GNU Classpath is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+ You should have received a copy of the GNU General Public License
+ along with GNU Classpath; see the file COPYING.  If not, write to the
+ University of Warsaw, Interdisciplinary Centre for Mathematical and
+ Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
-Linking this library statically or dynamically with other modules is
-making a combined work based on this library.  Thus, the terms and
-conditions of the GNU General Public License cover the whole
-combination.
+ Linking this library statically or dynamically with other modules is
+ making a combined work based on this library.  Thus, the terms and
+ conditions of the GNU General Public License cover the whole
+ combination.
 
-As a special exception, the copyright holders of this library give you
-permission to link this library with independent modules to produce an
-executable, regardless of the license terms of these independent
-modules, and to copy and distribute the resulting executable under
-terms of your choice, provided that you also meet, for each linked
-independent module, the terms and conditions of the license of that
-module.  An independent module is a module which is not derived from
-or based on this library.  If you modify this library, you may extend
-this exception to your version of the library, but you are not
-obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
-
+ As a special exception, the copyright holders of this library give you
+ permission to link this library with independent modules to produce an
+ executable, regardless of the license terms of these independent
+ modules, and to copy and distribute the resulting executable under
+ terms of your choice, provided that you also meet, for each linked
+ independent module, the terms and conditions of the license of that
+ module.  An independent module is a module which is not derived from
+ or based on this library.  If you modify this library, you may extend
+ this exception to your version of the library, but you are not
+ obligated to do so.  If you do not wish to do so, delete this
+ exception statement from your version. */
+//</editor-fold>
 package pl.edu.icm.visnow.lib.gui;
 
 import java.awt.Container;
-import java.awt.Font;
 import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.ImageIcon;
@@ -50,46 +50,47 @@ import pl.edu.icm.visnow.geometries.viewer3d.eventslisteners.render.FrameRendere
 
 /**
  *
- * @author Krzysztof S. Nowinski (know@icm.edu.pl) Warsaw University
- * Interdisciplinary Centre for Mathematical and Computational Modelling
+ * @author Krzysztof S. Nowinski (know@icm.edu.pl) Warsaw University Interdisciplinary Centre for
+ * Mathematical and Computational Modelling
  */
-public class AnimationPanel extends javax.swing.JPanel {
+public class AnimationPanel extends javax.swing.JPanel
+{
 
-    public static final int FORWARD = 1;
-    public static final int STOP = 0;
-    public static final int BACK = -1;
-    private int firstFrame = 0;
-    private int currentFrame = 0;
-    private float currentTime = 0;
-    private int lastFrame = 100;
-    float tmin = 0, tmax = 1, dt = .01f;
-    float tlow = 0, tup = 1;
-    private int delay = 10;
-    private int step = 1;
-    private int mode = STOP;
-    private boolean renderDone = true;
-    private boolean updatingFrame;
-    private ImageIcon fwdIcon = new javax.swing.ImageIcon(getClass().getResource("/pl/edu/icm/visnow/gui/icons/fwd.png"));
-    private ImageIcon bckIcon = new javax.swing.ImageIcon(getClass().getResource("/pl/edu/icm/visnow/gui/icons/bck.png"));
-    private ImageIcon selFwdIcon = new javax.swing.ImageIcon(getClass().getResource("/pl/edu/icm/visnow/gui/icons/selfwd.png"));
-    private ImageIcon selBckIcon = new javax.swing.ImageIcon(getClass().getResource("/pl/edu/icm/visnow/gui/icons/selbck.png"));
-    private Vector<FrameModificationListener> listeners = new Vector<FrameModificationListener>();
-    private String timeUnit = "";
-    private Container parent = null;
-    private boolean detached = false;
+   public static final int FORWARD = 1;
+   public static final int STOP = 0;
+   public static final int BACK = -1;
+   private int firstFrame = 0;
+   private int currentFrame = 0;
+   private float currentTime = 0;
+   private int lastFrame = 100;
+   float tmin = 0, tmax = 1, dt = .01f;
+   float tlow = 0, tup = 1;
+   private int delay = 10;
+   private int step = 1;
+   private int mode = STOP;
+   private boolean renderDone = true;
+   private boolean updatingFrame;
+   private ImageIcon fwdIcon = new javax.swing.ImageIcon(getClass().getResource("/pl/edu/icm/visnow/gui/icons/fwd.png"));
+   private ImageIcon bckIcon = new javax.swing.ImageIcon(getClass().getResource("/pl/edu/icm/visnow/gui/icons/bck.png"));
+   private ImageIcon selFwdIcon = new javax.swing.ImageIcon(getClass().getResource("/pl/edu/icm/visnow/gui/icons/selfwd.png"));
+   private ImageIcon selBckIcon = new javax.swing.ImageIcon(getClass().getResource("/pl/edu/icm/visnow/gui/icons/selbck.png"));
+   private Vector<FrameModificationListener> listeners = new Vector<FrameModificationListener>();
+   private String timeUnit = "";
+   private Container parent = null;
+   private boolean detached = false;
 
-    /**
-     * Creates new form AnimationPanel
-     */
-    public AnimationPanel() {
-        initComponents();
-    }
+   /**
+    * Creates new form AnimationPanel
+    */
+   public AnimationPanel()
+   {
+      initComponents();
+   }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+   /**
+    * This method is called from within the constructor to initialize the form. WARNING: Do NOT
+    * modify this code. The content of this method is always regenerated by the Form Editor.
+    */
    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
    private void initComponents()
    {
@@ -117,7 +118,6 @@ public class AnimationPanel extends javax.swing.JPanel {
       jLabel5 = new javax.swing.JLabel();
       timeField = new javax.swing.JTextField();
       frameSlider = new javax.swing.JSlider();
-      jPanel2 = new javax.swing.JPanel();
       speedSlider = new javax.swing.JSlider();
       speedResetButton = new javax.swing.JButton();
       timeRangeSlider = new pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider();
@@ -137,7 +137,7 @@ public class AnimationPanel extends javax.swing.JPanel {
 
       playControlPanel.setLayout(new java.awt.GridBagLayout());
 
-      jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+      jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
       jPanel1.setMaximumSize(new java.awt.Dimension(26, 26));
       jPanel1.setMinimumSize(new java.awt.Dimension(186, 26));
       jPanel1.setPreferredSize(new java.awt.Dimension(242, 26));
@@ -265,7 +265,7 @@ public class AnimationPanel extends javax.swing.JPanel {
       jPanel1.add(lastFrameButton, gridBagConstraints);
 
       gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridwidth = 2;
+      gridBagConstraints.gridwidth = 3;
       gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
       gridBagConstraints.weightx = 1.0;
       playControlPanel.add(jPanel1, gridBagConstraints);
@@ -307,7 +307,7 @@ public class AnimationPanel extends javax.swing.JPanel {
       gridBagConstraints = new java.awt.GridBagConstraints();
       gridBagConstraints.gridx = 0;
       gridBagConstraints.gridy = 3;
-      gridBagConstraints.gridwidth = 2;
+      gridBagConstraints.gridwidth = 3;
       gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
       gridBagConstraints.weightx = 1.0;
       playControlPanel.add(jPanel3, gridBagConstraints);
@@ -390,16 +390,12 @@ public class AnimationPanel extends javax.swing.JPanel {
       gridBagConstraints = new java.awt.GridBagConstraints();
       gridBagConstraints.gridx = 0;
       gridBagConstraints.gridy = 1;
-      gridBagConstraints.gridwidth = 2;
+      gridBagConstraints.gridwidth = 3;
       gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
       playControlPanel.add(frameSlider, gridBagConstraints);
 
-      jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-      jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.LINE_AXIS));
-
       speedSlider.setFont(new java.awt.Font("Dialog", 0, 8)); // NOI18N
       speedSlider.setMajorTickSpacing(50);
-      speedSlider.setPaintTicks(true);
       speedSlider.setBorder(javax.swing.BorderFactory.createTitledBorder("play speed"));
       speedSlider.setMaximumSize(new java.awt.Dimension(32767, 40));
       speedSlider.setMinimumSize(new java.awt.Dimension(90, 40));
@@ -411,7 +407,10 @@ public class AnimationPanel extends javax.swing.JPanel {
             speedSliderStateChanged(evt);
          }
       });
-      jPanel2.add(speedSlider);
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 1;
+      gridBagConstraints.gridy = 2;
+      playControlPanel.add(speedSlider, gridBagConstraints);
 
       speedResetButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
       speedResetButton.setText("*");
@@ -427,14 +426,12 @@ public class AnimationPanel extends javax.swing.JPanel {
             speedResetButtonActionPerformed(evt);
          }
       });
-      jPanel2.add(speedResetButton);
-
       gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 1;
+      gridBagConstraints.gridx = 2;
       gridBagConstraints.gridy = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.weightx = 0.3;
-      playControlPanel.add(jPanel2, gridBagConstraints);
+      gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+      gridBagConstraints.insets = new java.awt.Insets(7, 0, 2, 0);
+      playControlPanel.add(speedResetButton, gridBagConstraints);
 
       gridBagConstraints = new java.awt.GridBagConstraints();
       gridBagConstraints.gridx = 0;
@@ -459,6 +456,7 @@ public class AnimationPanel extends javax.swing.JPanel {
 
       jPanel4.setLayout(new java.awt.GridLayout(1, 0));
 
+      jLabel2.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
       jLabel2.setText("frames");
       jPanel4.add(jLabel2);
 
@@ -476,6 +474,7 @@ public class AnimationPanel extends javax.swing.JPanel {
       gridBagConstraints.gridx = 0;
       gridBagConstraints.gridy = 1;
       gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+      gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
       add(jPanel4, gridBagConstraints);
 
       detachButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
@@ -496,82 +495,68 @@ public class AnimationPanel extends javax.swing.JPanel {
 
    private void bckFrameButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bckFrameButtonActionPerformed
    {//GEN-HEADEREND:event_bckFrameButtonActionPerformed
-       if (mode != STOP) {
-           return;
-       }
-       int frame = currentFrame - step;
-       if (frame < firstFrame) {
-           return;
-       }
-       setFrame(frame);
+      if (mode != STOP)
+         return;
+      int frame = currentFrame - step;
+      if (frame < firstFrame)
+         return;
+      setFrame(frame);
    }//GEN-LAST:event_bckFrameButtonActionPerformed
 
    private void fwdFrameButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_fwdFrameButtonActionPerformed
    {//GEN-HEADEREND:event_fwdFrameButtonActionPerformed
-       if (mode != STOP) {
-           return;
-       }
-       int frame = currentFrame + step;
-       if (frame > lastFrame) {
-           return;
-       }
-       setFrame(frame);
+      if (mode != STOP)
+         return;
+      int frame = currentFrame + step;
+      if (frame > lastFrame)
+         return;
+      setFrame(frame);
    }//GEN-LAST:event_fwdFrameButtonActionPerformed
 
    private void stopButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_stopButtonActionPerformed
    {//GEN-HEADEREND:event_stopButtonActionPerformed
-       stopAnimation();
+      stopAnimation();
    }//GEN-LAST:event_stopButtonActionPerformed
 
    private void speedResetButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_speedResetButtonActionPerformed
    {//GEN-HEADEREND:event_speedResetButtonActionPerformed
-       speedSlider.setValue(50);
+      speedSlider.setValue(50);
    }//GEN-LAST:event_speedResetButtonActionPerformed
 
    private void speedSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_speedSliderStateChanged
    {//GEN-HEADEREND:event_speedSliderStateChanged
-       int s = speedSlider.getValue();
-       if (s < 50) {
-           delay = 10 * (50 - s);
-       } else {
-           delay = 1;
-       }
-       if (s > 50) {
-           step = (s - 50) + 1;
-       } else {
-           step = 1;
-       }
+      int s = speedSlider.getValue();
+      step = Math.max(1, (s - 50) + 1);
+      delay = Math.max(0,  10 * (50 - s));
    }//GEN-LAST:event_speedSliderStateChanged
 
    private void lastFrameButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_lastFrameButtonActionPerformed
    {//GEN-HEADEREND:event_lastFrameButtonActionPerformed
-       forwardButton.setSelected(false);
-       backButton.setSelected(false);
-       setFrame(lastFrame);
+      forwardButton.setSelected(false);
+      backButton.setSelected(false);
+      setFrame(lastFrame);
    }//GEN-LAST:event_lastFrameButtonActionPerformed
 
    private void firstFrameButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_firstFrameButtonActionPerformed
    {//GEN-HEADEREND:event_firstFrameButtonActionPerformed
-       forwardButton.setSelected(false);
-       backButton.setSelected(false);
-       setFrame(firstFrame);
+      forwardButton.setSelected(false);
+      backButton.setSelected(false);
+      setFrame(firstFrame);
    }//GEN-LAST:event_firstFrameButtonActionPerformed
 
    private void forwardButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_forwardButtonActionPerformed
    {//GEN-HEADEREND:event_forwardButtonActionPerformed
-       if (mode != STOP) {
-           return;
-       }
-       startAnimation(FORWARD);
+      if (mode == STOP)
+         startAnimation(FORWARD);
    }//GEN-LAST:event_forwardButtonActionPerformed
 
    private void backButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_backButtonActionPerformed
    {//GEN-HEADEREND:event_backButtonActionPerformed
-       if (mode != STOP) {
-           return;
-       }
-       startAnimation(BACK);
+      if (mode == STOP)
+         startAnimation(BACK);
    }//GEN-LAST:event_backButtonActionPerformed
+
+   //<editor-fold defaultstate="collapsed" desc=" attach/detach ">
 
    private void detachButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_detachButtonActionPerformed
    {//GEN-HEADEREND:event_detachButtonActionPerformed
@@ -584,11 +569,10 @@ public class AnimationPanel extends javax.swing.JPanel {
          detachedFrame.setBounds(10, 500, 600, 84);
          remove(frameSlider);
          playControlPanel.remove(jPanel1);
-         playControlPanel.remove(jPanel2);
          playControlPanel.remove(jPanel3);
          playControlPanel.remove(jPanel5);
          detachedFrame.setLayout(new java.awt.GridBagLayout());
-         
+
          gridBagConstraints = new java.awt.GridBagConstraints();
          gridBagConstraints.gridx = 0;
          gridBagConstraints.gridy = 0;
@@ -613,7 +597,6 @@ public class AnimationPanel extends javax.swing.JPanel {
          gridBagConstraints.gridheight = 2;
          gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
          gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-         detachedFrame.add(jPanel2, gridBagConstraints);
 
          gridBagConstraints = new java.awt.GridBagConstraints();
          gridBagConstraints.gridx = 1;
@@ -639,7 +622,6 @@ public class AnimationPanel extends javax.swing.JPanel {
          detachedFrame.setVisible(false);
          detachedFrame.remove(frameSlider);
          detachedFrame.remove(jPanel1);
-         detachedFrame.remove(jPanel2);
          detachedFrame.remove(jPanel3);
          detachedFrame.remove(jPanel5);
 
@@ -661,7 +643,6 @@ public class AnimationPanel extends javax.swing.JPanel {
          gridBagConstraints.gridy = 2;
          gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
          gridBagConstraints.weightx = 0.3;
-         playControlPanel.add(jPanel2, gridBagConstraints);
 
          gridBagConstraints = new java.awt.GridBagConstraints();
          gridBagConstraints.gridx = 0;
@@ -679,17 +660,21 @@ public class AnimationPanel extends javax.swing.JPanel {
          playControlPanel.add(jPanel5, gridBagConstraints);
          revalidate();
       }
-       detached = !detached;
+      detached = !detached;
    }//GEN-LAST:event_detachButtonActionPerformed
+
+//</editor-fold>
 
    private void framesFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_framesFieldActionPerformed
    {//GEN-HEADEREND:event_framesFieldActionPerformed
-       try {
-           int k = Integer.parseInt(framesField.getText());
-           if (k > 0)
+      try
+      {
+         int k = Integer.parseInt(framesField.getText());
+         if (k > 0)
          {
             frameSlider.setMaximum(k - 1);
             lastFrame = k - 1;
+            dt = (tup - tlow) / (lastFrame);
          }
       } catch (Exception e)
       {
@@ -702,6 +687,7 @@ public class AnimationPanel extends javax.swing.JPanel {
          return;
       tlow = timeRangeSlider.getLow();
       tup = timeRangeSlider.getUp();
+      dt = (tup - tlow) / (lastFrame);
       frameSlider.setValue(0);
    }//GEN-LAST:event_timeRangeSliderStateChanged
 
@@ -713,7 +699,7 @@ public class AnimationPanel extends javax.swing.JPanel {
    }//GEN-LAST:event_frameSliderStateChanged
 
     private void frameSliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_frameSliderMouseReleased
-        fireFrameEvent(currentFrame);
+       fireFrameEvent(currentFrame);
     }//GEN-LAST:event_frameSliderMouseReleased
 
    private void frameFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_frameFieldActionPerformed
@@ -731,194 +717,231 @@ public class AnimationPanel extends javax.swing.JPanel {
       try
       {
          float t = Float.parseFloat(timeField.getText());
-         frameSlider.setValue((int)((t - tmin) / dt));
+         frameSlider.setValue((int) ((t - tmin) / dt));
       } catch (Exception e)
       {
       }
    }//GEN-LAST:event_timeFieldActionPerformed
 
-    private void startAnimation(int m) {
-        if (m == FORWARD) {
-            forwardButton.setIcon(selFwdIcon);
-            backButton.setEnabled(false);
-        } else {
-            backButton.setIcon(selBckIcon);
-            forwardButton.setEnabled(false);
-        }
-        stopButton.setEnabled(true);
-        firstFrameButton.setEnabled(false);
-        fwdFrameButton.setEnabled(false);
-        bckFrameButton.setEnabled(false);
-        lastFrameButton.setEnabled(false);
-        mode = m;
-        new Thread(new Animation()).start();
-    }
+   private void startAnimation(int m)
+   {
+      if (m == FORWARD)
+      {
+         forwardButton.setIcon(selFwdIcon);
+         backButton.setEnabled(false);
+      } else
+      {
+         backButton.setIcon(selBckIcon);
+         forwardButton.setEnabled(false);
+      }
+      stopButton.setEnabled(true);
+      firstFrameButton.setEnabled(false);
+      fwdFrameButton.setEnabled(false);
+      bckFrameButton.setEnabled(false);
+      lastFrameButton.setEnabled(false);
+      mode = m;
+      new Thread(new Animation()).start();
+   }
 
-    public int getCurrentFrame() {
-        return currentFrame;
-    }
+   public int getCurrentFrame()
+   {
+      return currentFrame;
+   }
 
-    public float getCurrentVal() {
-        return (currentFrame * dt + tmin);
-    }
+   public float getCurrentVal()
+   {
+      return currentTime;
+   }
 
-    public void Count(int n1) {
-        lastFrame = n1 - 1;
-        frameSlider.setMaximum(n1 - 1);
-        setFrame(0);
-    }
+   private void updateTimeCoeff()
+   {
+      dt = (tup - tlow) / (lastFrame);
+   }
 
-    public void setTimeRange(float tmin, float tmax) {
-        this.tmin = this.tlow = tmin;
-        this.tmax = this.tup = tmax;
-        timeRangeSlider.setParams(tmin, tmax, tmin, tmax);
-    }
+   public void setTimeRange(float tmin, float tmax)
+   {
+      this.tmin = this.tlow = tmin;
+      this.tmax = this.tup = tmax;
+      timeRangeSlider.setParams(tmin, tmax, tmin, tmax);
+      dt = (tup - tlow) / (lastFrame);
+   }
 
-    public void setFrame(int n) {
-        if (n == currentFrame) {
+   public void setTime(float t)
+   {
+      setFrame((int)((t - tmin) / dt + .5f));
+   }
+
+   public void setFrame(int n)
+   {
+      if (n == currentFrame)
+         return;
+      currentFrame = n;
+      updatingFrame = true;
+      if (frameSlider.getValue() != n)
+      {
+         frameSlider.setValue(n);
+      }
+      currentTime = tlow + n * dt;
+      frameField.setText("" + currentFrame);
+      timeField.setText(String.format("%7.2f ", currentTime) + timeUnit);
+      updatingFrame = false;
+      fireFrameEvent(currentFrame);
+   }
+
+   public void stopAnimation()
+   {
+      mode = STOP;
+      stopButton.setEnabled(false);
+      forwardButton.setIcon(fwdIcon);
+      forwardButton.setEnabled(true);
+      backButton.setIcon(bckIcon);
+      backButton.setEnabled(true);
+      firstFrameButton.setEnabled(true);
+      fwdFrameButton.setEnabled(true);
+      bckFrameButton.setEnabled(true);
+      lastFrameButton.setEnabled(true);
+   }
+
+   public void setTimeUnit(String timeUnit)
+   {
+      this.timeUnit = timeUnit;
+      ((TitledBorder) timeRangeSlider.getBorder()).setTitle("time range (" + timeUnit + ")");
+   }
+
+   public void setRenderDone(boolean val)
+   {
+      renderDone = val;
+   }
+
+   private class Animation implements Runnable
+   {
+
+      public Animation()
+      {
+      }
+
+      @Override
+      public synchronized void run()
+      {
+         if (mode == STOP)
+         {
             return;
-        }
-        currentFrame = n;
-        //System.out.println("setting frame to: "+n);
-        //System.out.flush();
-
-        updatingFrame = true;
-        if (frameSlider.getValue() != n) {
-            frameSlider.setValue(n);
-        }
-        dt = (tup - tlow) / (frameSlider.getMaximum());
-        currentTime = tlow + n * dt;
-        frameField.setText("" + currentFrame);
-        timeField.setText(String.format("%7.2f ", currentTime) + timeUnit);
-        updatingFrame = false;
-        fireFrameEvent(currentFrame);
-    }
-
-    public void stopAnimation() {
-        mode = STOP;
-        stopButton.setEnabled(false);
-        forwardButton.setIcon(fwdIcon);
-        forwardButton.setEnabled(true);
-        backButton.setIcon(bckIcon);
-        backButton.setEnabled(true);
-        firstFrameButton.setEnabled(true);
-        fwdFrameButton.setEnabled(true);
-        bckFrameButton.setEnabled(true);
-        lastFrameButton.setEnabled(true);
-    }
-
-    public void setTimeUnit(String timeUnit) {
-        this.timeUnit = timeUnit;
-        ((TitledBorder) timeRangeSlider.getBorder()).setTitle("time range (" + timeUnit + ")");
-    }
-
-    public void setRenderDone(boolean val) {
-        renderDone = val;
-    }
-
-    private class Animation implements Runnable {
-
-        public Animation() {
-        }
-
-        public synchronized void run() {
-            if (mode == STOP) {
-                return;
+         }
+         int frame;
+         int dir = mode;
+         int startFrame = frameSlider.getValue();
+         frame = startFrame;
+         while (mode != STOP)
+         {
+            renderDone = false;
+            frame += dir * step;
+            if (dir == 1 && frame > frameSlider.getMaximum())
+            {
+               if (cycleToggle.isSelected())
+                  frame = 0;
+               else if (bounceToggle.isSelected())
+               {
+                  dir = -dir;
+                  frame = frameSlider.getMaximum() - 1;
+               } else
+               {
+                  stopAnimation();
+                  break;
+               }
+            } else if (dir == -1 && frame <= 0)
+            {
+               if (cycleToggle.isSelected())
+                  frame = frameSlider.getMaximum() - 1;
+               else if (bounceToggle.isSelected())
+               {
+                  dir = -dir;
+                  frame = 0;
+               } else
+               {
+                  stopAnimation();
+                  break;
+               }
             }
-            int frame;
-            int dir = mode;
-            int startFrame = frameSlider.getValue();
-            frame = startFrame;
-            while (mode != STOP) {
-                renderDone = false;
-                frame += dir * step;
-                if (dir == 1 && frame > frameSlider.getMaximum()) {
-                    if (cycleToggle.isSelected()) {
-                        frame = 0;
-                    } else if (bounceToggle.isSelected()) {
-                        dir = -dir;
-                        frame = frameSlider.getMaximum() - 1;
-                    } else {
-                        stopAnimation();
-                        break;
-                    }
-                } else if (dir == -1 && frame <= 0) {
-                    if (cycleToggle.isSelected()) {
-                        frame = frameSlider.getMaximum() - 1;
-                    } else if (bounceToggle.isSelected()) {
-                        dir = -dir;
-                        frame = 0;
-                    } else {
-                        stopAnimation();
-                        break;
-                    }
-                }
-                setFrame(frame);
-                //System.out.println(""+frame+" "+renderDone+" "+mode);
-                try {
-                    //
-                    //for (int i = 0; i < 500 && !renderDone; i++)                
-                    while (!renderDone) {
-                        wait(10);
-                    }
-                    wait(delay);
-                } catch (InterruptedException c) {
-                    stopAnimation();
-                }
+            setFrame(frame);
+            try
+            {
+               while (!renderDone)
+                  wait(10);
+               wait(delay);
+            } catch (InterruptedException c)
+            {
+               stopAnimation();
             }
-            stopAnimation();
-        }
-    }
+         }
+         stopAnimation();
+      }
+   }
 
-    public void addListener(FrameModificationListener l) {
-        listeners.add(l);
-    }
+   public void addListener(FrameModificationListener l)
+   {
+      listeners.add(l);
+   }
 
-    public void removeListener(FrameModificationListener l) {
-        listeners.remove(l);
-    }
+   public void removeListener(FrameModificationListener l)
+   {
+      listeners.remove(l);
+   }
 
-    protected void fireFrameEvent(int frame) {
-        FrameModificationEvent e = new FrameModificationEvent(this, currentFrame, currentTime);
-        Iterator it = listeners.iterator();
-        while (it.hasNext()) {
-            ((FrameModificationListener) it.next()).frameChanged(e);
-        }
-    }
+   protected void fireFrameEvent(int frame)
+   {
+      FrameModificationEvent e = new FrameModificationEvent(this, currentFrame, currentTime);
+      Iterator it = listeners.iterator();
+      while (it.hasNext())
+      {
+         ((FrameModificationListener) it.next()).frameChanged(e);
+      }
+   }
 
-    public int getFirstFrame() {
-        return firstFrame;
-    }
+   public int getFirstFrame()
+   {
+      return firstFrame;
+   }
 
-    public int getLastFrame() {
-        return lastFrame;
-    }
+   public int getLastFrame()
+   {
+      return lastFrame;
+   }
 
-    public void setNFrames(int nFrames) {
-        this.lastFrame = nFrames - 1;
-        frameSlider.setMaximum(lastFrame);
-        framesField.setText("" + nFrames);
-    }
-    private FrameRenderedListener frameRenderedListener = new FrameRenderedListener() {
+   public void setNFrames(int nFrames)
+   {
+      this.lastFrame = nFrames - 1;
+      frameSlider.setMaximum(lastFrame);
+      framesField.setText("" + nFrames);
+   }
 
-        public void frameRendered(FrameRenderedEvent evt) {
-            renderDone = true;
-        }
-    };
+   private FrameRenderedListener frameRenderedListener = new FrameRenderedListener()
+   {
+      public void frameRendered(FrameRenderedEvent evt)
+      {
+         renderDone = true;
+      }
+   };
 
-    public FrameRenderedListener getFrameRenderedListener() {
-        return frameRenderedListener;
-    }
+   public FrameRenderedListener getFrameRenderedListener()
+   {
+      return frameRenderedListener;
+   }
 
-    public boolean isAdjusting() {
-        //System.out.println(""+frameSlider.getValueIsAdjusting()+" "+mode);
-        return frameSlider.getValueIsAdjusting() || mode != STOP;
-    }
-    
-    public void setFrameSliderEnabled(boolean enabled) {
-        this.frameSlider.setEnabled(enabled);
-    }
-    
+   public boolean isAdjusting()
+   {
+      return frameSlider.getValueIsAdjusting() || mode != STOP;
+   }
+
+   public void setFrameSliderEnabled(boolean enabled)
+   {
+      this.frameSlider.setEnabled(enabled);
+   }
+
+   public void setLabels(String rangeLabel, String currentLabel)
+   {
+      ((TitledBorder)timeRangeSlider.getBorder()).setTitle(rangeLabel);
+      jLabel5.setText(currentLabel);
+   }
    // Variables declaration - do not modify//GEN-BEGIN:variables
    private javax.swing.JButton backButton;
    private javax.swing.JButton bckFrameButton;
@@ -937,7 +960,6 @@ public class AnimationPanel extends javax.swing.JPanel {
    private javax.swing.JLabel jLabel3;
    private javax.swing.JLabel jLabel5;
    private javax.swing.JPanel jPanel1;
-   private javax.swing.JPanel jPanel2;
    private javax.swing.JPanel jPanel3;
    private javax.swing.JPanel jPanel4;
    private javax.swing.JPanel jPanel5;

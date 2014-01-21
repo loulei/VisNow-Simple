@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,8 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.lib.basic.mappers.Graph;
 
@@ -78,8 +81,9 @@ public class GraphObject extends VisualizationModule
    protected Vector<DataArray> data = new Vector<DataArray>();
    protected Vector<Color> graphColors = new Vector<Color>();
    protected String[] axDesc = null;
+   protected int fontHeight = 15;
 
-   
+
    public GraphObject()
    {
       parameters = params = new Params();
@@ -98,7 +102,7 @@ public class GraphObject extends VisualizationModule
                update();
          }
       });
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          @Override
          public void run()
@@ -121,9 +125,9 @@ public class GraphObject extends VisualizationModule
       protected Range xRange,  yRange;
       protected AxisLabelItem[] xLabels = null;
       protected AxisLabelItem[] yLabels = null;
-      protected int frame;     
+      protected int frame;
       protected Params params;
-      
+
       public GraphWorld(Params params)
       {
          super();
@@ -140,20 +144,19 @@ public class GraphObject extends VisualizationModule
       }
 
      @Override
-      public void drawLocal2D(J3DGraphics2D gr, LocalToWindow ltw)
-      {  
+      public void drawLocal2D(J3DGraphics2D gr, LocalToWindow ltw, int width, int height)
+      {
          if (renderingWindow == null ||
-             params == null || 
+             params == null ||
              params.getDisplayedData() == null || params.getDisplayedData().length < 1)
             return;
-         int windowWidth = renderingWindow.getWidth();
-         int windowHeight = renderingWindow.getHeight(); 
-         gr.setFont(new java.awt.Font("Dialog", 0, params.getFontSize()));       
+         fontHeight = (int)(height * params.getFontSize());
+         gr.setFont(new java.awt.Font("Dialog", 0, fontHeight));
          FontMetrics fm = gr.getFontMetrics();
          axDesc = params.getAxesLabels();
          String xf,yf;
-         
-         int yMargin = params.getFontSize() + 2;
+
+         int yMargin = fontHeight + 2;
          if (data == null || data.size() < 1)
          {
             ymin = 0;
@@ -169,11 +172,11 @@ public class GraphObject extends VisualizationModule
             if (ymax < data.get(i).getMaxv())
                ymax = data.get(i).getMaxv();
          }
-         origY = (int)(windowHeight * params.getVerticalExtents()[0] / 100.f);
-         endY  = (int)(windowHeight * params.getVerticalExtents()[1] / 100.f);
+         origY = (int)(height * params.getVerticalExtents()[0] / 100.f);
+         endY  = (int)(height * params.getVerticalExtents()[1] / 100.f);
          h     = endY - origY;
-         if (h < 2 * yMargin + 100) h = 2 * yMargin + 100;  
-         yRange = new Range(ymin, ymax, h - 2 * yMargin, false);
+         if (h < 2 * yMargin + 100) h = 2 * yMargin + 100;
+         yRange = new Range((h - 2 * yMargin) / (5 * fontHeight), ymin, ymax,  false);
          ymax = yRange.getUp();
          ymin = yRange.getLow();
          dy = (h - 2 * yMargin) / (ymax - ymin);
@@ -183,7 +186,7 @@ public class GraphObject extends VisualizationModule
             yf = "%"+(yk+2)+".0f";
          else
             yf = "%"+(4-yk)+"."+(2-yk)+"f";
-         
+
          int xll = yk+2;
          if (yk < 0) xll = 4 - yk;
          xll = fm.stringWidth(("12345678901234567890").substring(0, xll));
@@ -191,30 +194,29 @@ public class GraphObject extends VisualizationModule
          if (xll > xMargin) xMargin = xll;
          int xrMargin = fm.stringWidth(axDesc[0]);
          xMargin += xrMargin;
-         
-         origX = (int)(windowWidth * params.getHorizontalExtents()[0] / 100.f);
-         endX  = (int)(windowWidth * params.getHorizontalExtents()[1] / 100.f);
+
+         origX = (int)(width * params.getHorizontalExtents()[0] / 100.f);
+         endX  = (int)(width * params.getHorizontalExtents()[1] / 100.f);
          w     = endX - origX;
-         if (w < xMargin + 100) w = xMargin + 100;
-         xRange = new Range(0.f, dim, w - xMargin, false);
+         xRange = new Range(Math.max(w - xMargin, 200) / (3 * xll), 0.f, 1.f * dim, false);
          xmax = xRange.getUp();
          xmin = 0;
          dx = (w - xMargin) / xmax ;
          x0 = origX + xMargin - xrMargin;
-         
+
          float[] urCorner = toScr(xmax, ymax);
-         
+
          if (inField == null)
-            return;    
+            return;
          int xk = (int)(Math.log10(xRange.getStep()));
          if (xk>=0)
             xf = "%"+(xk+2)+".0f";
          else
             xf = "%"+(2-xk)+"."+(-xk)+"f";
-         
+
          GeneralPath axes = new GeneralPath();
          gr.setStroke(new BasicStroke(params.getLineWidth()));
-         
+
          float[] xr = xRange.getRange();
          float[] yr = yRange.getRange();
          gr.setColor(params.getColor());
@@ -233,7 +235,7 @@ public class GraphObject extends VisualizationModule
             float xs = toScr(xt, yr[1])[0];
             ticklines.moveTo(xs, y0);
             ticklines.lineTo(xs, urCorner[1]);
-            gr.drawString(String.format(xf, xt), xs - 5, y0 + 3 + params.getFontSize());
+            gr.drawString(String.format(xf, xt), xs - 5, y0 + 3 + fontHeight);
          }
          for (float yt =  yRange.getRange()[0];
                     yt <= yRange.getRange()[1];
@@ -243,26 +245,32 @@ public class GraphObject extends VisualizationModule
             ticklines.moveTo(x0, ys);
             ticklines.lineTo(urCorner[0], ys);
             String l = String.format(yf, yt);
-            gr.drawString(l, x0 - fm.stringWidth(l) - 3, ys + params.getFontSize() / 2.f);
+            gr.drawString(l, x0 - fm.stringWidth(l) - 3, ys + fontHeight / 2.f);
          }
          gr.draw(ticklines);
 
-         gr.setFont(new java.awt.Font("Dialog", 0, (int)(1.5 * params.getFontSize()))); 
+         fontHeight = (int)(1.5 * height * params.getFontSize());
+
+         gr.setFont(new java.awt.Font("Dialog", 0, fontHeight));
          if (axDesc != null && axDesc.length >= 2)
          {
             gr.drawString(axDesc[0],  urCorner[0] + 3, y0);
-            gr.drawString(axDesc[1], x0 - 10, urCorner[1] - params.getFontSize());
+            gr.drawString(axDesc[1], x0 - 10, urCorner[1] - fontHeight);
          }
+
+         fontHeight = (int)(2 * height * params.getFontSize());
 
          if (params.getTitle() != null && !params.getTitle().isEmpty())
          {
-            gr.setFont(new java.awt.Font("Dialog", 0, (int)(2 * params.getFontSize())));
+            gr.setFont(new java.awt.Font("Dialog", 0, fontHeight));
             fm = gr.getFontMetrics();
             int titleWidth = fm.stringWidth(params.getTitle());
-            gr.drawString(params.getTitle(), (origX + endX - titleWidth) / 2, origY + params.getFontSize());
+            gr.drawString(params.getTitle(), (origX + endX - titleWidth) / 2, origY - fontHeight);
          }
-         
-         gr.setFont(new java.awt.Font("Dialog", 0, (int)(params.getFontSize())));
+
+         fontHeight = (int)( height * params.getFontSize());
+
+         gr.setFont(new java.awt.Font("Dialog", 0, fontHeight));
          for (int i = 0; i < data.size(); i++)
          {
             gr.setColor(graphColors.get(i));
@@ -278,11 +286,11 @@ public class GraphObject extends VisualizationModule
             }
             gr.draw(graph);
             if (!params.isColorLegend()) continue;
-            gr.drawString(data.get(i).getName(), urCorner[0] + 2, origY + i * (3 + params.getFontSize()));
-         }        
+            gr.drawString(data.get(i).getName(), urCorner[0] + 2, origY + i * (3 + fontHeight));
+         }
       }
    }
-   
+
    protected void update()
    {
       dim = inField.getDims()[0];
@@ -299,19 +307,19 @@ public class GraphObject extends VisualizationModule
          }
       }
       outObj.clearGeometries2D();
-      if (outObj.getRenderingWindow() != null) 
-          outObj.getRenderingWindow().refresh();      
+      if (outObj.getRenderingWindow() != null)
+          outObj.getRenderingWindow().refresh();
    }
- 
+
    @Override
-   public void onInitFinished()
+   public void onInitFinishedLocal()
    {
       outObj = graphWorld;
       setOutputValue("outObj", new VNGeometryObject(outObj));
    }
-   
 
-   
+
+
    @Override
    public void onActive()
    {

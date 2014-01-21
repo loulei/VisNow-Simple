@@ -74,14 +74,14 @@ public class PointLightsEditorPanel extends javax.swing.JPanel
       if (edit)
          panel.movePointLight(iEd);
       else
-         panel.moveObject();
+         panel.moveScene();
    }
    
    public void releasePositionEdit()
    {
       for (int i = 0; i < editors.length; i++)
          editors[i].unsetPositionEdit();
-      panel.moveObject();
+      panel.moveScene();
    }
 
    /** This method is called from within the constructor to

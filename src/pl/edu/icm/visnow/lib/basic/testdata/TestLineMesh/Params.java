@@ -50,7 +50,7 @@ public class Params extends Parameters
 
    private static ParameterEgg[] eggs = new ParameterEgg[]
    {
-      new ParameterEgg<Float>("number of points", ParameterType.independent, 100.f),
+      new ParameterEgg<Float>("number of points", ParameterType.independent, 300.f),
    };
 
    public Params()

@@ -53,15 +53,16 @@ public class Params extends Parameters
    
    private static ParameterEgg[] eggs = new ParameterEgg[]
    {
-      new ParameterEgg<int[]>("downsize", ParameterType.dependent, new int[] {100, 100, 100}),
+      new ParameterEgg<int[]>("downsize", ParameterType.dependent, null),
       new ParameterEgg<Float>("sigma", ParameterType.dependent, 1.f),
-      new ParameterEgg<Integer>("nThreads", ParameterType.dependent,
-                                Runtime.getRuntime().availableProcessors())
+      new ParameterEgg<Integer>("nThreads", ParameterType.dependent, null)
    };
 
    public Params()
    {
       super(eggs);
+      setValue("downsize",new int[] {100, 100, 100});
+      setValue("nThreads",pl.edu.icm.visnow.system.main.VisNow.availableProcessors());
    }
 
     /**

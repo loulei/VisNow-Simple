@@ -48,7 +48,7 @@ import pl.edu.icm.visnow.gui.events.FloatValueModificationListener;
  * is decoupled. This allows to precompute some data and speed up creation
  * of isosurface on parameter changes.
  *
- * @author Krzysztof Madejski
+ * @author Krzysztof Madejski <krzysztof@madejscy.pl> ICM, University of Warsaw
  */
 public abstract class IsosurfaceEngine {
 

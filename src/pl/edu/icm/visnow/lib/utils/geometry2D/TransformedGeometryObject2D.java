@@ -45,6 +45,7 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Vector;
 import pl.edu.icm.visnow.lib.basic.viewers.Viewer2D.Display2DPanel;
 
@@ -62,7 +63,7 @@ public class TransformedGeometryObject2D {
     protected int alphaCompositeType = AlphaComposite.SRC_OVER;
     protected String parentModulePort = "";
     protected TransformedGeometryObject2D parent = null;
-    protected Vector<TransformedGeometryObject2D> children = new Vector<TransformedGeometryObject2D>();
+    protected ArrayList<TransformedGeometryObject2D> children = new ArrayList<TransformedGeometryObject2D>();
 
     protected String name = "";
 
@@ -277,7 +278,7 @@ public class TransformedGeometryObject2D {
         if (layer >= children.size()) {
             children.add(child);
         } else {
-            children.insertElementAt(child, layer);
+            children.set(layer, child);
         }
         child.setPanel(this.getPanel());
         child.setParent(this);
@@ -312,7 +313,7 @@ public class TransformedGeometryObject2D {
         return children.remove(children.get(i));
     }
     
-    public Vector<TransformedGeometryObject2D> getChildren() {
+    public ArrayList<TransformedGeometryObject2D> getChildren() {
         return children;
     }
     
@@ -342,7 +343,7 @@ public class TransformedGeometryObject2D {
             int index = children.indexOf(child);
             if (index > 0) {
                 children.remove(index);
-                children.insertElementAt(child, index - 1);
+                children.set(index - 1, child);
             }
         }
     }
@@ -352,7 +353,7 @@ public class TransformedGeometryObject2D {
             int index = children.indexOf(child);
             if (index >= 0 && index < children.size() - 1) {
                 children.remove(index);
-                children.insertElementAt(child, index + 1);
+                children.set(index + 1, child);
             }
         }
     }
@@ -828,7 +829,8 @@ public class TransformedGeometryObject2D {
      */
     public void setPanel(Display2DPanel panel) {
         this.panel = panel;
-        me.setPanel(panel);
+        if(me != null)
+            me.setPanel(panel);
     }
         
 }

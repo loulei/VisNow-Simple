@@ -37,12 +37,24 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.application.area.widgets;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.Timer;
+import org.apache.log4j.Logger;
 import pl.edu.icm.visnow.application.area.AreaPanelMouseEvents;
 import pl.edu.icm.visnow.engine.core.Output;
+import pl.edu.icm.visnow.engine.main.Port;
+import pl.edu.icm.visnow.lib.types.VNField;
 import pl.edu.icm.visnow.system.main.VisNow;
 
 /**
@@ -50,10 +62,69 @@ import pl.edu.icm.visnow.system.main.VisNow;
  * @author Hubert Orlik-Grzesik, University of Warsaw, ICM
  */
 public class PortPanelMouseEvents implements MouseListener, MouseMotionListener {
-
+    private static final Logger LOGGER = Logger.getLogger(PortPanelMouseEvents.class);
+    
     private PortPanel panel;
     private AreaPanelMouseEvents events;
+    
+    private boolean mouseOverPortPanel = false;
+    private int mouseOverPortPanelTooltipDelay = 1000;
+    private Timer mouseOverPortPanelTimer = new Timer(mouseOverPortPanelTooltipDelay, new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Port port = panel.getPort();
+            String descStr = null;
+            if(port instanceof Output) {
+                Object obj = ((Output)port).getValue();
+                if(obj instanceof VNField) { 
+                    if(((VNField)obj).getField() != null)
+                        descStr = ((VNField)obj).getField().shortDescription();
+                    else 
+                        descStr = "no data";
+                    if(descStr.startsWith("<html>"))
+                        descStr = descStr.substring(6);
+                    if(descStr.endsWith("</html>"))
+                        descStr = descStr.substring(0,descStr.length()-7);
+                }
+            }
+            StringBuilder s = new StringBuilder();                    
+            s.append("<html>").append(panel.getPort().getName());
+            if(panel.getPort().getDescription() != null)
+                s.append("<br>").append(panel.getPort().getDescription());
+            if(descStr != null)
+                s.append("<br>----<br>").append(descStr);                    
+            s.append("</html>");
 
+            JLabel lbl = new JLabel(s.toString());
+            lbl.setForeground(Color.BLACK);
+            lbl.setOpaque(true);
+            lbl.setBackground(new Color(255,255,200));
+            lbl.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+            if(!panel.isVisible()) {
+                mouseOverPortPanelTimer.stop();
+                return;
+            }
+            if(!panel.isVisible()) {
+                mouseOverPortPanelTimer.stop();
+                return;
+            }
+            Point p = new Point(panel.getLocationOnScreen().x + 25, 
+                                panel.getLocationOnScreen().y + 15);
+            int width = lbl.getPreferredSize().width;
+            int height = lbl.getPreferredSize().height;
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            if (p.x + width > screenSize.getWidth())
+               p.x = (int) screenSize.getWidth() - width;
+            if (p.y + height > screenSize.getHeight())
+               p.y = (int) screenSize.getHeight() - height;            
+            lbl.setBounds(p.x, p.y, width, height);
+            events.getAreaPanel().setFloatingComponent(lbl, p);
+            mouseOverPortPanelTimer.stop();
+        }
+    });
+
+    
+    
     PortPanelMouseEvents(PortPanel panel) {
         this.panel = panel;
         if(panel != null && panel.getModulePanel() != null && panel.getModulePanel().getAreaPanel() != null)
@@ -63,7 +134,7 @@ public class PortPanelMouseEvents implements MouseListener, MouseMotionListener 
    @Override
    public void mouseClicked(MouseEvent e)
    {
-      if (e.isMetaDown())
+      if (e.isMetaDown() || e.isAltDown() || e.isAltGraphDown())
       {
          if (!panel.getPort().isInput())
          {
@@ -79,26 +150,46 @@ public class PortPanelMouseEvents implements MouseListener, MouseMotionListener 
       }
    }
 
-    public void mousePressed(MouseEvent e) {
+    @Override
+    public void mousePressed(MouseEvent e) {        
+        if(mouseOverPortPanel) {
+            //LOGGER.info("");
+            mouseOverPortPanel = false;
+            mouseOverPortPanelTimer.stop();
+            events.getAreaPanel().removeFloatingComponent();
+        }            
+        
         events.portPanelSelfPressed(e, panel);
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
         events.mouseReleased(e);
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
-        
+        mouseOverPortPanel = true;
+        mouseOverPortPanelTimer.restart();        
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
+        if(mouseOverPortPanel) {
+            mouseOverPortPanel = false;
+            mouseOverPortPanelTimer.stop();
+            events.getAreaPanel().removeFloatingComponent();
+        }            
+        
         panel.getModulePanel().getAreaPanel().repaint();
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
         events.mousePortDragged(panel, e);
     }
 
+    @Override
     public void mouseMoved(MouseEvent e) {
         
     }

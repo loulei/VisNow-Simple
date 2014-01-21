@@ -48,6 +48,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -56,6 +57,7 @@ import pl.edu.icm.visnow.engine.exception.VNOuterDataException;
 import pl.edu.icm.visnow.engine.library.LibraryCore;
 import pl.edu.icm.visnow.engine.library.LibraryFolder;
 import pl.edu.icm.visnow.engine.library.TypesMap;
+import pl.edu.icm.visnow.system.config.VNPlugin;
 import pl.edu.icm.visnow.system.libraries.TypeStyle;
 import pl.edu.icm.visnow.system.main.VisNow;
 import pl.edu.icm.visnow.system.swing.VNSwingUtils;
@@ -67,17 +69,30 @@ import pl.edu.icm.visnow.system.swing.VNSwingUtils;
 public class JarLibReader
 {
 
+    private static final Logger LOGGER = Logger.getLogger(JarLibReader.class);
+    
    //<editor-fold defaultstate="collapsed" desc=" Interface ">
    public static JarLibraryRoot readFromJar(String path)
    {
-      return readFromJar(new File(path));
+      return readFromJar(new File(path), null);
    }
 
    public static JarLibraryRoot readFromJar(File file)
    {
+      return readFromJar(file, null);
+   }
+   
+   public static JarLibraryRoot readFromPlugin(VNPlugin plugin)
+   {
+      return readFromJar(new File(plugin.getJarPath()), plugin.getLoader());
+   }
+   
+   
+   public static JarLibraryRoot readFromJar(File file, ClassLoader readyLoader)
+   {
       try
       {
-         return tryReadFromJar(file);
+         return tryReadFromJar(file, readyLoader);
       } catch (VNOuterDataException ex)
       {
          Displayer.display(200907100900L, ex, "STATIC: JarLibReader", "Could not read library from jar.");
@@ -95,8 +110,12 @@ public class JarLibReader
    }
    //</editor-fold>
 
-   protected static JarLibraryRoot tryReadFromJar(File file) throws IOException, ParserConfigurationException, SAXException, VNOuterDataException
+   protected static JarLibraryRoot tryReadFromJar(File file, ClassLoader readyLoader) throws IOException, ParserConfigurationException, SAXException, VNOuterDataException
    {
+      if(!file.exists()) {
+          LOGGER.warn("Cannot read library. File does not exist: "+file.getAbsolutePath());
+          return null;
+      }
       JarFile jar = new JarFile(file);
       Enumeration<JarEntry> enumeration;
       JarEntry tmpEntry;
@@ -116,7 +135,7 @@ public class JarLibReader
             if (ii == 0)
                break libraryLoop;
          }
-         switch (VisNow.libraryLevel)
+         switch (VisNow.getLibraryLevel())
          {
          case VisNow.FULL_LIBRARY:
             if (tmpEntry.getName().toLowerCase().equals("extended_library.xml"))
@@ -159,11 +178,16 @@ public class JarLibReader
       if (typesEntry != null)
          typesMap = readTypesMap(jar, typesEntry);
       ///////////////////GENERATE CLASS LOADER
-      URLClassLoader loader =
-              new URLClassLoader(new URL[]
-              {
-                 file.toURI().toURL()
-              });
+      ClassLoader loader = null;
+      if(readyLoader != null) {
+          loader = readyLoader;
+      } else {      
+          loader =
+                new URLClassLoader(new URL[]
+                {
+                   file.toURI().toURL()
+                });
+      }
       ///////////////////PREPARE TO PARSE XML
       InputStream is = null;
       is = jar.getInputStream(libraryEntry);
@@ -296,8 +320,17 @@ public class JarLibReader
       for (int i = 0; i < list.getLength(); ++i)
          if (list.item(i).getNodeName().equalsIgnoreCase("folder"))
             ret.getSubFolders().add(readFolder(root, list.item(i)));
-         else if (list.item(i).getNodeName().equalsIgnoreCase("core"))
-            ret.getCores().add(readCore(root, list.item(i)));
+         else if (list.item(i).getNodeName().equalsIgnoreCase("core")){
+            LibraryCore lc = readCore(root, list.item(i));
+            if(lc != null) {
+                ret.getCores().add(lc);
+            } else {
+                throw new RuntimeException("Error reading library core. Root: "+root.getName()
+                        +" Core name: "+list.item(i).getAttributes().getNamedItem("name")
+                        +" Core class: "+list.item(i).getAttributes().getNamedItem("class")
+                        +" Core package: "+list.item(i).getAttributes().getNamedItem("package"));
+            } 
+         }
 
       return ret;
    }

@@ -50,6 +50,7 @@ import javax.swing.JPanel;
 public class UITab extends javax.swing.JPanel {
     private String title;
     private Vector<JPanel> uiPanels = new Vector<JPanel>();
+    private boolean active = true;
 
     /** Creates new form UITab */
     public UITab() {
@@ -117,6 +118,9 @@ public class UITab extends javax.swing.JPanel {
         updateGUI();
     }
 
+    public Vector<JPanel> getUIs() {
+        return uiPanels;
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -162,6 +166,20 @@ public class UITab extends javax.swing.JPanel {
      */
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    /**
+     * @return the active
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    /**
+     * @param active the active to set
+     */
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
 }

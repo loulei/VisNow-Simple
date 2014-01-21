@@ -89,18 +89,33 @@ public class MainConfigInitializer {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc=" Init libraries ">
-    public static void initLibraries(File file) throws VNOuterIOException {
+    public static void initPluginsActive(File file) throws VNOuterIOException {
         try {
             file.createNewFile();
         } catch (IOException ex) {
             throw new VNOuterIOException(
                     200907100500L,
-                    "Could not create file for library configuration.",
+                    "Could not create plugins active file.",
                     ex,
                     "MainConfigInitializer.static",
                     Thread.currentThread());
         }
     }
+    
+    static void initPluginFolders(File file) throws VNOuterIOException {
+        try {
+            file.createNewFile();
+        } catch (IOException ex) {
+            throw new VNOuterIOException(
+                    200907100500L,
+                    "Could not create plugin folders file.",
+                    ex,
+                    "MainConfigInitializer.static",
+                    Thread.currentThread());
+        }
+    }
+
+    
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc=" Init recent folders ">

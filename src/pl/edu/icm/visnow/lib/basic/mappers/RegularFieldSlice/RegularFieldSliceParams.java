@@ -40,7 +40,6 @@ package pl.edu.icm.visnow.lib.basic.mappers.RegularFieldSlice;
 import pl.edu.icm.visnow.engine.core.ParameterEgg;
 import pl.edu.icm.visnow.engine.core.ParameterType;
 import pl.edu.icm.visnow.engine.core.Parameters;
-import pl.edu.icm.visnow.engine.core.Parameter;
 
 /**
  *
@@ -48,71 +47,106 @@ import pl.edu.icm.visnow.engine.core.Parameter;
  */
 public class RegularFieldSliceParams extends Parameters {
 
-    private Parameter<Integer> axis;
-    private Parameter<Integer> slice;
-    private Parameter<Boolean> adjusting;
-    private Parameter<Boolean> recalculateMinMax;
 
-    @SuppressWarnings("unchecked")
-    private void initParameters() {
-        axis = getParameter("axis");
-        slice = getParameter("slice");
-        adjusting = getParameter("adjusting");
-        recalculateMinMax = getParameter("recalculateMinMax");
-        axis.setValue(2);
-        slice.setValue(0);
-        adjusting.setValue(false);
-        recalculateMinMax.setValue(false);
-    }
+   private static final String AXIS = "axis";
+   private static final String SLICE = "slice";
+   private static final String ADJUSTING = "adjusting";
+   private static final String RECALCULATE = "recalculate";
+   private static final String SHOW2D = "show 2d";
+   private static final String XEXT = "x extents";
+   private static final String YEXT = "y extents";
+   
 
-    private static ParameterEgg[] eggs = new ParameterEgg[]{
-        new ParameterEgg<Integer>("axis", ParameterType.dependent),
-        new ParameterEgg<Integer>("slice", ParameterType.dependent),
-        new ParameterEgg<Integer>("adjusting", ParameterType.independent),
-        new ParameterEgg<Boolean>("recalculateMinMax", ParameterType.independent)
-    };
+   private static ParameterEgg[] eggs = new ParameterEgg[]
+   {
+      new ParameterEgg<Integer>(AXIS, ParameterType.dependent, 2),
+      new ParameterEgg<Integer>(SLICE, ParameterType.dependent, 0),
+      new ParameterEgg<Boolean>(ADJUSTING, ParameterType.dependent, false),
+      new ParameterEgg<Boolean>(RECALCULATE, ParameterType.dependent, false),
+      new ParameterEgg<Boolean>(SHOW2D, ParameterType.dependent, false),
+      new ParameterEgg<float[]>(XEXT, ParameterType.independent, null),
+      new ParameterEgg<float[]>(YEXT, ParameterType.independent, null)
+   };
 
-    public RegularFieldSliceParams() {
-        super(eggs);
-        initParameters();
-    }
+   public RegularFieldSliceParams()
+   {
+      super(eggs);
+      setValue(XEXT, new float[]{.8f, .95f});
+      setValue(YEXT, new float[]{.05f, .20f});
+   }
 
-    public int getAxis() {
-        return axis.getValue();
-    }
+   public int getAxis()
+   {
+      return (Integer)getValue(AXIS);
+   }
 
-    public void setAxis(int axis) {
-        this.axis.setValue(axis);
-        fireStateChanged();
-    }
+   public void setAxis(int axis)
+   {
+      setValue(AXIS, axis);
+      fireStateChanged();
+   }
 
-    public int getSlice() {
-        return slice.getValue();
-    }
+   public int getSlice()
+   {
+      return (Integer)getValue(SLICE);
+   }
 
-    public void setSlice(int slice) {
-        this.slice.setValue(slice);
-        fireStateChanged();
-    }
+   public void setSlice(int slice)
+   {
+      setValue(SLICE, slice);
+      fireStateChanged();
+   }
+   
+   public boolean isAdjusting()
+   {
+      return(Boolean)getValue(ADJUSTING);
+   }
+   
+   public void setAdjusting(boolean adjusting)
+   {
+      setValue(ADJUSTING, adjusting);
+   }
+   
+   public boolean isRecalculate()
+   {
+      return(Boolean)getValue(RECALCULATE);
+   }
+   
+   public void setRecalculate(boolean recalculate)
+   {
+      setValue(RECALCULATE, recalculate);
+      fireStateChanged();
+   }
+   
+   public boolean isShow2D()
+   {
+      return(Boolean)getValue(SHOW2D);
+   }
+   
+   public void setShow2D(boolean show2d)
+   {
+      setValue(SHOW2D, show2d);
+   }
 
-    public boolean isAdjusting()
-    {
-       return adjusting.getValue();
-    }
+   public float[] getXExt()
+   {
+      return (float[])getValue(XEXT);
+   }
 
-    public void setAdjusting(boolean adjusting)
-    {
-       this.adjusting.setValue(adjusting);
-    }
+   public void setXExt(float[] xext)
+   {
+      setValue(XEXT, xext);
+      fireStateChanged();
+   }
+   public float[] getYExt()
+   {
+      return (float[])getValue(YEXT);
+   }
 
-    public boolean isRecalculateMinMax()
-    {
-       return recalculateMinMax.getValue();
-    }
+   public void setYExt(float[] yext)
+   {
+      setValue(YEXT, yext);
+      fireStateChanged();
+   }
 
-    public void setRecalculateMinMax(boolean value)
-    {
-       this.recalculateMinMax.setValue(value);
-       fireStateChanged();
-    }
 }

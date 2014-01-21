@@ -95,7 +95,7 @@ private static int getLastInt(String s) {
         
         BufferedReader reader = new BufferedReader(new FileReader(file));
 
-        Application ret = new Application("read_app");
+        Application ret = new Application("read_app", true);
         String module="";
         while(true) {
             String next = reader.readLine();

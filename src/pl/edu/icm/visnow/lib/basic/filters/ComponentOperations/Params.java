@@ -67,7 +67,7 @@ public class Params extends Parameters {
     private static final int[] initActions = new int[]{0};
     private static ParameterEgg[] eggs = new ParameterEgg[]{
         new ParameterEgg<int[]>("actions", ParameterType.dependent, initActions),
-        new ParameterEgg<boolean[]>("retain", ParameterType.dependent, new boolean[]{false}),
+        new ParameterEgg<boolean[]>("retain", ParameterType.dependent, null),
         
         new ParameterEgg<Boolean>("useCoords", ParameterType.independent, false),
         new ParameterEgg<Integer>("nDims", ParameterType.dependent, 3),
@@ -77,16 +77,16 @@ public class Params extends Parameters {
         new ParameterEgg<Integer>("zCoordComponent", ParameterType.dependent, 0),
         new ParameterEgg<Boolean>("addIndexComponent", ParameterType.independent, false),
         new ParameterEgg<Float>("xCoordScaleVal", ParameterType.independent, 1.0f),
-        new ParameterEgg<Float>("xCoordScaleMin", ParameterType.independent, 0.0f),
-        new ParameterEgg<Float>("xCoordScaleMax", ParameterType.independent, 5.0f),
         new ParameterEgg<Float>("yCoordScaleVal", ParameterType.independent, 1.0f),
-        new ParameterEgg<Float>("yCoordScaleMin", ParameterType.independent, 0.0f),
-        new ParameterEgg<Float>("yCoordScaleMax", ParameterType.independent, 5.0f),
         new ParameterEgg<Float>("zCoordScaleVal", ParameterType.independent, 1.0f),
-        new ParameterEgg<Float>("zCoordScaleMin", ParameterType.independent, 0.0f),
-        new ParameterEgg<Float>("zCoordScaleMax", ParameterType.independent, 5.0f),
-        new ParameterEgg<float[]>("min", ParameterType.dependent, new float[]{0.f}),
-        new ParameterEgg<float[]>("max", ParameterType.dependent, new float[]{1.f}),
+        new ParameterEgg<Float>("xVarShift", ParameterType.independent, 0.f),
+        new ParameterEgg<Float>("yVarShift", ParameterType.independent, 0.f),
+        new ParameterEgg<Float>("zVarShift", ParameterType.independent, 0.f),
+        new ParameterEgg<Float>("xCoordShift", ParameterType.independent, 0.f),
+        new ParameterEgg<Float>("yCoordShift", ParameterType.independent, 0.f),
+        new ParameterEgg<Float>("zCoordShift", ParameterType.independent, 0.f),
+        new ParameterEgg<float[]>("min", ParameterType.dependent, null),
+        new ParameterEgg<float[]>("max", ParameterType.dependent, null),
         
         new ParameterEgg<Vector<VectorComponent>>("vectorComponents", ParameterType.dependent, null),
         new ParameterEgg<boolean[]>("vCNorms", ParameterType.dependent, null),
@@ -101,10 +101,10 @@ public class Params extends Parameters {
         new ParameterEgg<Float>("maskMax", ParameterType.dependent, 1.f),
         
         new ParameterEgg<Vector<ComplexComponent>>("complexCombineComponents", ParameterType.dependent, null),
-        new ParameterEgg<boolean[]>("complexSplitRe", ParameterType.dependent, new boolean[]{}),
-        new ParameterEgg<boolean[]>("complexSplitIm", ParameterType.dependent, new boolean[]{}),
-        new ParameterEgg<boolean[]>("complexSplitAbs", ParameterType.dependent, new boolean[]{}),
-        new ParameterEgg<boolean[]>("complexSplitArg", ParameterType.dependent, new boolean[]{}),
+        new ParameterEgg<boolean[]>("complexSplitRe", ParameterType.dependent, null),
+        new ParameterEgg<boolean[]>("complexSplitIm", ParameterType.dependent, null),
+        new ParameterEgg<boolean[]>("complexSplitAbs", ParameterType.dependent, null),
+        new ParameterEgg<boolean[]>("complexSplitArg", ParameterType.dependent, null),
         
         new ParameterEgg<Boolean>("auto", ParameterType.independent, false),
     };
@@ -122,14 +122,14 @@ public class Params extends Parameters {
         setValue("zCoordComponent",  0);
         setValue("addIndexComponent",  false);
         setValue("xCoordScaleVal",  1.0f);
-        setValue("xCoordScaleMin",  0.0f);
-        setValue("xCoordScaleMax",  5.0f);
         setValue("yCoordScaleVal",  1.0f);
-        setValue("yCoordScaleMin",  0.0f);
-        setValue("yCoordScaleMax",  5.0f);
         setValue("zCoordScaleVal",  1.0f);
-        setValue("zCoordScaleMin",  0.0f);
-        setValue("zCoordScaleMax",  5.0f);
+        setValue("xCoordShift",  0f);
+        setValue("yCoordShift",  0f);
+        setValue("zCoordShift",  0f);
+        setValue("xVarShift",  0f);
+        setValue("yVarShift",  0f);
+        setValue("zVarShift",  0f);
         setValue("min",  new float[]{0.f});
         setValue("max",  new float[]{1.f});
         setValue("vCNorms",  null);
@@ -211,76 +211,76 @@ public class Params extends Parameters {
         setValue("addIndexComponent", add);
     }
 
-    public float getXCoordScaleVal() {
+    public float getXCoordScale() {
         return (Float) getValue("xCoordScaleVal");
     }
 
-    public void setXCoordScaleVal(float xCoordScaleVal) {
+    public void setXCoordScale(float xCoordScaleVal) {
         setValue("xCoordScaleVal", xCoordScaleVal);
     }
 
-    public float getYCoordScaleVal() {
+    public float getYCoordScale() {
         return (Float) getValue("yCoordScaleVal");
     }
 
-    public void setYCoordScaleVal(float yCoordScaleVal) {
+    public void setYCoordScale(float yCoordScaleVal) {
         setValue("yCoordScaleVal", yCoordScaleVal);
     }
 
-    public float getZCoordScaleVal() {
+    public float getZCoordScale() {
         return (Float) getValue("zCoordScaleVal");
     }
 
-    public void setZCoordScaleVal(float zCoordScaleVal) {
+    public void setZCoordScale(float zCoordScaleVal) {
         setValue("zCoordScaleVal", zCoordScaleVal);
     }
 
-    public float getXCoordScaleMin() {
-        return (Float) getValue("xCoordScaleMin");
+    public float getXVarShift() {
+        return (Float) getValue("xVarShift");
     }
 
-    public void setXCoordScaleMin(float xCoordScaleMin) {
-        setValue("xCoordScaleMin", xCoordScaleMin);
+    public void setXVarShift(float xVarShift) {
+        setValue("xVarShift", xVarShift);
     }
 
-    public float getYCoordScaleMin() {
-        return (Float) getValue("yCoordScaleMin");
+    public float getYVarShift() {
+        return (Float) getValue("yVarShift");
     }
 
-    public void setYCoordScaleMin(float yCoordScaleMin) {
-        setValue("yCoordScaleMin", yCoordScaleMin);
+    public void setYVarShift(float yVarShift) {
+        setValue("yVarShift", yVarShift);
     }
 
-    public float getZCoordScaleMin() {
-        return (Float) getValue("zCoordScaleMin");
+    public float getZVarShift() {
+        return (Float) getValue("zVarShift");
     }
 
-    public void setZCoordScaleMin(float zCoordScaleMin) {
-        setValue("zCoordScaleMin", zCoordScaleMin);
+    public void setZVarShift(float zVarShift) {
+        setValue("zVarShift", zVarShift);
+    }
+    
+    public float getXCoordShift() {
+        return (Float) getValue("xCoordShift");
     }
 
-    public float getXCoordScaleMax() {
-        return (Float) getValue("xCoordScaleMax");
+    public void setXCoordShift(float xCoordShift) {
+        setValue("xCoordShift", xCoordShift);
     }
 
-    public void setXCoordScaleMax(float xCoordScaleMax) {
-        setValue("xCoordScaleMax", xCoordScaleMax);
+    public float getYCoordShift() {
+        return (Float) getValue("yCoordShift");
     }
 
-    public float getYCoordScaleMax() {
-        return (Float) getValue("yCoordScaleMax");
+    public void setYCoordShift(float yCoordShift) {
+        setValue("yCoordShift", yCoordShift);
     }
 
-    public void setYCoordScaleMax(float yCoordScaleMax) {
-        setValue("yCoordScaleMax", yCoordScaleMax);
+    public float getZCoordShift() {
+        return (Float) getValue("zCoordShift");
     }
 
-    public float getZCoordScaleMax() {
-        return (Float) getValue("zCoordScaleMax");
-    }
-
-    public void setZCoordScaleMax(float zCoordScaleMax) {
-        setValue("zCoordScaleMax", zCoordScaleMax);
+    public void setZCoordShift(float zCoordShift) {
+        setValue("zCoordShift", zCoordShift);
     }
 
     /**

@@ -1796,8 +1796,7 @@ public class FluentReader {
             return null;
         }
 
-        IrregularField outField = new IrregularField();
-        outField.setNNodes(nNodes);
+        IrregularField outField = new IrregularField(nNodes);
         outField.setNSpace(3);
         outField.setCoords(coords);
 //        int[] ind = new int[nNodes];

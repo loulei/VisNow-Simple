@@ -46,6 +46,7 @@ import pl.edu.icm.visnow.engine.exception.VNSystemEngineStateException;
 import pl.edu.icm.visnow.engine.main.InputSaturation;
 import pl.edu.icm.visnow.engine.main.OutputSaturation;
 import pl.edu.icm.visnow.engine.main.Port;
+import static pl.edu.icm.visnow.engine.main.Port.LINK_DATA_STATUS_ERROR;
 import pl.edu.icm.visnow.engine.messages.Message;
 import pl.edu.icm.visnow.lib.types.VNDataAcceptor;
 
@@ -57,21 +58,30 @@ public class Input extends Port {
     private static boolean debug = false;
 
     protected InputSaturation saturation;
+    protected Link saturationReasonLink = null;
     public InputSaturation getInputSaturation() {
         return saturation;
     }
-    private void setInputSaturation(InputSaturation saturation) {
-        this.saturation=saturation;
+    public Link getInputSaturationReasonLink() {
+        return saturationReasonLink;
+    }
+    private void setInputSaturation(InputSaturation saturation, Link saturationReasonLink) {
+        this.saturation = saturation;
+        this.saturationReasonLink = saturationReasonLink;
         this.fireElementSaturationListeners();
     }
 
     protected InputEgg egg;
+    @Override
     public boolean isInput() {return true;}
+    @Override
     public Class getType() {return egg.getType();}
+    @Override
     public String getDescription() {return egg.getDescription();}
     public boolean isTriggering() {return egg.isTriggering();}
     public boolean isNecessary() {return egg.isNecessary();}
     public int getMinConnections() {return egg.getMinConnections();}
+    @Override
     public int getMaxConnections() {
         if(egg.getMaxConnections()==-1) return Integer.MAX_VALUE;
         return egg.getMaxConnections();
@@ -82,37 +92,48 @@ public class Input extends Port {
     protected Vector<Object> values;
 
 
-    public void checkSaturation() {
-       // System.out.println("in: check sat");
+    public final void checkSaturation() {
         if(this.isNecessary()) {
             if(this.isLinked()) {
                 for(Link link: this.getLinks()) {
                     if(link.getOutput().getOutputSaturation() == OutputSaturation.noData) {
-                        setInputSaturation(InputSaturation.noData);
+                        setInputSaturation(InputSaturation.noData, link);
                         return;
+                    } else {                        
+                        int status = this.getLinkDataStatus(link.getOutput());
+                        if(status == LINK_DATA_STATUS_ERROR) {
+                            setInputSaturation(InputSaturation.wrongData, link);
+                            return;
+                        }
                     }
                 }
+                setInputSaturation(InputSaturation.ok, null);
+            } else {
+                this.setInputSaturation(InputSaturation.notLinked, null);
+            }
+        } else {
+            if(this.isLinked()) {
 //                for(VNData data: datas) {
 //                    if(data.getValue()==null) {
 //                        setInputSaturation(InputSaturation.noData);
 //                        return;
 //                    }
 //                }
-                setInputSaturation(InputSaturation.ok);
-            } else {
-                this.setInputSaturation(InputSaturation.notLinked);
-            }
-        } else {
-            if(this.isLinked()) {
-                for(VNData data: datas) {
-                    if(data.getValue()==null) {
-                        setInputSaturation(InputSaturation.noData);
+                for(Link link: this.getLinks()) {
+                    if(link.getOutput().getOutputSaturation() == OutputSaturation.noData) {
+                        setInputSaturation(InputSaturation.noData, link);
                         return;
+                    } else {                        
+                        int status = this.getLinkDataStatus(link.getOutput());
+                        if(status == LINK_DATA_STATUS_ERROR) {
+                            setInputSaturation(InputSaturation.wrongData, link);
+                            return;
+                        }
                     }
                 }
-                setInputSaturation(InputSaturation.ok);
+                setInputSaturation(InputSaturation.ok, null);
             } else {
-                this.setInputSaturation(InputSaturation.ok);
+                this.setInputSaturation(InputSaturation.ok, null);
             }
         }
     }
@@ -135,6 +156,7 @@ public class Input extends Port {
         }
         checkSaturation();
         this.getModuleBox().getElement().checkSaturation();
+        this.getModuleBox().getEngine().engineSaturationCheck();
         return true;
     }
 
@@ -152,6 +174,7 @@ public class Input extends Port {
         }
         checkSaturation();
         this.getModuleBox().getElement().checkSaturation();
+        this.getModuleBox().getEngine().engineSaturationCheck();
         return true;
     }
 
@@ -175,6 +198,7 @@ public class Input extends Port {
     protected int action_wait;
     protected boolean anyoneActive;
 
+    @Override
     protected void onNotifyMessage(Message message) throws VNSystemEngineException {
         //VNLogger.debugMessage(this, true, message);
         //this.getModuleBox().getEngine().writeFlow(this+" : notify");
@@ -231,6 +255,7 @@ public class Input extends Port {
         
     }
 
+    @Override
     protected void onReadyMessage(Message message) throws VNSystemEngineException {
         //this.getModuleBox().getEngine().writeFlow(this+" : ready");
         if(getElementState() != ElementState.notifying)
@@ -258,6 +283,7 @@ public class Input extends Port {
 
     }
 
+    @Override
     protected void onActionMessage(Message message) throws VNSystemEngineException {
         //this.getModuleBox().getEngine().writeFlow(this+" : action");
         if(getElementState() != ElementState.ready)
@@ -274,6 +300,7 @@ public class Input extends Port {
         setActive();
     }
 
+    @Override
     protected void onInactionMessage(Message message) throws VNSystemEngineException {
         //this.getModuleBox().getEngine().writeFlow(this+" : inaction");
         if(getElementState() != ElementState.ready)
@@ -305,6 +332,7 @@ public class Input extends Port {
         }
     }
 
+    @Override
     protected void onDoneMessage(Message message) throws VNSystemEngineException {
 //        this.getModuleBox().getEngine().writeFlow(this+" : done");
         if(getElementState() != ElementState.propagating)
@@ -334,6 +362,7 @@ public class Input extends Port {
     }
     //</editor-fold>
 
+    @Override
     protected void onKillMessage() {
         
     }

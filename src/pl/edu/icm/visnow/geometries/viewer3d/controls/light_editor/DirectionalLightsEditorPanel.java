@@ -77,14 +77,14 @@ public class DirectionalLightsEditorPanel extends javax.swing.JPanel
       if (edit)
          panel.moveDirectionalLight(iEd);
       else
-         panel.moveObject();
+         panel.moveScene();
    }
    
    public void releaseDirectionEdit()
    {
       for (int i = 0; i < editors.length; i++)
          editors[i].unsetDirectionEdit();
-      panel.moveObject();
+      panel.moveScene();
    }
 
    /** This method is called from within the constructor to

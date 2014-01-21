@@ -75,6 +75,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
       globalTransformParams = new TransformParams();
       globalMappingParams.addRenderEventListener(new RenderEventListener()
       {
+         @Override
          public void renderExtentChanged(RenderEvent e)
          {
             for (int i = 0; i < cellSetDisplayParameters.length; i++)
@@ -166,6 +167,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
    /* following methods set rendering parameters for all cell sets -
     * these are convenience methods for simple, cell set independent GUIs
     */
+   @Override
    public void setDisplayMode(int displayMode)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -174,6 +176,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
       fireStateChanged();
    }
 
+   @Override
    public void setCellDataMapped(boolean cellDataMapped)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -182,6 +185,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
       fireStateChanged();
    }
 
+   @Override
    public void setTexture(Texture2D texture)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -235,6 +239,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
    }
 
 
+   @Override
    public void setColor(Color color)
    {
       float[] fC = new float[3];
@@ -253,6 +258,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
     * Setter for property ambientColor.
     * @param ambientColor New value of property fColor.
     */
+   @Override
    public void setAmbientColor(Color3f ambientColor)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -266,6 +272,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
     * Setter for property diffuseColor.
     * @param diffuseColor New value of property fColor.
     */
+   @Override
    public void setDiffuseColor(Color3f diffuseColor)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -279,6 +286,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
     * Setter for property specularColor.
     * @param specularColor New value of property fColor.
     */
+   @Override
    public void setSpecularColor(Color3f specularColor)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -288,11 +296,13 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
       fireStateChanged();
    }
 
+   @Override
    public Color getBackgroundColor()
    {
       return globalDisplayParams.getBackgroundColor();
    }
 
+   @Override
    public void setBackgroundColor(Color backgroundColor)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -306,6 +316,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
     * Setter for property transparency.
     * @param transparency New value of property transparency.
     */
+   @Override
    public void setTransparency(float transparency)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -325,6 +336,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
     * Setter for property shininess.
     * @param shininess New value of property shininess.
     */
+   @Override
    public void setShininess(float shininess)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -334,6 +346,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
       fireStateChanged();
    }
 
+   @Override
    public void setCullMode(int cullFace)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -346,6 +359,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
     * Setter for property annoFont.
     * @param annoFont New value of property annoFont.
     */
+   @Override
    public void setAnnoFont(Font annoFont)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -359,6 +373,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
     * Setter for property lineThickness.
     * @param lineThickness New value of property lineThickness.
     */
+   @Override
    public void setLineThickness(float lineThickness)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -366,11 +381,13 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
             cellSetDisplayParams.getRenderingParams().setLineThickness(lineThickness);
    }
    
+   @Override
    public boolean isLineLighting()
    {
       return globalDisplayParams.isLineLighting();
    }
    
+   @Override
    public void setLineLighting(boolean lineLighting)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -380,11 +397,13 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
    }
 
    
+   @Override
    public boolean ignoreMask()
    {
       return globalDisplayParams.ignoreMask();
    }
    
+   @Override
    public void setIgnoreMask(boolean ignoreMask)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -392,17 +411,20 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
             cellSetDisplayParams.getRenderingParams().setIgnoreMask(ignoreMask);
       globalDisplayParams.setLineLighting(ignoreMask);
    }
+   @Override
    public void setLineStyle(int lineStyle)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
          cellSetDisplayParams.getRenderingParams().setLineStyle(lineStyle);
    }
 
+   @Override
    public boolean getSurfaceOrientation()
    {
       return false;
    }
 
+   @Override
    public void setSurfaceOrientation(boolean orientation)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -415,6 +437,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
     * Setter for property annoColor.
     * @param annoColor New value of property annoColor.
     */
+   @Override
    public void setAnnoColor(Color annoColor)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -423,6 +446,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
       globalDisplayParams.setAnnoColor(annoColor);
    }
 
+   @Override
    public void setColorf(Color3f colorf)
    {
       setColor(colorf.get());
@@ -440,6 +464,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
          return null;
       }
    }
+   
    /**
     * Utility field holding list of ChangeListeners.
     */
@@ -451,7 +476,8 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
     */
    public synchronized void addChangeListener(ChangeListener listener)
    {
-      changeListenerList.add(listener);
+      if(!changeListenerList.contains(listener)) 
+            changeListenerList.add(listener);
    }
 
    /**
@@ -468,6 +494,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
       return active;
    }
 
+   @Override
    public void setActive(boolean active)
    {
       this.active = active;
@@ -479,7 +506,6 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
    /**
     * Notifies all registered listeners about the event.
     *
-    * @param object Parameter #1 of the <CODE>ChangeEvent<CODE> constructor.
     */
    public void fireStateChanged()
    {
@@ -491,126 +517,151 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
       }
    }
 
+   @Override
    public ColormapLegendParameters getColormapLegendParameters()
    {
       return colormapLegendParameters;
    }
 
+   @Override
    public boolean isCellDataMapped()
    {
       return globalMappingParams.isCellDataMapped();
    }
 
+   @Override
    public int getColorMode()
    {
       return globalMappingParams.getColorMode();
    }
 
+   @Override
    public void addRenderEventListener(RenderEventListener listener)
    {
-      globalMappingParams.addRenderEventListener(listener);
+       globalMappingParams.addRenderEventListener(listener);
    }
 
+   @Override
    public void removeRenderEventListener(RenderEventListener listener)
    {
       globalMappingParams.removeRenderEventListener(listener);
    }
 
+   @Override
    public void fireStateChanged(int change)
    {
       
    }
 
+   @Override
    public Color3f getAmbientColor()
    {
       return globalDisplayParams.getAmbientColor();
    }
 
+   @Override
    public Color getAnnoColor()
    {
       return globalDisplayParams.getAnnoColor();
    }
 
+   @Override
    public Font getAnnoFont()
    {
       return globalDisplayParams.getAnnoFont();
    }
 
+   @Override
    public OpenAppearance getAppearance()
    {
       return globalDisplayParams.getAppearance();
    }
 
+   @Override
    public OpenAppearance getLineAppearance()
    {
       return globalDisplayParams.getLineAppearance();
    }
 
+   @Override
    public Color getColor()
    {
       return globalDisplayParams.getColor();
    }
 
+   @Override
    public Color3f getColorf()
    {
       return globalDisplayParams.getColorf();
    }
 
+   @Override
    public Color3f getDiffuseColor()
    {
       return globalDisplayParams.getDiffuseColor();
    }
 
+   @Override
    public int getDisplayMode()
    {
       return globalDisplayParams.getDisplayMode();
    }
 
+   @Override
    public int getLineStyle()
    {
       return globalDisplayParams.getLineStyle();
    }
 
+   @Override
    public float getLineThickness()
    {
       return globalDisplayParams.getLineThickness();
    }
 
+   @Override
    public float getShininess()
    {
       return globalDisplayParams.getShininess();
    }
 
+   @Override
    public Color3f getSpecularColor()
    {
       return globalDisplayParams.getSpecularColor();
    }
 
+   @Override
    public float getTransparency()
    {
       return globalDisplayParams.getTransparency();
    }
 
+   @Override
    public void setAppearance(OpenAppearance appearance)
    {
       globalDisplayParams.setAppearance(appearance);
    }
 
+   @Override
    public void setLineAppearance(OpenAppearance appearance)
    {
       globalDisplayParams.setLineAppearance(appearance);
    }
 
+   @Override
    public void setParentParams(AbstractRenderingParams parentParams)
    {
       throw new UnsupportedOperationException("Not supported yet.");
    }
 
+   @Override
    public int getShadingMode()
    {
       throw new UnsupportedOperationException("Not supported yet.");
    }
 
+   @Override
    public void setShadingMode(int shadingMode)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -620,11 +671,13 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
       fireStateChanged();
    }
 
+   @Override
    public float getMinEdgeDihedral()
    {
       return 0;
    }
 
+   @Override
    public void setMinEdgeDihedral(float minEdgeDihedral)
    {
       for (CellSetDisplayParams cellSetDisplayParams : cellSetDisplayParameters)
@@ -633,11 +686,13 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
       fireStateChanged();
    }
 
+   @Override
    public float getPointSize()
    {
       return globalDisplayParams.getPointSize();
    }
 
+   @Override
    public void setPointSize(float pointSize)
    {
       globalDisplayParams.setPointSize(pointSize);
@@ -653,11 +708,13 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
          cellSetDisplayParams.setPickIndicator(pickIndicator);
    }
 
+   @Override
    public int getColorMap2DIndex()
    {
       return globalMappingParams.getColorMap2DIndex();
    }
 
+   @Override
    public void setColorMap2DIndex(int colorMap2DIndex)
    {
       globalMappingParams.setColorMap2DIndex(colorMap2DIndex);
@@ -668,11 +725,13 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
    }
 
 
+   @Override
    public boolean isUseColormap2D()
    {
       return globalMappingParams.isUseColormap2D();
    }
 
+   @Override
    public void setUseColormap2D(boolean useColormap2D)
    {
      globalMappingParams.setUseColormap2D(useColormap2D);
@@ -682,71 +741,85 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
       fireStateChanged();
    }
 
+   @Override
    public Texture2D getTexture()
    {
       return globalMappingParams.getTexture();
    }
 
+   @Override
    public BufferedImage getTextureImage()
    {
       return globalMappingParams.getTextureImage();
    }
 
+   @Override
    public void setTextureImage(BufferedImage image)
    {
       globalMappingParams.setTextureImage(image);
    }
 
+   @Override
    public ColorComponentParams getColorMap0Params()
    {
       return globalMappingParams.getColorMap0Params();
    }
 
+   @Override
    public ColorComponentParams getColorMap1Params()
    {
       return globalMappingParams.getColorMap1Params();
    }
 
+   @Override
    public ColorComponentParams getRedParams()
    {
       return globalMappingParams.getRedParams();
    }
 
+   @Override
    public ColorComponentParams getGreenParams()
    {
       return globalMappingParams.getGreenParams();
    }
 
+   @Override
    public ColorComponentParams getBlueParams()
    {
       return globalMappingParams.getBlueParams();
    }
 
+   @Override
    public ColorComponentParams getSatParams()
    {
       return globalMappingParams.getSatParams();
    }
 
+   @Override
    public ColorComponentParams getValParams()
    {
       return globalMappingParams. getValParams();
    }
 
+   @Override
    public ColorComponentParams getUParams()
    {
       return globalMappingParams.getUParams();
    }
 
+   @Override
    public ColorComponentParams getVParams()
    {
       return globalMappingParams.getVParams();
    }
 
+   @Override
    public int getColorMapModification()
    {
       return globalMappingParams.getColorMapModification();
    }
 
+   @Override
    public void setColorMapModification(int colorMapModification)
    {
       globalMappingParams.setColorMapModification(colorMapModification);
@@ -761,6 +834,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
       return globalMappingParams;
    }
 
+   @Override
    public void setColorMode(int colorMode)
    {
       globalMappingParams.setColorMode(colorMode);
@@ -770,11 +844,13 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
       fireStateChanged();
    }
 
+   @Override
    public float getBlendRatio()
    {
       return globalMappingParams.getBlendRatio();
    }
 
+   @Override
    public void setBlendRatio(float blendRatio)
    {
       globalMappingParams.setBlendRatio(blendRatio);
@@ -784,11 +860,13 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
       fireStateChanged();
    }
 
+   @Override
    public float getSurfaceOffset()
    {
       return globalDisplayParams.getSurfaceOffset();
    }
 
+   @Override
    public void setSurfaceOffset(float offset)
    {
       globalDisplayParams.setSurfaceOffset(offset);
@@ -798,6 +876,7 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
       fireStateChanged();
    }
    
+   @Override
    public void setLightedBackside(boolean lightedBg)
    {
       globalDisplayParams.setLightedBackside(lightedBg);
@@ -807,16 +886,19 @@ public class IrregularFieldDisplayParams implements AbstractDataMappingParams, A
       fireStateChanged();
    }
    
+   @Override
    public boolean isLightedBackside()
    {
       return globalDisplayParams.isLightedBackside();
    }
    
+   @Override
    public DataMappingParams getMappingParams()
    {
       return globalMappingParams;
    }
 
+   @Override
    public TransparencyParams getTransparencyParams()
    {
       return globalMappingParams.getTransparencyParams();

@@ -46,6 +46,7 @@ import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Vector;
 import pl.edu.icm.visnow.datasets.Hashable;
 
@@ -405,6 +406,8 @@ public final class RabinHashFunction implements Serializable
     */
    public static long hash(byte[] A)
    {
+      if(A == null)
+          return -0;
       return hash(A, 0, A.length, 0);
    }
 
@@ -591,7 +594,10 @@ public final class RabinHashFunction implements Serializable
 
    public static long hash(float[] A)
    {
-      return hash(A, 0, A.length);
+//      if(A == null)
+//          return 0;
+//      return hash(A, 0, A.length);
+       return System.currentTimeMillis();
    }
 
    public static long hash(float[][] A)
@@ -654,7 +660,7 @@ public final class RabinHashFunction implements Serializable
     *@param  A  vector of hashable objects
     *@return    the hash value
     */
-   public static long hash(Vector<Hashable> A)
+   public static long hash(ArrayList<Hashable> A)
    {
 //      long w = 0;
 //      for (int s = 0; s < A.size(); s++)

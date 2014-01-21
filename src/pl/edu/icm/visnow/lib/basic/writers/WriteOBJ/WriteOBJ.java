@@ -71,7 +71,7 @@ public class WriteOBJ extends ModuleCore {
             }
         });
 
-        SwingInstancer.swingRun(new Runnable() {
+        SwingInstancer.swingRunAndWait(new Runnable() {
 
             public void run() {
                 ui = new GUI();

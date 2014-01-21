@@ -61,7 +61,7 @@ public class Params extends Parameters {
 
     public Params() {
         super(eggs);
-        setValue("nThreads", Runtime.getRuntime().availableProcessors());
+        setValue("nThreads", pl.edu.icm.visnow.system.main.VisNow.availableProcessors());
     }
 
     public int getNThreads() {

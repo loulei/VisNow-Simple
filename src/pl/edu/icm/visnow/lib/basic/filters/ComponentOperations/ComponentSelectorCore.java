@@ -66,34 +66,28 @@ public class ComponentSelectorCore
       this.params = p;
    }
 
+    void update() {
+        if (inField == null || params == null) {
+            outField = null;
+            return;
+        }
+        int[] actions = params.getActions();
+        float[] clampMin = params.getMin();
+        float[] clampMax = params.getMax();
 
-   void update()
-   {
-      if (inField == null || params == null)
-      {
-         outField = null;
-         return;
-      }
-      int[] actions = params.getActions();
-      float[] clampMin = params.getMin();
-      float[] clampMax = params.getMax();
+        //TODO: looks like "add index component" functionality is implemented in CoordsFromDataCore 
+        //but maybe it should be additionally processed somehow in here? - Double check it with know
 
-      if (params.isAddIndexComponent())
-      {
-         int[] newActions = new int[actions.length + 1];
-         System.arraycopy(actions, 0, newActions, 0, actions.length);
-         newActions[newActions.length - 1] = Params.NOOP;
-         actions = newActions;
-      }
-      
-      for (int iData = 0; iData < inField.getNData(); iData++)
-         if (params.getRetain()[iData])
-            outField.addData(inField.getData(iData));
+        for (int iData = 0; iData < inField.getNData(); iData++)
+            if (params.getRetain()[iData])
+                outField.addData(inField.getData(iData));
 
       for (int iData = 0; iData < actions.length; iData++)
       {
          DataArray da = inField.getData(iData);
-         if (!da.isSimpleNumeric() || da.getTimeData() == null)
+         //this is not tested against null time data - assuming that time data cannot be null! (double check with babor on DataArray concept)
+         //TODO: resolve problem with time data and complex data array
+         if (!da.isNumericConvertible())// || da.getTimeData() == null)
             continue;
          if (actions[iData] == Params.NOOP && 
              clampMin[iData] <= da.getMinv() && clampMax[iData] >= da.getMaxv())
@@ -105,7 +99,7 @@ public class ComponentSelectorCore
             for (int timeStep = 0; timeStep < da.getNFrames(); timeStep++)
             {
                float time = da.getTime(timeStep);
-               da.setCurrentFrame(timeStep);
+               da.setCurrentTime(time);
                switch (actions[iData])
                {
                 case Params.BYTE:
@@ -119,54 +113,70 @@ public class ComponentSelectorCore
                         outDa.addData(outb, time);
                     continue;   
                case Params.BYTE_NORMALIZED:
-                  float minv = clampMin[iData];
-                  float maxv = clampMax[iData];
-                  float d = 255 / (maxv - minv);
-                  byte[] outbd = null;
-                  switch (da.getType())
-                  {
-                  case DataArray.FIELD_DATA_BYTE:
-                     if (timeStep == 0)
-                        outField.addData(da);
-                     break;
-                  case DataArray.FIELD_DATA_SHORT:
-                     short[] sd = da.getSData();
-                     outbd = new byte[sd.length];
-                     for (int j = 0; j < outbd.length; j++)
-                        outbd[j] = (byte) (0xff & (int) ((sd[j] - minv) * d));
-                     break;
-                  case DataArray.FIELD_DATA_INT:
-                     int[] id = da.getIData();
-                     outbd = new byte[id.length];
-                     for (int j = 0; j < outbd.length; j++)
-                        outbd[j] = (byte) (0xff & (int) ((id[j] - minv) * d));
-                     break;
-                  case DataArray.FIELD_DATA_FLOAT:
-                     float[] fd = da.getFData();
-                     outbd = new byte[fd.length];
-                     for (int j = 0; j < outbd.length; j++)
-                        outbd[j] = (byte) (0xff & (int) ((fd[j] - minv) * d));
-                     break;
-                  case DataArray.FIELD_DATA_DOUBLE:
-                     double[] dd = da.getDData();
-                     outbd = new byte[dd.length];
-                     for (int j = 0; j < outbd.length; j++)
-                        outbd[j] = (byte) (0xff & (int) ((dd[iData] - minv) * d));
-                     break;
-                  }
-                  if (da.getType() != DataArray.FIELD_DATA_BYTE)
-                  {
-                     if (timeStep == 0)
-                     {
-                        outDa = DataArray.create(outbd, da.getVeclen(), da.getName()+"_B", da.getUnit(), da.getUserData());
-                        outDa.setPhysMin(da.getPhysMin());
-                        outDa.setPhysMax(da.getPhysMax());
-                        outField.addData(outDa);
-                     }
-                     else
-                        outDa.addData(outbd, time);
-                  }
-                  continue;
+                       float minv = clampMin[iData];
+                       float maxv = clampMax[iData];
+                       float d = 255 / (maxv - minv);
+                       byte[] outbd = null;
+                       switch (da.getType()) {
+                           case DataArray.FIELD_DATA_BYTE:
+                               byte[] bd = da.getBData();
+                               outbd = new byte[bd.length];
+                               for (int j = 0; j < outbd.length; j++)
+                                   outbd[j] = (byte) (0xff & (int) (((int) bd[j] - minv) * d));
+                               break;
+                           case DataArray.FIELD_DATA_SHORT:
+                               short[] sd = da.getSData();
+                               outbd = new byte[sd.length];
+                               for (int j = 0; j < outbd.length; j++)
+                                   outbd[j] = (byte) (0xff & (int) ((sd[j] - minv) * d));
+                               break;
+                           case DataArray.FIELD_DATA_INT:
+                               int[] id = da.getIData();
+                               outbd = new byte[id.length];
+                               for (int j = 0; j < outbd.length; j++)
+                                   outbd[j] = (byte) (0xff & (int) ((id[j] - minv) * d));
+                               break;
+                           case DataArray.FIELD_DATA_FLOAT:
+                               float[] fd = da.getFData();
+                               outbd = new byte[fd.length];
+                               for (int j = 0; j < outbd.length; j++)
+                                   outbd[j] = (byte) (0xff & (int) ((fd[j] - minv) * d));
+                               break;
+                           case DataArray.FIELD_DATA_DOUBLE:
+                               double[] dd = da.getDData();
+                               outbd = new byte[dd.length];
+                               for (int j = 0; j < outbd.length; j++)
+                                   outbd[j] = (byte) (0xff & (int) ((dd[iData] - minv) * d));
+                               break;
+                           case DataArray.FIELD_DATA_COMPLEX:
+                               double[] cd = da.getDData();
+                               outbd = new byte[cd.length];
+                               for (int j = 0; j < outbd.length; j++)
+                                   outbd[j] = (byte) (0xff & (int) ((cd[iData] - minv) * d));
+                               break;
+                               //TODOL: 0...255 should be used or UnsignedByte type should be created
+                           case DataArray.FIELD_DATA_BOOLEAN:
+                               byte[] bd1 = da.getBData();
+                               outbd = new byte[bd1.length];
+                               for (int j = 0; j < outbd.length; j++)
+                                   outbd[j] = bd1[j] == 0 ? Byte.MIN_VALUE: Byte.MAX_VALUE;
+                               break;
+                           case DataArray.FIELD_DATA_LOGIC:
+                               byte[] bd2 = da.getBData();
+                               outbd = new byte[bd2.length];
+                               for (int j = 0; j < outbd.length; j++)
+                                   outbd[j] = bd2[j] == 0 ? Byte.MIN_VALUE: Byte.MAX_VALUE;
+                               break;
+                       }
+                       if (timeStep == 0) {
+                           outDa = DataArray.create(outbd, da.getVeclen(), da.getName() + "_B", da.getUnit(), da.getUserData());
+                           outDa.setPhysMin(da.getPhysMin());
+                           outDa.setPhysMax(da.getPhysMax());
+                           outField.addData(outDa);
+                       } else
+                           outDa.addData(outbd, time);
+
+                       continue;
                case Params.SHORT:
                     short[] outs = da.getSData();
                     if (timeStep == 0)
@@ -178,55 +188,70 @@ public class ComponentSelectorCore
                         outDa.addData(outs, time);
                     continue;   
                case Params.SHORT_NORMALIZED:
-                  minv = clampMin[iData];
-                  maxv = clampMax[iData];
-                  d = ((float) Short.MAX_VALUE - Short.MIN_VALUE) / (maxv - minv);
-                  short[] outsd = null;
-                  switch (da.getType())
-                  {
-                  case DataArray.FIELD_DATA_BYTE:
-                     byte[] bd = da.getBData();
-                     outsd = new short[bd.length];
-                     for (int j = 0; j < outsd.length; j++)
-                        outsd[j] = (short) (0xff & bd[j]);
-                     outField.addData(da);
-                     break;
-                  case DataArray.FIELD_DATA_SHORT:
-                     if (timeStep == 0)
-                        outField.addData(da);
-                     break;
-                  case DataArray.FIELD_DATA_INT:
-                     int[] id = da.getIData();
-                     outsd = new short[id.length];
-                     for (int j = 0; j < outsd.length; j++)
-                        outsd[j] = (short) ((id[j] - minv) * d + Short.MIN_VALUE);
-                     break;
-                  case DataArray.FIELD_DATA_FLOAT:
-                     float[] fd = da.getFData();
-                     outsd = new short[fd.length];
-                     for (int j = 0; j < outsd.length; j++)
-                        outsd[j] = (short) ((fd[j] - minv) * d + Short.MIN_VALUE);
-                     break;
-                  case DataArray.FIELD_DATA_DOUBLE:
-                     double[] dd = da.getDData();
-                     outsd = new short[dd.length];
-                     for (int j = 0; j < outsd.length; j++)
-                        outsd[j] = (short) ((dd[j] - minv) * d + Short.MIN_VALUE);
-                     break;
-                  }
-                  if (da.getType() != DataArray.FIELD_DATA_SHORT)
-                  {
-                     if (timeStep == 0)
-                     {
-                        outDa = DataArray.create(outsd, da.getVeclen(), da.getName()+"_S", da.getUnit(), da.getUserData());
-                        outDa.setPhysMin(da.getPhysMin());
-                        outDa.setPhysMax(da.getPhysMax());
-                        outField.addData(outDa);
-                     }
-                     else
-                        outDa.addData(outsd, time);
-                  }
-                  continue;
+                       minv = clampMin[iData];
+                       maxv = clampMax[iData];
+                       d = ((float) Short.MAX_VALUE - Short.MIN_VALUE) / (maxv - minv);
+                       short[] outsd = null;
+                       switch (da.getType()) {
+                           case DataArray.FIELD_DATA_BYTE:
+                               byte[] bd = da.getBData();
+                               outsd = new short[bd.length];
+                               for (int j = 0; j < outsd.length; j++)
+                                   outsd[j] = (short) (((int) bd[j] - minv) * d);
+                               break;
+                           case DataArray.FIELD_DATA_SHORT:
+                               //TODO: refactor this (extend and use ArrayUtils) (+regression test against modify components short -> short_normalized) or better add  get*DataNormalized
+                               short[] sd = da.getSData();
+                               outsd = new short[sd.length];
+                               for (int j = 0; j < outsd.length; j++)
+                                   outsd[j] = (short) ((sd[j] - minv) * d + Short.MIN_VALUE);
+                               break;
+                           case DataArray.FIELD_DATA_INT:
+                               int[] id = da.getIData();
+                               outsd = new short[id.length];
+                               for (int j = 0; j < outsd.length; j++)
+                                   outsd[j] = (short) ((id[j] - minv) * d + Short.MIN_VALUE);
+                               break;
+                           case DataArray.FIELD_DATA_FLOAT:
+                               //TODO: test it for vector (gaussian gradients)
+                               float[] fd = da.getFData();
+                               outsd = new short[fd.length];
+                               for (int j = 0; j < outsd.length; j++)
+                                   outsd[j] = (short) ((fd[j] - minv) * d + Short.MIN_VALUE);
+                               break;
+                           case DataArray.FIELD_DATA_DOUBLE:
+                               double[] dd = da.getDData();
+                               outsd = new short[dd.length];
+                               for (int j = 0; j < outsd.length; j++)
+                                   outsd[j] = (short) ((dd[j] - minv) * d + Short.MIN_VALUE);
+                               break;
+                           case DataArray.FIELD_DATA_COMPLEX:
+                               double[] cd = da.getDData();
+                               outsd = new short[cd.length];
+                               for (int j = 0; j < outsd.length; j++)
+                                   outsd[j] = (short) ((cd[j] - minv) * d + Short.MIN_VALUE);
+                               break;
+                           case DataArray.FIELD_DATA_BOOLEAN:
+                               byte[] bd1 = da.getBData();
+                               outsd = new short[bd1.length];
+                               for (int j = 0; j < outsd.length; j++)
+                                   outsd[j] = bd1[j] == 0 ? Short.MIN_VALUE: Short.MAX_VALUE;
+                               break;
+                           case DataArray.FIELD_DATA_LOGIC:
+                               byte[] bd2 = da.getBData();
+                               outsd = new short[bd2.length];
+                               for (int j = 0; j < outsd.length; j++)
+                                   outsd[j] = bd2[j] == 0 ? Short.MIN_VALUE: Short.MAX_VALUE;
+                               break;
+                       }
+                       if (timeStep == 0) {
+                           outDa = DataArray.create(outsd, da.getVeclen(), da.getName() + "_S", da.getUnit(), da.getUserData());
+                           outDa.setPhysMin(da.getPhysMin());
+                           outDa.setPhysMax(da.getPhysMax());
+                           outField.addData(outDa);
+                       } else
+                           outDa.addData(outsd, time);
+                       continue;
                case Params.INT:
                     int[] outi = da.getIData();
                     if (timeStep == 0)
@@ -293,7 +318,7 @@ public class ComponentSelectorCore
             for (int timeStep = 0; timeStep < da.getNFrames(); timeStep++)
             {
                float time = da.getTime(timeStep);
-               da.setCurrentFrame(timeStep);
+               da.setCurrentTime(time);
                int vlen = da.getVeclen();
                int n = da.getNData();
                float cm = clampMin[iData];

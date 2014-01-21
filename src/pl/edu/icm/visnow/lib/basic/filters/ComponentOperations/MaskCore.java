@@ -91,38 +91,88 @@ public class MaskCore
       float low = params.getMaskMin();
       float up = params.getMaskMax();
 
-      switch (inField.getData(i).getType())
-      {
-      case DataArray.FIELD_DATA_BYTE:
-         byte[] inB = inField.getData(i).getBData();
-         for (int j = 0; j < n; j++)
-            if ((0xFF & inB[j]) <= low || (0xFF & inB[j]) >= up)
-               mask[j] = false;
-         break;
-      case DataArray.FIELD_DATA_SHORT:
-         short[] inS = inField.getData(i).getSData();
-         for (int j = 0; j < n; j++)
-            if (inS[j] <= low || inS[j] >= up)
-               mask[j] = false;
-         break;
-      case DataArray.FIELD_DATA_INT:
-         int[] inI = inField.getData(i).getIData();
-         for (int j = 0; j < n; j++)
-            if (inI[j] <= low || inI[j] >= up)
-               mask[j] = false;
-         break;
-      case DataArray.FIELD_DATA_FLOAT:
-         float[] inF = inField.getData(i).getFData();
-         for (int j = 0; j < n; j++)
-            if (inF[j] <= low || inF[j] >= up)
-               mask[j] = false;
-         break;
-      case DataArray.FIELD_DATA_DOUBLE:
-         double[] inD = inField.getData(i).getDData();
-         for (int j = 0; j < n; j++)
-            if (inD[j] <= low || inD[j] >= up)
-               mask[j] = false;
-         break;
+      if(i < inField.getNData()) {
+            switch (inField.getData(i).getType())
+            {
+            case DataArray.FIELD_DATA_BYTE:
+               byte[] inB = inField.getData(i).getBData();
+               for (int j = 0; j < n; j++)
+                  if ((0xFF & inB[j]) <= low || (0xFF & inB[j]) >= up)
+                     mask[j] = false;
+               break;
+            case DataArray.FIELD_DATA_SHORT:
+               short[] inS = inField.getData(i).getSData();
+               for (int j = 0; j < n; j++)
+                  if (inS[j] <= low || inS[j] >= up)
+                     mask[j] = false;
+               break;
+            case DataArray.FIELD_DATA_INT:
+               int[] inI = inField.getData(i).getIData();
+               for (int j = 0; j < n; j++)
+                  if (inI[j] <= low || inI[j] >= up)
+                     mask[j] = false;
+               break;
+            case DataArray.FIELD_DATA_FLOAT:
+               float[] inF = inField.getData(i).getFData();
+               for (int j = 0; j < n; j++)
+                  if (inF[j] <= low || inF[j] >= up)
+                     mask[j] = false;
+               break;
+            case DataArray.FIELD_DATA_DOUBLE:
+               double[] inD = inField.getData(i).getDData();
+               for (int j = 0; j < n; j++)
+                  if (inD[j] <= low || inD[j] >= up)
+                     mask[j] = false;
+               break;
+            }
+      } else if(i >= inField.getNData()) {
+          //mask by coords
+          int dim = i - inField.getNData();
+          if (inField instanceof RegularField && ((RegularField) inField).getCoords() == null) {
+              //by affine
+              int[] dims = ((RegularField) inField).getDims();
+              float[] p;
+              switch (dims.length) {
+                  case 3:
+                      for (int z = 0, j = 0; z < dims[2]; z++) {
+                          for (int y = 0; y < dims[1]; y++) {
+                              for (int x = 0; x < dims[0]; x++, j++) {
+                                  p = ((RegularField) inField).getGridCoords(x, y, z);
+                                  if (p[dim] <= low || p[dim] >= up) {
+                                      mask[j] = false;
+                                  }
+                              }
+                          }
+                      }
+                      break;
+                  case 2:
+                      for (int y = 0, j = 0; y < dims[1]; y++) {
+                          for (int x = 0; x < dims[0]; x++, j++) {
+                              p = ((RegularField) inField).getGridCoords(x, y);
+                              if (p[dim] <= low || p[dim] >= up) {
+                                  mask[j] = false;
+                              }
+                          }
+                      }
+                      break;
+                  case 1:
+                      for (int x = 0; x < dims[0]; x++) {
+                          p = ((RegularField) inField).getGridCoords(x);
+                          if (p[dim] <= low || p[dim] >= up) {
+                              mask[x] = false;
+                          }
+                      }
+                      break;
+              }
+          } else {
+              float[] coords = inField.getCoords();
+              int nSpace = inField.getNSpace();
+              for (int j = 0; j < n; j++) {
+                  if (coords[nSpace * j + dim] <= low || coords[nSpace * j + dim] >= up) {
+                      mask[j] = false;
+                  }
+              }
+          }
       }
       outField.setMask(mask);
       if (params.isRecomputeMinMax())

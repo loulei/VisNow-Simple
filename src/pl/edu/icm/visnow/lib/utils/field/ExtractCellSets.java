@@ -85,8 +85,7 @@ public class ExtractCellSets
          }
       if (nOut == 0)
          return null;
-      IrregularField out = new IrregularField();
-      out.setNNodes(nOut);
+      IrregularField out = new IrregularField(nOut);
       out.setNSpace(in.getNSpace());
       out.setCoords(floatArrayCompact(in.getCoords(), in.getNSpace(), nOut, vpts) );
       for (DataArray da: in.getData())

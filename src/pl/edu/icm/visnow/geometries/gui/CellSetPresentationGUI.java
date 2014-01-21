@@ -37,8 +37,14 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.geometries.gui;
 
-import java.awt.Dimension;
+import java.awt.CardLayout;
 import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import pl.edu.icm.visnow.datasets.CellSet;
 import pl.edu.icm.visnow.datasets.Field;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
@@ -47,6 +53,7 @@ import pl.edu.icm.visnow.geometries.parameters.AbstractRenderingParams;
 import pl.edu.icm.visnow.geometries.parameters.CellSetDisplayParams;
 import pl.edu.icm.visnow.geometries.parameters.DataMappingParams;
 import pl.edu.icm.visnow.system.main.VisNow;
+import static java.awt.GridBagConstraints.*;
 
 /**
  *
@@ -81,12 +88,15 @@ public class CellSetPresentationGUI extends javax.swing.JPanel
       renderingParams = params.getRenderingParams();
       dataMappingParams = params.getDataMappingParams();
       displayPropertiesGUI.setRenderingParams(renderingParams);
-      transformPanel.setTransformParams(params.getTransformParams());
-      transformPanel.setTransSensitivity(inField.getDiameter()/500);
+      displayPropertiesGUI.setNDims(inCellSet.getNCellDims());      
+      transformGUI.setTransformParams(params.getTransformParams());
+      transformGUI.setTransSensitivity(inField.getDiameter()/500);
       dataMappingGUI.setInData(inCellSet, inField, dataMappingParams);
       dataMappingGUI.setStartNullTransparencyComponent(true);
       dataMappingGUI.setRenderingParams(renderingParams);
-      if (inCellSet.getNData() > 0)
+      
+      extendedTabbedPane.removeTabAt(3);  //delete for release
+      /*if (inCellSet.getNData() > 0)
       {
          log.debug("adding selectingComponent panel");
          mainPane.insertTab("select",null,selectionPanel,"select data range for cells to be displayed",3);
@@ -96,7 +106,7 @@ public class CellSetPresentationGUI extends javax.swing.JPanel
          selectingComponentSelector.setDataSchema(inCellSet.getSchema());
       }
       else
-         mainPane.removeTabAt(3);
+         mainPane.removeTabAt(3);*/
          log.debug("CellSetPresentationGUI done");
       active = true;
    }
@@ -113,62 +123,23 @@ public class CellSetPresentationGUI extends javax.swing.JPanel
       return dataMappingGUI;
    }
 
-   public void setPresentation(boolean simple)
-   {
-      GridBagConstraints gridBagConstraints;
-      Dimension simpleDim = new Dimension(200, 750);
-      Dimension expertDim = new Dimension(200, 590);
-      if (simple)
-      {
-         remove(mainPane);
-         mainPane.removeAll();
-         dataMappingGUI.setPresentation(simple);
-         displayPropertiesGUI.setPresentation(simple);
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 0;
-         gridBagConstraints.gridy = 0;
-         gridBagConstraints.weightx = 1.0;
-         gridBagConstraints.weighty = 1.0;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-         add(dataMappingGUI, gridBagConstraints);
-         if (dataMappingGUI.isTransparencyStartNull())
-         {
-            gridBagConstraints = new java.awt.GridBagConstraints();
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 1;
-            gridBagConstraints.weightx = 1.0;
-            gridBagConstraints.weighty = 1.0;
-            gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-            add(displayPropertiesGUI, gridBagConstraints);
-         }
-         setMinimumSize(simpleDim);
-         setMaximumSize(simpleDim);
-         setPreferredSize(simpleDim);
-      }
-      else
-      {
-         remove(dataMappingGUI);
-         if (dataMappingGUI.isTransparencyStartNull())
-            remove(displayPropertiesGUI);
-         setMinimumSize(expertDim);
-         setMaximumSize(expertDim);
-         setPreferredSize(expertDim);    
-         dataMappingGUI.setPresentation(simple);
-         displayPropertiesGUI.setPresentation(simple);
-         mainPane.addTab("datamap", dataMappingGUI);
-         mainPane.addTab("display", displayPropertiesGUI);
-         mainPane.addTab("transform", transformPanel);
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 0;
-         gridBagConstraints.gridy = 1;
-         gridBagConstraints.weightx = 1.0;
-         gridBagConstraints.weighty = 1.0;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-         add(mainPane, gridBagConstraints);
-      }
-      validate();
-      repaint();
-   }
+    public void setPresentation(boolean simple) {
+        Insets insets0 = new Insets(0, 0, 0, 0);
+        dataMappingGUI.setPresentation(simple);
+        displayPropertiesGUI.setPresentation(simple);
+
+        if (simple) {
+            simplePanel.add(dataMappingGUI, new GridBagConstraints(0, 1, 1, 1, 1, 0, NORTH, HORIZONTAL, insets0, 0, 0));
+            if (dataMappingGUI.isTransparencyStartNull())
+                simplePanel.add(displayPropertiesGUI, new GridBagConstraints(0, 2, 1, 1, 1, 0, NORTH, HORIZONTAL, insets0, 0, 0));
+        } else {
+            dataMappingPanel.add(dataMappingGUI, java.awt.BorderLayout.NORTH);
+            displayPropertiesPanel.add(displayPropertiesGUI, java.awt.BorderLayout.NORTH);
+        }
+        ((CardLayout) getLayout()).show(this, simple ? "simpleUI" : "extendedUI");
+        revalidate();
+
+    }
 
 
    /** This method is called from within the constructor to
@@ -176,119 +147,139 @@ public class CellSetPresentationGUI extends javax.swing.JPanel
     * WARNING: Do NOT modify this code. The content of this method is
     * always regenerated by the Form Editor.
     */
-   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-   private void initComponents()
-   {
-      java.awt.GridBagConstraints gridBagConstraints;
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-      textureFileChooser = new javax.swing.JFileChooser();
-      mainPane = new javax.swing.JTabbedPane();
-      dataMappingGUI = new pl.edu.icm.visnow.geometries.gui.DataMappingGUI();
-      displayPropertiesGUI = new pl.edu.icm.visnow.geometries.gui.DisplayPropertiesGUI();
-      transformPanel = new pl.edu.icm.visnow.geometries.gui.TransformPanel();
-      selectionPanel = new javax.swing.JPanel();
-      selectCellsBox = new javax.swing.JCheckBox();
-      selectedRangeSlider = new pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider();
-      jPanel1 = new javax.swing.JPanel();
-      selectingComponentSelector = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
+        textureFileChooser = new javax.swing.JFileChooser();
+        extendedTabbedPane = new javax.swing.JTabbedPane();
+        dataMappingScrollPane = new javax.swing.JScrollPane();
+        dataMappingPanel = new javax.swing.JPanel();
+        dataMappingGUI = new pl.edu.icm.visnow.geometries.gui.DataMappingGUI();
+        displayPropertiesScrollPane = new javax.swing.JScrollPane();
+        displayPropertiesPanel = new javax.swing.JPanel();
+        displayPropertiesGUI = new pl.edu.icm.visnow.geometries.gui.DisplayPropertiesGUI();
+        transformScrollPane = new javax.swing.JScrollPane();
+        transformPanel = new javax.swing.JPanel();
+        transformGUI = new pl.edu.icm.visnow.geometries.gui.TransformPanel();
+        selectScrollPane = new javax.swing.JScrollPane();
+        selectPanel = new javax.swing.JPanel();
+        selectionPanel = new javax.swing.JPanel();
+        selectCellsBox = new javax.swing.JCheckBox();
+        selectingComponentSelector = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
+        selectedRangeSlider = new pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider();
+        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+        simpleScrollPane = new javax.swing.JScrollPane();
+        simplePanel = new javax.swing.JPanel();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
-      setMinimumSize(new java.awt.Dimension(200, 620));
-      setPreferredSize(new java.awt.Dimension(235, 620));
-      setRequestFocusEnabled(false);
-      setLayout(new java.awt.GridBagLayout());
+        setRequestFocusEnabled(false);
+        setLayout(new java.awt.CardLayout());
 
-      mainPane.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
-      mainPane.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-      mainPane.setMinimumSize(new java.awt.Dimension(200, 620));
-      mainPane.setPreferredSize(new java.awt.Dimension(235, 620));
-      mainPane.setRequestFocusEnabled(false);
+        extendedTabbedPane.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
+        extendedTabbedPane.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        extendedTabbedPane.setRequestFocusEnabled(false);
 
-      dataMappingGUI.setMinimumSize(new java.awt.Dimension(180, 490));
-      dataMappingGUI.setPreferredSize(new java.awt.Dimension(220, 495));
-      mainPane.addTab("datamap", dataMappingGUI);
+        dataMappingScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-      displayPropertiesGUI.setBackground(new java.awt.Color(238, 238, 237));
-      mainPane.addTab("display", displayPropertiesGUI);
-      mainPane.addTab("transform", transformPanel);
+        dataMappingPanel.setLayout(new java.awt.BorderLayout());
+        dataMappingPanel.add(dataMappingGUI, java.awt.BorderLayout.NORTH);
 
-      selectionPanel.setLayout(new java.awt.GridBagLayout());
+        dataMappingScrollPane.setViewportView(dataMappingPanel);
 
-      selectCellsBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      selectCellsBox.setText("<html>show cells with data <p>values from range");
-      selectCellsBox.setIconTextGap(8);
-      selectCellsBox.setMinimumSize(new java.awt.Dimension(160, 38));
-      selectCellsBox.setPreferredSize(new java.awt.Dimension(170, 38));
-      selectCellsBox.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            selectCellsBoxActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-      selectionPanel.add(selectCellsBox, gridBagConstraints);
+        extendedTabbedPane.addTab("datamap", dataMappingScrollPane);
 
-      selectedRangeSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "cell data range", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12))); // NOI18N
-      selectedRangeSlider.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            selectedRangeSliderStateChanged(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.ipadx = 120;
-      gridBagConstraints.ipady = 2;
-      gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-      gridBagConstraints.weightx = 1.0;
-      selectionPanel.add(selectedRangeSlider, gridBagConstraints);
+        displayPropertiesScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-      javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-      jPanel1.setLayout(jPanel1Layout);
-      jPanel1Layout.setHorizontalGroup(
-         jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addGap(0, 255, Short.MAX_VALUE)
-      );
-      jPanel1Layout.setVerticalGroup(
-         jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addGap(0, 435, Short.MAX_VALUE)
-      );
+        displayPropertiesPanel.setLayout(new java.awt.BorderLayout());
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 3;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.weighty = 1.0;
-      selectionPanel.add(jPanel1, gridBagConstraints);
+        displayPropertiesGUI.setBackground(new java.awt.Color(238, 238, 237));
+        displayPropertiesPanel.add(displayPropertiesGUI, java.awt.BorderLayout.NORTH);
 
-      selectingComponentSelector.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            selectingComponentSelectorStateChanged(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      selectionPanel.add(selectingComponentSelector, gridBagConstraints);
+        displayPropertiesScrollPane.setViewportView(displayPropertiesPanel);
 
-      mainPane.addTab("select", selectionPanel);
+        extendedTabbedPane.addTab("display", displayPropertiesScrollPane);
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
-      gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.weighty = 1.0;
-      add(mainPane, gridBagConstraints);
-   }// </editor-fold>//GEN-END:initComponents
+        transformScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        transformPanel.setLayout(new java.awt.BorderLayout());
+        transformPanel.add(transformGUI, java.awt.BorderLayout.NORTH);
+
+        transformScrollPane.setViewportView(transformPanel);
+
+        extendedTabbedPane.addTab("transform", transformScrollPane);
+
+        selectScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        selectPanel.setLayout(new java.awt.BorderLayout());
+
+        selectionPanel.setLayout(new java.awt.GridBagLayout());
+
+        selectCellsBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        selectCellsBox.setText("<html>show cells with data <p>values from range");
+        selectCellsBox.setIconTextGap(8);
+        selectCellsBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectCellsBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        selectionPanel.add(selectCellsBox, gridBagConstraints);
+
+        selectingComponentSelector.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                selectingComponentSelectorStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        selectionPanel.add(selectingComponentSelector, gridBagConstraints);
+
+        selectedRangeSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "cell data range", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12))); // NOI18N
+        selectedRangeSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                selectedRangeSliderStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        selectionPanel.add(selectedRangeSlider, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.weighty = 1.0;
+        selectionPanel.add(filler2, gridBagConstraints);
+
+        selectPanel.add(selectionPanel, java.awt.BorderLayout.NORTH);
+
+        selectScrollPane.setViewportView(selectPanel);
+
+        extendedTabbedPane.addTab("select", selectScrollPane);
+
+        add(extendedTabbedPane, "extendedUI");
+
+        simpleScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        simplePanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 99;
+        gridBagConstraints.weighty = 1.0;
+        simplePanel.add(filler1, gridBagConstraints);
+
+        simpleScrollPane.setViewportView(simplePanel);
+
+        add(simpleScrollPane, "simpleUI");
+    }// </editor-fold>//GEN-END:initComponents
 
 
 private void selectCellsBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_selectCellsBoxActionPerformed
@@ -331,24 +322,56 @@ private void selectingComponentSelectorStateChanged(javax.swing.event.ChangeEven
       renderingParams = params.getRenderingParams();
       displayPropertiesGUI.setRenderingParams(renderingParams);
       dataMappingGUI.setRenderingParams(renderingParams);
-      transformPanel.setTransformParams(params.getTransformParams());
+      transformGUI.setTransformParams(params.getTransformParams());
    }
 
    public void setSignalingTransform(SignalingTransform3D sigTrans)
    {
-      transformPanel.setSigTrans(sigTrans);
+      transformGUI.setSigTrans(sigTrans);
    }
 
-   // Variables declaration - do not modify//GEN-BEGIN:variables
-   private pl.edu.icm.visnow.geometries.gui.DataMappingGUI dataMappingGUI;
-   private pl.edu.icm.visnow.geometries.gui.DisplayPropertiesGUI displayPropertiesGUI;
-   private javax.swing.JPanel jPanel1;
-   private javax.swing.JTabbedPane mainPane;
-   private javax.swing.JCheckBox selectCellsBox;
-   private pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider selectedRangeSlider;
-   private pl.edu.icm.visnow.lib.gui.DataComponentSelector selectingComponentSelector;
-   private javax.swing.JPanel selectionPanel;
-   private javax.swing.JFileChooser textureFileChooser;
-   private pl.edu.icm.visnow.geometries.gui.TransformPanel transformPanel;
-   // End of variables declaration//GEN-END:variables
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private pl.edu.icm.visnow.geometries.gui.DataMappingGUI dataMappingGUI;
+    private javax.swing.JPanel dataMappingPanel;
+    private javax.swing.JScrollPane dataMappingScrollPane;
+    private pl.edu.icm.visnow.geometries.gui.DisplayPropertiesGUI displayPropertiesGUI;
+    private javax.swing.JPanel displayPropertiesPanel;
+    private javax.swing.JScrollPane displayPropertiesScrollPane;
+    private javax.swing.JTabbedPane extendedTabbedPane;
+    private javax.swing.Box.Filler filler1;
+    private javax.swing.Box.Filler filler2;
+    private javax.swing.JCheckBox selectCellsBox;
+    private javax.swing.JPanel selectPanel;
+    private javax.swing.JScrollPane selectScrollPane;
+    private pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider selectedRangeSlider;
+    private pl.edu.icm.visnow.lib.gui.DataComponentSelector selectingComponentSelector;
+    private javax.swing.JPanel selectionPanel;
+    private javax.swing.JPanel simplePanel;
+    private javax.swing.JScrollPane simpleScrollPane;
+    private javax.swing.JFileChooser textureFileChooser;
+    private pl.edu.icm.visnow.geometries.gui.TransformPanel transformGUI;
+    private javax.swing.JPanel transformPanel;
+    private javax.swing.JScrollPane transformScrollPane;
+    // End of variables declaration//GEN-END:variables
+
+    public static void main(String[] args) {
+        UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(4,0,0,0));
+        
+        JFrame f = new JFrame();
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        final CellSetPresentationGUI p = new CellSetPresentationGUI();
+        f.add(p);
+        f.pack();
+        f.addComponentListener(new ComponentAdapter() {
+            private boolean toggleSimple = true;
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                p.setPresentation(toggleSimple);
+                toggleSimple = !toggleSimple;
+            }
+        });
+        f.setVisible(true);
+    }
+
 }

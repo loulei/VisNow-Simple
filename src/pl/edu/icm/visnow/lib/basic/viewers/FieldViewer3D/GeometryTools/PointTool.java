@@ -56,12 +56,15 @@ public class PointTool extends GeometryTool {
     public void paint(Graphics g) {
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
     }
 
+    @Override
     public void mouseMoved(MouseEvent e) {
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
         this.point = e.getPoint();
         fireGeometryToolRepaintNeeded();
@@ -69,24 +72,23 @@ public class PointTool extends GeometryTool {
         fireGeometryToolStateChanged();
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
 
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
 
     }
-
-//    @Deprecated
-//    public Point getPoint() {
-//        return point;
-//    }
 
     @Override
     public Cursor getCursor() {

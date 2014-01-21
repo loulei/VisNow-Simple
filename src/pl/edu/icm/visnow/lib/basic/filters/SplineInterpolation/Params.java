@@ -55,16 +55,19 @@ public class Params extends Parameters
    {
       new ParameterEgg<Integer>("type", ParameterType.dependent, DENSITY),
       new ParameterEgg<Integer>("density", ParameterType.dependent, 3),
-      new ParameterEgg<int[]>("components", ParameterType.dependent, new int[] {0}),
-      new ParameterEgg<int[]>("newDims", ParameterType.dependent, new int[] {100, 100, 100}),
+      new ParameterEgg<int[]>("components", ParameterType.dependent, null),
+      new ParameterEgg<int[]>("newDims", ParameterType.dependent, null),
       new ParameterEgg<Float>("cellSize", ParameterType.dependent, 1.f),
       new ParameterEgg<Integer>("nThreads", ParameterType.dependent,
-                                Runtime.getRuntime().availableProcessors())
+                                null)
    };
 
    public Params()
    {
       super(eggs);
+      setValue("components",new int[] {0});      
+      setValue("newDims",new int[] {100, 100, 100});
+      setValue("nThreads",pl.edu.icm.visnow.system.main.VisNow.availableProcessors());
    }
 
     /**

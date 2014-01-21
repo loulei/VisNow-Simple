@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,7 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.geometries.objects;
 
@@ -51,16 +53,17 @@ public class DataMappedGeometryObject extends GeometryObject
    public static final int SURFACE  = 1;
    public static final int EDGES    = 2;
    public static final int EXTEDGES = 4;
-   
+
    protected boolean structureChanged  = true;
    protected boolean dataChanged       = true;
+   protected boolean rangeChanged       = true;
    protected boolean isTextureChanged  = true;
    protected boolean coordsChanged     = true;
    protected boolean colorsChanged     = true;
    protected boolean uvCoordsChanged   = true;
    protected boolean debug             = false;
    protected boolean newParams         = true;
-   
+
    protected int nNodes           = 0;
    protected int nTriangleIndices = 0;
    protected int nLineIndices     = 0;
@@ -73,13 +76,13 @@ public class DataMappedGeometryObject extends GeometryObject
    protected DefaultColorMap1D colorMap    = null;
    protected DataMappingParams dataMappingParams = new DataMappingParams();
    protected ColormapLegend colormapLegend       = new ColormapLegend();
-   
+
    /**
     * Transient place holder for all geometries created by the module - detached
     * and re-attached for all structural changes
     */
    protected OpenBranchGroup geometry = new OpenBranchGroup();
-   
+
    /** Creates a new instance of DataMappedGeometryObject */
    public DataMappedGeometryObject()
    {
@@ -87,7 +90,7 @@ public class DataMappedGeometryObject extends GeometryObject
       dataMappingParams.getTransparencyParams().addListener(renderingParams.getTransparencyChangeListener());
       addGeometry2D(colormapLegend);
    }
-   
+
    public DataMappedGeometryObject(String name)
    {
       super(name);
@@ -95,7 +98,7 @@ public class DataMappedGeometryObject extends GeometryObject
       dataMappingParams.getTransparencyParams().addListener(renderingParams.getTransparencyChangeListener());
       addGeometry2D(colormapLegend);
    }
-   
+
    public DataMappedGeometryObject(String name, int timestamp)
    {
       super(name, timestamp);
@@ -103,7 +106,7 @@ public class DataMappedGeometryObject extends GeometryObject
       dataMappingParams.getTransparencyParams().addListener(renderingParams.getTransparencyChangeListener());
       addGeometry2D(colormapLegend);
    }
-   
+
    public DataMappingParams getDataMappingParams()
    {
       return dataMappingParams;
@@ -120,5 +123,24 @@ public class DataMappedGeometryObject extends GeometryObject
    {
       return colormapLegend;
    }
-   
+
+    /**
+     * @return the newParams
+     */
+    public boolean isNewParams() {
+        return newParams;
+    }
+
+    public boolean isRangeChanged() {
+        return rangeChanged;
+    }
+
+    public boolean isDataChanged() {
+        return dataChanged;
+    }
+
+    public boolean isStructureChanged() {
+        return structureChanged;
+    }
+    
 }

@@ -5,14 +5,14 @@
        </input>
     </inputs>
     <outputs>
-        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNField">
-            <schema>
-                <param name="IRREGULAR" value="true"/>
-            </schema>
-        </output>
-        <output name="regularOutField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+        <output name="outRegularField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
             <schema>
                 <param name="REGULAR" value="true"/>
+            </schema>
+        </output>
+        <output name="outIrregularField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <schema>
+                <param name="IRREGULAR" value="true"/>
             </schema>
         </output>
         <geometryOutput/>

@@ -12,10 +12,16 @@
         </input>
     </inputs>
     <outputs>
-        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNField">
+        <output name="outRegularField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="REGULAR" value="true"/>
+            </schema>
         </output>
-        <output name="regularOutField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
-        </output>
+        <output name="outIrregularField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <schema>
+                <param name="IRREGULAR" value="true"/>
+            </schema>
+        </output>        
         <geometryOutput/>
     </outputs>
     <description value="Selects a time moment from dtime dependent data, animates time dependent data over time."/>

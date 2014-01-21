@@ -1,5 +1,6 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+Copyright (C) 2006-2013 University of Warsaw, ICM
 
 This file is part of GNU Classpath.
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -33,7 +34,9 @@ module.  An independent module is a module which is not derived from
 or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+exception statement from your version.
+*/
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.basic.filters.InterpolationToRegularField;
 
@@ -89,7 +92,7 @@ public class InterpolationToRegularField extends RegularOutFieldVisualizationMod
    protected float[][] boxExtents;
    protected float[][] baseAffine = new float[4][3];
    protected int lastAxis = -1;
-   protected int nThreads = 1;
+   protected int nThreads = Runtime.getRuntime().availableProcessors();
    
    protected int[] dims = new int[]{10,10,10}; 
    protected float[][] outBaseAffine = new float[4][3];
@@ -160,7 +163,7 @@ public class InterpolationToRegularField extends RegularOutFieldVisualizationMod
                startAction();
          }
       });
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          public void run()
          {
@@ -360,6 +363,7 @@ public class InterpolationToRegularField extends RegularOutFieldVisualizationMod
       zMax = Math.min(dims[2] - 1, zMax);
       float[] vals = new float[4];
 // loop over possible z-indices in outfield (planes z = iz cutting tetra)
+      zLoop:
       for (int iz = k0; iz <= zMax; iz++)
       {
          for (int p = 0; p < 4; p++)
@@ -389,13 +393,12 @@ public class InterpolationToRegularField extends RegularOutFieldVisualizationMod
                int p0 = addNodes[4][is][0];
                int p1 = addNodes[4][is][1];
                float u = vals[p1] / (vals[p1] - vals[p0]);
+               if (u == Float.NaN || u == Float.NEGATIVE_INFINITY || u == Float.POSITIVE_INFINITY)
+                  continue zLoop;
                sliceVertsBaryCoords[i][p0] = u;
                sliceVertsBaryCoords[i][p1] = 1 - u;
                sliceVertsPlaneCoords[i][0] = u * tetraCoords[p0][0] + (1 - u) * tetraCoords[p1][0];
                sliceVertsPlaneCoords[i][1] = u * tetraCoords[p0][1] + (1 - u) * tetraCoords[p1][1];
-//               if (Math.abs(iz - (u * tetraCoords[p0][2] + (1 - u) * tetraCoords[p1][2])) > .0001)
-//                  System.out.printf("%5d %9.4f %9.4f%n", iz, u * tetraCoords[p0][2] + (1 - u) * tetraCoords[p1][2], 
-//                                                         iz - (u * tetraCoords[p0][2] + (1 - u) * tetraCoords[p1][2]));
             }
          }
          
@@ -430,6 +433,7 @@ public class InterpolationToRegularField extends RegularOutFieldVisualizationMod
             yMax = Math.min(dims[1] - 1, yMax);
             float[] triVals = new float[3];
 // loop over possible y-indices in outfield (segments y = iy cutting triangle)
+            yLoop:   
             for (int iy = l0; iy <= yMax; iy++)
             {
                for (int p = 0; p < 3; p++)
@@ -454,6 +458,8 @@ public class InterpolationToRegularField extends RegularOutFieldVisualizationMod
                      int p0 = addNodes[3][is][0];
                      int p1 = addNodes[3][is][1];
                      float u = triVals[p1] / (triVals[p1] - triVals[p0]);
+                     if (u == Float.NaN || u == Float.NEGATIVE_INFINITY || u == Float.POSITIVE_INFINITY)
+                        continue yLoop;
                      segmentVertsTriangleBaryCoords[i][p0] = u;
                      segmentVertsTriangleBaryCoords[i][p1] = 1 - u;
                      segmentVertsLineCoords[i] = u * triXYCoords[p0][0] + (1-u) * triXYCoords[p1][0];
@@ -473,8 +479,9 @@ public class InterpolationToRegularField extends RegularOutFieldVisualizationMod
                   continue;
                int m0 = Math.max((int)xMin, 0);
                if (m0 < xMin) m0 += 1;
-               int nData = dims[2] * dims[1] * dims[0];
                float d = 1 / (segmentVertsLineCoords[1] - segmentVertsLineCoords[0]);
+               if (d == Float.NaN || d == Float.NEGATIVE_INFINITY || d == Float.POSITIVE_INFINITY)
+                  continue;
                for (int ix = m0, iData = (dims[1] * iz + iy) * dims[0] + m0; ix <= Math.min(xMax, dims[0] - 1); ix++, iData++)
                {
                   if (valid[iData])
@@ -548,6 +555,7 @@ public class InterpolationToRegularField extends RegularOutFieldVisualizationMod
       yMax = Math.min(dims[1] - 1, yMax);
       float[] triVals = new float[3];
 // loop over possible y-indices in outfield (segments y = iy cutting triangle)
+      yLoop:
       for (int iy = l0; iy <= yMax; iy++)
       {
          for (int p = 0; p < 3; p++)
@@ -571,6 +579,8 @@ public class InterpolationToRegularField extends RegularOutFieldVisualizationMod
                int p0 = addNodes[3][is][0];
                int p1 = addNodes[3][is][1];
                float u = triVals[p1] / (triVals[p1] - triVals[p0]);
+               if (u == Float.NaN || u == Float.NEGATIVE_INFINITY || u == Float.POSITIVE_INFINITY)
+                  continue yLoop;
                segmentVertsBaryCoords[i][p0] = u;
                segmentVertsBaryCoords[i][p1] = 1 - u;
                segmentVertsLineCoords[i] = u * triCoords[p0][0] + (1-u) * triCoords[p1][0];
@@ -588,7 +598,9 @@ public class InterpolationToRegularField extends RegularOutFieldVisualizationMod
          int m0 = Math.max((int)xMin, 0);
          if (m0 < xMin) m0 += 1;
          int nData = dims[1] * dims[0];
-         float d = 1 / (segmentVertsLineCoords[1] - segmentVertsLineCoords[0]);
+         float d = 1 / (segmentVertsLineCoords[1] - segmentVertsLineCoords[0]); 
+               if (d== Float.NaN || d == Float.NEGATIVE_INFINITY || d == Float.POSITIVE_INFINITY)
+                  continue ;
          for (int ix = m0, iData = iy * dims[0] + m0; ix <= Math.min(xMax, dims[0] - 1); ix++, iData++)
          {
             if (valid[iData])
@@ -888,9 +900,12 @@ public class InterpolationToRegularField extends RegularOutFieldVisualizationMod
             initBaseAffine();
             transformBox();
             inCoords = inField.getCoords();
+            if (inCoords == null)
+               inCoords = ((RegularField)inField).getCoordsFromAffine();
             computeUI.setInField(inField);
             recomputedCoords = new float[trueDim * inField.getNNodes()];
             lastAxis = -1;
+            change = OUTPUT;
          }
       }
       fromUI = false;

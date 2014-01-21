@@ -37,7 +37,6 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.geometries.gui;
 
-import java.awt.Dimension;
 import javax.media.j3d.LineAttributes;
 import pl.edu.icm.visnow.datasets.Field;
 import pl.edu.icm.visnow.geometries.parameters.CellSetDisplayParams;
@@ -70,13 +69,18 @@ public class Presentation1DPanel extends javax.swing.JPanel
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jPanel1 = new javax.swing.JPanel();
         lineWidthSlider = new javax.swing.JSlider();
         lineStyleCombo = new javax.swing.JComboBox();
         colorPanel = new pl.edu.icm.visnow.geometries.gui.ColorMappedComponentPanel();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
-        setMinimumSize(new java.awt.Dimension(200, 630));
-        setPreferredSize(new java.awt.Dimension(235, 650));
-        setLayout(new java.awt.GridBagLayout());
+        setLayout(new java.awt.BorderLayout());
+
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        jPanel1.setLayout(new java.awt.GridBagLayout());
 
         lineWidthSlider.setMajorTickSpacing(50);
         lineWidthSlider.setMaximum(200);
@@ -84,7 +88,6 @@ public class Presentation1DPanel extends javax.swing.JPanel
         lineWidthSlider.setPaintTicks(true);
         lineWidthSlider.setValue(20);
         lineWidthSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "line width", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-        lineWidthSlider.setMinimumSize(new java.awt.Dimension(36, 40));
         lineWidthSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 lineWidthSliderStateChanged(evt);
@@ -92,11 +95,10 @@ public class Presentation1DPanel extends javax.swing.JPanel
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
         gridBagConstraints.weightx = 1.0;
-        add(lineWidthSlider, gridBagConstraints);
+        jPanel1.add(lineWidthSlider, gridBagConstraints);
 
         lineStyleCombo.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         lineStyleCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "solid", "dashed", "dotted", "dashdotted" }));
@@ -105,32 +107,26 @@ public class Presentation1DPanel extends javax.swing.JPanel
                 lineStyleComboItemStateChanged(evt);
             }
         });
-        lineStyleCombo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                lineStyleComboActionPerformed(evt);
-            }
-        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(3, 2, 9, 2);
-        add(lineStyleCombo, gridBagConstraints);
-
-        colorPanel.setMaximumSize(new java.awt.Dimension(420, 1000));
-        colorPanel.setMinimumSize(new java.awt.Dimension(165, 505));
-        colorPanel.setName("");
-        colorPanel.setPreferredSize(new java.awt.Dimension(205, 510));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
         gridBagConstraints.weightx = 1.0;
+        jPanel1.add(lineStyleCombo, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(colorPanel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.weighty = 1.0;
-        add(colorPanel, gridBagConstraints);
+        jPanel1.add(filler1, gridBagConstraints);
+
+        jScrollPane1.setViewportView(jPanel1);
+
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void lineWidthSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_lineWidthSliderStateChanged
@@ -177,11 +173,6 @@ public class Presentation1DPanel extends javax.swing.JPanel
 
            } // TODO add your handling code here:
     }//GEN-LAST:event_lineStyleComboItemStateChanged
-
-   private void lineStyleComboActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_lineStyleComboActionPerformed
-   {//GEN-HEADEREND:event_lineStyleComboActionPerformed
-      // TODO add your handling code here:
-   }//GEN-LAST:event_lineStyleComboActionPerformed
    
    public void setInFieldDisplayData(Field field, IrregularFieldDisplayParams fieldDisplayParams)
    {
@@ -214,26 +205,10 @@ public class Presentation1DPanel extends javax.swing.JPanel
       this.field = field;
    }
    
-   public void setPresentation(boolean simple)
-   {
-//      System.out.println(this.getClass().getSimpleName() + " simple = "+simple);
-      Dimension simpleDim = new Dimension(200, 350);
-      Dimension expertDim = new Dimension(200, 640);
-      if (simple)
-      {
-         colorPanel.setPresentation(simple);
-         setMinimumSize(simpleDim);
-         setPreferredSize(simpleDim);
-         setMaximumSize(simpleDim);
-      } else
-      {
-         setMinimumSize(expertDim);
-         setPreferredSize(expertDim);
-         setMaximumSize(expertDim);
-         colorPanel.setPresentation(simple);
-      }
-      validate();
-   }
+    public void setPresentation(boolean simple) {
+        colorPanel.setPresentation(simple);
+        validate();
+    }
 
    public ColorMappedComponentPanel getColorPanel()
    {
@@ -246,6 +221,9 @@ public class Presentation1DPanel extends javax.swing.JPanel
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected pl.edu.icm.visnow.geometries.gui.ColorMappedComponentPanel colorPanel;
+    protected javax.swing.Box.Filler filler1;
+    protected javax.swing.JPanel jPanel1;
+    protected javax.swing.JScrollPane jScrollPane1;
     protected javax.swing.JComboBox lineStyleCombo;
     protected javax.swing.JSlider lineWidthSlider;
     // End of variables declaration//GEN-END:variables

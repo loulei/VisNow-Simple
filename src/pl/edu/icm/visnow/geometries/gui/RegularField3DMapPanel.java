@@ -39,7 +39,10 @@ package pl.edu.icm.visnow.geometries.gui;
 
 import java.awt.Color;
 import javax.swing.JColorChooser;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 import pl.edu.icm.visnow.geometries.parameters.RegularField3dParams;
+import pl.edu.icm.visnow.gui.swingwrappers.TestPanel4;
 
 /**
  *
@@ -68,16 +71,11 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
 
         boxColorChooser = new javax.swing.JColorChooser();
         dataButtonGroup = new javax.swing.ButtonGroup();
-        jPanel1 = new javax.swing.JPanel();
+        dataPanel = new javax.swing.JPanel();
         boxColorButton = new javax.swing.JButton();
         gridTypeCombo = new javax.swing.JComboBox();
         gridCombo = new javax.swing.JComboBox();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        sliceButton = new javax.swing.JRadioButton();
-        avgButton = new javax.swing.JRadioButton();
-        maxButton = new javax.swing.JRadioButton();
-        jPanel3 = new javax.swing.JPanel();
+        showExternFacesPanel = new javax.swing.JPanel();
         iMinSurfBox = new javax.swing.JCheckBox();
         iMaxSurfBox = new javax.swing.JCheckBox();
         jMinSurfBox = new javax.swing.JCheckBox();
@@ -89,21 +87,20 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
+        sliceModePanel = new javax.swing.JPanel();
+        sliceButton = new javax.swing.JRadioButton();
+        avgButton = new javax.swing.JRadioButton();
+        maxButton = new javax.swing.JRadioButton();
 
-        setMinimumSize(new java.awt.Dimension(200, 120));
-        setPreferredSize(new java.awt.Dimension(235, 120));
+        setBorder(javax.swing.BorderFactory.createTitledBorder(null, "show data", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
         setRequestFocusEnabled(false);
         setLayout(new java.awt.GridBagLayout());
 
-        jPanel1.setMinimumSize(new java.awt.Dimension(73, 71));
-        jPanel1.setPreferredSize(new java.awt.Dimension(197, 71));
-        jPanel1.setLayout(new java.awt.GridBagLayout());
+        dataPanel.setLayout(new java.awt.GridBagLayout());
 
         boxColorButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         boxColorButton.setText("color");
-        boxColorButton.setMargin(new java.awt.Insets(2, 1, 2, 1));
-        boxColorButton.setMinimumSize(new java.awt.Dimension(36, 18));
-        boxColorButton.setPreferredSize(new java.awt.Dimension(36, 18));
+        boxColorButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         boxColorButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 boxColorButtonActionPerformed(evt);
@@ -116,13 +113,11 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
         gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        jPanel1.add(boxColorButton, gridBagConstraints);
+        dataPanel.add(boxColorButton, gridBagConstraints);
 
         gridTypeCombo.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         gridTypeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "no grid", "outline", "point grid", "line grid" }));
         gridTypeCombo.setSelectedIndex(1);
-        gridTypeCombo.setMinimumSize(new java.awt.Dimension(83, 20));
-        gridTypeCombo.setPreferredSize(new java.awt.Dimension(83, 20));
         gridTypeCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 gridTypeComboActionPerformed(evt);
@@ -135,13 +130,11 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
         gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        jPanel1.add(gridTypeCombo, gridBagConstraints);
+        dataPanel.add(gridTypeCombo, gridBagConstraints);
 
         gridCombo.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         gridCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "coarse", "fine", "very fine" }));
         gridCombo.setEnabled(false);
-        gridCombo.setMinimumSize(new java.awt.Dimension(70, 20));
-        gridCombo.setPreferredSize(new java.awt.Dimension(70, 20));
         gridCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 gridComboActionPerformed(evt);
@@ -154,82 +147,21 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
         gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        jPanel1.add(gridCombo, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        add(jPanel1, gridBagConstraints);
-
-        jPanel2.setLayout(new java.awt.GridBagLayout());
-
-        jLabel3.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        jLabel3.setText("color extern faces by");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        jPanel2.add(jLabel3, gridBagConstraints);
-
-        dataButtonGroup.add(sliceButton);
-        sliceButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        sliceButton.setSelected(true);
-        sliceButton.setText("slice");
-        sliceButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sliceButtonActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        jPanel2.add(sliceButton, gridBagConstraints);
-
-        dataButtonGroup.add(avgButton);
-        avgButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        avgButton.setText("avg");
-        avgButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                avgButtonActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        jPanel2.add(avgButton, gridBagConstraints);
-
-        dataButtonGroup.add(maxButton);
-        maxButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        maxButton.setText("max");
-        maxButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                maxButtonActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        jPanel2.add(maxButton, gridBagConstraints);
+        dataPanel.add(gridCombo, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
-        add(jPanel2, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        add(dataPanel, gridBagConstraints);
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "show extern faces", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-        jPanel3.setLayout(new java.awt.GridBagLayout());
+        showExternFacesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "show extern faces", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        showExternFacesPanel.setLayout(new java.awt.GridBagLayout());
 
         iMinSurfBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        iMinSurfBox.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         iMinSurfBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 iMinSurfBoxActionPerformed(evt);
@@ -240,9 +172,10 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        jPanel3.add(iMinSurfBox, gridBagConstraints);
+        showExternFacesPanel.add(iMinSurfBox, gridBagConstraints);
 
         iMaxSurfBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        iMaxSurfBox.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         iMaxSurfBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 iMaxSurfBoxActionPerformed(evt);
@@ -253,9 +186,10 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        jPanel3.add(iMaxSurfBox, gridBagConstraints);
+        showExternFacesPanel.add(iMaxSurfBox, gridBagConstraints);
 
         jMinSurfBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jMinSurfBox.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jMinSurfBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMinSurfBoxActionPerformed(evt);
@@ -266,9 +200,10 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        jPanel3.add(jMinSurfBox, gridBagConstraints);
+        showExternFacesPanel.add(jMinSurfBox, gridBagConstraints);
 
         jMaxSurfBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jMaxSurfBox.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jMaxSurfBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMaxSurfBoxActionPerformed(evt);
@@ -278,9 +213,10 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        jPanel3.add(jMaxSurfBox, gridBagConstraints);
+        showExternFacesPanel.add(jMaxSurfBox, gridBagConstraints);
 
         kMaxSurfBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        kMaxSurfBox.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         kMaxSurfBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 kMaxSurfBoxActionPerformed(evt);
@@ -290,9 +226,10 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        jPanel3.add(kMaxSurfBox, gridBagConstraints);
+        showExternFacesPanel.add(kMaxSurfBox, gridBagConstraints);
 
         kMinSurfBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        kMinSurfBox.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         kMinSurfBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 kMinSurfBoxActionPerformed(evt);
@@ -303,7 +240,7 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        jPanel3.add(kMinSurfBox, gridBagConstraints);
+        showExternFacesPanel.add(kMinSurfBox, gridBagConstraints);
 
         jLabel6.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jLabel6.setText("max");
@@ -312,7 +249,7 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jPanel3.add(jLabel6, gridBagConstraints);
+        showExternFacesPanel.add(jLabel6, gridBagConstraints);
 
         jLabel7.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jLabel7.setText("min");
@@ -322,7 +259,7 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        jPanel3.add(jLabel7, gridBagConstraints);
+        showExternFacesPanel.add(jLabel7, gridBagConstraints);
 
         jLabel8.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -334,7 +271,7 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        jPanel3.add(jLabel8, gridBagConstraints);
+        showExternFacesPanel.add(jLabel8, gridBagConstraints);
 
         jLabel9.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -343,7 +280,7 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        jPanel3.add(jLabel9, gridBagConstraints);
+        showExternFacesPanel.add(jLabel9, gridBagConstraints);
 
         jLabel10.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -352,45 +289,112 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        jPanel3.add(jLabel10, gridBagConstraints);
+        showExternFacesPanel.add(jLabel10, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 4, 0);
-        add(jPanel3, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 2, 0, 0);
+        add(showExternFacesPanel, gridBagConstraints);
+
+        sliceModePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "color extern faces by", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        sliceModePanel.setEnabled(false);
+        sliceModePanel.setLayout(new java.awt.GridBagLayout());
+
+        dataButtonGroup.add(sliceButton);
+        sliceButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        sliceButton.setSelected(true);
+        sliceButton.setText("slice");
+        sliceButton.setEnabled(false);
+        sliceButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sliceButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        sliceModePanel.add(sliceButton, gridBagConstraints);
+
+        dataButtonGroup.add(avgButton);
+        avgButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        avgButton.setText("avg");
+        avgButton.setEnabled(false);
+        avgButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                avgButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        sliceModePanel.add(avgButton, gridBagConstraints);
+
+        dataButtonGroup.add(maxButton);
+        maxButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        maxButton.setText("max");
+        maxButton.setEnabled(false);
+        maxButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maxButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        sliceModePanel.add(maxButton, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        add(sliceModePanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void iMinSurfBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_iMinSurfBoxActionPerformed
     {//GEN-HEADEREND:event_iMinSurfBoxActionPerformed
        params.setSurFaces(0, 0, iMinSurfBox.isSelected());
+       updateSliceSelection();
     }//GEN-LAST:event_iMinSurfBoxActionPerformed
 
     private void iMaxSurfBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_iMaxSurfBoxActionPerformed
     {//GEN-HEADEREND:event_iMaxSurfBoxActionPerformed
        params.setSurFaces(0, 1, iMaxSurfBox.isSelected());
+       updateSliceSelection();
     }//GEN-LAST:event_iMaxSurfBoxActionPerformed
 
     private void jMinSurfBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMinSurfBoxActionPerformed
     {//GEN-HEADEREND:event_jMinSurfBoxActionPerformed
        params.setSurFaces(1, 0, jMinSurfBox.isSelected());
+       updateSliceSelection();
     }//GEN-LAST:event_jMinSurfBoxActionPerformed
 
     private void jMaxSurfBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMaxSurfBoxActionPerformed
     {//GEN-HEADEREND:event_jMaxSurfBoxActionPerformed
        params.setSurFaces(1, 1, jMaxSurfBox.isSelected());
+       updateSliceSelection();
     }//GEN-LAST:event_jMaxSurfBoxActionPerformed
 
     private void kMinSurfBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_kMinSurfBoxActionPerformed
     {//GEN-HEADEREND:event_kMinSurfBoxActionPerformed
        params.setSurFaces(2, 0, kMinSurfBox.isSelected());
+       updateSliceSelection();
     }//GEN-LAST:event_kMinSurfBoxActionPerformed
 
     private void kMaxSurfBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_kMaxSurfBoxActionPerformed
     {//GEN-HEADEREND:event_kMaxSurfBoxActionPerformed
        params.setSurFaces(2, 1, kMaxSurfBox.isSelected());
+       updateSliceSelection();
     }//GEN-LAST:event_kMaxSurfBoxActionPerformed
 
     private void boxColorButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_boxColorButtonActionPerformed
@@ -441,31 +445,79 @@ public class RegularField3DMapPanel extends javax.swing.JPanel
       this.params = params;
    }
 
+   /**
+    * Enables slice selection panel if any of extern faces is selected; Disables panel otherwise.
+    */
+    private void updateSliceSelection() {
+        enableSliceSelection(kMaxSurfBox.isSelected() || kMinSurfBox.isSelected()
+                        || iMaxSurfBox.isSelected() || iMinSurfBox.isSelected()
+                        || jMaxSurfBox.isSelected() || jMinSurfBox.isSelected());
+    }
 
+    private void enableSliceSelection(boolean enabled) {
+        sliceModePanel.setEnabled(enabled);
+        sliceButton.setEnabled(enabled);
+        avgButton.setEnabled(enabled);
+        maxButton.setEnabled(enabled);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        sliceModePanel.setEnabled(enabled);
+        dataPanel.setEnabled(enabled);
+        showExternFacesPanel.setEnabled(enabled);
+
+        gridCombo.setEnabled(enabled);
+        gridTypeCombo.setEnabled(enabled);
+        boxColorButton.setEnabled(enabled);
+        boxColorChooser.setEnabled(enabled);
+
+
+        iMaxSurfBox.setEnabled(enabled);
+        iMinSurfBox.setEnabled(enabled);
+        jMaxSurfBox.setEnabled(enabled);
+        jMinSurfBox.setEnabled(enabled);
+        kMaxSurfBox.setEnabled(enabled);
+        kMinSurfBox.setEnabled(enabled);
+
+        avgButton.setEnabled(enabled);
+        maxButton.setEnabled(enabled);
+        sliceButton.setEnabled(enabled);
+    }
+
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JRadioButton avgButton;
     protected javax.swing.JButton boxColorButton;
     protected javax.swing.JColorChooser boxColorChooser;
     protected javax.swing.ButtonGroup dataButtonGroup;
+    protected javax.swing.JPanel dataPanel;
     protected javax.swing.JComboBox gridCombo;
     protected javax.swing.JComboBox gridTypeCombo;
     protected javax.swing.JCheckBox iMaxSurfBox;
     protected javax.swing.JCheckBox iMinSurfBox;
     protected javax.swing.JLabel jLabel10;
-    protected javax.swing.JLabel jLabel3;
     protected javax.swing.JLabel jLabel6;
     protected javax.swing.JLabel jLabel7;
     protected javax.swing.JLabel jLabel8;
     protected javax.swing.JLabel jLabel9;
     protected javax.swing.JCheckBox jMaxSurfBox;
     protected javax.swing.JCheckBox jMinSurfBox;
-    protected javax.swing.JPanel jPanel1;
-    protected javax.swing.JPanel jPanel2;
-    protected javax.swing.JPanel jPanel3;
     protected javax.swing.JCheckBox kMaxSurfBox;
     protected javax.swing.JCheckBox kMinSurfBox;
     protected javax.swing.JRadioButton maxButton;
+    protected javax.swing.JPanel showExternFacesPanel;
     protected javax.swing.JRadioButton sliceButton;
+    protected javax.swing.JPanel sliceModePanel;
     // End of variables declaration//GEN-END:variables
 
+    public static void main(String[] args) {
+        JFrame f = new JFrame();
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        final RegularField3DMapPanel p = new  RegularField3DMapPanel();
+        f.add(p);
+        f.pack();
+        f.setVisible(true);
+    }    
 }

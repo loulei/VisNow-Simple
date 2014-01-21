@@ -80,7 +80,7 @@ public class ComputeIrregularFieldStreamlines extends ComputeStreamlines
       downVectors = new float[nSrc][3*nBackward];
       upVectors = new float[nSrc][3*nForward];
       float[][] xt = inField.getExtents();
-      nThreads = Runtime.getRuntime().availableProcessors();
+      nThreads = pl.edu.icm.visnow.system.main.VisNow.availableProcessors();
       Thread[] workThreads = new Thread[nThreads];
       threadProgress = new int[nThreads];
       for (int i = 0; i < nThreads; i++)
@@ -136,8 +136,7 @@ public class ComputeIrregularFieldStreamlines extends ComputeStreamlines
       boolean[] edgeOrientations = new boolean[lines.length/2];
       for (int i = 0; i < edgeOrientations.length; i++)
          edgeOrientations[i] = true;
-      outField = new IrregularField();
-      outField.setNNodes(nvert);
+      outField = new IrregularField(nvert);
       outField.setNSpace(3);
       outField.setCoords(coords);
       DataArray da = DataArray.create(indices, 1, "steps");

@@ -57,6 +57,7 @@ public class GeometryParamsEvent extends ChangeEvent {
     public static final int TYPE_POINT_ADDED = 10;
     public static final int TYPE_POINT_REMOVED = 11;
     public static final int TYPE_POINT_MODIFIED = 12;
+    public static final int TYPE_POINT_CLASS = 13;
 
     private int type = TYPE_ALL;
 

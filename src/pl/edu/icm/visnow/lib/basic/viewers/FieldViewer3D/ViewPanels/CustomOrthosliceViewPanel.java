@@ -43,8 +43,11 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import javax.swing.event.ChangeEvent;
+import pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D.Geometry.CalculableParameter;
 import pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D.Geometry.ConnectionDescriptor;
 import pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D.Geometry.PointDescriptor;
+import pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D.GeometryTools.GeometryTool;
 
 /**
  * @author Bartosz Borucki (babor@icm.edu.pl) University of Warsaw,
@@ -71,7 +74,8 @@ public class CustomOrthosliceViewPanel extends ViewPanel implements ComponentLis
     private int axis = 0;
     private float[][] extents = null;
     private float[][] base = null;
-    private float[][] localBase = null;    
+    private float[][] localBase = null;
+    private float[] localPoint0 = {0.0f, 0.0f};
     private ArrayList<PointDescriptor> points = new ArrayList<PointDescriptor>();
     private ArrayList<ConnectionDescriptor> pointConnections = new ArrayList<ConnectionDescriptor>();
     private int[] selectedPoints = null;
@@ -88,6 +92,8 @@ public class CustomOrthosliceViewPanel extends ViewPanel implements ComponentLis
     private BasicStroke dashedLine = new BasicStroke(1.f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 2.0f, dash, 0.f);
     private BasicStroke solidLine = new BasicStroke(1.f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 2.0f);
     private int point0CircleRadius = 10;
+    private int mouseRotateRadius = 50;
+    private int mouseRotateTickSize = 4;
     private GeneralPath[] customAxisPaths = new GeneralPath[2];
     private boolean rotatingAxes = false;
     private boolean holdingAxis0 = false;
@@ -110,6 +116,8 @@ public class CustomOrthosliceViewPanel extends ViewPanel implements ComponentLis
     private boolean holdingPoint = false;
     private int holdingPointIndex = -1;
     private CursorProvider cp = new CursorProvider();
+    private boolean holdingWindowRange = false;
+    private float[] lastPoint = new float[3];
 
     public CustomOrthosliceViewPanel(int axis) {
         super();
@@ -333,8 +341,7 @@ public class CustomOrthosliceViewPanel extends ViewPanel implements ComponentLis
 
             if (rotatingAxes) {
                 gr.setStroke(solidLine);
-                gr.setColor(Color.MAGENTA);
-                point0CircleRadius = 10;
+                gr.setColor(Color.MAGENTA);                
                 float[] tmp = realToPanelCoords(customOrthoPlanesPoint);
 
                 gr.drawOval((int) (tmp[0] + 0.5) - point0CircleRadius, (int) (tmp[1] + 0.5) - point0CircleRadius, 2 * point0CircleRadius, 2 * point0CircleRadius);
@@ -354,100 +361,176 @@ public class CustomOrthosliceViewPanel extends ViewPanel implements ComponentLis
             gr.draw(p);
         }
 
-
-
-        //---------paint drag line-----------------------
-        if (holdingNewPoint) {
-            gr.setColor(Color.RED);
-
-            gr.drawLine(dragLine[0][0], dragLine[0][1], dragLine[1][0], dragLine[1][1]);
-            int[] c = new int[2];
-            c[0] = (int) Math.round(dragLineCenter[0]);
-            c[1] = (int) Math.round(dragLineCenter[1]);
-            gr.drawLine(c[0] - 3, c[1],
-                    c[0] + 3, c[1]);
-            gr.drawLine(c[0], c[1] - 3,
-                    c[0], c[1] + 3);
-            float d = (float) (Math.sqrt((dragLine[1][0] - dragLine[0][0]) * (dragLine[1][0] - dragLine[0][0]) + (dragLine[1][1] - dragLine[0][1]) * (dragLine[1][1] - dragLine[0][1])));
-            int cx = (int) Math.round((float) c[0] - d / 2.0f);
-            int cy = (int) Math.round((float) c[1] - d / 2.0f);
-            int cd = (int) Math.round(d);
-            gr.drawOval(cx, cy, cd, cd);
-        }
-
-
-
-
         //---------paint slice info-----------------------
         if (paintSliceInfo) {
             gr.setColor(Color.YELLOW);
             gr.drawString(sliceInfoString, 5, 2 + gr.getFontMetrics().getHeight());
         }
 
+        //------------paint geometry tool----------------------
+        if(geomTool != null) {
+            g.translate(-imagePosX, -imagePosY);
+            geomTool.paint(g);
+            g.translate(imagePosX, imagePosY);
+        }        
+        
         //--------------------------------------------
+        gr.setStroke(new BasicStroke());
         gr.setColor(oldColor);
     }
 
     private void updateCustomAxisPaths() {
-//        if(localBase == null || extents == null)
-//            return;
-//
-//        float[] p0 = realToPanelCoords(customOrthoPlanesPoint);        
-//        float[] p1;
-//        float[] tmp = new float[3];
-//        
-//        customAxisPaths[0] = new GeneralPath();
-//        System.arraycopy(customOrthoPlanesPoint, 0, tmp, 0, tmp.length);
-//        while(true) {
-//            for (int i = 0; i < tmp.length; i++) {
-//                tmp[i] += localBase[0][i];
-//            }
-//            p1 = realToPanelCoords(tmp);
-//            if(p1[0] <= 0 || p1[0] >= w || p1[1] <= 0 || p1[1] >= h)
-//                break;
-//        }
-//        customAxisPaths[0].moveTo(p0[0]+10*localPanelBase[0][0], p0[1]+10*localPanelBase[0][1]);        
-//        customAxisPaths[0].lineTo(p1[0], p1[1]);
-//
-//        System.arraycopy(customOrthoPlanesPoint, 0, tmp, 0, tmp.length);
-//        while(true) {
-//            for (int i = 0; i < tmp.length; i++) {
-//                tmp[i] -= localBase[0][i];
-//            }
-//            p1 = realToPanelCoords(tmp);
-//            if(p1[0] <= 0 || p1[0] >= w || p1[1] <= 0 || p1[1] >= h)
-//                break;
-//        }
-//        customAxisPaths[0].moveTo(p0[0]-10*localPanelBase[0][0], p0[1]-10*localPanelBase[0][1]);
-//        customAxisPaths[0].lineTo(p1[0], p1[1]);
-//
-//
-//
-//        customAxisPaths[1] = new GeneralPath();
-//        System.arraycopy(customOrthoPlanesPoint, 0, tmp, 0, tmp.length);
-//        while(true) {
-//            for (int i = 0; i < tmp.length; i++) {
-//                tmp[i] += localBase[1][i];
-//            }
-//            p1 = realToPanelCoords(tmp);
-//            if(p1[0] <= 0 || p1[0] >= w || p1[1] <= 0 || p1[1] >= h)
-//                break;
-//        }
-//        customAxisPaths[1].moveTo(p0[0]+10*localPanelBase[1][0], p0[1]+10*localPanelBase[1][1]);
-//        customAxisPaths[1].lineTo(p1[0], p1[1]);
-//
-//        System.arraycopy(customOrthoPlanesPoint, 0, tmp, 0, tmp.length);
-//        while(true) {
-//            for (int i = 0; i < tmp.length; i++) {
-//                tmp[i] -= localBase[1][i];
-//            }
-//            p1 = realToPanelCoords(tmp);
-//            if(p1[0] <= 0 || p1[0] >= w || p1[1] <= 0 || p1[1] >= h)
-//                break;
-//        }
-//        customAxisPaths[1].moveTo(p0[0]-10*localPanelBase[1][0], p0[1]-10*localPanelBase[1][1]);
-//        customAxisPaths[1].lineTo(p1[0], p1[1]);
-//
+        if(localBase == null || extents == null)
+            return;
+        
+        mouseRotateRadius = (int) (Math.min(w, h)*3.0/8.0);
+
+        float[] tmp = new float[3];
+        float[] p1 = new float[2];
+        float[] p2 = new float[2];
+        float v, x1, x2, y1, y2;
+        localPoint0 = realToPanelCoords(customOrthoPlanesPoint);
+
+        //------------------base 0 axis--------------------------------
+        System.arraycopy(customOrthoPlanesPoint, 0, tmp, 0, 3);
+        while(true) {
+            for (int i = 0; i < 3; i++) {
+                tmp[i] += localBase[0][i];
+            }
+            p2 = realToPanelCoords(tmp);
+            if(p2[0] <= 0 || p2[0] >= w || p2[1] <= 0 || p2[1] >= h)
+                break;
+        }
+        
+        System.arraycopy(customOrthoPlanesPoint, 0, tmp, 0, 3);
+        while(true) {
+            for (int i = 0; i < 3; i++) {
+                tmp[i] -= localBase[0][i];
+            }
+            p1 = realToPanelCoords(tmp);
+            if(p1[0] <= 0 || p1[0] >= w || p1[1] <= 0 || p1[1] >= h)
+                break;
+        }
+        
+        if(p1[0] > p2[0]) {
+            //keep alwas p1 on the left and p2 on the right
+            v = p1[0];
+            p1[0] = p2[0];
+            p2[0] = v;
+            v = p1[1];
+            p1[1] = p2[1];
+            p2[1] = v;
+        }
+        
+        float[] vv = new float[2];
+        float[] vvp = new float[2];
+        vv[0] = p2[0]-p1[0];
+        vv[1] = p2[1]-p1[1];
+        float nv = (float) Math.sqrt(vv[0]*vv[0] + vv[1]*vv[1]);
+        vv[0] /= nv;
+        vv[1] /= nv;
+        vvp[0] = -vv[1];
+        vvp[1] = vv[0];
+        x1 = localPoint0[0] - point0CircleRadius*vv[0];
+        y1 = localPoint0[1] - point0CircleRadius*vv[1];
+        x2 = localPoint0[0] + point0CircleRadius*vv[0];
+        y2 = localPoint0[1] + point0CircleRadius*vv[1];
+
+        customAxisPaths[0] = new GeneralPath();
+        customAxisPaths[0].moveTo(p1[0], p1[1]);
+        customAxisPaths[0].lineTo(x1, y1);
+        customAxisPaths[0].moveTo(x2, y2);
+        customAxisPaths[0].lineTo(p2[0], p2[1]);
+
+        //tick for mouse rotation range
+        vvp[0] = -vv[1];
+        vvp[1] = vv[0];
+        x1 = localPoint0[0] - mouseRotateRadius*vv[0] - mouseRotateTickSize*vvp[0];
+        y1 = localPoint0[1] - mouseRotateRadius*vv[1] - mouseRotateTickSize*vvp[1];
+        x2 = localPoint0[0] - mouseRotateRadius*vv[0] + mouseRotateTickSize*vvp[0];
+        y2 = localPoint0[1] - mouseRotateRadius*vv[1] + mouseRotateTickSize*vvp[1];
+        if(x1 > 0 && x1 < w && y1 >0 && y1 < h) {
+            customAxisPaths[0].moveTo(x1, y1);
+            customAxisPaths[0].lineTo(x2, y2);
+        }
+        x1 = localPoint0[0] + mouseRotateRadius*vv[0] - mouseRotateTickSize*vvp[0];
+        y1 = localPoint0[1] + mouseRotateRadius*vv[1] - mouseRotateTickSize*vvp[1];
+        x2 = localPoint0[0] + mouseRotateRadius*vv[0] + mouseRotateTickSize*vvp[0];
+        y2 = localPoint0[1] + mouseRotateRadius*vv[1] + mouseRotateTickSize*vvp[1];
+        if(x1 > 0 && x1 < w && y1 >0 && y1 < h) {
+            customAxisPaths[0].moveTo(x1, y1);
+            customAxisPaths[0].lineTo(x2, y2);
+        }
+        
+        
+        
+        //------------------base 1 axis--------------------------------
+        System.arraycopy(customOrthoPlanesPoint, 0, tmp, 0, 3);
+        while(true) {
+            for (int i = 0; i < 3; i++) {
+                tmp[i] += localBase[1][i];
+            }
+            p2 = realToPanelCoords(tmp);
+            if(p2[0] <= 0 || p2[0] >= w || p2[1] <= 0 || p2[1] >= h)
+                break;
+        }
+        
+        System.arraycopy(customOrthoPlanesPoint, 0, tmp, 0, 3);
+        while(true) {
+            for (int i = 0; i < 3; i++) {
+                tmp[i] -= localBase[1][i];
+            }
+            p1 = realToPanelCoords(tmp);
+            if(p1[0] <= 0 || p1[0] >= w || p1[1] <= 0 || p1[1] >= h)
+                break;
+        }
+        
+        if(p1[0] > p2[0]) {
+            //keep alwas p1 on the left and p2 on the right
+            v = p1[0];
+            p1[0] = p2[0];
+            p2[0] = v;
+            v = p1[1];
+            p1[1] = p2[1];
+            p2[1] = v;
+        }
+        
+        vv[0] = p2[0]-p1[0];
+        vv[1] = p2[1]-p1[1];
+        nv = (float) Math.sqrt(vv[0]*vv[0] + vv[1]*vv[1]);
+        vv[0] /= nv;
+        vv[1] /= nv;
+        x1 = localPoint0[0] - point0CircleRadius*vv[0];
+        y1 = localPoint0[1] - point0CircleRadius*vv[1];
+        x2 = localPoint0[0] + point0CircleRadius*vv[0];
+        y2 = localPoint0[1] + point0CircleRadius*vv[1];
+
+        customAxisPaths[1] = new GeneralPath();
+        customAxisPaths[1].moveTo(p1[0], p1[1]);
+        customAxisPaths[1].lineTo(x1, y1);
+        customAxisPaths[1].moveTo(x2, y2);
+        customAxisPaths[1].lineTo(p2[0], p2[1]);
+        
+        //tick for mouse rotation range
+        vvp[0] = -vv[1];
+        vvp[1] = vv[0];
+        x1 = localPoint0[0] - mouseRotateRadius*vv[0] - mouseRotateTickSize*vvp[0];
+        y1 = localPoint0[1] - mouseRotateRadius*vv[1] - mouseRotateTickSize*vvp[1];
+        x2 = localPoint0[0] - mouseRotateRadius*vv[0] + mouseRotateTickSize*vvp[0];
+        y2 = localPoint0[1] - mouseRotateRadius*vv[1] + mouseRotateTickSize*vvp[1];
+        if(x1 > 0 && x1 < w && y1 >0 && y1 < h) {
+            customAxisPaths[1].moveTo(x1, y1);
+            customAxisPaths[1].lineTo(x2, y2);
+        }
+        x1 = localPoint0[0] + mouseRotateRadius*vv[0] - mouseRotateTickSize*vvp[0];
+        y1 = localPoint0[1] + mouseRotateRadius*vv[1] - mouseRotateTickSize*vvp[1];
+        x2 = localPoint0[0] + mouseRotateRadius*vv[0] + mouseRotateTickSize*vvp[0];
+        y2 = localPoint0[1] + mouseRotateRadius*vv[1] + mouseRotateTickSize*vvp[1];
+        if(x1 > 0 && x1 < w && y1 >0 && y1 < h) {
+            customAxisPaths[1].moveTo(x1, y1);
+            customAxisPaths[1].lineTo(x2, y2);
+        }
+        
     }
 
     /**
@@ -598,9 +681,6 @@ public class CustomOrthosliceViewPanel extends ViewPanel implements ComponentLis
         out[1] = (int) Math.round((float) y * dh + dh / 2.0f);
         return out;
     }
-    private boolean holdingNewPoint = false;
-    private int[][] dragLine = new int[2][2];
-    private float[] dragLineCenter = new float[2];
 
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -617,10 +697,11 @@ public class CustomOrthosliceViewPanel extends ViewPanel implements ComponentLis
                 setCustomOrthoPlanesPoint(p);
                 fireCustomOrthoPlaneChanged(axis, customOrthoPlanesPoint, customOrthoPlanesVectors);
             }
-
-        } else if (e.getButton() == MouseEvent.BUTTON3) {
+        } else if(e.getButton() == MouseEvent.BUTTON3) {
+            if(geomTool != null) {
+                geomTool.mouseClicked(e);
+            }            
         }
-
     }
 
     @Override
@@ -679,45 +760,44 @@ public class CustomOrthosliceViewPanel extends ViewPanel implements ComponentLis
                     return;
                 }
 
-                if (customAxisPaths[0] != null && Path2D.intersects(customAxisPaths[0].getPathIterator(null), x - 3, y - 3, 6, 6)) {
+                if (mouseOverTranslateAxis0) {
                     holdingAxis0 = true;
                 }
 
-                if (customAxisPaths[1] != null && Path2D.intersects(customAxisPaths[1].getPathIterator(null), x - 3, y - 3, 6, 6)) {
+                if (mouseOverTranslateAxis1) {
                     holdingAxis1 = true;
                 }
-
+                
                 if (holdingAxis0 || holdingAxis1) {
                     startPoint = panelToRealCoords(x, y);
                     repaint();
                 }
 
+                if(mouseOverRotate) {
+                    rotatingAxes = true;
+                    for (int i = 0; i < 3; i++) {
+                        System.arraycopy(customOrthoPlanesVectors[i], 0, startingVectors[i], 0, 3);
+                    }
+                    if (rotatingAxes) {
+                        startPoint = panelToRealCoords(x, y);
+                        repaint();
+                    }                    
+                }                
             }
-
         } else if (e.getButton() == MouseEvent.BUTTON2) {
-            if (x < 0 || y < 0 || x >= w || y >= h) {
-                return;
-            }
-
-            rotatingAxes = true;
-            for (int i = 0; i < 3; i++) {
-                System.arraycopy(customOrthoPlanesVectors[i], 0, startingVectors[i], 0, 3);
-            }
-            if (rotatingAxes) {
-                startPoint = panelToRealCoords(x, y);
-                repaint();
-            }
-
+            holdingWindowRange = true;
+            lastPoint[0] = x;
+            lastPoint[1] = y;
+            this.setCursor(Cursor.getDefaultCursor());
         } else if (e.getButton() == MouseEvent.BUTTON3) {
             if (x < 0 || y < 0 || x >= w || y >= h) {
                 return;
             }
-
-            holdingNewPoint = true;
-            dragLine[0][0] = x;
-            dragLine[0][1] = y;
-            dragLineCenter[0] = x;
-            dragLineCenter[1] = y;
+            
+            if(geomTool != null) {
+                geomTool.mousePressed(e);
+            }
+            
         }
     }
 
@@ -741,30 +821,19 @@ public class CustomOrthosliceViewPanel extends ViewPanel implements ComponentLis
                 fireGeometryPointSelected(-1, false);
             }
 
-        } else if (e.getButton() == MouseEvent.BUTTON2) {
             if (rotatingAxes) {
                 rotatingAxes = false;
                 endPoint = panelToRealCoords(e.getX() - imagePosX, e.getY() - imagePosY);
                 fireCustomOrthoPlaneChanged(axis, customOrthoPlanesPoint, calculateNewCustomOrthoPlaneVectors(startingVectors, customOrthoPlanesPoint, startPoint, endPoint));
                 repaint();
             }
+        } else if(e.getButton() == MouseEvent.BUTTON2) {
+            holdingWindowRange = false;
+            
         } else if (e.getButton() == MouseEvent.BUTTON3) {
-            holdingNewPoint = false;
-            if (dragLineCenter[0] < 0) {
-                dragLineCenter[0] = 0;
+            if(geomTool != null) {
+                geomTool.mouseReleased(e);
             }
-            if (dragLineCenter[0] >= w) {
-                dragLineCenter[0] = w;
-            }
-            if (dragLineCenter[1] < 0) {
-                dragLineCenter[1] = 0;
-            }
-            if (dragLineCenter[1] >= h) {
-                dragLineCenter[1] = h;
-            }
-
-            float[] p = panelToRealCoords(dragLineCenter);
-            fireGeometryPointAdded(p);
         }
 
 
@@ -831,18 +900,23 @@ public class CustomOrthosliceViewPanel extends ViewPanel implements ComponentLis
 
             fireCustomOrthoPlaneChanged(axis, customOrthoPlanesPoint, calculateNewCustomOrthoPlaneVectors(startingVectors, customOrthoPlanesPoint, startPoint, endPoint));
             repaint();
-
-
-        } else if (holdingNewPoint) {
-            dragLine[1][0] = x;
-            dragLine[1][1] = y;
-            dragLineCenter[0] = (float) (dragLine[1][0] + dragLine[0][0]) / 2.0f;
-            dragLineCenter[1] = (float) (dragLine[1][1] + dragLine[0][1]) / 2.0f;
-            repaint();
+        } else if(holdingWindowRange) {
+            float dx = (float)x-lastPoint[0];
+            float dy = lastPoint[1]-(float)y;
+            lastPoint[0] = x;
+            lastPoint[1] = y;
+            fireMappingRangeChanged(dx, dy);
+        } else {
+            if(geomTool != null) {
+                geomTool.mouseDragged(e);
+            }
         }
     }
 
     private boolean mouseOver = false;
+    private boolean mouseOverRotate = false;
+    private boolean mouseOverTranslateAxis0 = false;
+    private boolean mouseOverTranslateAxis1 = false;
     private float[] currentMousePosition = new float[2];
     
     @Override
@@ -869,23 +943,72 @@ public class CustomOrthosliceViewPanel extends ViewPanel implements ComponentLis
             return;
         }
 
-        if(mouseOver && !((e.getModifiersEx() & mouseOnmaskCtrl) == mouseOnmaskCtrl) && !((e.getModifiersEx() & mouseOnmaskShift) == mouseOnmaskShift)) {
-        
+        if(mouseOver && !((e.getModifiersEx() & mouseOnmaskCtrl) == mouseOnmaskCtrl) && !((e.getModifiersEx() & mouseOnmaskShift) == mouseOnmaskShift)) {        
+            float d = (x-localPoint0[0])*(x-localPoint0[0]) + (y-localPoint0[1])*(y-localPoint0[1]);
             if (customAxisPaths[0] != null && Path2D.intersects(customAxisPaths[0].getPathIterator(null), x - 3, y - 3, 6, 6)) {
-                this.setCursor(cp.getCustomMoveCursor());
+                if(d <= mouseRotateRadius*mouseRotateRadius) {                    
+                    this.setCursor(cp.getCustomMoveCursor());
+                    mouseOverRotate = false;
+                    mouseOverTranslateAxis0 = true;
+                    mouseOverTranslateAxis1 = false;
+                } else {
+                    this.setCursor(cp.getCustomRotateCursor());
+                    mouseOverRotate = true;
+                    mouseOverTranslateAxis0 = false;
+                    mouseOverTranslateAxis1 = false;
+                }
             } else if (customAxisPaths[1] != null && Path2D.intersects(customAxisPaths[1].getPathIterator(null), x - 3, y - 3, 6, 6)) {
-                this.setCursor(cp.getCustomMoveCursor());
+                if(d <= mouseRotateRadius*mouseRotateRadius) {                    
+                    this.setCursor(cp.getCustomMoveCursor());
+                    mouseOverRotate = false;
+                    mouseOverTranslateAxis0 = false;
+                    mouseOverTranslateAxis1 = true;
+                } else {
+                    this.setCursor(cp.getCustomRotateCursor());
+                    mouseOverRotate = true;
+                    mouseOverTranslateAxis0 = false;
+                    mouseOverTranslateAxis1 = false;
+                }
             } else {
-                this.setCursor(Cursor.getDefaultCursor());
+                if(d <= point0CircleRadius*point0CircleRadius) {                    
+                    this.setCursor(cp.getCustomMoveCursor());
+                    mouseOverRotate = false;
+                    mouseOverTranslateAxis0 = true;
+                    mouseOverTranslateAxis1 = true;                    
+                } else {
+                    //this.setCursor(Cursor.getDefaultCursor());
+                    mouseOverRotate = false;
+                    mouseOverTranslateAxis0 = false;
+                    mouseOverTranslateAxis1 = false;
+                    if(geomTool != null) {
+                        this.setCursor(geomTool.getCursor());
+                        geomTool.mouseMoved(e);
+                    } else {
+                        this.setCursor(Cursor.getDefaultCursor());
+                    }
+                }
             }            
         } else {
-            this.setCursor(Cursor.getDefaultCursor());
+            //this.setCursor(Cursor.getDefaultCursor());
+            mouseOverRotate = false;
+            mouseOverTranslateAxis0 = false;
+            mouseOverTranslateAxis1 = false;
+            if(geomTool != null) {
+                this.setCursor(geomTool.getCursor());
+                geomTool.mouseMoved(e);
+            } else {
+                this.setCursor(Cursor.getDefaultCursor());
+            }
         }
 
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
+        if(geomTool != null && geomTool.isHolding()) {        
+            return;
+        }
+        
         if ((e.getModifiersEx() & wheelOnmaskShift) == wheelOnmaskShift) {
             int x, y;
             float imgX, imgY;
@@ -909,7 +1032,7 @@ public class CustomOrthosliceViewPanel extends ViewPanel implements ComponentLis
             imagePosY += y;
 
             update();
-        } else {
+        } else {            
             float[] p = new float[3];
             for (int i = 0; i < 3; i++) {
                 p[i] = customOrthoPlanesPoint[i] + customOrthoPlanesVectors[axis][i] * e.getWheelRotation() * upp;
@@ -929,6 +1052,13 @@ public class CustomOrthosliceViewPanel extends ViewPanel implements ComponentLis
             listener.onViewPanelEvent(new GeometryPointAddedCustomOrthoPanelEvent(this, axis, p));
         }
     }
+    
+    private void firePointsConnectionsCalculablesAdded(float[][] points, int[][] connections, CalculableParameter calculable) {
+        for (ViewPanelListener listener : viewPanelListeners) {
+            listener.onViewPanelEvent(new PCCAddedCustomOrthoPanelEvent(this, points, connections, calculable));
+        }
+    }
+    
 
     private void fireGeometryPointSelected(int pIndex, boolean followSlices) {
         for (ViewPanelListener listener : viewPanelListeners) {
@@ -947,6 +1077,12 @@ public class CustomOrthosliceViewPanel extends ViewPanel implements ComponentLis
             listener.onViewPanelEvent(new ZoomChangedOrthoPanelEvent(this));
         }
     }
+    
+    private void fireMappingRangeChanged(float dCenter, float dWidth) {
+        for (ViewPanelListener listener : viewPanelListeners) {
+            listener.onViewPanelEvent(new MappingRangeChangedOrthoPanelEvent(this, dCenter, dWidth));
+        }
+    }    
 
     public int getScalingMode() {
         return scalingMode;
@@ -1220,8 +1356,12 @@ public class CustomOrthosliceViewPanel extends ViewPanel implements ComponentLis
             localBase[0][i] = upp * localBase[0][i] / localBaseNorm[0];
             localBase[1][i] = upp * localBase[1][i] / localBaseNorm[1];
         }
+        
+        //updateLocalPanelBase();
     }
-    
+
+//    private float[][] localPanelBase = new float[2][2];
+//    
 //    private void updateLocalPanelBase() {
 //        float[] p0 = realToPanelCoords(customOrthoPlanesPoint);        
 //        float[] p1;
@@ -1410,6 +1550,43 @@ public class CustomOrthosliceViewPanel extends ViewPanel implements ComponentLis
     private void fireMouseLocationChanged(float[] p) {
         for (ViewPanelListener listener : viewPanelListeners) {
             listener.onViewPanelEvent(new MouseLocationChangedOrthoPanelEvent(this,p));
+        }
+    }
+    
+    @Override
+    public void setGeometryTool(GeometryTool gt) {
+        if(this.geomTool != null) {
+            this.geomTool.removeChangeListener(this);
+            this.geomTool = null;
+        }
+
+        this.geomTool = gt;
+
+        if(this.geomTool != null) {
+            this.geomTool.addChangeListener(this);
+        }
+
+        repaint();
+    }
+
+
+    @Override
+    public void onGeometryToolStateChanged(ChangeEvent e) {
+        Object src = e.getSource();
+        if(src instanceof GeometryTool) {
+            GeometryTool gt = (GeometryTool)src;
+            int[][] gtPoints = gt.getPoints();
+            int[][] gtConnections = gt.getConnections();
+
+            if(gtPoints == null)
+                return;
+
+            int nPts = gtPoints.length;
+            float[][] outPoints = new float[nPts][3];
+            for (int i = 0; i < nPts; i++) {
+                outPoints[i] = panelToRealCoords(gtPoints[i][0] - imagePosX, gtPoints[i][1] - imagePosY);
+            }
+            firePointsConnectionsCalculablesAdded(outPoints, gtConnections, gt.getCalculable());
         }
     }
     

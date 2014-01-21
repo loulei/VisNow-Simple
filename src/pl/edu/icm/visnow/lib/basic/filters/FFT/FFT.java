@@ -66,7 +66,7 @@ public class FFT extends RegularOutFieldVisualizationModule {
     public FFT() {
         parameters = params = new Params();
         core.setParams(params);
-         SwingInstancer.swingRun(new Runnable() {
+         SwingInstancer.swingRunAndWait(new Runnable() {
 
             public void run() {
                 computeUI = new GUI();

@@ -1,5 +1,6 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+Copyright (C) 2006-2013 University of Warsaw, ICM
 
 This file is part of GNU Classpath.
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -33,7 +34,9 @@ module.  An independent module is a module which is not derived from
 or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+exception statement from your version.
+*/
+//</editor-fold>
 
  package pl.edu.icm.visnow.lib.basic.mappers.Isosurface;
 
@@ -80,7 +83,6 @@ public class RegularFieldIsosurface extends IsosurfaceEngine
     *Creates isosurface of a data component of a RegularField in at threshold value thr
     *and interpolates selected data componentson the surface/line mesh
     *Isosurface is generated from the input field cropped  and downsized according to the parameters
-    *@param in       RegularField used for isosurface creation
     *@param params   Parameters of isosurface
     *@return a TriangulatedField2D containing surface reprezentation and optimized line representation of the
     *isosurface with outData components interpolated
@@ -105,7 +107,7 @@ public class RegularFieldIsosurface extends IsosurfaceEngine
           (up[0] - low[0]) / d[0] < 2 ||
           (up[1] - low[1]) / d[1] < 2 ||
           (up[2] - low[2]) / d[2] < 2) 
-         return new IrregularField();
+         return null;
 
       int[] inDims = in.getDims();
       DataArray data = in.getData(comp);
@@ -140,6 +142,7 @@ public class RegularFieldIsosurface extends IsosurfaceEngine
       int[] dind = {1, 1, 1};
       for (i = 0; i < 3; i++)
       {
+//         dims[i] = (up[i] - low[i] + d[i]) / d[i];
          dims[i] = (up[i] - low[i] + d[i] - 1) / d[i];
          dind[i] *= d[i];
       }
@@ -566,8 +569,9 @@ public class RegularFieldIsosurface extends IsosurfaceEngine
                }
             }
       }
-      IrregularField out = new IrregularField();
-      out.setNNodes(p);
+      if (p <= 0)
+         return null;
+      IrregularField out = new IrregularField(p);
       out.setNSpace(3);
       CellSet isosurfaceCellSet = new CellSet(in.getName() + String.format("_%5.2f", threshold));
       out.addCellSet(isosurfaceCellSet);
@@ -605,36 +609,6 @@ public class RegularFieldIsosurface extends IsosurfaceEngine
                break pointloop;
          }
       }
-//
-//      
-//      
-//        //---------------test coords for same node coords----------------
-//         System.out.println("testing coords");
-//        float[] crd1 = new float[3];
-//        float[] crd2 = new float[3];
-//        for (i = 0; i < outNNodes; i++) {
-//            for (int jj = 0; jj < 3; jj++) {
-//                crd1[jj] = coords[3 * i + jj];
-//            }
-//
-//
-//            for (int ii = 0; ii < outNNodes; ii++) {
-//               for (int jj = 0; jj < 3; jj++) {
-//                   crd2[jj] = coords[3 * ii + jj];                    
-//               }
-//               if(i != ii  && crd2[0] == crd1[0] && crd2[1] == crd1[1] && crd2[2] == crd1[2]) {
-//                   System.out.println("coords of nodes "+i+" and "+ii+" are same");
-//                   VisNowCallTrace.trace();
-//                   System.exit(0);
-//               }
-//            }
-//        }
-//         System.out.println("testing coords done");
-//        //---------------------------------------------------------------
-//      
-//      
-//      
-//      
       int[] cells = new int[3 * nTriangles];
       boolean[] orientations = new boolean[nTriangles];
       int[] dataIndices = new int[nTriangles];

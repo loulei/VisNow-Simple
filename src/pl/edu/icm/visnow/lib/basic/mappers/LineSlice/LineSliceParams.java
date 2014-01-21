@@ -95,6 +95,10 @@ public class LineSliceParams extends Parameters
       fireStateChanged();
    }
 
+   /**
+    * Returns selected axis
+    * @return 0 - X axis; 1 - Y axis; 2 - Z axis
+    */
    public int getAxis()
    {
       return  (Integer)getValue("axis");

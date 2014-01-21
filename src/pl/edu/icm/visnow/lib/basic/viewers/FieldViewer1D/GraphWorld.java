@@ -14,9 +14,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -41,7 +41,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.util.Vector;
 import javax.swing.SwingUtilities;
@@ -57,7 +56,7 @@ public class GraphWorld extends javax.swing.JPanel
 {
    protected int origX = 45, origY = 180;
    protected int endX = 45,  endY  = 10;
-   protected int w,  h, lastw = -1, lasth = -1;
+   protected int w = 500,  h = 150, lastw = -1, lasth = -1;
    protected int n0 = 0,  n1 = 10;
    protected float xmin = 0,  xmax = 10;
    protected float ymin = 0,  ymax = 1;
@@ -147,7 +146,7 @@ public class GraphWorld extends javax.swing.JPanel
    void drawDataArea(Graphics2D gr,
            boolean xaxis, int frame)
    {
-      
+
       String xf,yf;
       float[] dash = {1.f, 3.f};
       int xk = (int)(Math.log10(xRange.getStep()));

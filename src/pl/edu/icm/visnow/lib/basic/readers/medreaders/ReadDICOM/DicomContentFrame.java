@@ -257,10 +257,10 @@ private void dicomTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//
         obj = selectionPaths[i].getLastPathComponent();
         objStr = obj.toString();
         if(objStr != null) {
-            if(objStr.startsWith("Series") && selectionPaths.length > 1)
+            if((objStr.startsWith("Series") || objStr.startsWith("All")) && selectionPaths.length > 1)
                 return;
             
-            if(!objStr.startsWith("Series") && !objStr.startsWith("Image"))
+            if(!(objStr.startsWith("Series") || objStr.startsWith("All")) && !objStr.startsWith("Image"))
                 return;
         }
         

@@ -83,14 +83,14 @@ public class DataComponentList extends javax.swing.JPanel
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
+        jPanel1 = new javax.swing.JPanel();
         componentList = new javax.swing.JList();
 
-        setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        setMinimumSize(new java.awt.Dimension(100, 45));
-        setPreferredSize(new java.awt.Dimension(200, 50));
         setLayout(new java.awt.BorderLayout());
 
-        componentList.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
+        componentList.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         componentList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { " " };
             public int getSize() { return strings.length; }
@@ -101,7 +101,9 @@ public class DataComponentList extends javax.swing.JPanel
                 componentListValueChanged(evt);
             }
         });
-        jScrollPane1.setViewportView(componentList);
+        jPanel1.add(componentList, java.awt.BorderLayout.CENTER);
+
+        jScrollPane1.setViewportView(jPanel1);
 
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -111,11 +113,6 @@ public class DataComponentList extends javax.swing.JPanel
       fireStateChanged();
    }//GEN-LAST:event_componentListValueChanged
 
-   public void setTitle(String title)
-   {
-      ((TitledBorder)(componentList.getBorder())).setTitle(title);
-   }
-   
    protected void updateComponentNames()
    {
       active = false;
@@ -124,7 +121,7 @@ public class DataComponentList extends javax.swing.JPanel
           componentList.setModel(new DefaultListModel());
           return;
       }
-      Vector<DataArray> components = inField.getData();
+      ArrayList<DataArray> components = inField.getData();
       nComps = components.size();
       compNames.clear();
       nItems = 0;
@@ -362,6 +359,7 @@ public class DataComponentList extends javax.swing.JPanel
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList componentList;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
       /**

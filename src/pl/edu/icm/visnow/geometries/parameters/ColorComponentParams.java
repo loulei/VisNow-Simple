@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,8 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.geometries.parameters;
 
@@ -70,9 +73,18 @@ public class ColorComponentParams
       fireStateChanged();
    }
 
+   public void setDataComponent(int dataComponent, float dataMin, float dataMax)
+   {
+      this.dataComponent = dataComponent;
+      this.dataMin = dataMin;
+      this.dataMax = dataMax;
+      map.setMinmax(dataMin, dataMax);
+      fireStateChanged();
+   }   
+   
    public int getMapType()
    {
-      return mapType;
+      return map.getMapType();
    }
 
    public void setMapType(int mapType)

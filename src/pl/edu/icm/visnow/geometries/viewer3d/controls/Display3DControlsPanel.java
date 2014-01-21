@@ -37,16 +37,32 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.geometries.viewer3d.controls;
 
-import java.awt.Dimension;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import javax.media.j3d.Group;
+import javax.media.j3d.Node;
+import javax.media.j3d.SceneGraphObject;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JTree;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 import javax.vecmath.Color3f;
+import pl.edu.icm.visnow.geometries.objects.generics.OpenBranchGroup;
 import pl.edu.icm.visnow.geometries.viewer3d.Display3DPanel;
 import pl.edu.icm.visnow.geometries.viewer3d.controls.light_editor.LightColorEditor;
+import pl.edu.icm.visnow.geometries.viewer3d.eventslisteners.render.FrameRenderedEvent;
+import pl.edu.icm.visnow.geometries.viewer3d.eventslisteners.render.FrameRenderedListener;
 import pl.edu.icm.visnow.geometries.viewer3d.lights.EditableAmbientLight;
 import pl.edu.icm.visnow.system.main.VisNow;
 import pl.edu.icm.visnow.system.swing.filechooser.VNFileChooser;
@@ -63,17 +79,18 @@ public class Display3DControlsPanel extends javax.swing.JPanel
    private static final int BGR_IMAGE    = 2;
    private static final long serialVersionUID = 4600073246148982408L;
    private Display3DPanel display3DPanel = null;
-   private JFileChooser jpegChooser                            = new JFileChooser();
+   private JFileChooser saveChooser                            = new JFileChooser();
    private JFileChooser bgrImageFileChooser                    = new JFileChooser();
-   private JFileChooser pngChooser                             = new JFileChooser();
 //   private JFileChooser sceneChooser                           = new JFileChooser();
    private boolean active = true;
-   private FileNameExtensionFilter jpegFilter = 
-              new FileNameExtensionFilter("JPEG image file","jpg","JPG","jpeg","JPEG");
-   private FileNameExtensionFilter pngFilter = 
-              new FileNameExtensionFilter("PNG image file","png","PNG","jpeg","JPEG");
-   private FileNameExtensionFilter scnFilter =
-              new FileNameExtensionFilter("scene file","scn","SCN","scene","SCENE");
+   private FileNameExtensionFilter allImagesFilter = new FileNameExtensionFilter("All image files", "jpg", "jpeg", "gif", "png", "JPG", "JPEG", "GIF", "PNG");
+   private FileNameExtensionFilter jpegImagesFilter = new FileNameExtensionFilter("JPEG images (*.jpg, *.jpeg)", "jpg", "jpeg", "JPG", "JPEG");
+   private FileNameExtensionFilter gifImagesFilter = new FileNameExtensionFilter("GIF images (*.gif)", "gif", "GIF");
+   private FileNameExtensionFilter pngImagesFilter = new FileNameExtensionFilter("PNG images (*.png)", "png", "PNG");
+   private FileNameExtensionFilter tiffImagesFilter = new FileNameExtensionFilter("TIFF images (*.tif, *.tiff)", "tif", "TIF", "tiff", "TIFF");
+   private FileNameExtensionFilter bmpImagesFilter = new FileNameExtensionFilter("BMP images (*.bmp)", "bmp", "BMP");
+   private FileNameExtensionFilter pcxImagesFilter = new FileNameExtensionFilter("PCX images (*.pcx)", "pcx", "PCX");
+
    private EditableAmbientLight ambientLight = null;
    LightColorEditor ambientLightColorEditor = new LightColorEditor();
    /** Creates new form Display3DControlsPanel */
@@ -112,24 +129,30 @@ public class Display3DControlsPanel extends javax.swing.JPanel
       stereoSeparationSlider.setVisible(panel.getStereoAvailable());
       dispToggle.setEnabled(true);
       stereoSeparationSlider.setEnabled(false);
-      jpegChooser.setFileFilter(jpegFilter);
-      jpegChooser.setCurrentDirectory(new File(VisNow.get().getMainConfig().getWorkeffectPath()));
-      pngChooser.setFileFilter(pngFilter);
-      pngChooser.setCurrentDirectory(new File(VisNow.get().getMainConfig().getWorkeffectPath()));
+      saveChooser.setAcceptAllFileFilterUsed(false);
+      saveChooser.addChoosableFileFilter(jpegImagesFilter);
+      saveChooser.addChoosableFileFilter(gifImagesFilter);
+      saveChooser.addChoosableFileFilter(pngImagesFilter);
+      saveChooser.addChoosableFileFilter(tiffImagesFilter);
+      saveChooser.addChoosableFileFilter(bmpImagesFilter);
+      saveChooser.addChoosableFileFilter(pcxImagesFilter);
+      if(VisNow.get() != null && VisNow.get().getMainConfig() != null)
+        saveChooser.setCurrentDirectory(new File(VisNow.get().getMainConfig().getWorkeffectPath()));
       clipPlanesUI.setModelClip(panel.getModelClip());
       moveCameraButton.setSelected(panel.isMoveCameraMode());
       backgroundColorEditor.setBrightness(0);    
       backgroundColorEditor1.setVisible(false);
       backgroundColorEditor2.setVisible(false);
       bgrImageReadButton.setVisible(false);
-      FileNameExtensionFilter allImagesFilter = new FileNameExtensionFilter("All image files", "jpg", "jpeg", "gif", "png", "JPG", "JPEG", "GIF", "PNG");
-      FileNameExtensionFilter jpegImagesFilter = new FileNameExtensionFilter("JPEG images (*.jpg, *.jpeg)", "jpg", "jpeg", "JPG", "JPEG");
-      FileNameExtensionFilter gifImagesFilter = new FileNameExtensionFilter("GIF images (*.gif)", "gif", "GIF");
-      FileNameExtensionFilter pngImagesFilter = new FileNameExtensionFilter("PNG images (*.png)", "png", "PNG");
       bgrImageFileChooser.addChoosableFileFilter(jpegImagesFilter);
       bgrImageFileChooser.addChoosableFileFilter(gifImagesFilter);
       bgrImageFileChooser.addChoosableFileFilter(pngImagesFilter);
       bgrImageFileChooser.addChoosableFileFilter(allImagesFilter);
+      
+      if(!VisNow.isDebug())
+          editorsPane.remove(j3dDebugPanel);
+      else
+        j3dTree.setModel(new J3DTreeModel(display3DPanel, j3dTree));
    }
    /** This method is called from within the constructor to
     * initialize the form.
@@ -203,8 +226,7 @@ public class Display3DControlsPanel extends javax.swing.JPanel
         resetRotationButton = new javax.swing.JButton();
         resetTranslationButton = new javax.swing.JButton();
         imageMoviePanel = new javax.swing.JPanel();
-        jpegButton = new javax.swing.JButton();
-        pngButton = new javax.swing.JButton();
+        saveButton = new javax.swing.JButton();
         widthTF = new javax.swing.JTextField();
         heightTF = new javax.swing.JTextField();
         widthLabel = new javax.swing.JLabel();
@@ -213,6 +235,9 @@ public class Display3DControlsPanel extends javax.swing.JPanel
         movieCreationPanel = new pl.edu.icm.visnow.geometries.viewer3d.controls.MovieCreationPanel();
         jLabel2 = new javax.swing.JLabel();
         jPanel10 = new javax.swing.JPanel();
+        j3dDebugPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        j3dTree = new javax.swing.JTree();
 
         setMinimumSize(new java.awt.Dimension(220, 500));
         setOpaque(false);
@@ -587,10 +612,10 @@ public class Display3DControlsPanel extends javax.swing.JPanel
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         appearanceControlPanel.add(pick3DBox, gridBagConstraints);
 
-        axesSizeSlider.setMajorTickSpacing(10);
+        axesSizeSlider.setMajorTickSpacing(40);
         axesSizeSlider.setMaximum(160);
-        axesSizeSlider.setMinimum(40);
-        axesSizeSlider.setMinorTickSpacing(2);
+        axesSizeSlider.setMinimum(10);
+        axesSizeSlider.setMinorTickSpacing(10);
         axesSizeSlider.setPaintTicks(true);
         axesSizeSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "orientation glyph size", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
         axesSizeSlider.setMinimumSize(new java.awt.Dimension(36, 39));
@@ -963,37 +988,20 @@ public class Display3DControlsPanel extends javax.swing.JPanel
         imageMoviePanel.setName("imageMoviePanel"); // NOI18N
         imageMoviePanel.setLayout(new java.awt.GridBagLayout());
 
-        jpegButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        jpegButton.setText("write jpeg");
-        jpegButton.setName("jpegButton"); // NOI18N
-        jpegButton.addActionListener(new java.awt.event.ActionListener() {
+        saveButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        saveButton.setText("save as...");
+        saveButton.setName("saveButton"); // NOI18N
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jpegButtonActionPerformed(evt);
+                saveButtonActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        imageMoviePanel.add(jpegButton, gridBagConstraints);
-
-        pngButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        pngButton.setText("write png");
-        pngButton.setName("pngButton"); // NOI18N
-        pngButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pngButtonActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        imageMoviePanel.add(pngButton, gridBagConstraints);
+        imageMoviePanel.add(saveButton, gridBagConstraints);
 
         widthTF.setEnabled(false);
         widthTF.setName("widthTF"); // NOI18N
@@ -1002,6 +1010,7 @@ public class Display3DControlsPanel extends javax.swing.JPanel
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
         imageMoviePanel.add(widthTF, gridBagConstraints);
 
         heightTF.setEnabled(false);
@@ -1011,6 +1020,7 @@ public class Display3DControlsPanel extends javax.swing.JPanel
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
         imageMoviePanel.add(heightTF, gridBagConstraints);
 
         widthLabel.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
@@ -1020,6 +1030,7 @@ public class Display3DControlsPanel extends javax.swing.JPanel
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 0, 5);
         imageMoviePanel.add(widthLabel, gridBagConstraints);
@@ -1031,6 +1042,7 @@ public class Display3DControlsPanel extends javax.swing.JPanel
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 0, 5);
         imageMoviePanel.add(heightLabel, gridBagConstraints);
@@ -1082,6 +1094,18 @@ public class Display3DControlsPanel extends javax.swing.JPanel
         imageMoviePanel.add(jPanel10, gridBagConstraints);
 
         editorsPane.addTab("output", imageMoviePanel);
+
+        j3dDebugPanel.setName("j3dDebugPanel"); // NOI18N
+        j3dDebugPanel.setLayout(new java.awt.BorderLayout());
+
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
+
+        j3dTree.setName("j3dTree"); // NOI18N
+        jScrollPane1.setViewportView(j3dTree);
+
+        j3dDebugPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        editorsPane.addTab("J3D debug", j3dDebugPanel);
 
         add(editorsPane, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -1218,62 +1242,6 @@ public class Display3DControlsPanel extends javax.swing.JPanel
    {//GEN-HEADEREND:event_scaleResetActionPerformed
       animScaleSlider.setValue(0);
 }//GEN-LAST:event_scaleResetActionPerformed
-
-   private void jpegButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jpegButtonActionPerformed
-   {//GEN-HEADEREND:event_jpegButtonActionPerformed
-      boolean ok = false;
-      int w = 0, h = 0;
-      try
-      {
-         w = Integer.parseInt(widthTF.getText());
-         h = Integer.parseInt(heightTF.getText());
-         ok = true;
-      }
-      catch(NumberFormatException ex)
-      {
-         ok = false;
-      }
-      
-      if(!useWindowSizeCB.isSelected() && ok && w > 16 && h > 16)
-      {
-         display3DPanel.newOffScreen(w,h);
-      }
-      else
-      {
-         display3DPanel.newOffScreen();
-      }
-      int returnVal = jpegChooser.showSaveDialog(null);
-      if (returnVal == JFileChooser.APPROVE_OPTION)
-         display3DPanel.writeJpeg( VNFileChooser.filenameWithExtenstionAddedIfNecessary( jpegChooser.getSelectedFile(), jpegFilter ) );
-}//GEN-LAST:event_jpegButtonActionPerformed
-
-   private void pngButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_pngButtonActionPerformed
-   {//GEN-HEADEREND:event_pngButtonActionPerformed
-      boolean ok = false;
-      int w = 0, h = 0;
-      try
-      {
-         w = Integer.parseInt(widthTF.getText());
-         h = Integer.parseInt(heightTF.getText());
-         ok = true;
-      }
-      catch(NumberFormatException ex)
-      {
-         ok = false;
-      }
-      
-      Dimension d = display3DPanel.getOffScreenSize();
-      if (!useWindowSizeCB.isSelected() && ok && w > 16 && h > 16) {
-           if(d == null || (d != null && (w != d.width || h != d.height)))
-                display3DPanel.newOffScreen(w, h);
-      } else {
-          if(d == null || (d != null && (windowWidth != d.width || windowHeight != d.height)))
-                display3DPanel.newOffScreen();
-      }
-      int returnVal = pngChooser.showSaveDialog(null);
-      if (returnVal == JFileChooser.APPROVE_OPTION)
-         display3DPanel.writePNG( VNFileChooser.filenameWithExtenstionAddedIfNecessary(pngChooser.getSelectedFile(), pngFilter) );
-}//GEN-LAST:event_pngButtonActionPerformed
 
    public MovieCreationPanel getMovieCreationPanel()
    {
@@ -1489,6 +1457,33 @@ private void clipBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
             display3DPanel.setLockView(lockViewButton.isSelected());
     }//GEN-LAST:event_lockViewButtonActionPerformed
 
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        boolean ok = false;
+        int w = 0, h = 0;
+        try
+        {
+            w = Integer.parseInt(widthTF.getText());
+            h = Integer.parseInt(heightTF.getText());
+            ok = true;
+        }
+        catch(NumberFormatException ex)
+        {
+            ok = false;
+        }
+
+        if(!useWindowSizeCB.isSelected() && ok && w > 16 && h > 16)
+        {
+            display3DPanel.newOffScreen(w,h);
+        }
+        else
+        {
+            display3DPanel.newOffScreen();
+        }
+        int returnVal = saveChooser.showSaveDialog(null);
+        if (returnVal == JFileChooser.APPROVE_OPTION)
+            display3DPanel.writeImage(VNFileChooser.fileWithExtensionAddedIfNecessary(saveChooser.getSelectedFile(), (FileNameExtensionFilter)saveChooser.getFileFilter()));
+    }//GEN-LAST:event_saveButtonActionPerformed
+
     public void setLockViewButtonState(boolean selected) {
         this.lockViewButton.setSelected(selected);
     }
@@ -1523,6 +1518,8 @@ private void clipBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
     private javax.swing.JLabel heightLabel;
     private javax.swing.JTextField heightTF;
     private javax.swing.JPanel imageMoviePanel;
+    private javax.swing.JPanel j3dDebugPanel;
+    private javax.swing.JTree j3dTree;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
@@ -1538,7 +1535,7 @@ private void clipBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JButton jpegButton;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel lightEditorPanel;
     private javax.swing.JToggleButton lockViewButton;
     private javax.swing.JSlider mouseRotationSensitivitySlider;
@@ -1548,11 +1545,11 @@ private void clipBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
     private pl.edu.icm.visnow.geometries.viewer3d.controls.MovieCreationPanel movieCreationPanel;
     private javax.swing.JComboBox orientGlyphType;
     private javax.swing.JCheckBox pick3DBox;
-    private javax.swing.JButton pngButton;
     private pl.edu.icm.visnow.geometries.viewer3d.controls.light_editor.PointLightsEditorPanel pointLightsEditorPanel;
     private javax.swing.JButton resetButton;
     private javax.swing.JButton resetRotationButton;
     private javax.swing.JButton resetTranslationButton;
+    private javax.swing.JButton saveButton;
     private javax.swing.JButton scaleReset;
     private javax.swing.JSlider stereoSeparationSlider;
     private javax.swing.JToggleButton stereoToggle;
@@ -1568,4 +1565,103 @@ private void clipBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
     private javax.swing.JButton zTransReset;
     private javax.swing.JSlider zTransSlider;
     // End of variables declaration//GEN-END:variables
+
+    private class J3DTreeModel implements TreeModel {
+        Display3DPanel panel;
+        Group root;
+        JTree parentTree;
+        
+        public J3DTreeModel(Display3DPanel panel, JTree tree) {
+            this.panel = panel;
+            this.parentTree = tree;
+            this.root = panel.getWindowRootObject();
+            panel.addFrameRenderedListener(new FrameRenderedListener() {
+
+                @Override
+                public void frameRendered(FrameRenderedEvent e) {
+                    J3DTreeModel.this.fireTreeModelChanged();                    
+                }
+            });                        
+        }        
+
+        @Override
+        public Object getRoot() {
+            return root;
+        }
+
+        @Override
+        public Object getChild(Object parent, int index) {
+            if(parent instanceof Group) {
+                return ((Group)parent).getChild(index);
+            }
+            return null;
+        }
+
+        @Override
+        public int getChildCount(Object parent) {
+            if(parent instanceof Group) {
+                int n = 0;
+                Group g = (Group)parent;
+                Enumeration e = g.getAllChildren();
+                while(e.hasMoreElements()) {
+                    n++;
+                    e.nextElement();
+                }
+                return n;                
+            }
+            return 0;
+        }
+
+        @Override
+        public boolean isLeaf(Object node) {
+            if(node instanceof Group)
+                return (getChildCount(node) == 0);                
+            return false;
+        }
+
+        @Override
+        public void valueForPathChanged(TreePath path, Object newValue) {
+        }
+
+        @Override
+        public int getIndexOfChild(Object parent, Object child) {
+            if(parent instanceof Group && child instanceof Node) {
+                return ((Group)parent).indexOfChild((Node)child);                
+            }
+            return -1;
+        }
+
+        
+        ArrayList<TreeModelListener> tmls = new ArrayList<TreeModelListener>();
+        
+        @Override
+        public void addTreeModelListener(TreeModelListener l) {
+            tmls.add(l);
+        }
+
+        @Override
+        public void removeTreeModelListener(TreeModelListener l) {
+            tmls.remove(l);
+        }
+        
+        public void fireTreeModelChanged() {
+            //System.out.println("huhu");
+            Enumeration<TreePath> exp = parentTree.getExpandedDescendants(parentTree.getPathForRow(0));
+            
+            for (int i = 0; i < tmls.size(); i++) {
+                tmls.get(i).treeStructureChanged(new TreeModelEvent(this, new Object[]{root}));
+            }
+            
+            while(exp.hasMoreElements()) {
+                parentTree.expandPath(exp.nextElement());
+            }
+        }
+        
+        
+        
+    }
+    
+    
+    
+    
 }

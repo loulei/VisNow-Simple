@@ -97,7 +97,7 @@ public class DataProvider implements DataProviderParamsListener {
     }
 
     public DataProvider(final RegularField field) {
-        SwingInstancer.swingRun(new Runnable() {
+        SwingInstancer.swingRunAndWait(new Runnable() {
             @Override
             public void run() {
                 ui = new DataProviderUI();
@@ -739,9 +739,11 @@ public class DataProvider implements DataProviderParamsListener {
     }
 
     public int[] getOrthoSliceRGB(int axis, int x, int y) {
-        if (inField == null || sliceImage == null || inField.getDims().length != 3) {
+        if (inField == null || sliceImage == null || inField.getDims().length != 3)
             return null;
-        }
+        
+        if(x < 0 || y < 0 || x >= orthosliceImages[axis].getWidth() || y >= orthosliceImages[axis].getHeight())
+            return null;
 
         int[] pixel = null;
         pixel = orthosliceImages[axis].getRaster().getPixel(x, y, pixel);

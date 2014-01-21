@@ -14,9 +14,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -44,6 +44,7 @@ import java.util.Hashtable;
 import javax.swing.JLabel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.apache.log4j.Logger;
 import pl.edu.icm.visnow.datasets.Field;
 import pl.edu.icm.visnow.datasets.RegularField;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
@@ -62,6 +63,7 @@ import pl.edu.icm.visnow.system.main.VisNow;
  */
 public class GlyphsGUI extends javax.swing.JPanel
 {
+    private static final Logger LOGGER = Logger.getLogger(GlyphsGUI.class);
    private GlyphsParams params = new GlyphsParams();
    private Field inField = null;
    private Hashtable<Integer, JLabel> downLabels = new Hashtable<Integer, JLabel>();
@@ -75,8 +77,8 @@ public class GlyphsGUI extends javax.swing.JPanel
    };
    private float smax = 1;
    private int[] downsize;
-   private BooleanChangeListener presentationListener = new BooleanChangeListener()  
-   {        
+   private BooleanChangeListener presentationListener = new BooleanChangeListener()
+   {
       @Override
       public void booleanChanged(BooleanEvent e)
       {
@@ -100,14 +102,14 @@ public class GlyphsGUI extends javax.swing.JPanel
          jTabbedPane1.removeAll();
          remove(jTabbedPane1);
          glyphPanel.remove(extraGlyphControlsPanel);
-         glyphPanel.remove(fillPanel);         
+         glyphPanel.remove(fillPanel);
          glyphPanel.setMinimumSize(simpleDim);
          glyphPanel.setPreferredSize(simpleDim);
          glyphPanel.setMaximumSize(simpleDim);
          dataMappingGUI.setMinimumSize(simpleDim);
          dataMappingGUI.setPreferredSize(simpleDim);
          dataMappingGUI.setMaximumSize(simpleDim);
-         
+
          gridBagConstraints = new java.awt.GridBagConstraints();
          gridBagConstraints.gridx = 0;
          gridBagConstraints.gridy = 1;
@@ -127,7 +129,7 @@ public class GlyphsGUI extends javax.swing.JPanel
          gridBagConstraints.weighty = 1.0;
          add(fillPanel, gridBagConstraints);
       } else
-      {   
+      {
          remove(glyphPanel);
          remove(dataMappingGUI);
          remove(fillPanel);
@@ -163,7 +165,7 @@ public class GlyphsGUI extends javax.swing.JPanel
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         add(jTabbedPane1, gridBagConstraints);
-         
+
       }
       validate();
    }
@@ -216,7 +218,7 @@ public class GlyphsGUI extends javax.swing.JPanel
         lodSlider = new javax.swing.JSlider();
         absBox = new javax.swing.JCheckBox();
         sqrtBox = new javax.swing.JCheckBox();
-        scaleSlider = new pl.edu.icm.visnow.gui.widgets.LogarithmicSlider();
+        scaleSlider = new pl.edu.icm.visnow.gui.widgets.ExtendedSlider();
         jPanel5 = new javax.swing.JPanel();
         downsizeSlider = new javax.swing.JSlider();
         regularFieldDownsizeUI = new pl.edu.icm.visnow.lib.gui.DownsizeUI();
@@ -228,6 +230,7 @@ public class GlyphsGUI extends javax.swing.JPanel
         thrSlider = new pl.edu.icm.visnow.gui.widgets.FloatSlider();
         thrComponentSelector = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
         thrRelBox = new javax.swing.JCheckBox();
+        transparencySlider = new javax.swing.JSlider();
         fillPanel = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         cropUI = new pl.edu.icm.visnow.lib.gui.CropUI();
@@ -236,11 +239,15 @@ public class GlyphsGUI extends javax.swing.JPanel
         dataMappingGUI = new pl.edu.icm.visnow.geometries.gui.DataMappingGUI();
         guiPresentationButton = new MultistateButton(new String[]{"show simple GUI","show expert GUI"}, null);
 
-        setMinimumSize(new java.awt.Dimension(200, 675));
         setOpaque(false);
-        setPreferredSize(new java.awt.Dimension(230, 810));
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
+            }
+        });
         setLayout(new java.awt.GridBagLayout());
 
+        jTabbedPane1.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
         jTabbedPane1.setMinimumSize(new java.awt.Dimension(175, 550));
         jTabbedPane1.setPreferredSize(new java.awt.Dimension(200, 800));
 
@@ -248,8 +255,6 @@ public class GlyphsGUI extends javax.swing.JPanel
         glyphPanel.setPreferredSize(new java.awt.Dimension(200, 650));
         glyphPanel.setLayout(new java.awt.GridBagLayout());
 
-        mapComboBox.setMinimumSize(new java.awt.Dimension(100, 30));
-        mapComboBox.setPreferredSize(new java.awt.Dimension(200, 36));
         mapComboBox.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 mapComboBoxStateChanged(evt);
@@ -264,8 +269,9 @@ public class GlyphsGUI extends javax.swing.JPanel
         gridBagConstraints.weightx = 1.0;
         glyphPanel.add(mapComboBox, gridBagConstraints);
 
+        glyphComboBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         glyphComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "sphere", "cone", "diamond" }));
-        glyphComboBox.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "glyph", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        glyphComboBox.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "glyph", 0, 0, new java.awt.Font("Dialog", 0, 10))); // NOI18N
         glyphComboBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 glyphComboBoxItemStateChanged(evt);
@@ -286,7 +292,7 @@ public class GlyphsGUI extends javax.swing.JPanel
         lodSlider.setPaintTicks(true);
         lodSlider.setSnapToTicks(true);
         lodSlider.setValue(1);
-        lodSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "glyph smoothness", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        lodSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "glyph smoothness", 0, 0, new java.awt.Font("Dialog", 0, 10))); // NOI18N
         lodSlider.setPreferredSize(new java.awt.Dimension(150, 50));
         lodSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -333,8 +339,8 @@ public class GlyphsGUI extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(5, 8, 5, 7);
         glyphPanel.add(sqrtBox, gridBagConstraints);
 
-        scaleSlider.setAdjusting(true);
-        scaleSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "glyph scale", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        scaleSlider.setScaleType(pl.edu.icm.visnow.gui.widgets.ExtendedSlider.ScaleType.LOGARITHMIC);
+        scaleSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "glyph scale", 0, 0, new java.awt.Font("Dialog", 0, 10))); // NOI18N
         scaleSlider.setMinimumSize(new java.awt.Dimension(65, 65));
         scaleSlider.setPreferredSize(new java.awt.Dimension(200, 65));
         scaleSlider.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -418,7 +424,7 @@ public class GlyphsGUI extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 0);
         extraGlyphControlsPanel.add(glyphThicknessBox, gridBagConstraints);
 
-        glyphThicknessSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "thickness of vector glyphs", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        glyphThicknessSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "thickness of vector glyphs", 0, 0, new java.awt.Font("Dialog", 0, 10))); // NOI18N
         glyphThicknessSlider.setMinimumSize(new java.awt.Dimension(90, 65));
         glyphThicknessSlider.setPreferredSize(new java.awt.Dimension(65, 65));
         glyphThicknessSlider.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -434,7 +440,7 @@ public class GlyphsGUI extends javax.swing.JPanel
         gridBagConstraints.weightx = 1.0;
         extraGlyphControlsPanel.add(glyphThicknessSlider, gridBagConstraints);
 
-        lineThicknessSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "line thickness", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        lineThicknessSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "line thickness", 0, 0, new java.awt.Font("Dialog", 0, 10))); // NOI18N
         lineThicknessSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 lineThicknessSliderStateChanged(evt);
@@ -447,7 +453,7 @@ public class GlyphsGUI extends javax.swing.JPanel
         gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
         extraGlyphControlsPanel.add(lineThicknessSlider, gridBagConstraints);
 
-        thrSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "threshold", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        thrSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "threshold", 0, 0, new java.awt.Font("Dialog", 0, 10))); // NOI18N
         thrSlider.setMinimumSize(new java.awt.Dimension(90, 65));
         thrSlider.setPreferredSize(new java.awt.Dimension(200, 65));
         thrSlider.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -457,7 +463,7 @@ public class GlyphsGUI extends javax.swing.JPanel
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
         extraGlyphControlsPanel.add(thrSlider, gridBagConstraints);
@@ -469,7 +475,7 @@ public class GlyphsGUI extends javax.swing.JPanel
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
         extraGlyphControlsPanel.add(thrComponentSelector, gridBagConstraints);
@@ -483,10 +489,24 @@ public class GlyphsGUI extends javax.swing.JPanel
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
         extraGlyphControlsPanel.add(thrRelBox, gridBagConstraints);
+
+        transparencySlider.setMajorTickSpacing(10);
+        transparencySlider.setValue(0);
+        transparencySlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "transparency", 0, 0, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        transparencySlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                transparencySliderStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        extraGlyphControlsPanel.add(transparencySlider, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -532,9 +552,7 @@ public class GlyphsGUI extends javax.swing.JPanel
         jTabbedPane1.addTab("crop", jPanel1);
 
         jPanel6.setLayout(new java.awt.BorderLayout());
-
-        dataMappingGUI.setPreferredSize(new java.awt.Dimension(235, 800));
-        jPanel6.add(dataMappingGUI, java.awt.BorderLayout.CENTER);
+        jPanel6.add(dataMappingGUI, java.awt.BorderLayout.NORTH);
 
         jTabbedPane1.addTab("datamap", jPanel6);
 
@@ -663,6 +681,15 @@ private void regularFieldDownsizeUIStateChanged(javax.swing.event.ChangeEvent ev
       setPresentation(guiPresentationButton.getState() == VisNow.SIMPLE_GUI);
    }//GEN-LAST:event_guiPresentationButtonStateChanged
 
+   private void transparencySliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_transparencySliderStateChanged
+   {//GEN-HEADEREND:event_transparencySliderStateChanged
+      params.setTransparency(transparencySlider.getValue() / 100.f);
+   }//GEN-LAST:event_transparencySliderStateChanged
+
+    private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+
+    }//GEN-LAST:event_formComponentResized
+
 private String[] lastInComponents = null;
 
    private boolean componentsChanged(String[] inComponents)
@@ -701,7 +728,7 @@ private String[] lastInComponents = null;
          dimsChanged)
       {
          CardLayout cl = (CardLayout)(jPanel5.getLayout());
-         if (inField instanceof RegularField && 
+         if (inField instanceof RegularField &&
             (this.inField == null || !(this.inField instanceof RegularField)) || dimsChanged)
          {
             RegularField regularInField = (RegularField) inField;
@@ -794,6 +821,9 @@ private String[] lastInComponents = null;
       scaleSlider.setMax(smax);
       scaleSlider.setMin(smax/100);
       scaleSlider.setVal(smax/10);
+      //setter in logarithmic slider does not fire event so scale param needs to be updated as well
+      //TODO: but this should not fire event ! (this setScaleMinMax method is feedback to GUI - but apparently flow here is different...)
+      params.setScale(smax/10);
    }
 
    private void setThicknessMinMax()
@@ -817,13 +847,13 @@ private String[] lastInComponents = null;
    {
       return dataMappingGUI;
    }
-   
+
    public BooleanChangeListener getPresentationListener()
    {
       return presentationListener;
    }
 
-   
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox absBox;
     private javax.swing.JCheckBox constantDiamBox;
@@ -846,10 +876,11 @@ private String[] lastInComponents = null;
     private javax.swing.JSlider lodSlider;
     private pl.edu.icm.visnow.lib.gui.DataComponentSelector mapComboBox;
     private pl.edu.icm.visnow.lib.gui.DownsizeUI regularFieldDownsizeUI;
-    private pl.edu.icm.visnow.gui.widgets.LogarithmicSlider scaleSlider;
+    private pl.edu.icm.visnow.gui.widgets.ExtendedSlider scaleSlider;
     private javax.swing.JCheckBox sqrtBox;
     private pl.edu.icm.visnow.lib.gui.DataComponentSelector thrComponentSelector;
     private javax.swing.JCheckBox thrRelBox;
     private pl.edu.icm.visnow.gui.widgets.FloatSlider thrSlider;
+    private javax.swing.JSlider transparencySlider;
     // End of variables declaration//GEN-END:variables
 }

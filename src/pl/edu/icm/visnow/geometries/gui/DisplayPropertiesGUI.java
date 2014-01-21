@@ -41,22 +41,25 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import javax.media.j3d.LineAttributes;
 import javax.media.j3d.PolygonAttributes;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
+import javax.swing.WindowConstants;
 import javax.swing.plaf.basic.BasicComboPopup;
 import javax.vecmath.Color3f;
 import pl.edu.icm.visnow.geometries.objects.FieldGeometry;
 import pl.edu.icm.visnow.geometries.parameters.AbstractRenderingParams;
 import pl.edu.icm.visnow.geometries.parameters.RenderingParams;
 import pl.edu.icm.visnow.gui.icons.IconsContainer;
-import pl.edu.icm.visnow.lib.utils.SwingInstancer;
 
 /**
  *
@@ -67,7 +70,7 @@ public class DisplayPropertiesGUI extends javax.swing.JPanel
    protected static ImageIcon[] modeIcons = null;
 
    protected AbstractRenderingParams renderingParams = new RenderingParams();
-   protected boolean is3D = true;
+   protected int nDims = 3;
    protected boolean lastLinesButtonState = false;
    
    class IconString
@@ -91,6 +94,7 @@ public class DisplayPropertiesGUI extends javax.swing.JPanel
          return string;
       }
       
+      @Override
       public String toString()
       {
          return string;
@@ -107,6 +111,7 @@ public class DisplayPropertiesGUI extends javax.swing.JPanel
    {
       protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
 
+      @Override
       public Component getListCellRendererComponent(JList list, Object value, int index,
               boolean isSelected, boolean cellHasFocus)
       {
@@ -140,7 +145,6 @@ public class DisplayPropertiesGUI extends javax.swing.JPanel
       }, null);
       specularColorEditor.setTitle("specular color");
       specularColorEditor.setBrightness(20);
-      diffuseColorEditor.setTitle("diffuse color");
       featSlider.setShowingFields(false);
       Object popup = modeCombo.getUI().getAccessibleChild(modeCombo, 0);
       if (popup instanceof BasicComboPopup)
@@ -173,15 +177,108 @@ public class DisplayPropertiesGUI extends javax.swing.JPanel
            return;
        }
        
-       imageBox.setVisible(!is3D);
+       boxBox.setSelected((renderingParams.getDisplayMode() & RenderingParams.OUTLINE_BOX) == RenderingParams.OUTLINE_BOX);
        imageBox.setSelected((renderingParams.getDisplayMode() & RenderingParams.IMAGE) == RenderingParams.IMAGE);
        pointBox.setSelected((renderingParams.getDisplayMode() & RenderingParams.NODES) == RenderingParams.NODES);
-       edgesBox.setSelected((renderingParams.getDisplayMode() & FieldGeometry.EDGES) == FieldGeometry.EDGES);
-       surfaceBox.setSelected((renderingParams.getDisplayMode() & FieldGeometry.SURFACE) == FieldGeometry.SURFACE);
+       //edgesBox.setSelected((renderingParams.getDisplayMode() & FieldGeometry.EDGES) == FieldGeometry.EDGES);
+       //surfaceBox.setSelected((renderingParams.getDisplayMode() & FieldGeometry.SURFACE) == FieldGeometry.SURFACE);
+       edgesBox.setSelected((renderingParams.getDisplayMode() & RenderingParams.EDGES) == RenderingParams.EDGES);
+       surfaceBox.setSelected((renderingParams.getDisplayMode() & RenderingParams.SURFACE) == RenderingParams.SURFACE);
+       
+       switch(nDims) {
+           case 3:
+               //RegularField 3D or IrregularField/CellSet with 3D cells
+               surfaceBox.setEnabled(true);
+               surfacePanel.setVisible(true);
+               edgesBox.setEnabled(true);
+               pointBox.setEnabled(true);
+               boxBox.setEnabled(true);
+               imageBox.setEnabled(false);
+               
+//               featSlider.setEnabled(edgesBox.isSelected() && nDims > 0);
+//               jLabel4.setEnabled(true);
+//               lineStyleCombo.setEnabled(true);
+//               lineLightingBox.setEnabled(true);
+               break;
+           case 2:
+               //RegularField 2D or IrregularField/CellSet with 2D cells
+               surfaceBox.setEnabled(true);
+               surfacePanel.setVisible(true);
+               edgesBox.setEnabled(true);
+               pointBox.setEnabled(true);
+               boxBox.setEnabled(true);
+               imageBox.setEnabled(true);               
+               
+//               featSlider.setEnabled(edgesBox.isSelected());
+//               jLabel4.setEnabled(true);
+//               lineStyleCombo.setEnabled(true);
+//               lineLightingBox.setEnabled(true);
+               break;
+           case 1:
+               //RegularField 1D or IrregularField/CellSet with 1D cells
+               surfaceBox.setEnabled(false);
+               surfacePanel.setVisible(false);
+               edgesBox.setEnabled(true);
+               pointBox.setEnabled(true);
+               boxBox.setEnabled(true);
+               imageBox.setEnabled(false); 
+               
+//               featSlider.setEnabled(edgesBox.isSelected());
+//               jLabel4.setEnabled(true);
+//               lineStyleCombo.setEnabled(true);
+//               lineLightingBox.setEnabled(true);
+               break;               
+           case 0:
+               //IrregularField/CellSet with 0D cells (points)
+               surfaceBox.setEnabled(false);
+               surfacePanel.setVisible(false);
+               edgesBox.setEnabled(false);
+               pointBox.setEnabled(true);
+               boxBox.setEnabled(true);
+               imageBox.setEnabled(false); 
+
+//               featSlider.setEnabled(false);
+//               jLabel4.setEnabled(false);
+//               lineStyleCombo.setEnabled(false);
+//               lineLightingBox.setEnabled(false);
+               break;               
+       }
+       
+       updateActiveControls();
    }
+
+   /**
+    * Enables/disables controls according to checkboxes state (surface, image, lines, points, box)
+    */
+    private void updateActiveControls() {
+        boolean lines = (edgesBox.isEnabled() && edgesBox.isSelected()) || (pointBox.isEnabled() && pointBox.isSelected()) || (boxBox.isEnabled() && boxBox.isSelected());
+        boolean linesFull = (edgesBox.isEnabled() && edgesBox.isSelected());
+        boolean surfaces = (surfaceBox.isEnabled() && surfaceBox.isSelected());
+        boolean image = (imageBox.isEnabled() && imageBox.isSelected());
+
+
+        surfacePanel.setEnabled(surfaces || image);
+        specularColorEditor.setEnabled(surfaces);
+        shininessSlider.setEnabled(surfaces);
+        transparencySlider.setEnabled(surfaces || image);
+        faceButton.setEnabled(surfaces);
+        flipToggle.setEnabled(surfaces);
+        lightBackBox.setEnabled(surfaces);
+        modeCombo.setEnabled(surfaces);
+        offsetBox.setEnabled(surfaces);
+        jPanel5.setEnabled(surfaces);
+
+        edgesPanel.setEnabled(lines);
+        jLabel4.setEnabled(lines);
+        lineLightingBox.setEnabled(lines);
+        lineStyleCombo.setEnabled(lines);
+        lineWidthSlider.setEnabled(lines);
+
+        featSlider.setEnabled(linesFull);
+    }
    
-    public void setIs3D(boolean is3D) {
-        this.is3D = is3D;
+    public void setNDims(int nDims) {
+        this.nDims = nDims;
         updateGUI();
     }   
 
@@ -195,561 +292,422 @@ public class DisplayPropertiesGUI extends javax.swing.JPanel
       updateGUI();
    }
 
-   public void setShadingMode(boolean gouraud)
-   {
-      if (gouraud)
-         SwingInstancer.swingRun(new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               modeCombo.setSelectedIndex(GOURAUD);
-               renderingParams.setShadingMode(RenderingParams.GOURAUD_SHADED);
-            }
-         });
-      else
-         SwingInstancer.swingRun(new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               modeCombo.setSelectedIndex(FLAT);
-               renderingParams.setShadingMode(RenderingParams.FLAT_SHADED);
-            }
-         });
-   }
-
    public void setPresentation(boolean simple)
    {
       GridBagConstraints gridBagConstraints;
-      Dimension simpleEdgesDim = new Dimension(200, 177);
-      Dimension expertEdgesDim = new Dimension(200, 199);
-      Dimension simpleSurfDim = new Dimension(200, 185);
-      Dimension expertSurfDim = new Dimension(200, 235);
-      Dimension simpleDim = new Dimension(200, 460);
-      Dimension expertDim = new Dimension(200, 500);
-      if (simple)
-      {
-         surfacePanel.remove(specularColorEditor);
-         surfacePanel.remove(shininessSlider);
-         edgesPanel.remove(lineLightingBox);
-         edgesPanel.setMinimumSize(simpleEdgesDim);
-         edgesPanel.setMaximumSize(simpleEdgesDim);
-         edgesPanel.setPreferredSize(simpleEdgesDim);
-         surfacePanel.setMinimumSize(simpleSurfDim);
-         surfacePanel.setMaximumSize(simpleSurfDim);
-         surfacePanel.setPreferredSize(simpleSurfDim);
-         setMinimumSize(simpleDim);
-         setMaximumSize(simpleDim);
-         setPreferredSize(simpleDim);
-      } else
-      {   
-         setMinimumSize(expertDim);
-         setMaximumSize(expertDim);
-         setPreferredSize(expertDim);    
-         
-         surfacePanel.setMinimumSize(expertSurfDim);
-         surfacePanel.setMaximumSize(expertSurfDim);
-         surfacePanel.setPreferredSize(expertSurfDim);
-         
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 0;
-         gridBagConstraints.gridy = 4;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-         gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 3);
-         surfacePanel.add(specularColorEditor, gridBagConstraints);
-         
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 0;
-         gridBagConstraints.gridy = 6;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-         surfacePanel.add(shininessSlider, gridBagConstraints);
-         edgesPanel.setMinimumSize(expertEdgesDim);
-         edgesPanel.setMaximumSize(expertEdgesDim);
-         edgesPanel.setPreferredSize(expertEdgesDim);
-         
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 0;
-         gridBagConstraints.gridy = 1;
-         gridBagConstraints.gridwidth = 2;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-         edgesPanel.add(featSlider, gridBagConstraints);
-
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 0;
-         gridBagConstraints.gridy = 4;
-         gridBagConstraints.gridwidth = 2;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-         edgesPanel.add(lineLightingBox, gridBagConstraints);
-
-      }
-      validate();
+      specularColorEditor.setVisible(!simple);
+      shininessSlider.setVisible(!simple);
+      featSlider.setVisible(!simple);
+      lineLightingBox.setVisible(!simple);
+      revalidate();
    }
 
    @SuppressWarnings("unchecked")
-   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-   private void initComponents()
-   {
-      java.awt.GridBagConstraints gridBagConstraints;
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-      cullFaceGroup = new javax.swing.ButtonGroup();
-      shadingGroup = new javax.swing.ButtonGroup();
-      helpFrame = new javax.swing.JFrame();
-      helpText = new javax.swing.JLabel();
-      testFrame = new javax.swing.JFrame();
-      jCheckBox1 = new javax.swing.JCheckBox();
-      surfacePanel = new javax.swing.JPanel();
-      transparencySlider = new javax.swing.JSlider();
-      shininessSlider = new javax.swing.JSlider();
-      jPanel5 = new javax.swing.JPanel();
-      modeCombo = new javax.swing.JComboBox();
-      flipToggle = new javax.swing.JToggleButton();
-      faceButton = new pl.edu.icm.visnow.gui.widgets.MultistateButton();
-      offsetBox = new javax.swing.JCheckBox();
-      lightBackBox = new javax.swing.JCheckBox();
-      specularColorEditor = new pl.edu.icm.visnow.gui.widgets.ColorEditor();
-      diffuseColorEditor = new pl.edu.icm.visnow.gui.widgets.ColorEditor();
-      edgesPanel = new javax.swing.JPanel();
-      lineStyleCombo = new javax.swing.JComboBox();
-      jLabel4 = new javax.swing.JLabel();
-      featSlider = new pl.edu.icm.visnow.gui.widgets.LogarithmicSlider();
-      lineLightingBox = new javax.swing.JCheckBox();
-      lineWidthSlider = new pl.edu.icm.visnow.gui.widgets.LogarithmicSlider();
-      jPanel1 = new javax.swing.JPanel();
-      jPanel2 = new javax.swing.JPanel();
-      surfaceBox = new javax.swing.JCheckBox();
-      pointBox = new javax.swing.JCheckBox();
-      edgesBox = new javax.swing.JCheckBox();
-      imageBox = new javax.swing.JCheckBox();
-      boxBox = new javax.swing.JCheckBox();
+        cullFaceGroup = new javax.swing.ButtonGroup();
+        shadingGroup = new javax.swing.ButtonGroup();
+        helpFrame = new javax.swing.JFrame();
+        helpText = new javax.swing.JLabel();
+        testFrame = new javax.swing.JFrame();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        displayContentPanel = new javax.swing.JPanel();
+        surfaceBox = new javax.swing.JCheckBox();
+        pointBox = new javax.swing.JCheckBox();
+        edgesBox = new javax.swing.JCheckBox();
+        imageBox = new javax.swing.JCheckBox();
+        boxBox = new javax.swing.JCheckBox();
+        surfacePanel = new javax.swing.JPanel();
+        transparencySlider = new javax.swing.JSlider();
+        shininessSlider = new javax.swing.JSlider();
+        jPanel5 = new javax.swing.JPanel();
+        modeCombo = new javax.swing.JComboBox();
+        flipToggle = new javax.swing.JToggleButton();
+        faceButton = new pl.edu.icm.visnow.gui.widgets.MultistateButton();
+        offsetBox = new javax.swing.JCheckBox();
+        lightBackBox = new javax.swing.JCheckBox();
+        specularColorEditor = new pl.edu.icm.visnow.gui.widgets.ColorEditor();
+        edgesPanel = new javax.swing.JPanel();
+        lineStyleCombo = new javax.swing.JComboBox();
+        jLabel4 = new javax.swing.JLabel();
+        featSlider = new pl.edu.icm.visnow.gui.widgets.ExtendedSlider();
+        lineLightingBox = new javax.swing.JCheckBox();
+        lineWidthSlider = new pl.edu.icm.visnow.gui.widgets.ExtendedSlider();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
-      helpFrame.setUndecorated(true);
+        helpFrame.setUndecorated(true);
 
-      helpText.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      helpText.setText("<html>This slider controls relative visibility of the object surface part<p>\nwith respect to other geometries<p>\nIf there are lines on the surface, increase slider value (drag right)<p>\nDrag left to see the surface through other object (\"object in the box\" effect)</html>"); // NOI18N
-      helpFrame.getContentPane().add(helpText, java.awt.BorderLayout.CENTER);
+        helpText.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        helpText.setText("<html>This slider controls relative visibility of the object surface part<p>\nwith respect to other geometries<p>\nIf there are lines on the surface, increase slider value (drag right)<p>\nDrag left to see the surface through other object (\"object in the box\" effect)</html>"); // NOI18N
+        helpFrame.getContentPane().add(helpText, java.awt.BorderLayout.CENTER);
 
-      testFrame.setMinimumSize(new java.awt.Dimension(210, 570));
+        testFrame.setMinimumSize(new java.awt.Dimension(210, 570));
 
-      jCheckBox1.setText("simple");
-      jCheckBox1.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            jCheckBox1ActionPerformed(evt);
-         }
-      });
-      testFrame.getContentPane().add(jCheckBox1, java.awt.BorderLayout.NORTH);
+        jCheckBox1.setText("simple");
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+        testFrame.getContentPane().add(jCheckBox1, java.awt.BorderLayout.NORTH);
 
-      setMinimumSize(new java.awt.Dimension(200, 480));
-      setPreferredSize(new java.awt.Dimension(235, 480));
-      setLayout(new java.awt.GridBagLayout());
+        setLayout(new java.awt.GridBagLayout());
 
-      surfacePanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 153), java.awt.Color.white, new java.awt.Color(102, 102, 102), new java.awt.Color(204, 204, 204)), javax.swing.BorderFactory.createTitledBorder(null, "surfaces", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10)))); // NOI18N
-      surfacePanel.setMinimumSize(new java.awt.Dimension(276, 225));
-      surfacePanel.setPreferredSize(new java.awt.Dimension(330, 230));
-      surfacePanel.setLayout(new java.awt.GridBagLayout());
+        displayContentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "show", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        displayContentPanel.setName(""); // NOI18N
+        displayContentPanel.setLayout(new java.awt.GridBagLayout());
 
-      transparencySlider.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-      transparencySlider.setMajorTickSpacing(20);
-      transparencySlider.setMinorTickSpacing(5);
-      transparencySlider.setValue(0);
-      transparencySlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "transparency", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-      transparencySlider.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            transparencySliderStateChanged(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 5;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.weighty = 1.0;
-      surfacePanel.add(transparencySlider, gridBagConstraints);
+        surfaceBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        surfaceBox.setSelected(true);
+        surfaceBox.setText("surfaces"); // NOI18N
+        surfaceBox.setToolTipText("show surfaces (if present) in 3D view");
+        surfaceBox.setMaximumSize(new java.awt.Dimension(88, 16));
+        surfaceBox.setMinimumSize(new java.awt.Dimension(80, 16));
+        surfaceBox.setPreferredSize(new java.awt.Dimension(80, 16));
+        surfaceBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                surfaceBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 3, 0);
+        displayContentPanel.add(surfaceBox, gridBagConstraints);
 
-      shininessSlider.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-      shininessSlider.setMajorTickSpacing(20);
-      shininessSlider.setMinorTickSpacing(5);
-      shininessSlider.setValue(15);
-      shininessSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "shininess", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-      shininessSlider.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            shininessSliderStateChanged(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 6;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      surfacePanel.add(shininessSlider, gridBagConstraints);
+        pointBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        pointBox.setText("points");
+        pointBox.setToolTipText("show points that build surfaces (if present)");
+        pointBox.setMaximumSize(new java.awt.Dimension(64, 16));
+        pointBox.setMinimumSize(new java.awt.Dimension(64, 16));
+        pointBox.setPreferredSize(new java.awt.Dimension(64, 16));
+        pointBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pointBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
+        displayContentPanel.add(pointBox, gridBagConstraints);
 
-      jPanel5.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-      jPanel5.setMinimumSize(new java.awt.Dimension(200, 80));
-      jPanel5.setPreferredSize(new java.awt.Dimension(377, 80));
-      jPanel5.setLayout(new java.awt.GridBagLayout());
+        edgesBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        edgesBox.setText("lines");
+        edgesBox.setToolTipText("show lines that build surfaces ((if present)");
+        edgesBox.setMaximumSize(new java.awt.Dimension(54, 16));
+        edgesBox.setMinimumSize(new java.awt.Dimension(54, 16));
+        edgesBox.setPreferredSize(new java.awt.Dimension(54, 16));
+        edgesBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                edgesBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
+        displayContentPanel.add(edgesBox, gridBagConstraints);
 
-      modeCombo.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      modeCombo.setModel(new DefaultComboBoxModel(elements));
-      modeCombo.addItemListener(new java.awt.event.ItemListener()
-      {
-         public void itemStateChanged(java.awt.event.ItemEvent evt)
-         {
-            modeComboItemStateChanged(evt);
-         }
-      });
-      modeCombo.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            modeComboActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.insets = new java.awt.Insets(0, 0, 4, 0);
-      jPanel5.add(modeCombo, gridBagConstraints);
+        imageBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        imageBox.setText("image");
+        imageBox.setToolTipText("show image (if present) in 2D view");
+        imageBox.setMaximumSize(new java.awt.Dimension(63, 16));
+        imageBox.setMinimumSize(new java.awt.Dimension(63, 16));
+        imageBox.setPreferredSize(new java.awt.Dimension(63, 16));
+        imageBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                imageBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        displayContentPanel.add(imageBox, gridBagConstraints);
 
-      flipToggle.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      flipToggle.setText("flip sides");
-      flipToggle.setMargin(new java.awt.Insets(2, 4, 2, 4));
-      flipToggle.setMaximumSize(new java.awt.Dimension(89, 18));
-      flipToggle.setMinimumSize(new java.awt.Dimension(89, 18));
-      flipToggle.setName(""); // NOI18N
-      flipToggle.setPreferredSize(new java.awt.Dimension(89, 18));
-      flipToggle.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            flipToggleActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 1;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
-      jPanel5.add(flipToggle, gridBagConstraints);
+        boxBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        boxBox.setText("box");
+        boxBox.setToolTipText("show geometry outline (if geometry present)");
+        boxBox.setMaximumSize(new java.awt.Dimension(47, 16));
+        boxBox.setMinimumSize(new java.awt.Dimension(47, 16));
+        boxBox.setPreferredSize(new java.awt.Dimension(47, 16));
+        boxBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boxBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        displayContentPanel.add(boxBox, gridBagConstraints);
 
-      faceButton.setText("multistateButton1");
-      faceButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      faceButton.setMaximumSize(new java.awt.Dimension(90, 18));
-      faceButton.setMinimumSize(new java.awt.Dimension(90, 18));
-      faceButton.setPreferredSize(new java.awt.Dimension(90, 18));
-      faceButton.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            faceButtonStateChanged(evt);
-         }
-      });
-      faceButton.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            faceButtonActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.weightx = 1.0;
-      jPanel5.add(faceButton, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        add(displayContentPanel, gridBagConstraints);
 
-      offsetBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      offsetBox.setText("pull to front of the scene");
-      offsetBox.setMaximumSize(new java.awt.Dimension(232, 18));
-      offsetBox.setMinimumSize(new java.awt.Dimension(232, 18));
-      offsetBox.setPreferredSize(new java.awt.Dimension(232, 18));
-      offsetBox.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            offsetBoxActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 2;
-      gridBagConstraints.gridwidth = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
-      jPanel5.add(offsetBox, gridBagConstraints);
+        surfacePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "surfaces", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        surfacePanel.setLayout(new java.awt.GridBagLayout());
 
-      lightBackBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      lightBackBox.setSelected(true);
-      lightBackBox.setText("<html>lighted<p> backside</html>");
-      lightBackBox.setMargin(new java.awt.Insets(0, 2, 2, 0));
-      lightBackBox.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            lightBackBoxActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      jPanel5.add(lightBackBox, gridBagConstraints);
+        transparencySlider.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        transparencySlider.setMajorTickSpacing(20);
+        transparencySlider.setMinorTickSpacing(5);
+        transparencySlider.setValue(0);
+        transparencySlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "transparency", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        transparencySlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                transparencySliderStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        surfacePanel.add(transparencySlider, gridBagConstraints);
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      surfacePanel.add(jPanel5, gridBagConstraints);
+        shininessSlider.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        shininessSlider.setMajorTickSpacing(20);
+        shininessSlider.setMinorTickSpacing(5);
+        shininessSlider.setValue(15);
+        shininessSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "shininess", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        shininessSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                shininessSliderStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        surfacePanel.add(shininessSlider, gridBagConstraints);
 
-      specularColorEditor.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            specularColorEditorStateChanged(evt);
-         }
-      });
-      specularColorEditor.setLayout(new java.awt.BorderLayout());
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 4;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 3);
-      surfacePanel.add(specularColorEditor, gridBagConstraints);
+        jPanel5.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jPanel5.setLayout(new java.awt.GridBagLayout());
 
-      diffuseColorEditor.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            diffuseColorEditorStateChanged(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 3;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 3);
-      surfacePanel.add(diffuseColorEditor, gridBagConstraints);
+        modeCombo.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        modeCombo.setModel(new DefaultComboBoxModel(elements));
+        modeCombo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                modeComboItemStateChanged(evt);
+            }
+        });
+        modeCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modeComboActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 4, 0);
+        jPanel5.add(modeCombo, gridBagConstraints);
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.weightx = 0.8;
-      gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
-      add(surfacePanel, gridBagConstraints);
+        flipToggle.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        flipToggle.setText("flip sides");
+        flipToggle.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        flipToggle.setMaximumSize(new java.awt.Dimension(89, 18));
+        flipToggle.setMinimumSize(new java.awt.Dimension(89, 18));
+        flipToggle.setName(""); // NOI18N
+        flipToggle.setPreferredSize(new java.awt.Dimension(89, 18));
+        flipToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                flipToggleActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+        jPanel5.add(flipToggle, gridBagConstraints);
 
-      edgesPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 153), null, new java.awt.Color(102, 102, 102), new java.awt.Color(204, 204, 204)), javax.swing.BorderFactory.createTitledBorder(null, "points and lines", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10), java.awt.Color.black))); // NOI18N
-      edgesPanel.setMinimumSize(new java.awt.Dimension(194, 199));
-      edgesPanel.setPreferredSize(new java.awt.Dimension(194, 199));
-      edgesPanel.setRequestFocusEnabled(false);
-      edgesPanel.setLayout(new java.awt.GridBagLayout());
+        faceButton.setText("multistateButton1");
+        faceButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        faceButton.setMaximumSize(new java.awt.Dimension(90, 18));
+        faceButton.setMinimumSize(new java.awt.Dimension(90, 18));
+        faceButton.setPreferredSize(new java.awt.Dimension(90, 18));
+        faceButton.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                faceButtonStateChanged(evt);
+            }
+        });
+        faceButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                faceButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        jPanel5.add(faceButton, gridBagConstraints);
 
-      lineStyleCombo.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      lineStyleCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "solid", "dashed", "dotted", "dashdot" }));
-      lineStyleCombo.addItemListener(new java.awt.event.ItemListener()
-      {
-         public void itemStateChanged(java.awt.event.ItemEvent evt)
-         {
-            lineStyleComboItemStateChanged(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 1;
-      gridBagConstraints.gridy = 3;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.insets = new java.awt.Insets(0, 8, 0, 0);
-      edgesPanel.add(lineStyleCombo, gridBagConstraints);
+        offsetBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        offsetBox.setText("pull to front of the scene");
+        offsetBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                offsetBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
+        jPanel5.add(offsetBox, gridBagConstraints);
 
-      jLabel4.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      jLabel4.setText("line style");
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 3;
-      edgesPanel.add(jLabel4, gridBagConstraints);
+        lightBackBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        lightBackBox.setSelected(true);
+        lightBackBox.setText("<html>lighted<p> backside</html>");
+        lightBackBox.setMargin(new java.awt.Insets(0, 2, 2, 0));
+        lightBackBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lightBackBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel5.add(lightBackBox, gridBagConstraints);
 
-      featSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "feature angle", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-      featSlider.setMin(0.1F);
-      featSlider.setMinimumSize(new java.awt.Dimension(90, 64));
-      featSlider.setPreferredSize(new java.awt.Dimension(200, 64));
-      featSlider.setVal(0.1F);
-      featSlider.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            featSliderStateChanged(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.gridwidth = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      edgesPanel.add(featSlider, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        surfacePanel.add(jPanel5, gridBagConstraints);
 
-      lineLightingBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      lineLightingBox.setText("darken lines");
-      lineLightingBox.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            lineLightingBoxActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 4;
-      gridBagConstraints.gridwidth = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      edgesPanel.add(lineLightingBox, gridBagConstraints);
+        specularColorEditor.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                specularColorEditorStateChanged(evt);
+            }
+        });
+        specularColorEditor.setLayout(new java.awt.BorderLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 3);
+        surfacePanel.add(specularColorEditor, gridBagConstraints);
 
-      lineWidthSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "line/point width", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-      lineWidthSlider.setMin(0.5F);
-      lineWidthSlider.setMinimumSize(new java.awt.Dimension(90, 63));
-      lineWidthSlider.setPreferredSize(new java.awt.Dimension(200, 63));
-      lineWidthSlider.setVal(1.0F);
-      lineWidthSlider.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            lineWidthSliderStateChanged(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridwidth = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      edgesPanel.add(lineWidthSlider, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
+        add(surfacePanel, gridBagConstraints);
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      add(edgesPanel, gridBagConstraints);
+        edgesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "points and lines", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        edgesPanel.setRequestFocusEnabled(false);
+        edgesPanel.setLayout(new java.awt.GridBagLayout());
 
-      jPanel1.setMinimumSize(new java.awt.Dimension(200, 100));
-      jPanel1.setPreferredSize(new java.awt.Dimension(200, 100));
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 3;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.weighty = 1.0;
-      add(jPanel1, gridBagConstraints);
+        lineStyleCombo.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        lineStyleCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "solid", "dashed", "dotted", "dashdot" }));
+        lineStyleCombo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                lineStyleComboItemStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 8, 0, 0);
+        edgesPanel.add(lineStyleCombo, gridBagConstraints);
 
-      jPanel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 153), null, new java.awt.Color(102, 102, 102), new java.awt.Color(204, 204, 204)));
-      jPanel2.setMaximumSize(new java.awt.Dimension(300, 55));
-      jPanel2.setMinimumSize(new java.awt.Dimension(160, 45));
-      jPanel2.setName(""); // NOI18N
-      jPanel2.setPreferredSize(new java.awt.Dimension(200, 50));
-      jPanel2.setLayout(new java.awt.GridBagLayout());
+        jLabel4.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jLabel4.setText("line style");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
+        edgesPanel.add(jLabel4, gridBagConstraints);
 
-      surfaceBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      surfaceBox.setSelected(true);
-      surfaceBox.setText("surfaces"); // NOI18N
-      surfaceBox.setMaximumSize(new java.awt.Dimension(88, 16));
-      surfaceBox.setMinimumSize(new java.awt.Dimension(80, 16));
-      surfaceBox.setPreferredSize(new java.awt.Dimension(80, 16));
-      surfaceBox.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            surfaceBoxActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.insets = new java.awt.Insets(0, 5, 3, 0);
-      jPanel2.add(surfaceBox, gridBagConstraints);
+        featSlider.setScaleType(pl.edu.icm.visnow.gui.widgets.ExtendedSlider.ScaleType.LOGARITHMIC);
+        featSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "feature angle", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        featSlider.setMin(0.1F);
+        featSlider.setVal(0.1F);
+        featSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                featSliderStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        edgesPanel.add(featSlider, gridBagConstraints);
 
-      pointBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      pointBox.setText("points");
-      pointBox.setMaximumSize(new java.awt.Dimension(64, 16));
-      pointBox.setMinimumSize(new java.awt.Dimension(64, 16));
-      pointBox.setPreferredSize(new java.awt.Dimension(64, 16));
-      pointBox.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            pointBoxActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 2;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
-      jPanel2.add(pointBox, gridBagConstraints);
+        lineLightingBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        lineLightingBox.setText("darken lines");
+        lineLightingBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lineLightingBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        edgesPanel.add(lineLightingBox, gridBagConstraints);
 
-      edgesBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      edgesBox.setText("lines");
-      edgesBox.setMaximumSize(new java.awt.Dimension(54, 16));
-      edgesBox.setMinimumSize(new java.awt.Dimension(54, 16));
-      edgesBox.setPreferredSize(new java.awt.Dimension(54, 16));
-      edgesBox.setRolloverEnabled(false);
-      edgesBox.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            edgesBoxActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 1;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
-      jPanel2.add(edgesBox, gridBagConstraints);
+        lineWidthSlider.setScaleType(pl.edu.icm.visnow.gui.widgets.ExtendedSlider.ScaleType.LOGARITHMIC);
+        lineWidthSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "line/point width", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        lineWidthSlider.setMin(0.5F);
+        lineWidthSlider.setVal(1.0F);
+        lineWidthSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                lineWidthSliderStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        edgesPanel.add(lineWidthSlider, gridBagConstraints);
 
-      imageBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      imageBox.setText("image");
-      imageBox.setMaximumSize(new java.awt.Dimension(63, 16));
-      imageBox.setMinimumSize(new java.awt.Dimension(63, 16));
-      imageBox.setPreferredSize(new java.awt.Dimension(63, 16));
-      imageBox.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            imageBoxActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
-      jPanel2.add(imageBox, gridBagConstraints);
-
-      boxBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      boxBox.setText("box");
-      boxBox.setMaximumSize(new java.awt.Dimension(47, 16));
-      boxBox.setMinimumSize(new java.awt.Dimension(47, 16));
-      boxBox.setPreferredSize(new java.awt.Dimension(47, 16));
-      boxBox.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            boxBoxActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 2;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      jPanel2.add(boxBox, gridBagConstraints);
-
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      add(jPanel2, gridBagConstraints);
-   }// </editor-fold>//GEN-END:initComponents
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        add(edgesPanel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 99;
+        gridBagConstraints.weighty = 1.0;
+        add(filler1, gridBagConstraints);
+    }// </editor-fold>//GEN-END:initComponents
 
    private void setGeometryMode()
    {
@@ -768,8 +726,8 @@ public class DisplayPropertiesGUI extends javax.swing.JPanel
    }
     private void edgesBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_edgesBoxActionPerformed
     {//GEN-HEADEREND:event_edgesBoxActionPerformed
-       featSlider.setEnabled(edgesBox.isSelected());
        setGeometryMode();
+       updateActiveControls();
 }//GEN-LAST:event_edgesBoxActionPerformed
 
     private void lineStyleComboItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event_lineStyleComboItemStateChanged
@@ -808,6 +766,7 @@ public class DisplayPropertiesGUI extends javax.swing.JPanel
     private void surfaceBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_surfaceBoxActionPerformed
     {//GEN-HEADEREND:event_surfaceBoxActionPerformed
        setGeometryMode();
+       updateActiveControls();
 }//GEN-LAST:event_surfaceBoxActionPerformed
 
     private void flipToggleActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_flipToggleActionPerformed
@@ -818,16 +777,13 @@ public class DisplayPropertiesGUI extends javax.swing.JPanel
     private void pointBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_pointBoxActionPerformed
     {//GEN-HEADEREND:event_pointBoxActionPerformed
        setGeometryMode();
+        updateActiveControls();
     }//GEN-LAST:event_pointBoxActionPerformed
 
     private void specularColorEditorStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_specularColorEditorStateChanged
     {//GEN-HEADEREND:event_specularColorEditorStateChanged
        renderingParams.setSpecularColor(new Color3f(specularColorEditor.getColorComponents()));
     }//GEN-LAST:event_specularColorEditorStateChanged
-
-    private void diffuseColorEditorStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_diffuseColorEditorStateChanged
-       renderingParams.setDiffuseColor(new Color3f(diffuseColorEditor.getColorComponents()));
-    }//GEN-LAST:event_diffuseColorEditorStateChanged
 
     private void featSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_featSliderStateChanged
     {//GEN-HEADEREND:event_featSliderStateChanged
@@ -860,11 +816,13 @@ public class DisplayPropertiesGUI extends javax.swing.JPanel
 
     private void imageBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imageBoxActionPerformed
        setGeometryMode();
+       updateActiveControls();              
     }//GEN-LAST:event_imageBoxActionPerformed
 
    private void boxBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_boxBoxActionPerformed
    {//GEN-HEADEREND:event_boxBoxActionPerformed
       setGeometryMode();
+      updateActiveControls();
    }//GEN-LAST:event_boxBoxActionPerformed
 
    private static final int GOURAUD    = 0;
@@ -927,51 +885,54 @@ public class DisplayPropertiesGUI extends javax.swing.JPanel
    {//GEN-HEADEREND:event_lightBackBoxActionPerformed
       renderingParams.setLightedBackside(lightBackBox.isSelected());
    }//GEN-LAST:event_lightBackBoxActionPerformed
+   
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    protected javax.swing.JCheckBox boxBox;
+    protected javax.swing.ButtonGroup cullFaceGroup;
+    protected javax.swing.JPanel displayContentPanel;
+    protected javax.swing.JCheckBox edgesBox;
+    protected javax.swing.JPanel edgesPanel;
+    protected pl.edu.icm.visnow.gui.widgets.MultistateButton faceButton;
+    protected pl.edu.icm.visnow.gui.widgets.ExtendedSlider featSlider;
+    protected javax.swing.Box.Filler filler1;
+    protected javax.swing.JToggleButton flipToggle;
+    protected javax.swing.JFrame helpFrame;
+    protected javax.swing.JLabel helpText;
+    protected javax.swing.JCheckBox imageBox;
+    protected javax.swing.JCheckBox jCheckBox1;
+    protected javax.swing.JLabel jLabel4;
+    protected javax.swing.JPanel jPanel5;
+    protected javax.swing.JCheckBox lightBackBox;
+    protected javax.swing.JCheckBox lineLightingBox;
+    protected javax.swing.JComboBox lineStyleCombo;
+    protected pl.edu.icm.visnow.gui.widgets.ExtendedSlider lineWidthSlider;
+    protected javax.swing.JComboBox modeCombo;
+    protected javax.swing.JCheckBox offsetBox;
+    protected javax.swing.JCheckBox pointBox;
+    protected javax.swing.ButtonGroup shadingGroup;
+    protected javax.swing.JSlider shininessSlider;
+    protected pl.edu.icm.visnow.gui.widgets.ColorEditor specularColorEditor;
+    protected javax.swing.JCheckBox surfaceBox;
+    protected javax.swing.JPanel surfacePanel;
+    protected javax.swing.JFrame testFrame;
+    protected javax.swing.JSlider transparencySlider;
+    // End of variables declaration//GEN-END:variables
 
-   public static void main(String args[])
-   {
-      java.awt.EventQueue.invokeLater(new Runnable()
-      {
-         public void run()
-         {
-            DisplayPropertiesGUI gui = new DisplayPropertiesGUI();
-            gui.testFrame.add(gui, BorderLayout.CENTER);
-            gui.testFrame.setVisible(true);
-         }
-      });
-   }
-   // Variables declaration - do not modify//GEN-BEGIN:variables
-   protected javax.swing.JCheckBox boxBox;
-   protected javax.swing.ButtonGroup cullFaceGroup;
-   protected pl.edu.icm.visnow.gui.widgets.ColorEditor diffuseColorEditor;
-   protected javax.swing.JCheckBox edgesBox;
-   protected javax.swing.JPanel edgesPanel;
-   protected pl.edu.icm.visnow.gui.widgets.MultistateButton faceButton;
-   protected pl.edu.icm.visnow.gui.widgets.LogarithmicSlider featSlider;
-   protected javax.swing.JToggleButton flipToggle;
-   protected javax.swing.JFrame helpFrame;
-   protected javax.swing.JLabel helpText;
-   protected javax.swing.JCheckBox imageBox;
-   protected javax.swing.JCheckBox jCheckBox1;
-   protected javax.swing.JLabel jLabel4;
-   protected javax.swing.JPanel jPanel1;
-   protected javax.swing.JPanel jPanel2;
-   protected javax.swing.JPanel jPanel5;
-   protected javax.swing.JCheckBox lightBackBox;
-   protected javax.swing.JCheckBox lineLightingBox;
-   protected javax.swing.JComboBox lineStyleCombo;
-   protected pl.edu.icm.visnow.gui.widgets.LogarithmicSlider lineWidthSlider;
-   protected javax.swing.JComboBox modeCombo;
-   protected javax.swing.JCheckBox offsetBox;
-   protected javax.swing.JCheckBox pointBox;
-   protected javax.swing.ButtonGroup shadingGroup;
-   protected javax.swing.JSlider shininessSlider;
-   protected pl.edu.icm.visnow.gui.widgets.ColorEditor specularColorEditor;
-   protected javax.swing.JCheckBox surfaceBox;
-   protected javax.swing.JPanel surfacePanel;
-   protected javax.swing.JFrame testFrame;
-   protected javax.swing.JSlider transparencySlider;
-   // End of variables declaration//GEN-END:variables
-
-       
+    public static void main(String[] args) {
+        JFrame f = new JFrame();
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        final DisplayPropertiesGUI p = new DisplayPropertiesGUI();
+        f.add(p);
+        f.pack();
+        f.addComponentListener(new ComponentAdapter() {
+            private boolean toggleSimple = true;
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                p.setPresentation(toggleSimple);
+                toggleSimple = !toggleSimple;
+            }
+            
+        });
+        f.setVisible(true);
+    }
 }

@@ -5,15 +5,25 @@
         <input name="inField" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
             <acceptor>
                 <param name="NDIMS" value="3"/>
-                <param name="NSPACE" value="3"/>
+            </acceptor>
+            <acceptor>
+                <param name="NDIMS" value="2"/>
             </acceptor>
         </input>
     </inputs>
     <outputs>
         <output name="outField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
         </output>
+        <output name="mapField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+        </output>
+        <output name="segmentField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="NDIMS" value="1"/>
+                <param name="NSPACE" value="3"/>
+            </schema>
+        </output>
         <geometryOutput/>
-    </outputs>    
+    </outputs>
     <parameters>
     </parameters>
 </module>

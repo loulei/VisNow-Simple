@@ -1,40 +1,39 @@
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+ Copyright (C) 2006-2013 University of Warsaw, ICM
 
-This file is part of GNU Classpath.
+ This file is part of GNU Classpath.
 
-GNU Classpath is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+ GNU Classpath is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
 
-GNU Classpath is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
+ GNU Classpath is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+ You should have received a copy of the GNU General Public License
+ along with GNU Classpath; see the file COPYING.  If not, write to the 
+ University of Warsaw, Interdisciplinary Centre for Mathematical and 
+ Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
 
-Linking this library statically or dynamically with other modules is
-making a combined work based on this library.  Thus, the terms and
-conditions of the GNU General Public License cover the whole
-combination.
+ Linking this library statically or dynamically with other modules is
+ making a combined work based on this library.  Thus, the terms and
+ conditions of the GNU General Public License cover the whole
+ combination.
 
-As a special exception, the copyright holders of this library give you
-permission to link this library with independent modules to produce an
-executable, regardless of the license terms of these independent
-modules, and to copy and distribute the resulting executable under
-terms of your choice, provided that you also meet, for each linked
-independent module, the terms and conditions of the license of that
-module.  An independent module is a module which is not derived from
-or based on this library.  If you modify this library, you may extend
-this exception to your version of the library, but you are not
-obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
-
+ As a special exception, the copyright holders of this library give you
+ permission to link this library with independent modules to produce an
+ executable, regardless of the license terms of these independent
+ modules, and to copy and distribute the resulting executable under
+ terms of your choice, provided that you also meet, for each linked
+ independent module, the terms and conditions of the license of that
+ module.  An independent module is a module which is not derived from
+ or based on this library.  If you modify this library, you may extend
+ this exception to your version of the library, but you are not
+ obligated to do so.  If you do not wish to do so, delete this
+ exception statement from your version. */
 package pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D.Geometry;
 
 import java.io.*;
@@ -43,17 +42,21 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import pl.edu.icm.visnow.datasets.RegularField;
 import pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D.FieldDisplay3DFrame;
 import pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D.Geometry.PointsWizard.PointsWizardDialog;
 import pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D.Geometry.ToolsActivityWizard.ToolsActivityWizardDialog;
+import pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D.Geometry.ReadPAC.ReadPAC;
+import pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D.Geometry.WritePAC.WritePAC;
 import pl.edu.icm.visnow.system.main.VisNow;
 
 /**
  *
- * @author Krzysztof S. Nowinski, University of Warsaw, ICM
+ * @author Bartosz Borucki (babor@icm.edu.pl), University of Warsaw, ICM
+ *
  */
 public class GeometryUI extends javax.swing.JPanel implements ListSelectionListener {
 
@@ -62,7 +65,7 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
     protected PointDescriptorTableModel modelPts;
     protected ConnectionDescriptorTableModel modelConn;
     private JFileChooser fileChooser = new JFileChooser();
-    private FileNameExtensionFilter geometryFileNameExtensionFilter = new FileNameExtensionFilter("Geometry (*.txt)", "txt", "TXT");
+    private FileNameExtensionFilter geometryFileNameExtensionFilter = new FileNameExtensionFilter("PAC files (*.pac)", "pac", "PAC");
     private FieldDisplay3DFrame frame = null;
     private PointsWizardDialog wizard = null;
     private ToolsActivityWizardDialog wizard2 = null;
@@ -80,6 +83,7 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
 
     public GeometryUI(FieldDisplay3DFrame frame) {
         initComponents();
+        fileChooser.setFileFilter(geometryFileNameExtensionFilter);
         this.frame = frame;
         this.wizard = new PointsWizardDialog(frame, false);
         this.wizard2 = new ToolsActivityWizardDialog(frame, false);
@@ -97,7 +101,7 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         ArrayList<PointDescriptor> pds = params.getPointsDescriptors();
         PointDescriptor[] pdsArr = new PointDescriptor[pds.size()];
         for (int i = 0; i < pdsArr.length; i++) {
-            pdsArr[i] = pds.get(i);            
+            pdsArr[i] = pds.get(i);
         }
         connectPoint1CB.setModel(new DefaultComboBoxModel(pdsArr));
         connectPoint2CB.setModel(new DefaultComboBoxModel(pdsArr));
@@ -109,17 +113,7 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         modelCps = new CalculableParameterTableModel(cparams);
         cpsTable.setModel(modelCps);
         cpsTable.getSelectionModel().addListSelectionListener(this);
-        cpsTable.getColumnModel().getColumn(0).setMinWidth(120);
-        cpsTable.getColumnModel().getColumn(0).setPreferredWidth(120);
-        cpsTable.getColumnModel().getColumn(1).setMinWidth(80);
-        cpsTable.getColumnModel().getColumn(1).setPreferredWidth(80);
-        cpsTable.getColumnModel().getColumn(2).setMinWidth(200);
-        cpsTable.getColumnModel().getColumn(2).setPreferredWidth(200);
-        cpsTable.getColumnModel().getColumn(3).setMinWidth(240);
-        cpsTable.getColumnModel().getColumn(3).setPreferredWidth(240);
-
         cparams.addChangeListener(new ChangeListener() {
-
             @Override
             public void stateChanged(ChangeEvent e) {
                 updateCalculableGUI();
@@ -127,15 +121,14 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         });
 
         params.addGeometryParamsListener(new GeometryParamsListener() {
-
             @Override
             public void onGeometryParamsChanged(GeometryParamsEvent e) {
                 if (e.getType() == GeometryParamsEvent.TYPE_POINT_SELECTION || e.getType() == GeometryParamsEvent.TYPE_ALL) {
                     createCustomPlaneButton.setEnabled(params.getSelectedPoints() != null && params.getSelectedPoints().length == 3);
 
-                    if (params.getSelectedPoints() != null && params.getSelectedPoints().length == 1) {
+                    if (!fromValueChanged && params.getSelectedPoints() != null && params.getSelectedPoints().length == 1) {
                         int[] pts = params.getSelectedPoints();
-                        if (pts != null && pts.length > 0) {
+                        if (!fromValueChanged && pts != null && pts.length > 0) {
                             int min = pts[0];
                             int max = pts[0];
                             for (int i = 0; i < pts.length; i++) {
@@ -156,7 +149,7 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
                     }
 
                     if (params.getSelectedPoints() == null) {
-                        if (pointsTable.getSelectedRowCount() != 0) {
+                        if (!fromValueChanged && pointsTable.getSelectedRowCount() != 0) {
                             tableSilent = true;
                             pointsTable.getSelectionModel().removeSelectionInterval(0, pointsTable.getRowCount() - 1);
                             tableSilent = false;
@@ -202,11 +195,18 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         cpsTable.tableChanged(new TableModelEvent(modelCps));
     }
 
+    private String lastPath = null;
+    
     private void exportPointsAndConnections() {
         boolean done = false;
         while (!done) {
-            fileChooser.setSelectedFile(new File(fileChooser.getCurrentDirectory() + File.separator + params.getPatientString().replaceAll(" ", "_") + ".txt"));
-            fileChooser.setFileFilter(geometryFileNameExtensionFilter);
+            
+            if (lastPath == null) {
+                fileChooser.setCurrentDirectory(new File(VisNow.get().getMainConfig().getUsableDataPath(GeometryUI.class)));
+            } else {
+                fileChooser.setCurrentDirectory(new File(lastPath));
+            }
+            
             int returnVal = fileChooser.showSaveDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File f = fileChooser.getSelectedFile().getAbsoluteFile();
@@ -221,8 +221,9 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
                     done = true;
                 }
                 if (done) {
-                    String path = fileChooser.getSelectedFile().getAbsolutePath();
-                    exportPointsAndConnections(path);
+                    lastPath = fileChooser.getSelectedFile().getAbsolutePath();
+                    VisNow.get().getMainConfig().setLastDataPath(lastPath, GeometryUI.class);
+                    WritePAC.writePAC(lastPath, params.getPointsDescriptors(), params.getConnectionDescriptors(), params.getInfoString());
                 }
             } else {
                 done = true;
@@ -230,122 +231,148 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         }
     }
 
-    private void exportPointsAndConnections(String filePath) {
-        try {
-            File f = new File(filePath);
-            BufferedWriter output = new BufferedWriter(new FileWriter(f));
-
-            output.write("points and connections data file");
-            output.newLine();
-            ArrayList<PointDescriptor> pts = params.getPointsDescriptors();
-            ArrayList<ConnectionDescriptor> conn = params.getConnectionDescriptors();
-            String tmp = "";
-            int[] indices;
-            output.append("points " + pts.size());
-            output.newLine();
-            for (int i = 0; i < pts.size(); i++) {
-                indices = pts.get(i).getIndices();
-                tmp = "" + pts.get(i).getName() + "\t" + indices[0] + "\t" + indices[1] + "\t" + indices[2];
-                output.append(tmp);
-                output.newLine();
-            }
-            output.newLine();
-
-            output.append("connections " + conn.size());
-            output.newLine();
-            int i1, i2;
-            for (int i = 0; i < conn.size(); i++) {
-                i1 = pts.indexOf(conn.get(i).getP1());
-                i2 = pts.indexOf(conn.get(i).getP2());
-                tmp = "" + conn.get(i).getName() + "\t" + i1 + "\t" + i2;
-                output.append(tmp);
-                output.newLine();
-            }
-            output.newLine();
-
-            if (params.getInfoString() != null) {
-                output.append(params.getInfoString());
-                output.newLine();
-            }
-
-            output.close();
-        } catch (Exception ex) {
-        }
-    }
-
+//    private void exportPointsAndConnections(String filePath) {
+//        try {
+//            File f = new File(filePath);
+//            BufferedWriter output = new BufferedWriter(new FileWriter(f));
+//
+//            //output.write("points and connections data file");
+//            output.write("#PAC data file");
+//            output.newLine();
+//            ArrayList<PointDescriptor> pts = params.getPointsDescriptors();
+//            ArrayList<ConnectionDescriptor> conn = params.getConnectionDescriptors();
+//            String tmp = "";
+//            int[] indices;
+//            output.append("points " + pts.size());
+//            output.newLine();
+//            for (int i = 0; i < pts.size(); i++) {
+//                indices = pts.get(i).getIndices();
+//                tmp = "" + pts.get(i).getName() + "\t" + indices[0] + "\t" + indices[1] + "\t" + indices[2] + "\t" + pts.get(i).getMembership();
+//                output.append(tmp);
+//                output.newLine();
+//            }
+//            output.newLine();
+//
+//            output.append("connections " + conn.size());
+//            output.newLine();
+//            int i1, i2;
+//            for (int i = 0; i < conn.size(); i++) {
+//                i1 = pts.indexOf(conn.get(i).getP1());
+//                i2 = pts.indexOf(conn.get(i).getP2());
+//                tmp = "" + conn.get(i).getName() + "\t" + i1 + "\t" + i2;
+//                output.append(tmp);
+//                output.newLine();
+//            }
+//            output.newLine();
+//
+//            if (params.getInfoString() != null) {
+//                output.append(params.getInfoString());
+//                output.newLine();
+//            }
+//
+//            output.close();
+//        } catch (Exception ex) {
+//        }
+//    }
     private void importPointsAndConnections() {
-        fileChooser.setFileFilter(geometryFileNameExtensionFilter);
+        if (lastPath == null) {
+            fileChooser.setCurrentDirectory(new File(VisNow.get().getMainConfig().getUsableDataPath(GeometryUI.class)));
+        } else {
+            fileChooser.setCurrentDirectory(new File(lastPath));
+        }
         int returnVal = fileChooser.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            String path = fileChooser.getSelectedFile().getAbsolutePath();
-            importPointsAndConnections(path);
-        }
-    }
-
-    private void importPointsAndConnections(String filePath) {
-        try {
-            File f = new File(filePath);
-            BufferedReader input = new BufferedReader(new FileReader(f));
-
-            String line;
-
-            line = input.readLine();
-            if (line == null || !line.equals("points and connections data file")) {
-                input.close();
-                return;
-            }
-
-            line = input.readLine();
-            if (line == null || !line.startsWith("points")) {
-                input.close();
-                return;
-            }
-            String[] tmp = line.split(" ");
-            int nPoints = Integer.parseInt(tmp[1]);
-
-            String[] names = new String[nPoints];
-            int[][] pts = new int[nPoints][3];
-
-            for (int i = 0; i < nPoints; i++) {
-                line = input.readLine();
-                tmp = line.split("\t");
-                names[i] = new String(tmp[0]);
-                pts[i][0] = Integer.parseInt(tmp[1]);
-                pts[i][1] = Integer.parseInt(tmp[2]);
-                pts[i][2] = Integer.parseInt(tmp[3]);
-            }
-
-            line = input.readLine();
-            line = input.readLine();
-            if (line == null || !line.startsWith("connections")) {
-                input.close();
-                return;
-            }
-            tmp = line.split(" ");
-            int nConns = Integer.parseInt(tmp[1]);
-            String[] cnames = new String[nConns];
-            int[][] conns = new int[nConns][2];
-            for (int i = 0; i < nConns; i++) {
-                line = input.readLine();
-                if (line == null) {
-                    input.close();
-                    return;
-                }
-                tmp = line.split("\t");
-                cnames[i] = new String(tmp[0]);
-                conns[i][0] = Integer.parseInt(tmp[1]);
-                conns[i][1] = Integer.parseInt(tmp[2]);
-            }
-            input.close();
-
-            //params.clearConenctions();
+            lastPath = fileChooser.getSelectedFile().getAbsolutePath();
+            VisNow.get().getMainConfig().setLastDataPath(lastPath, GeometryUI.class);
+            ArrayList<PointDescriptor> pointsDescriptors = new ArrayList<PointDescriptor>();
+            ArrayList<ConnectionDescriptor> connectionDescriptors = new ArrayList<ConnectionDescriptor>();
+            ReadPAC.readPAC(lastPath, pointsDescriptors, connectionDescriptors);
             params.clearPoints();
-            params.addPoints(names, pts);
-            params.addConnections(cnames, conns);
-        } catch (Exception ex) {
+            PointDescriptor pd;
+            for (int i = 0; i < pointsDescriptors.size(); i++) {
+                pd = pointsDescriptors.get(i);
+                int[] ind = pd.getIndices();
+                if(ind == null || ind[0] == -1 || ind[1] == -1 || ind[2] == -1) {
+                    params.addPoint(pd.getName(), pd.getWorldCoords(), pd.getMembership());
+                } else {
+                    params.addPoint(pd.getName(), ind, pd.getMembership());
+                }
+            }
+            ConnectionDescriptor cd;
+            for (int i = 0; i < connectionDescriptors.size(); i++) {
+                cd = connectionDescriptors.get(i);
+                params.addConnection(params.getPointsDescriptorByName(cd.getP1().getName()), params.getPointsDescriptorByName(cd.getP2().getName()), cd.getName());
+            }
         }
     }
 
+//    private void importPointsAndConnections(String filePath) {
+//        try {
+//            File f = new File(filePath);
+//            BufferedReader input = new BufferedReader(new FileReader(f));
+//
+//            String line;
+//
+//            line = input.readLine();
+//            if (line == null || !line.equals("points and connections data file")) {
+//                input.close();
+//                return;
+//            }
+//
+//            line = input.readLine();
+//            if (line == null || !line.startsWith("points")) {
+//                input.close();
+//                return;
+//            }
+//            String[] tmp = line.split(" ");
+//            int nPoints = Integer.parseInt(tmp[1]);
+//
+//            String[] names = new String[nPoints];
+//            int[][] pts = new int[nPoints][3];
+//            int[] classes = new int[nPoints];
+//
+//            for (int i = 0; i < nPoints; i++) {
+//                line = input.readLine();
+//                tmp = line.split("\t");
+//                names[i] = new String(tmp[0]);
+//                pts[i][0] = Integer.parseInt(tmp[1]);
+//                pts[i][1] = Integer.parseInt(tmp[2]);
+//                pts[i][2] = Integer.parseInt(tmp[3]);
+//                if(tmp.length > 4)
+//                    classes[i] = Integer.parseInt(tmp[4]);
+//                else
+//                    classes[i] = -1;
+//            }
+//
+//            line = input.readLine();
+//            line = input.readLine();
+//            if (line == null || !line.startsWith("connections")) {
+//                input.close();
+//                return;
+//            }
+//            tmp = line.split(" ");
+//            int nConns = Integer.parseInt(tmp[1]);
+//            String[] cnames = new String[nConns];
+//            int[][] conns = new int[nConns][2];
+//            for (int i = 0; i < nConns; i++) {
+//                line = input.readLine();
+//                if (line == null) {
+//                    input.close();
+//                    return;
+//                }
+//                tmp = line.split("\t");
+//                cnames[i] = new String(tmp[0]);
+//                conns[i][0] = Integer.parseInt(tmp[1]);
+//                conns[i][1] = Integer.parseInt(tmp[2]);
+//            }
+//            input.close();
+//
+//            params.clearPoints();
+//            params.addPoints(names, pts, classes);
+//            params.addConnections(cnames, conns);
+//        } catch (Exception ex) {
+//        }
+//    }
     private void updateGUI() {
         showGlyphsCB.setSelected(params.isShowGlyphs());
         paintLabelsCB.setSelected(params.isPaintLabels());
@@ -360,14 +387,34 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         ArrayList<PointDescriptor> pds = params.getPointsDescriptors();
         PointDescriptor[] pdsArr = new PointDescriptor[pds.size()];
         for (int i = 0; i < pdsArr.length; i++) {
-            pdsArr[i] = pds.get(i);            
+            pdsArr[i] = pds.get(i);
         }
         connectPoint1CB.setModel(new DefaultComboBoxModel(pdsArr));
         connectPoint2CB.setModel(new DefaultComboBoxModel(pdsArr));
 
         updateCalculableGUI();
         updateButtons();
+
+        classesCB.setSelected(params.getCurrentClassId() != -1);
+        if (params.getCurrentClassId() != -1) {
+            classSpinner.setValue(params.getCurrentClassId());
+        }
+        if (classesCB.isSelected()) {
+            classSpinner.setEnabled(true);
+            classIDLabel.setEnabled(true);            
+        } else {
+            classSpinner.setEnabled(false);
+            classIDLabel.setEnabled(false);
+        }
+        if(!fromValueChanged && !tableSilent) {
+            tableSilent = true;
+            //modelPts.refresh();
+            
+            tableSilent = false;
+        }
         
+        addFieldComponentsCB.setSelected(params.isAddFieldData());
+
         customSlicePanel.setVisible(!simple);
     }
 
@@ -394,6 +441,10 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         paintLabelsCB = new javax.swing.JCheckBox();
         glyphScaleSlider = new javax.swing.JSlider();
         jLabel1 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        classesCB = new javax.swing.JCheckBox();
+        classIDLabel = new javax.swing.JLabel();
+        classSpinner = new javax.swing.JSpinner();
         jScrollPane1 = new javax.swing.JScrollPane();
         pointsTable = new javax.swing.JTable();
         customSlicePanel = new javax.swing.JPanel();
@@ -417,18 +468,19 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         paintCalculableValues2DCB = new javax.swing.JCheckBox();
         addCalculableButon = new javax.swing.JButton();
         removeCalculableButton = new javax.swing.JButton();
-        mainPanel = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         cpsTable = new javax.swing.JTable();
         bottomPanel = new javax.swing.JPanel();
         importButton = new javax.swing.JButton();
         exportButton = new javax.swing.JButton();
         wizardButton = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
         outputPointsButton = new javax.swing.JButton();
+        addFieldComponentsCB = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
 
-        setMinimumSize(new java.awt.Dimension(200, 1000));
-        setPreferredSize(new java.awt.Dimension(200, 1000));
+        setMinimumSize(new java.awt.Dimension(200, 800));
+        setPreferredSize(new java.awt.Dimension(200, 800));
         setLayout(new java.awt.GridBagLayout());
 
         pointsPanel.setLayout(new java.awt.GridBagLayout());
@@ -447,7 +499,6 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(clearPointsButton, gridBagConstraints);
 
         removePointButton.setText("Remove selected points");
@@ -462,7 +513,6 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
         jPanel1.add(removePointButton, gridBagConstraints);
 
         addIntersectionButton.setText("Add intersection point");
@@ -477,7 +527,6 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
         jPanel1.add(addIntersectionButton, gridBagConstraints);
 
         undoButton.setText("Undo last point");
@@ -492,7 +541,6 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
         jPanel1.add(undoButton, gridBagConstraints);
 
         addCalculablePointButton.setText("Add calculated point");
@@ -508,7 +556,6 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
         jPanel1.add(addCalculablePointButton, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -573,14 +620,65 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         pointsPanel.add(jPanel3, gridBagConstraints);
 
+        jPanel4.setMinimumSize(new java.awt.Dimension(233, 50));
+        jPanel4.setPreferredSize(new java.awt.Dimension(233, 50));
+        jPanel4.setLayout(new java.awt.GridBagLayout());
+
+        classesCB.setText("enable point classification");
+        classesCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                classesCBActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel4.add(classesCB, gridBagConstraints);
+
+        classIDLabel.setText("current class ID: ");
+        classIDLabel.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(4, 15, 0, 0);
+        jPanel4.add(classIDLabel, gridBagConstraints);
+
+        classSpinner.setEnabled(false);
+        classSpinner.setPreferredSize(new java.awt.Dimension(40, 20));
+        classSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                classSpinnerStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 0);
+        jPanel4.add(classSpinner, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        pointsPanel.add(jPanel4, gridBagConstraints);
+
         jScrollPane1.setMinimumSize(new java.awt.Dimension(180, 150));
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(240, 150));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(200, 150));
 
         pointsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -598,6 +696,7 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
                 return types [columnIndex];
             }
         });
+        pointsTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         pointsTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(pointsTable);
         pointsTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -606,9 +705,11 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
         pointsPanel.add(jScrollPane1, gridBagConstraints);
 
         customSlicePanel.setLayout(new java.awt.GridBagLayout());
@@ -624,7 +725,7 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 10, 5);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
         customSlicePanel.add(createCustomPlaneButton, gridBagConstraints);
 
         slicePositioningCB.setText("Use custom slice positioning");
@@ -642,7 +743,7 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         pointsPanel.add(customSlicePanel, gridBagConstraints);
@@ -815,8 +916,8 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
 
         calculablesPanel.setLayout(new java.awt.GridBagLayout());
 
-        topPanel.setMinimumSize(new java.awt.Dimension(180, 100));
-        topPanel.setPreferredSize(new java.awt.Dimension(200, 100));
+        topPanel.setMinimumSize(new java.awt.Dimension(180, 70));
+        topPanel.setPreferredSize(new java.awt.Dimension(200, 70));
         topPanel.setLayout(new java.awt.GridBagLayout());
 
         paintCalculableValues2DCB.setText("Show values in 2D slices");
@@ -832,7 +933,6 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         topPanel.add(paintCalculableValues2DCB, gridBagConstraints);
 
         addCalculableButon.setText("Add calculable...");
@@ -845,7 +945,6 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
         topPanel.add(addCalculableButon, gridBagConstraints);
 
         removeCalculableButton.setText("Remove selected");
@@ -861,7 +960,6 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
         topPanel.add(removeCalculableButton, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -870,37 +968,47 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         gridBagConstraints.weightx = 1.0;
         calculablesPanel.add(topPanel, gridBagConstraints);
 
-        mainPanel.setLayout(new java.awt.BorderLayout());
-
-        jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        jScrollPane3.setMinimumSize(new java.awt.Dimension(180, 150));
+        jScrollPane3.setPreferredSize(new java.awt.Dimension(200, 150));
 
         cpsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Name", "Value", "Dependant points", "Type"
             }
-        ));
-        cpsTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        cpsTable.setMaximumSize(new java.awt.Dimension(2147483647, 1000000));
-        cpsTable.setMinimumSize(new java.awt.Dimension(640, 200));
-        cpsTable.setPreferredSize(new java.awt.Dimension(640, 800));
-        jScrollPane3.setViewportView(cpsTable);
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Float.class, java.lang.String.class, java.lang.String.class
+            };
 
-        mainPanel.add(jScrollPane3, java.awt.BorderLayout.CENTER);
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        cpsTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        cpsTable.setColumnSelectionAllowed(true);
+        cpsTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane3.setViewportView(cpsTable);
+        cpsTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        cpsTable.getColumnModel().getColumn(0).setMinWidth(50);
+        cpsTable.getColumnModel().getColumn(0).setPreferredWidth(70);
+        cpsTable.getColumnModel().getColumn(1).setMinWidth(50);
+        cpsTable.getColumnModel().getColumn(1).setPreferredWidth(70);
+        cpsTable.getColumnModel().getColumn(2).setMinWidth(150);
+        cpsTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+        cpsTable.getColumnModel().getColumn(3).setMinWidth(90);
+        cpsTable.getColumnModel().getColumn(3).setPreferredWidth(90);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        calculablesPanel.add(mainPanel, gridBagConstraints);
+        calculablesPanel.add(jScrollPane3, gridBagConstraints);
 
         mainTabbedPane.addTab("calculables", calculablesPanel);
 
@@ -912,7 +1020,7 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
 
         bottomPanel.setLayout(new java.awt.GridBagLayout());
 
-        importButton.setText("Load points & connections...");
+        importButton.setText("Load geometry...");
         importButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 importButtonActionPerformed(evt);
@@ -920,13 +1028,12 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         bottomPanel.add(importButton, gridBagConstraints);
 
-        exportButton.setText("Save points & connections...");
+        exportButton.setText("Save geometry...");
         exportButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportButtonActionPerformed(evt);
@@ -934,11 +1041,10 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 5, 5, 5);
         bottomPanel.add(exportButton, gridBagConstraints);
 
         wizardButton.setText("Start wizard");
@@ -949,22 +1055,45 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        gridBagConstraints.weighty = 1.0;
         bottomPanel.add(wizardButton, gridBagConstraints);
 
-        outputPointsButton.setText("Output points");
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("output geometry to port"));
+        jPanel5.setLayout(new java.awt.GridBagLayout());
+
+        outputPointsButton.setText("Output");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        bottomPanel.add(outputPointsButton, gridBagConstraints);
+        jPanel5.add(outputPointsButton, gridBagConstraints);
+
+        addFieldComponentsCB.setText("add field data");
+        addFieldComponentsCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addFieldComponentsCBActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        jPanel5.add(addFieldComponentsCB, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        bottomPanel.add(jPanel5, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1105,6 +1234,31 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
        }
 
    }//GEN-LAST:event_addCalculablePointButtonActionPerformed
+
+    private void classesCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_classesCBActionPerformed
+        if (classesCB.isSelected()) {
+            classSpinner.setEnabled(true);
+            classIDLabel.setEnabled(true);
+            params.setCurrentClassId((Integer) classSpinner.getValue());
+        } else {
+            classSpinner.setEnabled(false);
+            classIDLabel.setEnabled(false);
+            params.setCurrentClassId(-1);
+        }
+    }//GEN-LAST:event_classesCBActionPerformed
+
+    private void classSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_classSpinnerStateChanged
+        int v = (Integer) classSpinner.getValue();
+        if (v < 0) {
+            classSpinner.setValue(0);
+            return;
+        }
+        params.setCurrentClassId(v);
+    }//GEN-LAST:event_classSpinnerStateChanged
+
+    private void addFieldComponentsCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addFieldComponentsCBActionPerformed
+        params.setAddFieldData(addFieldComponentsCB.isSelected());
+    }//GEN-LAST:event_addFieldComponentsCBActionPerformed
     /**
      * Utility field holding list of ChangeListeners.
      */
@@ -1132,8 +1286,7 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
     /**
      * Notifies all registered listeners about the event.
      *
-     * @param object Parameter #1 of the
-     * <CODE>ChangeEvent<CODE> constructor.
+     * @param object Parameter #1 of the      <CODE>ChangeEvent<CODE> constructor.
      */
     private void fireStateChanged() {
         ChangeEvent e = new ChangeEvent(this);
@@ -1144,9 +1297,13 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addCalculableButon;
     private javax.swing.JButton addCalculablePointButton;
+    private javax.swing.JCheckBox addFieldComponentsCB;
     private javax.swing.JButton addIntersectionButton;
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JPanel calculablesPanel;
+    private javax.swing.JLabel classIDLabel;
+    private javax.swing.JSpinner classSpinner;
+    private javax.swing.JCheckBox classesCB;
     private javax.swing.JButton clearPointsButton;
     private javax.swing.JButton connectButton;
     private javax.swing.JComboBox connectPoint1CB;
@@ -1165,10 +1322,11 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JPanel mainPanel;
     private javax.swing.JTabbedPane mainTabbedPane;
     private javax.swing.JButton outputPointsButton;
     private javax.swing.JCheckBox paintCalculableValues2DCB;
@@ -1189,12 +1347,13 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
     private javax.swing.JButton wizardButton;
     // End of variables declaration//GEN-END:variables
 
+    boolean fromValueChanged = false;
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        if (e.getValueIsAdjusting() || tableSilent) {
+        if (e.getValueIsAdjusting() || tableSilent || fromValueChanged) {
             return;
         }
-
+        fromValueChanged = true;
         if (e.getSource() == pointsTable.getSelectionModel() && pointsTable.getRowSelectionAllowed()) {
             //removePointButton.setEnabled(!pointsTable.getSelectionModel().isSelectionEmpty());
             params.setSelectedPoints(pointsTable.getSelectedRows());
@@ -1209,6 +1368,7 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         }
 
         updateButtons();
+        fromValueChanged = false;
     }
 
     private void updateButtons() {
@@ -1220,9 +1380,8 @@ public class GeometryUI extends javax.swing.JPanel implements ListSelectionListe
         removeCalculableButton.setVisible(!simple);
         bottomPanel.setVisible(!simple);
         addCalculablePointButton.setVisible(!simple);
-        
+
     }
-    
 
     public JButton getOutputPointsButton() {
         return outputPointsButton;

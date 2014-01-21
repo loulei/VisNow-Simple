@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,7 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.basic.filters.RadialCoordinates;
 
@@ -61,7 +63,7 @@ public class RadialCoordinates extends RegularOutFieldVisualizationModule
    protected boolean fromUI = false;
    protected RegularField inField = null;
    protected RegularField lastInField = null;
-   protected boolean ignoreUI = false;
+   protected boolean fromIn = false;
    protected float[] coords = null;
    protected int[] dims = null;
    static Logger logger = Logger.getLogger(RadialCoordinates.class);
@@ -71,21 +73,20 @@ public class RadialCoordinates extends RegularOutFieldVisualizationModule
       parameters = params = new Params();
       params.addChangeListener(new ChangeListener()
       {
+         @Override
          public void stateChanged(ChangeEvent evt)
          {
-            if(ignoreUI)
-               return;
-            fromUI = true;
-            if (params.isAdjusting() && regularFieldGeometry != null)
+            if (inField != null && !fromIn)
             {
                updateCoords();
-               regularFieldGeometry.updateCoords();
+               if (regularFieldGeometry != null)
+                  regularFieldGeometry.updateCoords();
+               if (!params.isAdjusting())
+                  startAction();
             }
-            else
-               startAction();
          }
       });
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          public void run()
          {
@@ -96,7 +97,7 @@ public class RadialCoordinates extends RegularOutFieldVisualizationModule
       ui.addComputeGUI(computeUI);
       setPanel(ui);
    }
-   
+
    public static InputEgg[] inputEggs = null;
    public static OutputEgg[] outputEggs = null;
 
@@ -107,7 +108,7 @@ public class RadialCoordinates extends RegularOutFieldVisualizationModule
       if (ir >= dims.length)    ir = Params.CONSTANT;
       if (iphi >= dims.length)  iphi = Params.CONSTANT;
       if (ipsi >= dims.length)  ipsi = Params.CONSTANT;
-      float dr = 0;
+      float dr = 0, dz = 0;
       double dphi = 0, dpsi = 0;
       float r0 = params.getRMin();
       if (ir == Params.CONSTANT)
@@ -120,10 +121,14 @@ public class RadialCoordinates extends RegularOutFieldVisualizationModule
       else
          dphi = (params.getPhiMax() - phi0) / (dims[iphi] - 1);
       double psi0 = params.getPsiMin();
+      float z0 = params.getZMin();
       if (ipsi == Params.CONSTANT)
-         dpsi = 0;
+         dpsi = dz = 0;
       else
+      {
+         dz =  (params.getZMax() - z0) / (dims[ipsi] - 1);
          dpsi = (params.getPsiMax() - psi0) / (dims[ipsi] - 1);
+      }
       double phi = phi0;
       double psi = psi0;
       double cphi = Math.cos(phi);
@@ -131,6 +136,7 @@ public class RadialCoordinates extends RegularOutFieldVisualizationModule
       double cpsi = Math.cos(psi);
       double spsi = Math.sin(psi);
       float r = r0;
+      float z = 0;
       switch (dims.length)
       {
          case 3:
@@ -149,9 +155,14 @@ public class RadialCoordinates extends RegularOutFieldVisualizationModule
                }
                if (ipsi == 2)
                {
-                  psi = psi0 + i * dpsi;
-                  cpsi = Math.cos(psi);
-                  spsi = Math.sin(psi);
+                  if (sph)
+                  {
+                     psi = psi0 + i * dpsi;
+                     cpsi = Math.cos(psi);
+                     spsi = Math.sin(psi);
+                  }
+                  else
+                     z = z0 + i * dz;
                }
                for (int j = 0; j < dims[1]; j++)
                {
@@ -160,17 +171,19 @@ public class RadialCoordinates extends RegularOutFieldVisualizationModule
                   if (iphi == 1)
                   {
                      phi = phi0 + j * dphi;
-                     if (sph)
-                     {
-                        cphi = Math.cos(phi);
-                        sphi = Math.sin(phi);
-                     }
+                     cphi = Math.cos(phi);
+                     sphi = Math.sin(phi);
                   }
                   if (ipsi == 1)
                   {
-                     psi = psi0 + j * dpsi;
-                     cpsi = Math.cos(psi);
-                     spsi = Math.sin( psi);
+                     if (sph)
+                     {
+                        psi = psi0 + j * dpsi;
+                        cpsi = Math.cos(psi);
+                        spsi = Math.sin( psi);
+                     }
+                     else
+                        z = z0 + j * dz;
                   }
 
                   for (int k = 0; k < dims[0]; k++)
@@ -180,17 +193,19 @@ public class RadialCoordinates extends RegularOutFieldVisualizationModule
                      if (iphi == 0)
                      {
                         phi = phi0 + k * dphi;
-                        if (sph)
-                        {
-                           cphi = Math.cos(phi);
-                           sphi = Math.sin(phi);
-                        }
+                        cphi = Math.cos(phi);
+                        sphi = Math.sin(phi);
                      }
                      if (ipsi == 0)
                      {
-                        psi = psi0 + k * dpsi;
-                        cpsi = Math.cos(psi);
-                        spsi = Math.sin(psi);
+                        if (sph)
+                        {
+                           psi = psi0 + k * dpsi;
+                           cpsi = Math.cos(psi);
+                           spsi = Math.sin(psi);
+                        }
+                        else
+                           z = z0 + k * dz;
                      }
                      if (sph)
                      {
@@ -199,9 +214,9 @@ public class RadialCoordinates extends RegularOutFieldVisualizationModule
                         coords[l + 2] = (float) (r * sphi);
                      } else
                      {
-                        coords[l] = (float) (r * cpsi);
-                        coords[l + 1] = (float) (r * spsi);
-                        coords[l + 2] = (float) phi;
+                        coords[l] = (float) (r * cphi);
+                        coords[l + 1] = (float) (r * sphi);
+                        coords[l + 2] = z;
                      }
                      l += 3;
                   }
@@ -216,17 +231,19 @@ public class RadialCoordinates extends RegularOutFieldVisualizationModule
                if (iphi == 1)
                {
                   phi = phi0 + j * dphi;
-                  if (sph)
-                  {
-                     cphi = Math.cos(phi);
-                     sphi = Math.sin(phi);
-                  }
+                  cphi = Math.cos(phi);
+                  sphi = Math.sin(phi);
                }
                if (ipsi == 1)
                {
-                  psi = psi0 + j * dpsi;
-                  cpsi = Math.cos(psi);
-                  spsi = Math.sin(psi);
+                  if (sph)
+                  {
+                     psi = psi0 + j * dpsi;
+                     cpsi = Math.cos(psi);
+                     spsi = Math.sin( psi);
+                  }
+                  else
+                     z = z0 + j * dz;
                }
 
                for (int k = 0; k < dims[0]; k++)
@@ -236,17 +253,19 @@ public class RadialCoordinates extends RegularOutFieldVisualizationModule
                   if (iphi == 0)
                   {
                      phi = phi0 + k * dphi;
-                     if (sph)
-                     {
-                        cphi = Math.cos(phi);
-                        sphi = Math.sin(phi);
-                     }
+                     cphi = Math.cos(phi);
+                     sphi = Math.sin(phi);
                   }
                   if (ipsi == 0)
                   {
-                     psi = psi0 + k * dpsi;
-                     cpsi = Math.cos(psi);
-                     spsi = Math.sin(psi);
+                     if (sph)
+                     {
+                        psi = psi0 + k * dpsi;
+                        cpsi = Math.cos(psi);
+                        spsi = Math.sin(psi);
+                     }
+                     else
+                        z = z0 + k * dz;
                   }
                   if (sph)
                   {
@@ -255,33 +274,35 @@ public class RadialCoordinates extends RegularOutFieldVisualizationModule
                      coords[l + 2] = (float) (r * sphi);
                   } else
                   {
-                     coords[l] = (float) (r * cpsi);
-                     coords[l + 1] = (float) (r * spsi);
-                     coords[l + 2] = (float) phi;
+                     coords[l] = (float) (r * cphi);
+                     coords[l + 1] = (float) (r * sphi);
+                     coords[l + 2] = z;
                   }
                   l += 3;
                }
             }
             break;
          case 1:
-            for (int k = 0, l = 1; k < dims[0]; k++)
+            for (int k = 0, l = 0; k < dims[0]; k++)
             {
                if (ir == 0)
                   r = r0 + k * dr;
                if (iphi == 0)
                {
                   phi = phi0 + k * dphi;
-                  if (sph)
-                  {
-                     cphi = Math.cos(phi);
-                     sphi = Math.sin(phi);
-                  }
+                  cphi = Math.cos(phi);
+                  sphi = Math.sin(phi);
                }
                if (ipsi == 0)
                {
-                  psi = psi0 + k * dpsi;
-                  cpsi = Math.cos(psi);
-                  spsi = Math.sin(psi);
+                  if (sph)
+                  {
+                     psi = psi0 + k * dpsi;
+                     cpsi = Math.cos(psi);
+                     spsi = Math.sin(psi);
+                  }
+                  else
+                     z = z0 + k * dz;
                }
                if (sph)
                {
@@ -290,9 +311,9 @@ public class RadialCoordinates extends RegularOutFieldVisualizationModule
                   coords[l + 2] = (float) (r * sphi);
                } else
                {
-                  coords[l] = (float) (r * cpsi);
-                  coords[l + 1] = (float) (r * spsi);
-                  coords[l + 2] = (float) phi;
+                  coords[l] = (float) (r * cphi);
+                  coords[l + 1] = (float) (r * sphi);
+                  coords[l + 2] = z;
                }
                l += 3;
             }
@@ -300,7 +321,7 @@ public class RadialCoordinates extends RegularOutFieldVisualizationModule
       }
       outField.setNSpace(3);
       outField.setCoords(coords);
-      
+
    }
 
    public void updateField()
@@ -315,58 +336,28 @@ public class RadialCoordinates extends RegularOutFieldVisualizationModule
          outField.addData(inField.getData(i));
    }
 
-   private void updateUI()
-   {
-      ignoreUI = true;
-      logger.debug("updating UI");
-      computeUI.setInField(inField);
-      ignoreUI = false;
-   }
 
    public void onActive()
    {
-      if (!fromUI)
+      if (getInputFirstValue("inField") != null &&
+          ((VNRegularField) getInputFirstValue("inField")).getField() != null &&
+          ((VNRegularField) getInputFirstValue("inField")).getField() != inField)
       {
-         if (getInputFirstValue("inField") == null)
-            return;
+         params.setActive(false);
+         fromIn = true;
+         logger.debug("setting infield");
          inField = ((VNRegularField) getInputFirstValue("inField")).getField();
-         if (inField != lastInField)
-         {
-            logger.debug("setting infield");
-            switch (inField.getDims().length)
-            {
-            case 3:
-               params.setRCoord(0);
-               params.setPhiCoord(1);
-               params.setPsiCoord(2);
-               break;
-            case 2:
-               params.setRCoord(Params.CONSTANT);
-               params.setPhiCoord(0);
-               params.setPsiCoord(1);
-               break;
-            case 1:
-               params.setRCoord(Params.CONSTANT);
-               params.setPhiCoord(Params.CONSTANT);
-               params.setPsiCoord(0);
-               break;
-            }
-            updateUI();
-            lastInField = inField;
-            updateField();
-            updateCoords();
-            if (!prepareOutputGeometry())
-               return;
-            show();
-            setOutputValue("outField", new VNRegularField(outField));
+         computeUI.setInField(inField);
+         params.setActive(true);
+         updateField();
+         updateCoords();
+         if (!prepareOutputGeometry())
             return;
-         }
-      }
-      fromUI = false;
-      if (inField == null)
+         show();
+         setOutputValue("outField", new VNRegularField(outField));
+         fromIn = false;
          return;
-      updateCoords();
-      show();
+      }
       if (!params.isAdjusting())
          setOutputValue("outField", new VNRegularField(outField));
    }

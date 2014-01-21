@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,20 +35,27 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.gui;
 
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import static java.lang.Math.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import pl.edu.icm.visnow.gui.events.FloatValueModificationEvent;
+import pl.edu.icm.visnow.gui.events.FloatValueModificationListener;
+import pl.edu.icm.visnow.lib.basic.mappers.Isosurface.IsosurfaceGUI;
 import pl.edu.icm.visnow.lib.utils.Range;
 
 /**
@@ -63,7 +71,8 @@ public class FloatArrayEditor extends javax.swing.JPanel
    private boolean startSingle = true;
    private int decimals = 2;
    private boolean valuePreferred = true;
-
+   private float rmin = 0, rmax = 100;
+   private int maxRangeCount = 10;
    /**
     * Creates new form FloatArrayEditor
     */
@@ -73,126 +82,33 @@ public class FloatArrayEditor extends javax.swing.JPanel
       JLabel renderer = (JLabel) thresholdList.getCellRenderer();
       renderer.setFont(new Font(Font.DIALOG_INPUT, Font.PLAIN, 9));
       renderer.setHorizontalAlignment(SwingConstants.RIGHT);
+      intervalCombo1.addChangeListener(
+      new FloatValueModificationListener()
+      {
+         @Override
+         public void floatValueChanged(FloatValueModificationEvent e)
+         {
+            thresholds = Range.createLinearRange(rmin, rmax, e.getVal());
+            setThresholds();
+         }
+      });
+      simplePanel.setVisible(false);
    }
 
    public void setValuePreferred(boolean valuePreferred)
    {
       this.valuePreferred = valuePreferred;
    }
-   
+
    public void setPresentation(boolean simple)
    {
-      GridBagConstraints gridBagConstraints;
-      Dimension simpleDim = new Dimension(200, 75);
-      Dimension expertDim = new Dimension(200, 313);
-      if (simple)
-      {
-         if (valuePreferred)
-         {
-            remove(linRangePanel);
-            remove(logRangePanel);
-            remove(arrayPanel);
-            remove(fillPanel);
-            singleValPanel.remove(setThrButton);
-            singleValPanel.remove(addThrButton);
-         }
-         else
-         {
-            remove(linRangePanel);
-            remove(logRangePanel);
-            remove(arrayPanel);
-            remove(fillPanel);
-            remove(singleValPanel);
-            gridBagConstraints = new java.awt.GridBagConstraints();
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 0;
-            gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-            gridBagConstraints.weightx = 1;
-            add(nValsSlider, gridBagConstraints);
-         }
-         setMinimumSize(simpleDim);
-         setPreferredSize(simpleDim);
-         setMaximumSize(simpleDim);
-      }
-      else
-      {
-         setMinimumSize(expertDim);
-         setPreferredSize(expertDim);
-         setMaximumSize(expertDim);
-         
-         if (valuePreferred)
-         {
-            gridBagConstraints = new java.awt.GridBagConstraints();
-            gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-            gridBagConstraints.weightx = 0.1;
-            singleValPanel.add(setThrButton, gridBagConstraints);
-            gridBagConstraints = new java.awt.GridBagConstraints();
-            gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-            gridBagConstraints.weightx = 0.1;
-            singleValPanel.add(addThrButton, gridBagConstraints);
-            gridBagConstraints = new java.awt.GridBagConstraints();
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 1;
-            gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-            gridBagConstraints.weightx = 1.0;
-            add(linRangePanel, gridBagConstraints);
-            gridBagConstraints = new java.awt.GridBagConstraints();
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 2;
-            gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-            gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-            add(logRangePanel, gridBagConstraints);
-            gridBagConstraints = new java.awt.GridBagConstraints();
-            gridBagConstraints.gridx = 1;
-            gridBagConstraints.gridy = 1;
-            gridBagConstraints.gridheight = 3;
-            gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-            gridBagConstraints.weightx = 1.0;
-            add(arrayPanel, gridBagConstraints);
-            gridBagConstraints = new java.awt.GridBagConstraints();
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 3;
-            gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-            gridBagConstraints.weighty = 0.1;
-            add(fillPanel, gridBagConstraints);
-         }
-         else
-         {
-            remove(nValsSlider);
-            gridBagConstraints = new java.awt.GridBagConstraints();
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 0;
-            gridBagConstraints.gridwidth = 2;
-            gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-            gridBagConstraints.weightx = 1.0;
-            add(singleValPanel, gridBagConstraints);
-            gridBagConstraints = new java.awt.GridBagConstraints();
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 1;
-            gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-            gridBagConstraints.weightx = 1.0;
-            add(linRangePanel, gridBagConstraints);
-            gridBagConstraints = new java.awt.GridBagConstraints();
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 2;
-            gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-            gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-            add(logRangePanel, gridBagConstraints);
-            gridBagConstraints = new java.awt.GridBagConstraints();
-            gridBagConstraints.gridx = 1;
-            gridBagConstraints.gridy = 1;
-            gridBagConstraints.gridheight = 3;
-            gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-            gridBagConstraints.weightx = 1.0;
-            add(arrayPanel, gridBagConstraints);
-            gridBagConstraints = new java.awt.GridBagConstraints();
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 3;
-            gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-            gridBagConstraints.weighty = 0.1;
-            add(fillPanel, gridBagConstraints);
-         }
-      }
+       linRangePanel.setVisible(!simple);
+       logRangePanel.setVisible(!simple);
+       arrayPanel.setVisible(!simple);
+       simplePanel.setVisible(simple && !valuePreferred);
+       setThrButton.setVisible(!simple);
+       addThrButton.setVisible(!simple);
+       singleValPanel.setVisible(!simple || valuePreferred);
    }
 
    /**
@@ -200,422 +116,437 @@ public class FloatArrayEditor extends javax.swing.JPanel
     * modify this code. The content of this method is always regenerated by the Form Editor.
     */
    @SuppressWarnings("unchecked")
-   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-   private void initComponents()
-   {
-      java.awt.GridBagConstraints gridBagConstraints;
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-      buttonGroup1 = new javax.swing.ButtonGroup();
-      nValsSlider = new pl.edu.icm.visnow.gui.widgets.EnhancedIntSlider();
-      linRangePanel = new javax.swing.JPanel();
-      linCountSpinner = new javax.swing.JSpinner();
-      jPanel9 = new javax.swing.JPanel();
-      setLinRangeButton = new javax.swing.JButton();
-      addLinRangeButton = new javax.swing.JButton();
-      jLabel4 = new javax.swing.JLabel();
-      jPanel2 = new javax.swing.JPanel();
-      jLabel6 = new javax.swing.JLabel();
-      minLinField = new javax.swing.JTextField();
-      jLabel7 = new javax.swing.JLabel();
-      maxLinField = new javax.swing.JTextField();
-      logRangePanel = new javax.swing.JPanel();
-      jLabel2 = new javax.swing.JLabel();
-      minLogRangeField = new javax.swing.JTextField();
-      jLabel3 = new javax.swing.JLabel();
-      maxLogRangeField = new javax.swing.JTextField();
-      jPanel8 = new javax.swing.JPanel();
-      setLogRangeButton = new javax.swing.JButton();
-      addLogRangeButton = new javax.swing.JButton();
-      jLabel5 = new javax.swing.JLabel();
-      eqSpacedLogRangeToggle = new javax.swing.JCheckBox();
-      logValSlider = new javax.swing.JSlider();
-      singleValPanel = new javax.swing.JPanel();
-      thrSlider = new pl.edu.icm.visnow.gui.widgets.FloatSlider();
-      setThrButton = new javax.swing.JRadioButton();
-      addThrButton = new javax.swing.JRadioButton();
-      arrayPanel = new javax.swing.JPanel();
-      jScrollPane1 = new javax.swing.JScrollPane();
-      thresholdList = new javax.swing.JList();
-      clearThrButton = new javax.swing.JButton();
-      deleteSelButton = new javax.swing.JButton();
-      fillPanel = new javax.swing.JPanel();
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        simplePanel = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        intervalCombo1 = new pl.edu.icm.visnow.gui.widgets.IntervalCombo();
+        singleValPanel = new javax.swing.JPanel();
+        thrSlider = new pl.edu.icm.visnow.gui.widgets.FloatSlider();
+        setThrButton = new javax.swing.JRadioButton();
+        addThrButton = new javax.swing.JRadioButton();
+        linRangePanel = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        minLinField = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        maxLinField = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        intervalCombo = new pl.edu.icm.visnow.gui.widgets.IntervalCombo();
+        jPanel1 = new javax.swing.JPanel();
+        setLinRangeButton = new javax.swing.JButton();
+        addLinRangeButton = new javax.swing.JButton();
+        logRangePanel = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        minLogRangeField = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        maxLogRangeField = new javax.swing.JTextField();
+        eqSpacedLogRangeToggle = new javax.swing.JCheckBox();
+        logValSlider = new javax.swing.JSlider();
+        jPanel8 = new javax.swing.JPanel();
+        setLogRangeButton = new javax.swing.JButton();
+        addLogRangeButton = new javax.swing.JButton();
+        arrayPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        thresholdList = new javax.swing.JList();
+        deleteSelButton = new javax.swing.JButton();
+        clearThrButton = new javax.swing.JButton();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
-      nValsSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "number of isolines", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-      nValsSlider.setMax(200);
-      nValsSlider.setMin(20);
-      nValsSlider.setMinimumSize(new java.awt.Dimension(180, 63));
-      nValsSlider.setName("nValsSlider"); // NOI18N
-      nValsSlider.setPreferredSize(new java.awt.Dimension(220, 63));
-      nValsSlider.setVal(50);
-      nValsSlider.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            nValsSliderStateChanged(evt);
-         }
-      });
+        setRequestFocusEnabled(false);
+        setLayout(new java.awt.GridBagLayout());
 
-      setMaximumSize(new java.awt.Dimension(300, 320));
-      setMinimumSize(new java.awt.Dimension(180, 320));
-      setPreferredSize(new java.awt.Dimension(210, 320));
-      setRequestFocusEnabled(false);
-      setLayout(new java.awt.GridBagLayout());
+        simplePanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        simplePanel.setLayout(new java.awt.BorderLayout(5, 0));
 
-      linRangePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "linear range", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-      linRangePanel.setName("linRangePanel"); // NOI18N
-      linRangePanel.setPreferredSize(new java.awt.Dimension(156, 123));
-      linRangePanel.setLayout(new java.awt.GridBagLayout());
+        jLabel8.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel8.setText("interval");
+        jLabel8.setName("jLabel8"); // NOI18N
+        simplePanel.add(jLabel8, java.awt.BorderLayout.WEST);
 
-      linCountSpinner.setName("linCountSpinner"); // NOI18N
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 1;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.weightx = 0.1;
-      linRangePanel.add(linCountSpinner, gridBagConstraints);
+        intervalCombo1.setName("intervalCombo1"); // NOI18N
+        simplePanel.add(intervalCombo1, java.awt.BorderLayout.CENTER);
 
-      jPanel9.setName("jPanel9"); // NOI18N
-      jPanel9.setLayout(new java.awt.GridLayout(1, 0));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        add(simplePanel, gridBagConstraints);
 
-      setLinRangeButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      setLinRangeButton.setText("set");
-      setLinRangeButton.setMargin(new java.awt.Insets(0, 14, 0, 14));
-      setLinRangeButton.setName("setLinRangeButton"); // NOI18N
-      setLinRangeButton.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            setLinRangeButtonActionPerformed(evt);
-         }
-      });
-      jPanel9.add(setLinRangeButton);
+        singleValPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "single threshold", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        singleValPanel.setName("singleValPanel"); // NOI18N
+        singleValPanel.setLayout(new java.awt.GridBagLayout());
 
-      addLinRangeButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      addLinRangeButton.setText("add");
-      addLinRangeButton.setMargin(new java.awt.Insets(0, 14, 0, 14));
-      addLinRangeButton.setName("addLinRangeButton"); // NOI18N
-      addLinRangeButton.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            addLinRangeButtonActionPerformed(evt);
-         }
-      });
-      jPanel9.add(addLinRangeButton);
+        thrSlider.setName("thrSlider"); // NOI18N
+        thrSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                thrSliderStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        singleValPanel.add(thrSlider, gridBagConstraints);
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 2;
-      gridBagConstraints.gridwidth = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
-      linRangePanel.add(jPanel9, gridBagConstraints);
+        buttonGroup1.add(setThrButton);
+        setThrButton.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        setThrButton.setSelected(true);
+        setThrButton.setText("set");
+        setThrButton.setMargin(new java.awt.Insets(0, 2, 0, 2));
+        setThrButton.setName("setThrButton"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.1;
+        singleValPanel.add(setThrButton, gridBagConstraints);
 
-      jLabel4.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      jLabel4.setText("thresholds");
-      jLabel4.setName("jLabel4"); // NOI18N
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.weightx = 0.1;
-      linRangePanel.add(jLabel4, gridBagConstraints);
+        buttonGroup1.add(addThrButton);
+        addThrButton.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        addThrButton.setText("add");
+        addThrButton.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        addThrButton.setName("addThrButton"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.1;
+        singleValPanel.add(addThrButton, gridBagConstraints);
 
-      jPanel2.setName("jPanel2"); // NOI18N
-      jPanel2.setLayout(new java.awt.GridLayout(2, 2));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        add(singleValPanel, gridBagConstraints);
 
-      jLabel6.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      jLabel6.setText("min");
-      jLabel6.setName("jLabel6"); // NOI18N
-      jPanel2.add(jLabel6);
+        linRangePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "linear range", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        linRangePanel.setName("linRangePanel"); // NOI18N
+        linRangePanel.setLayout(new java.awt.GridBagLayout());
 
-      minLinField.setText("0");
-      minLinField.setName("minLinField"); // NOI18N
-      jPanel2.add(minLinField);
+        jLabel6.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel6.setText("min");
+        jLabel6.setName("jLabel6"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        linRangePanel.add(jLabel6, gridBagConstraints);
 
-      jLabel7.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      jLabel7.setText("max");
-      jLabel7.setName("jLabel7"); // NOI18N
-      jPanel2.add(jLabel7);
+        minLinField.setText("0");
+        minLinField.setMinimumSize(new java.awt.Dimension(60, 20));
+        minLinField.setName("minLinField"); // NOI18N
+        minLinField.setPreferredSize(new java.awt.Dimension(60, 20));
+        minLinField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minLinFieldActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        linRangePanel.add(minLinField, gridBagConstraints);
 
-      maxLinField.setText("100");
-      maxLinField.setName("maxLinField"); // NOI18N
-      jPanel2.add(maxLinField);
+        jLabel7.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel7.setText("max");
+        jLabel7.setName("jLabel7"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        linRangePanel.add(jLabel7, gridBagConstraints);
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridwidth = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.insets = new java.awt.Insets(0, 6, 3, 0);
-      linRangePanel.add(jPanel2, gridBagConstraints);
+        maxLinField.setText("100");
+        maxLinField.setMinimumSize(new java.awt.Dimension(60, 20));
+        maxLinField.setName("maxLinField"); // NOI18N
+        maxLinField.setPreferredSize(new java.awt.Dimension(60, 20));
+        maxLinField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maxLinFieldActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        linRangePanel.add(maxLinField, gridBagConstraints);
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.weightx = 1.0;
-      add(linRangePanel, gridBagConstraints);
+        jLabel4.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel4.setText("interval");
+        jLabel4.setName("jLabel4"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        linRangePanel.add(jLabel4, gridBagConstraints);
 
-      logRangePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "logarithmic range", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-      logRangePanel.setInheritsPopupMenu(true);
-      logRangePanel.setMinimumSize(new java.awt.Dimension(124, 128));
-      logRangePanel.setName("logRangePanel"); // NOI18N
-      logRangePanel.setPreferredSize(new java.awt.Dimension(155, 128));
-      logRangePanel.setLayout(new java.awt.GridBagLayout());
+        intervalCombo.setMinimumSize(new java.awt.Dimension(60, 20));
+        intervalCombo.setPreferredSize(new java.awt.Dimension(60, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        linRangePanel.add(intervalCombo, gridBagConstraints);
 
-      jLabel2.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      jLabel2.setText("min");
-      jLabel2.setName("jLabel2"); // NOI18N
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      logRangePanel.add(jLabel2, gridBagConstraints);
+        jPanel1.setName("jPanel1"); // NOI18N
+        jPanel1.setLayout(new java.awt.GridBagLayout());
 
-      minLogRangeField.setText(".01");
-      minLogRangeField.setName("minLogRangeField"); // NOI18N
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 1;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.insets = new java.awt.Insets(0, 8, 0, 0);
-      logRangePanel.add(minLogRangeField, gridBagConstraints);
+        setLinRangeButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        setLinRangeButton.setText("set");
+        setLinRangeButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        setLinRangeButton.setName("setLinRangeButton"); // NOI18N
+        setLinRangeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setLinRangeButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(setLinRangeButton, gridBagConstraints);
 
-      jLabel3.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      jLabel3.setText("max");
-      jLabel3.setName("jLabel3"); // NOI18N
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.weightx = 0.1;
-      logRangePanel.add(jLabel3, gridBagConstraints);
+        addLinRangeButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        addLinRangeButton.setText("add");
+        addLinRangeButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        addLinRangeButton.setName("addLinRangeButton"); // NOI18N
+        addLinRangeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addLinRangeButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(addLinRangeButton, gridBagConstraints);
 
-      maxLogRangeField.setText("100");
-      maxLogRangeField.setName("maxLogRangeField"); // NOI18N
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 1;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.weightx = 0.1;
-      gridBagConstraints.insets = new java.awt.Insets(0, 8, 0, 0);
-      logRangePanel.add(maxLogRangeField, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        linRangePanel.add(jPanel1, gridBagConstraints);
 
-      jPanel8.setName("jPanel8"); // NOI18N
-      jPanel8.setLayout(new java.awt.GridLayout(1, 0));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.6;
+        add(linRangePanel, gridBagConstraints);
 
-      setLogRangeButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      setLogRangeButton.setText("set");
-      setLogRangeButton.setMargin(new java.awt.Insets(0, 14, 0, 14));
-      setLogRangeButton.setName("setLogRangeButton"); // NOI18N
-      setLogRangeButton.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            setLogRangeButtonActionPerformed(evt);
-         }
-      });
-      jPanel8.add(setLogRangeButton);
+        logRangePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "logarithmic range", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        logRangePanel.setInheritsPopupMenu(true);
+        logRangePanel.setName("logRangePanel"); // NOI18N
+        logRangePanel.setLayout(new java.awt.GridBagLayout());
 
-      addLogRangeButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      addLogRangeButton.setText("add");
-      addLogRangeButton.setMargin(new java.awt.Insets(0, 14, 0, 14));
-      addLogRangeButton.setName("addLogRangeButton"); // NOI18N
-      addLogRangeButton.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            addLogRangeButtonActionPerformed(evt);
-         }
-      });
-      jPanel8.add(addLogRangeButton);
+        jLabel2.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel2.setText("min");
+        jLabel2.setName("jLabel2"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        logRangePanel.add(jLabel2, gridBagConstraints);
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 2;
-      gridBagConstraints.gridwidth = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      logRangePanel.add(jPanel8, gridBagConstraints);
+        minLogRangeField.setText(".01");
+        minLogRangeField.setMinimumSize(new java.awt.Dimension(60, 20));
+        minLogRangeField.setName("minLogRangeField"); // NOI18N
+        minLogRangeField.setPreferredSize(new java.awt.Dimension(60, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        logRangePanel.add(minLogRangeField, gridBagConstraints);
 
-      jLabel5.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-      jLabel5.setText("<html>values /<p>decade</html>");
-      jLabel5.setName("jLabel5"); // NOI18N
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 3;
-      gridBagConstraints.gridheight = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.insets = new java.awt.Insets(5, 0, 1, 0);
-      logRangePanel.add(jLabel5, gridBagConstraints);
+        jLabel3.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel3.setText("max");
+        jLabel3.setName("jLabel3"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        logRangePanel.add(jLabel3, gridBagConstraints);
 
-      eqSpacedLogRangeToggle.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-      eqSpacedLogRangeToggle.setText("<html>equally<p> spaced</html>");
-      eqSpacedLogRangeToggle.setName("eqSpacedLogRangeToggle"); // NOI18N
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 1;
-      gridBagConstraints.gridy = 4;
-      logRangePanel.add(eqSpacedLogRangeToggle, gridBagConstraints);
+        maxLogRangeField.setText("100");
+        maxLogRangeField.setMinimumSize(new java.awt.Dimension(60, 20));
+        maxLogRangeField.setName("maxLogRangeField"); // NOI18N
+        maxLogRangeField.setPreferredSize(new java.awt.Dimension(60, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        logRangePanel.add(maxLogRangeField, gridBagConstraints);
 
-      logValSlider.setMaximum(9);
-      logValSlider.setValue(2);
-      logValSlider.setName("logValSlider"); // NOI18N
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 5;
-      gridBagConstraints.gridwidth = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      logRangePanel.add(logValSlider, gridBagConstraints);
+        eqSpacedLogRangeToggle.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        eqSpacedLogRangeToggle.setText("equally spaced");
+        eqSpacedLogRangeToggle.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        eqSpacedLogRangeToggle.setName("eqSpacedLogRangeToggle"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        logRangePanel.add(eqSpacedLogRangeToggle, gridBagConstraints);
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-      add(logRangePanel, gridBagConstraints);
+        logValSlider.setMaximum(9);
+        logValSlider.setValue(2);
+        logValSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "values/decade", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        logValSlider.setName("logValSlider"); // NOI18N
+        logValSlider.setPreferredSize(new java.awt.Dimension(100, 36));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        logRangePanel.add(logValSlider, gridBagConstraints);
 
-      singleValPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "single threshold", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-      singleValPanel.setMaximumSize(new java.awt.Dimension(2147483647, 86));
-      singleValPanel.setMinimumSize(new java.awt.Dimension(193, 85));
-      singleValPanel.setName("singleValPanel"); // NOI18N
-      singleValPanel.setPreferredSize(new java.awt.Dimension(220, 85));
-      singleValPanel.setLayout(new java.awt.GridBagLayout());
+        jPanel8.setName("jPanel8"); // NOI18N
+        jPanel8.setLayout(new java.awt.GridBagLayout());
 
-      thrSlider.setName("thrSlider"); // NOI18N
-      thrSlider.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            thrSliderStateChanged(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.gridwidth = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.weightx = 1.0;
-      singleValPanel.add(thrSlider, gridBagConstraints);
+        setLogRangeButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        setLogRangeButton.setText("set");
+        setLogRangeButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        setLogRangeButton.setName("setLogRangeButton"); // NOI18N
+        setLogRangeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setLogRangeButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        jPanel8.add(setLogRangeButton, gridBagConstraints);
 
-      buttonGroup1.add(setThrButton);
-      setThrButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      setThrButton.setSelected(true);
-      setThrButton.setText("set");
-      setThrButton.setMargin(new java.awt.Insets(0, 2, 0, 2));
-      setThrButton.setName("setThrButton"); // NOI18N
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.weightx = 0.1;
-      singleValPanel.add(setThrButton, gridBagConstraints);
+        addLogRangeButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        addLogRangeButton.setText("add");
+        addLogRangeButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        addLogRangeButton.setName("addLogRangeButton"); // NOI18N
+        addLogRangeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addLogRangeButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        jPanel8.add(addLogRangeButton, gridBagConstraints);
 
-      buttonGroup1.add(addThrButton);
-      addThrButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      addThrButton.setText("add");
-      addThrButton.setMargin(new java.awt.Insets(2, 0, 2, 0));
-      addThrButton.setMaximumSize(new java.awt.Dimension(44, 19));
-      addThrButton.setMinimumSize(new java.awt.Dimension(44, 19));
-      addThrButton.setName("addThrButton"); // NOI18N
-      addThrButton.setPreferredSize(new java.awt.Dimension(44, 19));
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.weightx = 0.1;
-      singleValPanel.add(addThrButton, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        logRangePanel.add(jPanel8, gridBagConstraints);
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.gridwidth = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.weightx = 1.0;
-      add(singleValPanel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.6;
+        add(logRangePanel, gridBagConstraints);
 
-      arrayPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "values", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-      arrayPanel.setMinimumSize(new java.awt.Dimension(72, 186));
-      arrayPanel.setName("arrayPanel"); // NOI18N
-      arrayPanel.setPreferredSize(new java.awt.Dimension(82, 206));
-      arrayPanel.setLayout(new java.awt.GridBagLayout());
+        arrayPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "values", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        arrayPanel.setName("arrayPanel"); // NOI18N
+        arrayPanel.setLayout(new java.awt.GridBagLayout());
 
-      jScrollPane1.setMinimumSize(new java.awt.Dimension(70, 100));
-      jScrollPane1.setName("jScrollPane1"); // NOI18N
-      jScrollPane1.setPreferredSize(new java.awt.Dimension(70, 120));
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
 
-      thresholdList.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-      thresholdList.setModel(new javax.swing.AbstractListModel()
-      {
-         String[] strings = { "0", " " };
-         public int getSize() { return strings.length; }
-         public Object getElementAt(int i) { return strings[i]; }
-      });
-      thresholdList.setAlignmentX(0.0F);
-      thresholdList.setName("thresholdList"); // NOI18N
-      jScrollPane1.setViewportView(thresholdList);
+        thresholdList.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        thresholdList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "0", " " };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        thresholdList.setAlignmentX(0.0F);
+        thresholdList.setName("thresholdList"); // NOI18N
+        jScrollPane1.setViewportView(thresholdList);
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-      gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.weighty = 1.0;
-      arrayPanel.add(jScrollPane1, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        arrayPanel.add(jScrollPane1, gridBagConstraints);
 
-      clearThrButton.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      clearThrButton.setText("clear list");
-      clearThrButton.setMargin(new java.awt.Insets(4, 4, 4, 4));
-      clearThrButton.setName("clearThrButton"); // NOI18N
-      clearThrButton.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            clearThrButtonActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 3;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.ipady = -6;
-      gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-      arrayPanel.add(clearThrButton, gridBagConstraints);
+        deleteSelButton.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        deleteSelButton.setText("delete");
+        deleteSelButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        deleteSelButton.setName("deleteSelButton"); // NOI18N
+        deleteSelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteSelButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        arrayPanel.add(deleteSelButton, gridBagConstraints);
 
-      deleteSelButton.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-      deleteSelButton.setText("<html>delete<p>selected</html>");
-      deleteSelButton.setName("deleteSelButton"); // NOI18N
-      deleteSelButton.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            deleteSelButtonActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      arrayPanel.add(deleteSelButton, gridBagConstraints);
+        clearThrButton.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        clearThrButton.setText("clear list");
+        clearThrButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        clearThrButton.setName("clearThrButton"); // NOI18N
+        clearThrButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearThrButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        arrayPanel.add(clearThrButton, gridBagConstraints);
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 1;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.gridheight = 3;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.weightx = 1.0;
-      add(arrayPanel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.4;
+        add(arrayPanel, gridBagConstraints);
 
-      fillPanel.setMinimumSize(new java.awt.Dimension(10, 1));
-      fillPanel.setName("fillPanel"); // NOI18N
-      fillPanel.setPreferredSize(new java.awt.Dimension(100, 1000));
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 3;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.weighty = 0.1;
-      add(fillPanel, gridBagConstraints);
-   }// </editor-fold>//GEN-END:initComponents
+        filler1.setName("filler1"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.weighty = 1.0;
+        add(filler1, gridBagConstraints);
+    }// </editor-fold>//GEN-END:initComponents
 
 private void setLinRangeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setLinRangeButtonActionPerformed
    try
    {
-      thresholds = Range.createLinearRange((Integer) linCountSpinner.getValue(), 
-                                           Float.parseFloat(minLinField.getText()), 
-                                           Float.parseFloat(maxLinField.getText()));
+      thresholds = Range.createLinearRange(rmin, rmax, intervalCombo.getSelectedInterval());
       setThresholds();
    } catch (Exception e)
    {
@@ -625,9 +556,7 @@ private void setLinRangeButtonActionPerformed(java.awt.event.ActionEvent evt) {/
 private void addLinRangeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addLinRangeButtonActionPerformed
    try
    {
-      mergeRange(Range.createLinearRange((Integer) linCountSpinner.getValue(), 
-                                         Float.parseFloat(minLinField.getText()), 
-                                         Float.parseFloat(maxLinField.getText())));
+      mergeRange(Range.createLinearRange(rmin, rmax, intervalCombo.getSelectedInterval()));
       setThresholds();
    } catch (Exception e)
    {
@@ -636,15 +565,15 @@ private void addLinRangeButtonActionPerformed(java.awt.event.ActionEvent evt) {/
 
 private void clearThrButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearThrButtonActionPerformed
    float v = thrSlider.getVal();
-   thresholds = new float[] {vMin + (v - physMin) * (vMax - vMin) / (physMax - physMin)};
+   thresholds = new float[] {v};
    setThresholds();
 }//GEN-LAST:event_clearThrButtonActionPerformed
 
 private void setLogRangeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setLogRangeButtonActionPerformed
    try
    {
-       thresholds = Range.createLogRange(logValSlider.getValue(), 
-                                         Float.parseFloat(minLogRangeField.getText()), 
+       thresholds = Range.createLogRange(logValSlider.getValue(),
+                                         Float.parseFloat(minLogRangeField.getText()),
                                          Float.parseFloat(maxLogRangeField.getText()),
                                          eqSpacedLogRangeToggle.isSelected());
         setThresholds();
@@ -656,8 +585,8 @@ private void setLogRangeButtonActionPerformed(java.awt.event.ActionEvent evt) {/
 private void addLogRangeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addLogRangeButtonActionPerformed
    try
    {
-   mergeRange(Range.createLogRange(logValSlider.getValue(), 
-                                   Float.parseFloat(minLogRangeField.getText()), 
+   mergeRange(Range.createLogRange(logValSlider.getValue(),
+                                   Float.parseFloat(minLogRangeField.getText()),
                                    Float.parseFloat(maxLogRangeField.getText()),
                                    eqSpacedLogRangeToggle.isSelected()));
    setThresholds();
@@ -708,14 +637,27 @@ private void deleteSelButtonActionPerformed(java.awt.event.ActionEvent evt) {//G
    setThresholds();
 }//GEN-LAST:event_deleteSelButtonActionPerformed
 
-   private void nValsSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_nValsSliderStateChanged
-   {//GEN-HEADEREND:event_nValsSliderStateChanged
-      if (nValsSlider.isAdjusting())
-         return;
-      thresholds = Range.createLinearRange(nValsSlider.getVal(), vMin, vMax);
-      linCountSpinner.setValue(nValsSlider.getVal());
-      setThresholds();
-   }//GEN-LAST:event_nValsSliderStateChanged
+   private void minLinFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_minLinFieldActionPerformed
+   {//GEN-HEADEREND:event_minLinFieldActionPerformed
+      try
+      {
+         rmin = Float.parseFloat(minLinField.getText());
+         intervalCombo.setRangeLength(rmax - rmin, maxRangeCount);
+      } catch (Exception e)
+      {
+      }
+   }//GEN-LAST:event_minLinFieldActionPerformed
+
+   private void maxLinFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_maxLinFieldActionPerformed
+   {//GEN-HEADEREND:event_maxLinFieldActionPerformed
+      try
+      {
+         rmax = Float.parseFloat(maxLinField.getText());
+         intervalCombo.setRangeLength(rmax - rmin, maxRangeCount);
+      } catch (Exception e)
+      {
+      }
+   }//GEN-LAST:event_maxLinFieldActionPerformed
 
 
    private void mergeRange(float[] range)
@@ -755,17 +697,21 @@ private void deleteSelButtonActionPerformed(java.awt.event.ActionEvent evt) {//G
 
    public void setMinMax(float vMin, float vMax, float physMin, float physMax)
    {
-      if (vMax < vMin + .0000001f)
-         vMax = vMin + .0000001f;
+      if (vMax < vMin + .00001f)
+         vMax = vMin + .00001f;
+      if (physMax < physMin + .00001f)
+         physMax = physMin + .00001f;
       decimals = (int)(-Math.log10(vMax - vMin));
       if (decimals < 0) decimals = 0;
       decimals +=2;
       String format = "%."+decimals+"f";
       this.vMin = vMin;
       this.vMax = vMax;
-      this.physMin = physMin;
-      this.physMax = physMax;
+      rmin = this.physMin = physMin;
+      rmax = this.physMax = physMax;
       thrSlider.setMinMax(physMin, physMax);
+      intervalCombo.setRangeLength(rmax - rmin, maxRangeCount);
+      intervalCombo1.setRangeLength(rmax - rmin, maxRangeCount);
       minLinField.setText(String.format(format, physMin));
       maxLinField.setText(String.format(format, physMax));
       float lMax = max(abs(physMin), abs(physMax));
@@ -778,16 +724,13 @@ private void deleteSelButtonActionPerformed(java.awt.event.ActionEvent evt) {//G
          thresholds = new float[]
          {
             (physMin + physMax) / 2
-         };      
+         };
          thrSlider.setVal(thresholds[0]);
-      } else {
+      } else
+      {
          try
          {
-            int nDiv = (Integer) linCountSpinner.getValue();
-            float rangeMin = Float.parseFloat(minLinField.getText());
-            float rangeMax = Float.parseFloat(maxLinField.getText());
-            thresholds = Range.createLinearRange(nDiv, rangeMin, rangeMax);
-            
+            thresholds = Range.createLinearRange(rmin, rmax, intervalCombo.getSelectedInterval());
          } catch (Exception e)
          {
          }
@@ -797,11 +740,9 @@ private void deleteSelButtonActionPerformed(java.awt.event.ActionEvent evt) {//G
 
    public void setMaxRangeCount(int count)
    {
-      int step = count / 20;
-      if (step < 1) step = 1;
-      ((SpinnerNumberModel) (linCountSpinner.getModel())).setMaximum(count);
-      ((SpinnerNumberModel) (linCountSpinner.getModel())).setStepSize(step);
-      ((SpinnerNumberModel) (linCountSpinner.getModel())).setValue(count / 5);
+      maxRangeCount = 1 + (int)(Math.log10(Math.max(10., count)));
+      intervalCombo.setRangeLength(rmax - rmin, maxRangeCount);
+      intervalCombo1.setRangeLength(rmax - rmin, maxRangeCount);
    }
 
    public void setStartSingle(boolean startSingle)
@@ -844,7 +785,7 @@ private void deleteSelButtonActionPerformed(java.awt.event.ActionEvent evt) {//G
 
    /**
     * Notifies all registered listeners about the event.
-    * 
+    *
     * @param object Parameter #1 of the <CODE>ChangeEvent<CODE> constructor.
     */
    private void fireStateChanged()
@@ -854,40 +795,59 @@ private void deleteSelButtonActionPerformed(java.awt.event.ActionEvent evt) {//G
          listener.stateChanged(e);
    }
 
-   // Variables declaration - do not modify//GEN-BEGIN:variables
-   private javax.swing.JButton addLinRangeButton;
-   private javax.swing.JButton addLogRangeButton;
-   private javax.swing.JRadioButton addThrButton;
-   private javax.swing.JPanel arrayPanel;
-   private javax.swing.ButtonGroup buttonGroup1;
-   private javax.swing.JButton clearThrButton;
-   private javax.swing.JButton deleteSelButton;
-   private javax.swing.JCheckBox eqSpacedLogRangeToggle;
-   private javax.swing.JPanel fillPanel;
-   private javax.swing.JLabel jLabel2;
-   private javax.swing.JLabel jLabel3;
-   private javax.swing.JLabel jLabel4;
-   private javax.swing.JLabel jLabel5;
-   private javax.swing.JLabel jLabel6;
-   private javax.swing.JLabel jLabel7;
-   private javax.swing.JPanel jPanel2;
-   private javax.swing.JPanel jPanel8;
-   private javax.swing.JPanel jPanel9;
-   private javax.swing.JScrollPane jScrollPane1;
-   private javax.swing.JSpinner linCountSpinner;
-   private javax.swing.JPanel linRangePanel;
-   private javax.swing.JPanel logRangePanel;
-   private javax.swing.JSlider logValSlider;
-   private javax.swing.JTextField maxLinField;
-   private javax.swing.JTextField maxLogRangeField;
-   private javax.swing.JTextField minLinField;
-   private javax.swing.JTextField minLogRangeField;
-   private pl.edu.icm.visnow.gui.widgets.EnhancedIntSlider nValsSlider;
-   private javax.swing.JButton setLinRangeButton;
-   private javax.swing.JButton setLogRangeButton;
-   private javax.swing.JRadioButton setThrButton;
-   private javax.swing.JPanel singleValPanel;
-   private pl.edu.icm.visnow.gui.widgets.FloatSlider thrSlider;
-   private javax.swing.JList thresholdList;
-   // End of variables declaration//GEN-END:variables
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addLinRangeButton;
+    private javax.swing.JButton addLogRangeButton;
+    private javax.swing.JRadioButton addThrButton;
+    private javax.swing.JPanel arrayPanel;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JButton clearThrButton;
+    private javax.swing.JButton deleteSelButton;
+    private javax.swing.JCheckBox eqSpacedLogRangeToggle;
+    private javax.swing.Box.Filler filler1;
+    private pl.edu.icm.visnow.gui.widgets.IntervalCombo intervalCombo;
+    private pl.edu.icm.visnow.gui.widgets.IntervalCombo intervalCombo1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel linRangePanel;
+    private javax.swing.JPanel logRangePanel;
+    private javax.swing.JSlider logValSlider;
+    private javax.swing.JTextField maxLinField;
+    private javax.swing.JTextField maxLogRangeField;
+    private javax.swing.JTextField minLinField;
+    private javax.swing.JTextField minLogRangeField;
+    private javax.swing.JButton setLinRangeButton;
+    private javax.swing.JButton setLogRangeButton;
+    private javax.swing.JRadioButton setThrButton;
+    private javax.swing.JPanel simplePanel;
+    private javax.swing.JPanel singleValPanel;
+    private pl.edu.icm.visnow.gui.widgets.FloatSlider thrSlider;
+    private javax.swing.JList thresholdList;
+    // End of variables declaration//GEN-END:variables
+
+
+    public static void main(String[] args) {
+        JFrame f = new JFrame();
+        final FloatArrayEditor p = new FloatArrayEditor();
+        f.add(p);
+        f.pack();
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        f.addComponentListener(new ComponentAdapter() {
+            private boolean toggleSimple = true;
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                p.setPresentation(toggleSimple);
+                toggleSimple = !toggleSimple;
+            }
+        });
+        
+        f.setVisible(true);
+    }
 }

@@ -37,7 +37,7 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.datasets;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
 
 /**
@@ -50,7 +50,7 @@ public interface DataContainer
 
    void addData(DataArray dataArray);
    
-   Vector<DataArray> getData();
+   ArrayList<DataArray> getData();
 
    DataArray getData(int i);
    

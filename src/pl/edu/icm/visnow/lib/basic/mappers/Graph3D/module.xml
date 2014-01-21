@@ -7,10 +7,6 @@
                 <param name="NDIMS" value="2"/>
             </acceptor>
         </input>
-        <!--
-        <input name="inTexture" type="pl.edu.icm.visnow.lib.types.VNImageObject" modifiers="TRIGGERING">
-        </input>
-        -->
     </inputs>
     <outputs>
         <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
@@ -23,5 +19,5 @@
     </outputs>    
     <parameters>
     </parameters>
-    <description value="creates a grasph of a scalar component of a 2D regular field"/>
+    <description value="creates a graph of a scalar component of a 2D regular field"/>
 </module>

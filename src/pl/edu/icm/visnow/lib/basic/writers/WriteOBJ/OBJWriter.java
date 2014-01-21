@@ -290,9 +290,7 @@ public class OBJWriter extends FilterWriter {
       }
 
       String shapeName = null;
-      if (shape.getUserData() instanceof String) {
-        shapeName = (String)shape.getUserData();
-      }
+      shapeName = shape.getName();
       if (accept(shapeName)) {
         objectName += shapeName + "_";
       }

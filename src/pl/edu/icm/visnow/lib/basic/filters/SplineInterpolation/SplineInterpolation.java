@@ -1,5 +1,6 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+Copyright (C) 2006-2013 University of Warsaw, ICM
 
 This file is part of GNU Classpath.
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -33,7 +34,9 @@ module.  An independent module is a module which is not derived from
 or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+exception statement from your version.
+*/
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.basic.filters.SplineInterpolation;
 
@@ -75,7 +78,7 @@ public class SplineInterpolation extends ModuleCore
             startAction();
          }
       });
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          public void run()
          {
@@ -144,6 +147,7 @@ public class SplineInterpolation extends ModuleCore
          break;
       case Params.NEWDIMS:
          outDims = params.getNewDims();
+         int numDims = outDims.length;
          outField = new  RegularField(outDims);
          if (inField.getCoords() != null)
          {
@@ -162,15 +166,15 @@ public class SplineInterpolation extends ModuleCore
          else
          {
             float[][] inAffine = inField.getAffine();
-            float[][] outAffine = new float[4][3];
-            for (int i = 0; i < 3; i++)
+            float[][] outAffine = new float[numDims+1][outDims.length];
+            for (int i = 0; i < numDims; i++)
             {
                float d = (dims[i] - 1.f)/(outDims[i] - 1.f);
-               for (int j = 0; j < 3; j++)
+               for (int j = 0; j < numDims; j++)
                   outAffine[i][j] = inAffine[i][j] * d;
             }
-            for (int i = 0; i < 3; i++)
-               outAffine[3][i] = inAffine[3][i];
+            for (int i = 0; i < numDims; i++)
+               outAffine[numDims][i] = inAffine[numDims][i];
             outField.setAffine(outAffine);
          }      
          for (int n = 0; n < interpolatedComponents.length; n++)
@@ -188,13 +192,13 @@ public class SplineInterpolation extends ModuleCore
          float[][] outAffine = new float[4][3];
          float d = inAffine[0][0] / params.getCellSize();
          outDims[0] = (int) ((dims[0] - 1) * d) + 1;
-         outField = new RegularField(outDims);
+//         outField = new RegularField(outDims);
          for (int j = 0; j < 3; j++)
             outAffine[0][j] = inAffine[0][j] / d;
          if (dims.length > 1)
          d = inAffine[1][1] / params.getCellSize();
          outDims[1] = (int) ((dims[1] - 1) * d) + 1;
-         outField = new RegularField(outDims);
+//         outField = new RegularField(outDims);
          for (int j = 0; j < 3; j++)
             outAffine[1][j] = inAffine[1][j] / d;
          if (dims.length > 2)

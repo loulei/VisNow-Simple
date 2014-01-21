@@ -1,3 +1,4 @@
+///<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,12 +35,13 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.datasets;
 
+import java.util.ArrayList;
 import pl.edu.icm.visnow.datasets.cells.Cell;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
-import java.util.Vector;
 import pl.edu.icm.visnow.gui.events.FloatValueModificationEvent;
 import pl.edu.icm.visnow.gui.events.FloatValueModificationListener;
 import pl.edu.icm.visnow.lib.utils.RabinHashFunction;
@@ -54,6 +56,7 @@ public class CellSet implements DataContainer
    protected static final String DATA = "data";
 
    protected int nCells;
+   protected int nDataValues;
    protected long hash;
    protected long boundaryHash;
    protected CellSetSchema schema = new CellSetSchema();
@@ -62,8 +65,8 @@ public class CellSet implements DataContainer
    protected CellArray edgeArray;
    protected long[] cellArrayHashes = new long[Cell.TYPES];
    protected long[] boundaryCellArrayHashes = new long[Cell.TYPES2D];
-   protected Vector<DataArray> data = new Vector<DataArray>();
-   protected Vector<DataArray> nodeData = new Vector<DataArray>();
+   protected ArrayList<DataArray> data = new ArrayList<DataArray>();
+   protected ArrayList<DataArray> nodeData = new ArrayList<DataArray>();
    protected int[] pointIndices = null;
    protected int nActiveNodes = -1;
    protected boolean selected = false;
@@ -74,6 +77,7 @@ public class CellSet implements DataContainer
     *
     * @return the value of currentTime
     */
+   @Override
    public float getCurrentTime()
    {
       return currentTime;
@@ -135,27 +139,27 @@ public class CellSet implements DataContainer
 
    public String description()
    {
-      StringBuffer s = new StringBuffer();
-      s.append(schema.getName()+":   ");
+      StringBuilder s = new StringBuilder();
+      s.append(schema.getName()).append(":   ");
       for (int i = 0; i<Cell.TYPES; i++)
          if (cellArrays[i]!=null)
          {
             CellArray ca = cellArrays[i];
-            s.append(""+ca.getNCells()+" "+Cell.UCDnames[i]+"s ");
+            s.append("").append(ca.getNCells()).append(" ").append(Cell.UCDnames[i]).append("s ");
          }
       s.append("<br>boundary:   ");
       for (int i = 0; i<Cell.TYPES2D; i++)
          if (boundaryCellArrays[i]!=null)
          {
             CellArray ca = boundaryCellArrays[i];
-            s.append(""+ca.getNCells()+" "+Cell.UCDnames[i]+"s ");
+            s.append("").append(ca.getNCells()).append(" ").append(Cell.UCDnames[i]).append("s ");
          }
 
       s.append("<br>Cell data components:");
       if (data.size()>0) {
           s.append("<table>");
          for (DataArray dataArray : data)
-            s.append(dataArray.description()+"<br>");
+            s.append(dataArray.description()).append("<br>");
          s.append("</table>");
       } else {
             s.append("<br>");
@@ -183,6 +187,16 @@ public class CellSet implements DataContainer
    public int getNData()
    {
       return data.size();
+   }
+
+   public int getnDataValues()
+   {
+      return nDataValues;
+   }
+
+   public void setnDataValues(int nDataValues)
+   {
+      this.nDataValues = nDataValues;
    }
 
    /**
@@ -369,7 +383,7 @@ public class CellSet implements DataContainer
       return hash;
    }
 
-   public Vector<DataArray> getData()
+   public ArrayList<DataArray> getData()
    {
       return data;
    }
@@ -395,7 +409,7 @@ public class CellSet implements DataContainer
       schema.addDataArraySchema(dataArray.getSchema());
    }
 
-   public void setData(Vector<DataArray> data)
+   public void setData(ArrayList<DataArray> data)
    {
       this.data = data;
    }
@@ -870,7 +884,8 @@ public class CellSet implements DataContainer
       {
          boundaryCellArrays[Cell.TRIANGLE] = cellArrays[Cell.TRIANGLE];
          boundaryCellArrays[Cell.QUAD] = cellArrays[Cell.QUAD];
-         boundaryHash = RabinHashFunction.hash(boundaryCellArrayHashes);
+         updateActiveNodes();
+         boundaryHash = RabinHashFunction.hash(boundaryCellArrayHashes);         
          return;
       }
       if (cellArrays[Cell.TRIANGLE] != null)
@@ -880,7 +895,7 @@ public class CellSet implements DataContainer
       for (int i = 0; i<cellArrays.length; i++)
          if (cellArrays[i]!=null && Cell.dim[i]==3)
          {
-            Vector<CellArray> faces = cellArrays[i].generateFaces();
+            ArrayList<CellArray> faces = cellArrays[i].generateFaces();
             for (CellArray cellArray : faces)
                mergeCellArray(cellArray, boundaryCellArrays);
          }
@@ -959,8 +974,9 @@ public class CellSet implements DataContainer
       boolean[] quadOrientations  = null;
       int[] quadDataIndices  = null;
 
-      if (cellArrays[Cell.POINT] != null)
-         boundaryCellArrays[Cell.POINT] = cellArrays[Cell.POINT];
+      //commented out because it overwrites boundary points created from nodes
+      //if (cellArrays[Cell.POINT] != null)
+      //   boundaryCellArrays[Cell.POINT] = cellArrays[Cell.POINT];
       
       if (boundaryCellArrays[Cell.TRIANGLE] != null)
       {
@@ -1373,4 +1389,80 @@ public class CellSet implements DataContainer
           statusListener.floatValueChanged(e);
    }
    
+    public boolean hasCellsType(int type) {
+        if (type < 0 || type >= Cell.TYPES) {
+            return false;
+        }
+
+        if (getCellArray(type) != null) {
+            return true;
+        }
+
+        CellArray[] bndrs = getBoundaryCellArrays();
+        if (bndrs != null) {
+            for (int j = 0; j < bndrs.length; j++) {
+                if (bndrs[j] != null && bndrs[j].getType() == type) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public boolean hasCellsPoint() {
+        return hasCellsType(Cell.POINT);
+    }
+
+    public boolean hasCellsSegment() {
+        return hasCellsType(Cell.SEGMENT);
+    }
+
+    public boolean hasCellsTriangle() {
+        return hasCellsType(Cell.TRIANGLE);
+    }
+
+    public boolean hasCellsQuad() {
+        return hasCellsType(Cell.QUAD);
+    }
+
+    public boolean hasCellsTetra() {
+        return hasCellsType(Cell.TETRA);
+    }
+
+    public boolean hasCellsPyramid() {
+        return hasCellsType(Cell.PYRAMID);
+    }
+
+    public boolean hasCellsPrism() {
+        return hasCellsType(Cell.PRISM);
+    }
+
+    public boolean hasCellsHexahedron() {
+        return hasCellsType(Cell.HEXAHEDRON);
+    }
+
+    public boolean hasCells1D() {
+        return (hasCellsSegment());
+    }
+    
+    public boolean hasCells2D() {
+        return (hasCellsTriangle() || hasCellsQuad());
+    }
+
+    public boolean hasCells3D() {
+        return (hasCellsTetra() || hasCellsPyramid() || hasCellsPrism() || hasCellsHexahedron());
+    }
+    
+    public int getNCellDims() {
+        if(hasCells3D())
+            return 3;
+        else if(hasCells2D())
+            return 2;
+        else if(hasCells1D())
+            return 1;
+        else
+            return 0;
+    }
+
+       
 }

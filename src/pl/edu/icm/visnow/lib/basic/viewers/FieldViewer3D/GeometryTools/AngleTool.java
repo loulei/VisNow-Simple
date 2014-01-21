@@ -64,8 +64,6 @@ public class AngleTool extends GeometryTool {
     private Point currentPoint = null;
     private Metadata currentPointMetadata = null;
 
-    private boolean holding = false;
-
     private int clickCount = 0;
 
     private double angle = 0.0f;
@@ -163,15 +161,19 @@ public class AngleTool extends GeometryTool {
         }
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
     }
 
@@ -240,5 +242,4 @@ public class AngleTool extends GeometryTool {
     public int getMinimumNPoints() {
         return 3;
     }
-
 }

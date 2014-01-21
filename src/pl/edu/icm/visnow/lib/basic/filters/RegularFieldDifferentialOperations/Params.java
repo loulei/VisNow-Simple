@@ -67,7 +67,7 @@ public class Params extends Parameters
       new ParameterEgg<boolean[][]>("VectorOperations", ParameterType.dependent, null),
       new ParameterEgg<Boolean>("autorun", ParameterType.dependent, true),
       new ParameterEgg<Integer>("threads", ParameterType.dependent,
-      Runtime.getRuntime().availableProcessors())
+      pl.edu.icm.visnow.system.main.VisNow.availableProcessors())
    };
 
    public Params()

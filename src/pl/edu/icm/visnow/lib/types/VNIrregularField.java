@@ -53,14 +53,9 @@ public class VNIrregularField extends VNField
    private float[] maxVal = null;
    private float[] stdDevVal = null;
 
-   public VNIrregularField()
-   {
-   }
-
    public VNIrregularField(IrregularField inField)
    {
-      field = inField;
-      field.checkPureDim();
+       super(inField);
    }
 
    @Override
@@ -69,6 +64,7 @@ public class VNIrregularField extends VNField
       return (IrregularField) field;
    }
 
+   @Override
    public void createStats()
    {
       if (field == null || field.getNData() < 1 || computed)

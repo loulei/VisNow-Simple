@@ -1,39 +1,42 @@
+ //<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+ Copyright (C) 2006-2013 University of Warsaw, ICM
 
-This file is part of GNU Classpath.
+ This file is part of GNU Classpath.
 
-GNU Classpath is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+ GNU Classpath is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
 
-GNU Classpath is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
+ GNU Classpath is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+ You should have received a copy of the GNU General Public License
+ along with GNU Classpath; see the file COPYING.  If not, write to the
+ University of Warsaw, Interdisciplinary Centre for Mathematical and
+ Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
-Linking this library statically or dynamically with other modules is
-making a combined work based on this library.  Thus, the terms and
-conditions of the GNU General Public License cover the whole
-combination.
+ Linking this library statically or dynamically with other modules is
+ making a combined work based on this library.  Thus, the terms and
+ conditions of the GNU General Public License cover the whole
+ combination.
 
-As a special exception, the copyright holders of this library give you
-permission to link this library with independent modules to produce an
-executable, regardless of the license terms of these independent
-modules, and to copy and distribute the resulting executable under
-terms of your choice, provided that you also meet, for each linked
-independent module, the terms and conditions of the license of that
-module.  An independent module is a module which is not derived from
-or based on this library.  If you modify this library, you may extend
-this exception to your version of the library, but you are not
-obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+ As a special exception, the copyright holders of this library give you
+ permission to link this library with independent modules to produce an
+ executable, regardless of the license terms of these independent
+ modules, and to copy and distribute the resulting executable under
+ terms of your choice, provided that you also meet, for each linked
+ independent module, the terms and conditions of the license of that
+ module.  An independent module is a module which is not derived from
+ or based on this library.  If you modify this library, you may extend
+ this exception to your version of the library, but you are not
+ obligated to do so.  If you do not wish to do so, delete this
+ exception statement from your version.
+ */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.basic.mappers.Streamlines;
 
@@ -41,12 +44,12 @@ package pl.edu.icm.visnow.lib.basic.mappers.Streamlines;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import pl.edu.icm.visnow.datasets.*;
 import pl.edu.icm.visnow.datasets.cells.Cell;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
+import pl.edu.icm.visnow.engine.core.Input;
 import pl.edu.icm.visnow.engine.core.InputEgg;
 import pl.edu.icm.visnow.engine.core.OutputEgg;
 import pl.edu.icm.visnow.gui.events.FloatValueModificationEvent;
@@ -54,6 +57,7 @@ import pl.edu.icm.visnow.gui.events.FloatValueModificationListener;
 import pl.edu.icm.visnow.lib.templates.visualization.modules.IrregularOutField1DVisualizationModule;
 import pl.edu.icm.visnow.lib.types.VNField;
 import pl.edu.icm.visnow.lib.types.VNIrregularField;
+import pl.edu.icm.visnow.lib.types.VNRegularField;
 import pl.edu.icm.visnow.lib.utils.CropDown;
 import pl.edu.icm.visnow.lib.utils.SwingInstancer;
 import pl.edu.icm.visnow.lib.utils.geometry2D.GeometryObject2D;
@@ -105,7 +109,7 @@ public class Streamlines extends IrregularOutField1DVisualizationModule
             startAction();
          }
       });
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          public void run()
          {
@@ -192,15 +196,19 @@ public class Streamlines extends IrregularOutField1DVisualizationModule
          params.setDowsizeChanged(false); 
          if (pts instanceof IrregularField)
          {
+            IrregularField irregularDownsizedPoints;
             int dSize = params.getDownsize();
             if (dSize < 1)
                 dSize = 1;
             if (dSize == 1)
+            {
                downsizedPts = pts.clone();
+               for (CellSet cs : ((IrregularField)downsizedPts).getCellSets())
+                  cs.generateExternFaces();
+            }
             else
             {
-               downsizedPts = new IrregularField();
-               downsizedPts.setNNodes(pts.getNNodes() / dSize);
+               downsizedPts = new IrregularField(pts.getNNodes() / dSize);
                downsizedPts.setNSpace(pts.getNSpace());
                int[] nodes = new int[pts.getNNodes() / dSize];
                for (int i = 0; i < nodes.length; i++)
@@ -209,7 +217,6 @@ public class Streamlines extends IrregularOutField1DVisualizationModule
                CellSet ptSet = new CellSet();
                ptSet.setCellArray(nodesArray);
                ptSet.setBoundaryCellArray(nodesArray);
-               ptSet.setCellArray(nodesArray);
                ((IrregularField)downsizedPts).addCellSet(ptSet);
                downsizedPts.addData(DataArray.create(nodes, 1, "dummy"));
                float[] ptsCoords = pts.getCoords();
@@ -289,9 +296,8 @@ public class Streamlines extends IrregularOutField1DVisualizationModule
             inField = ((VNField)getInputFirstValue("inField")).getField();
             if (!inField.hasProperVectorComponent())
             {
-               JOptionPane.showMessageDialog(null,
-                           "Input field has no vector component",
-                           "warning",JOptionPane.WARNING_MESSAGE);
+                inField = null;
+                outField = null;
                return;
             }
          }
@@ -354,9 +360,11 @@ public class Streamlines extends IrregularOutField1DVisualizationModule
          return;
       if (!inField.hasProperVectorComponent())
       {
-         JOptionPane.showMessageDialog(null,
-                     "Input field has no vector component",
-                     "warning",JOptionPane.WARNING_MESSAGE);
+//         JOptionPane.showMessageDialog(null,
+//                     "Input field has no vector component",
+//                     "warning",JOptionPane.WARNING_MESSAGE);
+            inField = null;
+            outField = null;
          return;
       }
       if (streamlines != null)
@@ -500,7 +508,18 @@ public class Streamlines extends IrregularOutField1DVisualizationModule
          DataArray da = DataArray.create(validStepRange, 2, "valid time range");
          da.setUserData(new String[]{"valid time range"});
          flowField.addData(da);
-         setOutputValue("flowField", new VNField(flowField));
+         
+        if (flowField != null && flowField instanceof RegularField) {
+            setOutputValue("regularFlowField", new VNRegularField((RegularField)flowField));
+            setOutputValue("irregularFlowField", null);
+        } else if(flowField != null && flowField instanceof IrregularField) {
+            setOutputValue("regularFlowField", null);
+            setOutputValue("irregularFlowField", new VNIrregularField((IrregularField)flowField));
+        } else {
+            setOutputValue("regularFlowField", null);
+            setOutputValue("irregularFlowField", null);
+        }
+         
          prepareOutputGeometry();
          show();
       }

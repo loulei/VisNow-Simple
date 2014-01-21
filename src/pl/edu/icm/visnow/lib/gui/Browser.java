@@ -54,7 +54,7 @@ import javax.swing.event.HyperlinkListener;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public class Browser extends javax.swing.JFrame
 {

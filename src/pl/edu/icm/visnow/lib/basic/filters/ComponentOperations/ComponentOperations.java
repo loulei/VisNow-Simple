@@ -46,6 +46,7 @@ import pl.edu.icm.visnow.engine.core.InputEgg;
 import pl.edu.icm.visnow.engine.core.OutputEgg;
 import pl.edu.icm.visnow.lib.templates.visualization.modules.OutFieldVisualizationModule;
 import pl.edu.icm.visnow.lib.types.VNField;
+import pl.edu.icm.visnow.lib.types.VNIrregularField;
 import pl.edu.icm.visnow.lib.types.VNRegularField;
 import pl.edu.icm.visnow.lib.utils.SwingInstancer;
 
@@ -84,7 +85,7 @@ public class ComponentOperations extends OutFieldVisualizationModule
          }
       });
 
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
 
          public void run()
@@ -100,27 +101,6 @@ public class ComponentOperations extends OutFieldVisualizationModule
       
    }
    
-//   @Override
-//   public void onOutputAttach(LinkFace link)
-//   {
-//      System.out.println(link.getOutput().getName());
-//      if (outField != null && "outObj".equals(link.getOutput().getName()))
-//      {
-//         prepareOutputGeometry();
-//         show();
-//      }
-//   }
-//   
-//   @Override
-//   public void onInputDetach(LinkFace link)
-//   {
-//      System.out.println(link.getOutput().getName());
-//      if ("outObj".equals(link.getOutput().getName()))
-//         outObj.clearAllGeometry();
-//   }
-
-   
-
    @Override
    public void onActive()
    {
@@ -144,13 +124,18 @@ public class ComponentOperations extends OutFieldVisualizationModule
             return;
       }
       fromUI = false;      
-      if (inField instanceof RegularField)
+      if (inField instanceof RegularField) {
          outField = ((RegularField)inField).cloneBase();
-      else
+         outRegularField = (RegularField)outField;
+         outIrregularField = null;
+      } else {
          outField = ((IrregularField)inField).cloneBase();
-      if (params.isUseCoords() && inField instanceof RegularField)
+         outRegularField = null;
+         outIrregularField = (IrregularField)outField;
+      }
+      if (params.isUseCoords())
       {
-         coreCoords.setData((RegularField) inField, params, (RegularField)outField);
+         coreCoords.setData(inField, params, outField);
          coreCoords.update();
       } 
       coreComponent.setData(inField, outField, params);
@@ -162,9 +147,14 @@ public class ComponentOperations extends OutFieldVisualizationModule
       coreComplex.setData(inField, coreMask.getOutField(), params);
       coreComplex.update();
       
-      if (inField instanceof RegularField)
-         setOutputValue("regularOutField",new VNRegularField((RegularField)outField));
-      setOutputValue("outField", new VNField(outField));
+      if (inField instanceof RegularField) {
+         setOutputValue("regularOutField",new VNRegularField(outRegularField));
+         setOutputValue("irregularOutField", null);         
+      } else if (inField instanceof IrregularField) {
+         setOutputValue("regularOutField", null);
+         setOutputValue("irregularOutField", new VNIrregularField((outIrregularField)));         
+      } 
+      
       if (getOutputs().getOutput("outObj").isLinked())
       {
          prepareOutputGeometry();

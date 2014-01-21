@@ -1,40 +1,41 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+ Copyright (C) 2006-2013 University of Warsaw, ICM
 
-This file is part of GNU Classpath.
+ This file is part of GNU Classpath.
 
-GNU Classpath is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+ GNU Classpath is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
 
-GNU Classpath is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
+ GNU Classpath is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+ You should have received a copy of the GNU General Public License
+ along with GNU Classpath; see the file COPYING.  If not, write to the
+ University of Warsaw, Interdisciplinary Centre for Mathematical and
+ Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
-Linking this library statically or dynamically with other modules is
-making a combined work based on this library.  Thus, the terms and
-conditions of the GNU General Public License cover the whole
-combination.
+ Linking this library statically or dynamically with other modules is
+ making a combined work based on this library.  Thus, the terms and
+ conditions of the GNU General Public License cover the whole
+ combination.
 
-As a special exception, the copyright holders of this library give you
-permission to link this library with independent modules to produce an
-executable, regardless of the license terms of these independent
-modules, and to copy and distribute the resulting executable under
-terms of your choice, provided that you also meet, for each linked
-independent module, the terms and conditions of the license of that
-module.  An independent module is a module which is not derived from
-or based on this library.  If you modify this library, you may extend
-this exception to your version of the library, but you are not
-obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
-
+ As a special exception, the copyright holders of this library give you
+ permission to link this library with independent modules to produce an
+ executable, regardless of the license terms of these independent
+ modules, and to copy and distribute the resulting executable under
+ terms of your choice, provided that you also meet, for each linked
+ independent module, the terms and conditions of the license of that
+ module.  An independent module is a module which is not derived from
+ or based on this library.  If you modify this library, you may extend
+ this exception to your version of the library, but you are not
+ obligated to do so.  If you do not wish to do so, delete this
+ exception statement from your version. */
+//</editor-fold>
 package pl.edu.icm.visnow.lib.basic.mappers.Glyphs;
 
 import java.awt.Color;
@@ -65,8 +66,8 @@ import pl.edu.icm.visnow.lib.types.VNField;
 import pl.edu.icm.visnow.lib.utils.SwingInstancer;
 
 /**
- * @author Krzysztof S. Nowinski (know@icm.edu.pl) Warsaw University,
- * Interdisciplinary Centre for Mathematical and Computational Modelling
+ * @author Krzysztof S. Nowinski (know@icm.edu.pl) Warsaw University, Interdisciplinary Centre for
+ * Mathematical and Computational Modelling
  */
 public class Glyphs extends VisualizationModule
 {
@@ -105,6 +106,7 @@ public class Glyphs extends VisualizationModule
    protected IndexedGeometryStripArray surf = null;
    protected OpenShape3D surfaces = new OpenShape3D();
    protected OpenAppearance appearance = new OpenAppearance();
+   protected OpenTransparencyAttributes transparencyAttributes = new OpenTransparencyAttributes();
    protected OpenLineAttributes lattr = new OpenLineAttributes(1.f, OpenLineAttributes.PATTERN_SOLID, true);
    protected ColorMap colorMap = null;
    private boolean fromUI = false;
@@ -112,18 +114,37 @@ public class Glyphs extends VisualizationModule
    protected float lastTime = -Float.MAX_VALUE;
    protected int currentColorMode = -1;
    protected Texture2D texture = null;
+   protected static final boolean[][] resetGeometry =
+   {
+      {
+         false, true, true, true, true, true, true, true, true
+      },
+      {
+         true, false, false, false, false, false, false, false, true
+      },
+      {
+         true, false, false, false, false, false, false, false, true
+      },
+      {
+         true, false, false, false, false, false, false, false, true
+      },
+      {
+         true, false, false, false, false, false, false, false, true
+      },
+      {
+         true, false, false, false, false, false, false, false, true
+      },
+      {
+         true, false, false, false, false, false, false, false, true
+      },
+      {
+         true, false, false, false, false, false, false, false, true
+      },
+      {
+         true, true, true, true, true, true, true, true, false
+      }
+   };
 
-   protected static final boolean[][] resetGeometry = 
-   {{false,true, true, true, true, true, true, true, true},
-    {true, false,false,false,false,false,false,false,true},
-    {true, false,false,false,false,false,false,false,true},
-    {true, false,false,false,false,false,false,false,true},
-    {true, false,false,false,false,false,false,false,true},
-    {true, false,false,false,false,false,false,false,true},
-    {true, false,false,false,false,false,false,false,true},
-    {true, false,false,false,false,false,false,false,true},
-    {true, true, true, true, true, true, true, true, false}};
-   
    public Glyphs()
    {
       parameters = params = new GlyphsParams();
@@ -143,7 +164,9 @@ public class Glyphs extends VisualizationModule
 
          }
       });
-      
+
+      appearance.setTransparencyAttributes(transparencyAttributes);
+      appearance.getPolygonAttributes().setBackFaceNormalFlip(true);
       surfaces.setCapability(Shape3D.ENABLE_PICK_REPORTING);
       surfaces.setCapability(Shape3D.ALLOW_GEOMETRY_READ);
       surfaces.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
@@ -154,48 +177,49 @@ public class Glyphs extends VisualizationModule
       surfaces.setAppearance(appearance);
       outGroup.addChild(surfaces);
       outObj.addNode(outGroup);
-      
-       RenderEventListener renderListener = new RenderEventListener() {
-           @Override
-           public void renderExtentChanged(RenderEvent e) {
-               if (!fromIn && inField != null) {
-                   //updateColors();              
 
-                   int extent = e.getUpdateExtent();
-                   int cMode = dataMappingParams.getColorMode();
-                   if (renderingParams.getDisplayMode() == AbstractRenderingParams.BACKGROUND) {
-                       cMode = DataMappingParams.UNCOLORED;
-                   }
-                   if (currentColorMode < 0) {
-                       updateGeometry();
-                       currentColorMode = cMode;
-                       return;
-                   }
-                   if (extent == RenderEvent.COLORS || extent == RenderEvent.TRANSPARENCY || extent == RenderEvent.TEXTURE) {
-                       if (resetGeometry[currentColorMode][cMode]) {
-                           updateGeometry();
-                       } else if (cMode == DataMappingParams.UVTEXTURED) {
-                           updateTextureCoords();
-                       } else {
-                           updateColors();
-                       }
-                       currentColorMode = cMode;
-                       return;
-                   }
-                   if (extent == RenderEvent.COORDS) {
-                       updateCoords();
-                   }
-                   if (extent == RenderEvent.GEOMETRY) {
-                       updateGeometry();
-                   }
-                   currentColorMode = cMode;
+      RenderEventListener renderListener = new RenderEventListener()
+      {
+         @Override
+         public void renderExtentChanged(RenderEvent e)
+         {
+            if (!fromIn && inField != null)
+            {
+               //updateColors();
+
+               int extent = e.getUpdateExtent();
+               int cMode = dataMappingParams.getColorMode();
+               if (renderingParams.getDisplayMode() == AbstractRenderingParams.BACKGROUND)
+                  cMode = DataMappingParams.UNCOLORED;
+               if (currentColorMode < 0)
+               {
+                  updateGeometry();
+                  currentColorMode = cMode;
+                  return;
                }
-           }
-       };
+               if (extent == RenderEvent.COLORS || extent == RenderEvent.TRANSPARENCY || extent == RenderEvent.TEXTURE)
+               {
+                  if (resetGeometry[currentColorMode][cMode])
+                     updateGeometry();
+                  else if (cMode == DataMappingParams.UVTEXTURED)
+                     updateTextureCoords();
+                  else
+                     updateColors();
+                  currentColorMode = cMode;
+                  return;
+               }
+               if (extent == RenderEvent.COORDS)
+                  updateCoords();
+               if (extent == RenderEvent.GEOMETRY)
+                  updateGeometry();
+               currentColorMode = cMode;
+            }
+         }
+      };
       dataMappingParams.addRenderEventListener(renderListener);
       renderingParams.addRenderEventListener(renderListener);
-      
-      SwingInstancer.swingRun(new Runnable()
+
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          @Override
          public void run()
@@ -216,7 +240,6 @@ public class Glyphs extends VisualizationModule
       if (thresholdDataArray == null)
          return true;
       if (glyphDataArray != null && isThrRelative)
-      {
          if (glyphDataArray.getVeclen() == 1)
             d = glyphDataArray.getData(i);
          else
@@ -227,7 +250,6 @@ public class Glyphs extends VisualizationModule
                d += v[j] * v[j];
             d = Math.sqrt(d);
          }
-      }
       if (thresholdDataArray.getVeclen() == 1)
          t = thresholdDataArray.getData(i);
       else
@@ -255,14 +277,26 @@ public class Glyphs extends VisualizationModule
          baseW = null;
          return;
       }
-      float[] um = {0, 0, 0};
-      float[] vm = {0, 0, 0};
-      float[] wm = {0, 0, 0};
+      float[] um =
+      {
+         0, 0, 0
+      };
+      float[] vm =
+      {
+         0, 0, 0
+      };
+      float[] wm =
+      {
+         0, 0, 0
+      };
 
       baseU = new float[3 * nGlyphs];
       baseV = new float[3 * nGlyphs];
       baseW = new float[3 * nGlyphs];
-      float[] p = {0, 0, 0};
+      float[] p =
+      {
+         0, 0, 0
+      };
       int vlen = glyphDataArray.getVeclen();
       float[] gData = glyphDataArray.getFData();
       for (int i = 0; i < nGlyphs; i++)
@@ -373,83 +407,89 @@ public class Glyphs extends VisualizationModule
       updateBaseCoords();
    }
 
-    private void updateBaseCoords() {
-        for (int i = 0; i < baseCoords.length; i++)
-           baseCoords[i] = 0;
-        if (inField.getCoords() != null)
-        {
-           int nSp = inField.getNSpace();
-           float[] fldCoords = inField.getCoords();
-           for (int i = 0; i < nGlyphs; i++)
-              for (int j = 0; j < nSp; j++)
-                 baseCoords[3 * i + j] = fldCoords[nSp * glyphIn[i] + j];
-        } else if (inField instanceof RegularField)
-        {
-           float[][] inAff = ((RegularField) inField).getAffine();
-           int[] dims = ((RegularField) inField).getDims();
-           int i0 = 0, i1 = 0, i2 = 0;
-           for (int i = 0; i < nGlyphs; i++)
-           {
-              int j = glyphIn[i];
-              i0 = j % dims[0];
-              if (dims.length > 1)
-              {
-                 j /= dims[0];
-                 i1 = j % dims[1];
-                 if (dims.length > 2)
-                    i2 = j / dims[1];
-              }
-              for (int k = 0; k < 3; k++)
-                 baseCoords[3 * i + k] = inAff[3][k] + i0 * inAff[0][k] + i1 * inAff[1][k] + i2 * inAff[2][k];
-           }
-        }
-    }
-    
-   public void updateColors()
-   {      
-        colors = ColorMapper.mapColorsIndexed(inField, dataMappingParams, glyphIn, renderingParams.getDiffuseColor(), colors);          
-        surf.setColors(0, colors);
+   private void updateBaseCoords()
+   {
+      for (int i = 0; i < baseCoords.length; i++)
+         baseCoords[i] = 0;
+      if (inField.getCoords() != null)
+      {
+         int nSp = inField.getNSpace();
+         float[] fldCoords = inField.getCoords();
+         for (int i = 0; i < nGlyphs; i++)
+            for (int j = 0; j < nSp; j++)
+               baseCoords[3 * i + j] = fldCoords[nSp * glyphIn[i] + j];
+      } else if (inField instanceof RegularField)
+      {
+         float[][] inAff = ((RegularField) inField).getAffine();
+         int[] dims = ((RegularField) inField).getDims();
+         int i0 = 0, i1 = 0, i2 = 0;
+         for (int i = 0; i < nGlyphs; i++)
+         {
+            int j = glyphIn[i];
+            i0 = j % dims[0];
+            if (dims.length > 1)
+            {
+               j /= dims[0];
+               i1 = j % dims[1];
+               if (dims.length > 2)
+                  i2 = j / dims[1];
+            }
+            for (int k = 0; k < 3; k++)
+               baseCoords[3 * i + k] = inAff[3][k] + i0 * inAff[0][k] + i1 * inAff[1][k] + i2 * inAff[2][k];
+         }
+      }
    }
-   
+
+   public void updateColors()
+   {
+      colors = ColorMapper.mapColorsIndexed(inField, dataMappingParams, glyphIn, renderingParams.getDiffuseColor(), colors);       
+      if(dataMappingParams.getTransparencyParams().getComponent() < 0 && params.getTransparency() == 0) {
+         appearance.getTransparencyAttributes().setTransparencyMode(TransparencyAttributes.NONE);
+      } else {
+         appearance.getTransparencyAttributes().setTransparencyMode(TransparencyAttributes.NICEST);
+         colors = ColorMapper.mapTransparencyIndexed(inField, dataMappingParams.getTransparencyParams(), glyphIn, colors);       
+      }
+      surf.setColors(0, colors);
+   }
+
    public void updateGeometry()
    {
       //boolean detach = outGroup.postdetach();
       surfaces.removeAllGeometries();
       surf = null;
-      
+
       int cMode = dataMappingParams.getColorMode();
       if (renderingParams.getShadingMode() == RenderingParams.BACKGROUND)
-           cMode = DataMappingParams.UNCOLORED;      
-      generateGlyphs(cMode);           
-      surfaces.addGeometry(surf);      
-      //outObj.setExtents(inField.getExtents());
+         cMode = DataMappingParams.UNCOLORED;
+      generateGlyphs(cMode);
+      surfaces.addGeometry(surf);
+      outObj.setExtents(inField.getExtents());
 
       appearance.setUserData(this);
       appearance.getColoringAttributes().setColor(renderingParams.getDiffuseColor());
       if (appearance.getMaterial() != null)
       {
-        appearance.getMaterial().setAmbientColor(renderingParams.getAmbientColor());
-        appearance.getMaterial().setDiffuseColor(renderingParams.getDiffuseColor());
-        appearance.getMaterial().setSpecularColor(renderingParams.getSpecularColor());
+         appearance.getMaterial().setAmbientColor(renderingParams.getAmbientColor());
+         appearance.getMaterial().setDiffuseColor(renderingParams.getDiffuseColor());
+         appearance.getMaterial().setSpecularColor(renderingParams.getSpecularColor());
       }
-      
+
       Color bgrColor2 = renderingParams.getBackgroundColor();
       float[] bgrColorComps = new float[3];
       bgrColor2.getColorComponents(bgrColorComps);
       if (renderingParams.getShadingMode() == AbstractRenderingParams.BACKGROUND)
-      {
          appearance.getColoringAttributes().setColor(new Color3f(bgrColorComps[0], bgrColorComps[1], bgrColorComps[2]));
-      }
       else
          appearance.getColoringAttributes().setColor(renderingParams.getDiffuseColor());
 
       if (dataMappingParams.getColorMode() != DataMappingParams.UVTEXTURED)
-         updateColors();     
+         updateColors();
       else
          updateTextureCoords();
    }
-   
-   private void generateGlyphs(int cMode) {
+
+   private void generateGlyphs(int cMode)
+   {
       if (nGlyphs < 1)
          return;
       glyphDataArray = inField.getData(params.getComponent());
@@ -474,54 +514,57 @@ public class Glyphs extends VisualizationModule
       makeIndices();
       if (glyphDataArray != null && glyphDataArray.getVeclen() > 1)
          prepareLocalCoords();
-      if (verts == null || verts.length != 3 * nGlyphs * gt.getNverts()) {
+      if (verts == null || verts.length != 3 * nGlyphs * gt.getNverts())
          verts = new float[3 * nGlyphs * gt.getNverts()];
-      }
-      
+
       int verticesMode = GeometryArray.COORDINATES;
       isNormals = false;
-      if(gt.getType() != Glyph.LINE_STRIPS) {
-          verticesMode |= GeometryArray.NORMALS;
-          isNormals = true;
+      if (gt.getType() != Glyph.LINE_STRIPS)
+      {
+         verticesMode |= GeometryArray.NORMALS;
+         isNormals = true;
       }
-      if(cMode == DataMappingParams.UVTEXTURED)
-          verticesMode |= GeometryArray.TEXTURE_COORDINATE_2;
+      if (cMode == DataMappingParams.UVTEXTURED)
+         verticesMode |= GeometryArray.TEXTURE_COORDINATE_2;
       else
-          verticesMode |= GeometryArray.COLOR_4;
+         verticesMode |= GeometryArray.COLOR_4;
 
-       if (isNormals && (normals == null || normals.length != 3 * nGlyphs * gt.getNverts())) {
-           normals = new float[3 * nGlyphs * gt.getNverts()];
-       }
+      if (isNormals && (normals == null || normals.length != 3 * nGlyphs * gt.getNverts()))
+         normals = new float[3 * nGlyphs * gt.getNverts()];
 
-       switch (gt.getType()) {
-           case Glyph.TRIANGLE_STRIPS:
-               surf = new IndexedTriangleStripArray(nvert, verticesMode, nind, strips);
-               break;
-           case Glyph.TRIANGLE_FANS:
-               surf = new IndexedTriangleFanArray(nvert, verticesMode, nind, strips);
-               break;
-           case Glyph.LINE_STRIPS:
-               surf = new IndexedLineStripArray(nvert, verticesMode, nind, strips);
-               break;
-       }
-       surf.setCapability(IndexedLineStripArray.ALLOW_COUNT_READ);
-       surf.setCapability(IndexedLineStripArray.ALLOW_FORMAT_READ);
-       surf.setCapability(IndexedLineStripArray.ALLOW_COORDINATE_INDEX_READ);
-       surf.setCapability(IndexedLineStripArray.ALLOW_COORDINATE_READ);
-       surf.setCapability(IndexedLineStripArray.ALLOW_COORDINATE_WRITE);
-       if (cMode == DataMappingParams.UVTEXTURED) {
-           surf.setCapability(IndexedLineStripArray.ALLOW_TEXCOORD_READ);
-           surf.setCapability(IndexedLineStripArray.ALLOW_TEXCOORD_WRITE);
-           surf.setCapability(IndexedLineStripArray.ALLOW_TEXCOORD_INDEX_READ);
-           surf.setCapability(IndexedLineStripArray.ALLOW_TEXCOORD_INDEX_WRITE);
-       } else {
-           surf.setCapability(IndexedLineStripArray.ALLOW_COLOR_READ);
-           surf.setCapability(IndexedLineStripArray.ALLOW_COLOR_WRITE);
-           surf.setColorIndices(0, cIndex);
-       }
-       surf.setCoordinates(0, verts);
-       surf.setCoordinateIndices(0, pIndex);
-       if (isNormals)      {
+      switch (gt.getType())
+      {
+         case Glyph.TRIANGLE_STRIPS:
+            surf = new IndexedTriangleStripArray(nvert, verticesMode, nind, strips);
+            break;
+         case Glyph.TRIANGLE_FANS:
+            surf = new IndexedTriangleFanArray(nvert, verticesMode, nind, strips);
+            break;
+         case Glyph.LINE_STRIPS:
+            surf = new IndexedLineStripArray(nvert, verticesMode, nind, strips);
+            break;
+      }
+      surf.setCapability(IndexedLineStripArray.ALLOW_COUNT_READ);
+      surf.setCapability(IndexedLineStripArray.ALLOW_FORMAT_READ);
+      surf.setCapability(IndexedLineStripArray.ALLOW_COORDINATE_INDEX_READ);
+      surf.setCapability(IndexedLineStripArray.ALLOW_COORDINATE_READ);
+      surf.setCapability(IndexedLineStripArray.ALLOW_COORDINATE_WRITE);
+      if (cMode == DataMappingParams.UVTEXTURED)
+      {
+         surf.setCapability(IndexedLineStripArray.ALLOW_TEXCOORD_READ);
+         surf.setCapability(IndexedLineStripArray.ALLOW_TEXCOORD_WRITE);
+         surf.setCapability(IndexedLineStripArray.ALLOW_TEXCOORD_INDEX_READ);
+         surf.setCapability(IndexedLineStripArray.ALLOW_TEXCOORD_INDEX_WRITE);
+      } else
+      {
+         surf.setCapability(IndexedLineStripArray.ALLOW_COLOR_READ);
+         surf.setCapability(IndexedLineStripArray.ALLOW_COLOR_WRITE);
+         surf.setColorIndices(0, cIndex);
+      }
+      surf.setCoordinates(0, verts);
+      surf.setCoordinateIndices(0, pIndex);
+      if (isNormals)
+      {
          surf.setCapability(IndexedLineStripArray.ALLOW_NORMAL_READ);
          surf.setCapability(IndexedLineStripArray.ALLOW_NORMAL_WRITE);
          surf.setNormals(0, normals);
@@ -538,10 +581,10 @@ public class Glyphs extends VisualizationModule
       OpenColoringAttributes colAttrs = new OpenColoringAttributes();
       colAttrs.setColor(renderingParams.getDiffuseColor());
       appearance.setColoringAttributes(colAttrs);
-      appearance.setLineAttributes(lattr);      
+      appearance.setLineAttributes(lattr);
       updateCoords();
    }
-   
+
    private void updateTextureCoords()
    {
       boolean detach = outGroup.postdetach();
@@ -549,39 +592,41 @@ public class Glyphs extends VisualizationModule
       int nNodes = inField.getNNodes();
       float[] uvDataTmp = new float[2 * nNodes];
       ColorComponentParams[] tParams = new ColorComponentParams[]
-              {dataMappingParams.getUParams(), dataMappingParams.getVParams()};
-      for (int i = 0; i < tParams.length; i++)
       {
+         dataMappingParams.getUParams(), dataMappingParams.getVParams()
+      };
+      for (int i = 0; i < tParams.length; i++)
          if (tParams[i].getDataComponent() >= 0)
-            uvDataTmp = TextureMapper.map(inField.getData(tParams[i].getDataComponent()), tParams[i], uvDataTmp, i);      
-         else if (tParams[i].getDataComponent() == DataMappingParams.COORDX ||
-                  tParams[i].getDataComponent() == DataMappingParams.COORDY ||
-                  tParams[i].getDataComponent() == DataMappingParams.COORDZ)
+            uvDataTmp = TextureMapper.map(inField.getData(tParams[i].getDataComponent()), tParams[i], uvDataTmp, i);
+         else if (tParams[i].getDataComponent() == DataMappingParams.COORDX
+                 || tParams[i].getDataComponent() == DataMappingParams.COORDY
+                 || tParams[i].getDataComponent() == DataMappingParams.COORDZ)
             uvDataTmp = TextureMapper.map(inField.getCoords(), nSpace, inField.getExtents(), tParams[i], uvDataTmp, i, .01f);
-         else if ( tParams[i].getDataComponent() == DataMappingParams.NORMALX ||
-                   tParams[i].getDataComponent() == DataMappingParams.NORMALY ||
-                   tParams[i].getDataComponent() == DataMappingParams.NORMALZ)
+         else if (tParams[i].getDataComponent() == DataMappingParams.NORMALX
+                 || tParams[i].getDataComponent() == DataMappingParams.NORMALY
+                 || tParams[i].getDataComponent() == DataMappingParams.NORMALZ)
             uvData = TextureMapper.map(normals, nSpace, inField.getExtents(), tParams[i], uvDataTmp, i, .01f);
-      }
-      
-      uvData = new float[2*nvert];
-      float u,v;
+
+      uvData = new float[2 * nvert];
+      float u, v;
       int gVerts = gt.getNverts();
-      for (int i = 0; i < nGlyphs; i++) {
-          u = uvDataTmp[2*glyphIn[i]];
-          v = uvDataTmp[2*glyphIn[i]+1];
-          for (int j = 0; j < gVerts; j++) {
-              uvData[2*(gVerts*i + j)    ] = u;
-              uvData[2*(gVerts*i + j) + 1] = v;                            
-          }           
+      for (int i = 0; i < nGlyphs; i++)
+      {
+         u = uvDataTmp[2 * glyphIn[i]];
+         v = uvDataTmp[2 * glyphIn[i] + 1];
+         for (int j = 0; j < gVerts; j++)
+         {
+            uvData[2 * (gVerts * i + j)] = u;
+            uvData[2 * (gVerts * i + j) + 1] = v;
+         }
       }
-      
+
       surf.setTextureCoordinates(0, 0, uvData);
       surf.setTextureCoordinateIndices(0, 0, pIndex);
       appearance.setTexture(dataMappingParams.getTexture());
-      if(detach) outGroup.postattach();
+      if (detach)
+         outGroup.postattach();
    }
-   
 
    private void updateCoords()
    {
@@ -685,7 +730,8 @@ public class Glyphs extends VisualizationModule
 
    public void update()
    {
-      if (params.getChange() == GlyphsParams.GEOMETRY_CHANGED) {
+      if (params.getChange() == GlyphsParams.GEOMETRY_CHANGED)
+      {
          prepareGlyphCount();
          currentColorMode = dataMappingParams.getColorMode();
       }
@@ -693,12 +739,20 @@ public class Glyphs extends VisualizationModule
          return;
       if (params.getChange() >= GlyphsParams.GLYPHS_CHANGED)
          updateGeometry();
-      if (params.getChange() >= GlyphsParams.COORDS_CHANGED) {
+      if (params.getChange() >= GlyphsParams.COORDS_CHANGED)
          updateCoords();
-      }
-      if(dataMappingParams.getColorMode() != DataMappingParams.UVTEXTURED)
-        updateColors();
+      if (dataMappingParams.getColorMode() != DataMappingParams.UVTEXTURED)
+         updateColors();
+      appearance.getTransparencyAttributes().setTransparency(params.getTransparency());
+      if (params.getTransparency() == 0)
+         appearance.getTransparencyAttributes().setTransparencyMode(TransparencyAttributes.NONE);
+      else
+         appearance.getTransparencyAttributes().setTransparencyMode(TransparencyAttributes.NICEST);
       params.setChange(0);
+
+      outObj.clearAllGeometry();
+      outObj.addNode(outGroup);      
+      outObj.setExtents(inField.getExtents());
    }
 
    protected void makeIndices()
@@ -735,12 +789,11 @@ public class Glyphs extends VisualizationModule
             outObj.setExtents(inField.getExtents());
             lastTime = inField.getCurrentTime();
             dataMappingParams.setInField(inFld);
-            ui.setInData(inField, dataMappingParams);            
+            ui.setInData(inField, dataMappingParams);
             isValidity = inField.isMask();
             valid = inField.getMask();
             params.setChange(GlyphsParams.GEOMETRY_CHANGED);
-         }
-         else //if (lastTime != inFld.getCurrentTime())
+         } else //if (lastTime != inFld.getCurrentTime())
          {
             lastTime = inField.getCurrentTime();
             isValidity = inField.isMask();

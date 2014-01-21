@@ -39,7 +39,7 @@ package pl.edu.icm.visnow.gui.components;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
     
 /**
  * Text field which tests input format against NumberFormat.getInstance().parse() method.
@@ -48,7 +48,7 @@ import org.apache.log4j.Logger;
  * @author szpak
  */
 public class FloatFormattedTextField extends FormattedTextField {
-    private static final Logger LOGGER = Logger.getLogger(FloatFormattedTextField.class);
+//    private static final Logger LOGGER = Logger.getLogger(FloatFormattedTextField.class);
 
     private int maxPrecisionDigits = 0;
     private boolean preserveUserFormat = true;
@@ -112,11 +112,22 @@ public class FloatFormattedTextField extends FormattedTextField {
                 text = preformat(text);
                 f = NumberFormat.getInstance().parse(text.trim()).floatValue();
             } catch (ParseException e) {
-                LOGGER.error("ParseException - This exception should not occur here. We assume that text is already in correct format!");
+//                LOGGER.error("ParseException - This exception should not occur here. We assume that text is already in correct format!");
                 throw new NumberFormatException(e.getMessage());
             }
                 
             return String.format("%1$."+maxPrecisionDigits+"f",f);
         }
+    }
+    
+    public float getValue()
+    {
+       try
+       {
+          return Float.parseFloat(getText());
+       } catch (Exception e)
+       {
+          return 0.f;
+       }
     }
 }

@@ -8,7 +8,6 @@
                 <param name="NSPACE" value="3"/>
                 <param name="NDIMS" value="3"/>
                 <param name="AFFINE" value="true"/>
-                <param name="DATA_VECLEN" value="1"/>
             </acceptor>
         </input>
     </inputs>

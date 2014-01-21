@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,14 +35,14 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.datasets;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 import pl.edu.icm.visnow.datasets.cells.Tetra;
 import pl.edu.icm.visnow.datasets.cells.SimplexPosition;
 import pl.edu.icm.visnow.datasets.cells.Triangle;
@@ -55,6 +56,7 @@ import pl.edu.icm.visnow.lib.utils.numeric.NumericalMethods;
  */
 public abstract class Field  implements Serializable, DataContainer
 {
+    private static final Logger LOGGER = Logger.getLogger(Field.class);
    public static final int GENERAL        = 0;
    public static final int REGULAR        = 1;
    public static final int IRREGULAR      = 2;
@@ -73,7 +75,7 @@ public abstract class Field  implements Serializable, DataContainer
    protected TimeData<boolean[]> timeMask = null;
    protected String timeUnit              = "";
    protected int lastValidFrame           = 0;
-   protected int currentFrame             = 0;
+//   protected int currentFrame             = 0;
    protected float currentTime            = 0;
    protected float[] coords;
    protected boolean[] mask               = null;
@@ -87,15 +89,15 @@ public abstract class Field  implements Serializable, DataContainer
    protected GeoTreeNode geoTree          = null;
    protected float[][] cellExtents        = null;
    protected String[] axesNames           = null;
-   protected Vector<List> timesteps       = null;
-   protected Vector<DataArray> data       = new Vector<DataArray>();
+   protected ArrayList<List> timesteps       = null;
+   protected ArrayList<DataArray> data       = new ArrayList<DataArray>();
    /**
     * trueDim <gt> 0 means that the field has cells of dimensions trueDim and is contained in
-    * the x1,...,x trueDim subspace. 
-    * 
+    * the x1,...,x trueDim subspace.
+    *
     */
    protected int trueDim = -1;
-   
+
    /** Creates a new instance of Field */
    public Field()
    {
@@ -116,7 +118,7 @@ public abstract class Field  implements Serializable, DataContainer
          s.append("<p>"+getData(i).toString());
       return "<html>"+s+"</html>";
    }
-   
+
    abstract public String shortDescription();
 
    /**
@@ -130,13 +132,13 @@ public abstract class Field  implements Serializable, DataContainer
     * </pre>
     */
    abstract public int getType();
-   
+
    @Override
    abstract public Field clone();
    abstract public Field cloneDeep();
    abstract public boolean isStructureCompatibleWith(Field f);
    abstract public IrregularField triangulate();
-   
+
    public String getName()
    {
       return name;
@@ -155,7 +157,7 @@ public abstract class Field  implements Serializable, DataContainer
    {
       return schema;
    }
-   
+
    /**
     * Setter for property schema.
     * @param schema New value of property schema.
@@ -164,13 +166,13 @@ public abstract class Field  implements Serializable, DataContainer
    {
       this.schema = schema;
    }
-   
+
    @Override
    public DataSchema getDataSchema()
    {
       return schema;
    }
-   
+
    /**
     * Getter for property nNodes.
     * @return Value of property nNodes.
@@ -180,17 +182,7 @@ public abstract class Field  implements Serializable, DataContainer
    {
       return nNodes;
    }
-   
-   /**
-    * Setter for property nNodes.
-    * @param nNodes New value of property nNodes.
-    */
-   public void setNNodes(int nNodes)
-   {
-      this.nNodes = nNodes;
-      structTimestamp = System.currentTimeMillis();
-   }
-   
+
    /**
     * Getter for property nSpace.
     * @return Value of property nSpace.
@@ -199,7 +191,7 @@ public abstract class Field  implements Serializable, DataContainer
    {
       return nSpace;
    }
-   
+
    /**
     * Setter for property nSpace.
     * @param nSpace New value of property nSpace.
@@ -209,7 +201,7 @@ public abstract class Field  implements Serializable, DataContainer
       this.nSpace = nSpace;
       structTimestamp = System.currentTimeMillis();
    }
-   
+
    /**
     * Get the value of nFrames
     *
@@ -219,9 +211,9 @@ public abstract class Field  implements Serializable, DataContainer
    {
       int nFrames = -1;
       if (timeCoords != null)
-         nFrames = timeCoords.size(); 
+         nFrames = timeCoords.size();
       if (timeMask != null && timeMask.size() > nFrames)
-         nFrames = timeMask.size(); 
+         nFrames = timeMask.size();
       for (DataArray dataArray : data)
          if (dataArray.getNFrames() > nFrames)
             nFrames = dataArray.getNFrames();
@@ -234,33 +226,33 @@ public abstract class Field  implements Serializable, DataContainer
     *
     * @return the value of currentFrame
     */
-   public int getCurrentFrame()
-   {
-      return currentFrame;
-   }
+//   public int getCurrentFrame()
+//   {
+//       return
+//   }
 
    /**
     * Set the value of currentFrame
     *
     * @param currentFrame new value of currentFrame
     */
-   public void setCurrentFrame(int cFrame)
-   {
-      if (timeCoords != null)
-      {
-         timeCoords.setCurrentFrame(cFrame);
-         coords = timeCoords.getData();
-      }
-      if (timeMask != null)
-      {
-         timeMask.setCurrentFrame(cFrame);
-         mask = timeMask.getData();
-      }
-      for (DataArray dataArray : data) 
-      {
-         dataArray.setCurrentFrame(cFrame);
-      }
-   }
+//   public void setCurrentFrame(int cFrame)
+//   {
+//      if (timeCoords != null)
+//      {
+//         timeCoords.setCurrentFrame(cFrame);
+//         coords = timeCoords.getData();
+//      }
+//      if (timeMask != null)
+//      {
+//         timeMask.setCurrentFrame(cFrame);
+//         mask = timeMask.getData();
+//      }
+//      for (DataArray dataArray : data)
+//      {
+//         dataArray.setCurrentFrame(cFrame);
+//      }
+//   }
 
    public float[] getNewTimestepCoords()
    {
@@ -273,17 +265,17 @@ public abstract class Field  implements Serializable, DataContainer
       timeCoords.setData(crds, 0);
       return crds;
    }
-   
+
 
    public float[][] getExtents()
    {
       return extents;
    }
-   
+
    public float getDiameter()
    {
       double d = 0;
-      for (int i = 0; i < extents[0].length; i++) 
+      for (int i = 0; i < extents[0].length; i++)
          d += (extents[1][i] - extents[0][i]) * (extents[1][i] - extents[0][i]);
       return (float)Math.sqrt(d) / 2;
    }
@@ -292,7 +284,10 @@ public abstract class Field  implements Serializable, DataContainer
    {
       this.extents = extents;
    }
-   
+
+   /**
+    * Returns number of components
+    */
     @Override
    public int getNData()
    {
@@ -314,13 +309,87 @@ public abstract class Field  implements Serializable, DataContainer
    {
       this.physExts = physExts;
    }
-   
-    @Override
+
+   @Override
    public DataArray getData(int i)
    {
       if (i<0 || i>=data.size())
          return null;
       return data.get(i);
+   }
+
+   public int[] getScalarDataIndices()
+   {
+       int scalarComponentsCount = 0;
+       for (int i = 0; i < data.size(); i++) {
+           if(data.get(i).getVeclen() == 1) {
+               scalarComponentsCount++;
+           }           
+       }
+       if(scalarComponentsCount == 0)
+           return null;
+       
+       int[] out = new int[scalarComponentsCount];
+       for (int i = 0, c = 0; i < data.size(); i++) {
+           if(data.get(i).getVeclen() == 1) {
+               out[c] = i;
+               c++;
+           }           
+       }
+       return out;
+   }
+
+   public int getFirstScalarComponentIndex() {
+       for (int i = 0; i < data.size(); i++) {
+           if(data.get(i).getVeclen() == 1) {
+               return i;
+           }           
+       }
+       return -1;
+   }
+   
+   public DataArray getFirstScalarComponent() {
+       int n = getFirstScalarComponentIndex();
+       if(n == -1)
+           return null;
+       return data.get(n);
+   }
+
+   public int[] getVectorDataIndices()
+   {
+       int vectorComponentsCount = 0;
+       for (int i = 0; i < data.size(); i++) {
+           if(data.get(i).getVeclen() != 1) {
+               vectorComponentsCount++;
+           }           
+       }
+       if(vectorComponentsCount == 0)
+           return null;
+       
+       int[] out = new int[vectorComponentsCount];
+       for (int i = 0, c = 0; i < data.size(); i++) {
+           if(data.get(i).getVeclen() != 1) {
+               out[c] = i;
+               c++;
+           }           
+       }
+       return out;
+   }
+
+   public int getFirstVectorComponentIndex() {
+       for (int i = 0; i < data.size(); i++) {
+           if(data.get(i).getVeclen() != 1) {
+               return i;
+           }           
+       }
+       return -1;
+   }
+
+   public DataArray getFirstVectorComponent() {
+       int n = getFirstVectorComponentIndex();
+       if(n == -1)
+           return null;
+       return data.get(n);
    }
    
    public DataArray getData(String s)
@@ -330,14 +399,14 @@ public abstract class Field  implements Serializable, DataContainer
             return dataArray;
       return null;
    }
-  
 
-   public Vector<DataArray> getData()
+
+   public ArrayList<DataArray> getData()
    {
       return data;
    }
 
-   public void setData(Vector<DataArray> data)
+   public void setData(ArrayList<DataArray> data)
    {
       this.data = data;
    }
@@ -357,32 +426,44 @@ public abstract class Field  implements Serializable, DataContainer
       data.clear();
       schema.getSchemasFromData(data);
    }
-   
+
     @Override
    public void addData(DataArray dataArray)
    {
+      //check naming
+      if(this.getData(dataArray.getName()) != null) {
+          dataArray.setName(dataArray.getName()+"_");
+          this.addData(dataArray);
+          return;          
+      }       
       data.add(dataArray);
       schema.addDataArraySchema(dataArray.getSchema());
       dataTimestamp = System.currentTimeMillis();
    }
-   
+
    public boolean removeData(DataArray dataArray) {
        if(data.contains(dataArray)) {
            schema.removeDataArraySchema(dataArray.getSchema());
            return data.remove(dataArray);
        } else {
-           return false;           
+           return false;
        }
    }
 
    public boolean removeData(int i) {
        if(i < 0 || i >= data.size())
            return false;
-       
+
        schema.removeDataArraySchema(data.get(i).getSchema());
        data.remove(i);
        return true;
    }
+
+    public void removeAllData() {
+        while(this.getNData() > 0)
+            removeData(this.getNData()-1);
+    }
+
    
    public boolean removeData(String name) {
        DataArray da = this.getData(name);
@@ -391,7 +472,7 @@ public abstract class Field  implements Serializable, DataContainer
        else
            return false;
   }
-   
+
     @Override
    public void setData(int i, DataArray dataArray)
    {
@@ -403,7 +484,7 @@ public abstract class Field  implements Serializable, DataContainer
       schema.getSchemasFromData(data);
       dataTimestamp = System.currentTimeMillis();
    }
-   
+
     @Override
    public void setData(int i, byte[] data0)
    {
@@ -414,7 +495,7 @@ public abstract class Field  implements Serializable, DataContainer
       schema.getSchemasFromData(data);
       dataTimestamp = System.currentTimeMillis();
    }
-   
+
     @Override
    public void setData(int i, byte[] data0, String name)
    {
@@ -437,7 +518,7 @@ public abstract class Field  implements Serializable, DataContainer
       schema.getSchemasFromData(data);
       dataTimestamp = System.currentTimeMillis();
    }
-   
+
     @Override
    public void setData(int i, short[] data0, String name)
    {
@@ -449,7 +530,7 @@ public abstract class Field  implements Serializable, DataContainer
       schema.getSchemasFromData(data);
       dataTimestamp = System.currentTimeMillis();
    }
-   
+
     @Override
    public void setData(int i, int[] data0)
    {
@@ -460,7 +541,7 @@ public abstract class Field  implements Serializable, DataContainer
       schema.getSchemasFromData(data);
       dataTimestamp = System.currentTimeMillis();
    }
-   
+
     @Override
    public void setData(int i, int[] data0, String name)
    {
@@ -472,7 +553,7 @@ public abstract class Field  implements Serializable, DataContainer
       schema.getSchemasFromData(data);
       dataTimestamp = System.currentTimeMillis();
    }
-   
+
     @Override
    public void setData(int i, float[] data0)
    {
@@ -483,7 +564,7 @@ public abstract class Field  implements Serializable, DataContainer
       schema.getSchemasFromData(data);
       dataTimestamp = System.currentTimeMillis();
    }
-   
+
     @Override
    public void setData(int i, float[] data0, String name)
    {
@@ -495,7 +576,7 @@ public abstract class Field  implements Serializable, DataContainer
       schema.getSchemasFromData(data);
       dataTimestamp = System.currentTimeMillis();
    }
-   
+
     @Override
    public void setData(int i, double[] data0)
    {
@@ -506,7 +587,7 @@ public abstract class Field  implements Serializable, DataContainer
       schema.getSchemasFromData(data);
       dataTimestamp = System.currentTimeMillis();
    }
-   
+
     @Override
    public void setData(int i, double[] data0, String name)
    {
@@ -524,7 +605,7 @@ public abstract class Field  implements Serializable, DataContainer
       if (timeMask == null || timeMask.isEmpty())
          return null;
       if (mask == null)
-         mask = timeMask.get(currentFrame);
+         mask = timeMask.getData(currentTime);
       return mask;
    }
 
@@ -532,16 +613,16 @@ public abstract class Field  implements Serializable, DataContainer
    {
       if (timeMask == null || timeMask.isEmpty())
          return null;
-      
+
       int nFrames = this.getNFrames();
       boolean[] out = new boolean[nNodes*nFrames];
       for (int i = 0; i < nFrames; i++) {
            boolean[] tmp = getMask(i);
-           System.arraycopy(tmp, 0, out, i*nNodes, nNodes);                      
+           System.arraycopy(tmp, 0, out, i*nNodes, nNodes);
       }
       return out;
    }
-   
+
    public boolean[] getMask(int frame)
    {
       if (timeMask == null || timeMask.isEmpty())
@@ -551,7 +632,7 @@ public abstract class Field  implements Serializable, DataContainer
       if (frame >= timeMask.size())
          frame = timeMask.size() - 1;
       return timeMask.get(frame);
-   }   
+   }
 
    public boolean[] getMaskTimeSlice(int node)
    {
@@ -561,10 +642,10 @@ public abstract class Field  implements Serializable, DataContainer
        boolean[] out = new boolean[nFrames];
         for (int i = 0; i < out.length; i++) {
             out[i] = timeMask.get(i)[node];
-        }           
+        }
        return out;
    }
-   
+
    public void setMask(boolean[] mask)
    {
       if (mask == null) {
@@ -601,7 +682,7 @@ public abstract class Field  implements Serializable, DataContainer
        }
        return out;
    }
-   
+
    public void setMask(boolean[] mask, float[] time)
    {
       if (mask == null) {
@@ -627,7 +708,7 @@ public abstract class Field  implements Serializable, DataContainer
       }
       updateExtents();
    }
-   
+
    public boolean isMask()
    {
       return getMask() != null;
@@ -647,11 +728,11 @@ public abstract class Field  implements Serializable, DataContainer
    {
       return transparencyMask != null && transparencyMask.length == nNodes;
    }
-   
+
    abstract public float[] getNodeCoords(int k);
    abstract public float[] getInterpolatedData(float[] point, int index);
    abstract public DataArray interpolateDataToMesh(Field mesh, DataArray da);
-   
+
    public float[] getCoords(int frame)
    {
       if (timeCoords == null || timeCoords.isEmpty())
@@ -663,16 +744,12 @@ public abstract class Field  implements Serializable, DataContainer
       return timeCoords.get(frame);
    }
 
-   public double[] getCoordsDP(int frame)
+   public double[] getCoordsDP(float time)
    {
       if (timeCoords == null || timeCoords.isEmpty())
          return null;
-      if (frame < 0)
-         frame = 0;
-      if (frame >= timeCoords.size())
-         frame = timeCoords.size() - 1;
       double[] tc = new double[nNodes * nSpace];
-      float[] c = timeCoords.get(frame);
+      float[] c = timeCoords.getData(time);
       for (int i = 0; i < tc.length; i++)
          tc[i] = (double) c[i];
       return tc;
@@ -682,8 +759,10 @@ public abstract class Field  implements Serializable, DataContainer
    {
       if (timeCoords == null || timeCoords.isEmpty())
          return null;
-      if (coords == null)
-         coords = timeCoords.get(currentFrame);
+      if (coords == null) {
+         coords = timeCoords.getData(currentTime);
+         coordsHash = RabinHashFunction.hash(this.coords);
+      }
       return coords;
    }
 
@@ -691,35 +770,43 @@ public abstract class Field  implements Serializable, DataContainer
    {
       if (timeCoords == null || timeCoords.isEmpty())
          return null;
-      
+
       int nFrames = this.getNFrames();
       float[] out = new float[nSpace*nNodes*nFrames];
       for (int i = 0; i < nFrames; i++) {
            float[] tmp = getCoords(i);
-           System.arraycopy(tmp, 0, out, i*nNodes*nSpace, nNodes*nSpace);                      
+           System.arraycopy(tmp, 0, out, i*nNodes*nSpace, nNodes*nSpace);
       }
       return out;
    }
-   
-   
+
+
    public double[] getCoordsDP()
    {
       if (timeCoords == null || timeCoords.isEmpty())
          return null;
-      return getCoordsDP(currentFrame);
+      return getCoordsDP(currentTime);
    }
-   
+
    public TimeData<float[]> getAllCoords()
    {
       return timeCoords;
    }
-   
+
    public void setCoords(TimeData<float[]> timeCoords)
    {
       this.timeCoords = timeCoords;
+      if (timeCoords == null)
+      {
+         coords = null;
+         coordsHash = -1;
+         updateExtents();
+         return;
+      }
       updateExtents();
       timeCoords.setCurrentTime(currentTime);
       coords = timeCoords.getData();
+      coordsHash = RabinHashFunction.hash(this.coords);
    }
 
    public TimeData<boolean[]> getTimeMask()
@@ -731,25 +818,26 @@ public abstract class Field  implements Serializable, DataContainer
    {
       this.timeMask = timeMask;
    }
-   
+
    public void addCoords(float[] c)
    {
       if(timeCoords == null)
           timeCoords = new TimeData<float[]>();
       timeCoords.add(c);
       coords = c;
+      coordsHash = RabinHashFunction.hash(this.coords);
       updateExtents();
-   }   
+   }
 
    public void addCoords(float[] c, float time)
    {
       if(timeCoords == null)
           timeCoords = new TimeData<float[]>();
       timeCoords.setData(c, time);
-      currentTime = time;
-      updateExtents();      
-   }   
-   
+      //currentTime = time;
+      updateExtents();
+   }
+
    public void addMask(boolean[] m)
    {
       if(timeMask == null)
@@ -767,7 +855,7 @@ public abstract class Field  implements Serializable, DataContainer
       currentTime = time;
       updateExtents();
    }
-   
+
    public void forceCurrentTime(float currentTime)
    {
       this.currentTime = currentTime;
@@ -775,6 +863,7 @@ public abstract class Field  implements Serializable, DataContainer
       {
          timeCoords.setCurrentTime(currentTime);
          coords = timeCoords.getData();
+         coordsHash = RabinHashFunction.hash(this.coords);
       }
       if (timeMask != null && !timeMask.isEmpty())
       {
@@ -784,7 +873,7 @@ public abstract class Field  implements Serializable, DataContainer
       for (DataArray dataArray : data)
          dataArray.setCurrentTime(currentTime);
    }
-   
+
     public void setCurrentTime(float currentTime)
    {
       if (this.currentTime != currentTime)
@@ -795,6 +884,7 @@ public abstract class Field  implements Serializable, DataContainer
          {
             timeCoords.setCurrentTime(currentTime);
             coords = timeCoords.getData();
+            coordsHash = RabinHashFunction.hash(this.coords);
          }
          if (timeMask != null && !timeMask.isEmpty() && mask == null)
          {
@@ -805,23 +895,23 @@ public abstract class Field  implements Serializable, DataContainer
             dataArray.setCurrentTime(currentTime);
       }
    }
-   
+
   public float[] getTrajectory(int node)
    {
       if(timeCoords == null || timeCoords.isEmpty())
            return null;
-      int nFrames = timeCoords.size(); 
+      int nFrames = timeCoords.size();
       float[] tr = new float[nFrames * nSpace];
       for (int i = 0; i < nFrames; i++)
          for (int k = 0; k < nSpace; k++)
             tr[nSpace * i + k] = timeCoords.get(i)[nSpace * node + k];
       return tr;
    }
-   
+
    public void updateExtents() {
-       updateExtents(false);       
+       updateExtents(false);
    }
-  
+
    public void updateExtents(boolean ignoreMask)
    {
        extents = new float[2][nSpace];
@@ -832,19 +922,19 @@ public abstract class Field  implements Serializable, DataContainer
            extents[0][i] = Float.MAX_VALUE;
            extents[1][i] = -Float.MAX_VALUE;
        }
-       
+
       float f;
       int nValid = 0;
       for (int k = 0; k < timeCoords.size(); k++)
       {
          boolean[] currentMask = null;
          if (!ignoreMask && timeMask != null)
-            currentMask = timeMask.get(k);
+            currentMask = timeMask.getData(timeCoords.getTime(k));
          float[] c = timeCoords.get(k);
          for (int i = 0; i < nNodes; i++)
          {
             if (currentMask != null && !currentMask[i])
-               continue;  //skip invalid nodes   
+               continue;  //skip invalid nodes
             nValid += 1;
             for (int j = 0; j < nSpace; j++)
             {
@@ -861,22 +951,22 @@ public abstract class Field  implements Serializable, DataContainer
             extents[0][i] = -1;
          }
 
-              
+
        if( extents[0][0] == extents[1][0] &&
            extents[0][1] == extents[1][1] &&
-           extents[0][2] == extents[1][2] ) 
-       { // min == max           
+           extents[0][2] == extents[1][2] )
+       { // min == max
             extents[0][0] -= 0.5f;
             extents[1][0] += 0.5f;
             extents[0][1] -= 0.5f;
             extents[1][1] += 0.5f;
             extents[0][2] -= 0.5f;
             extents[1][2] += 0.5f;
-       }           
-       
+       }
+
        physExtsFromExts();
    }
-   
+
    public void clearCoords()
    {
       if (timeCoords != null)
@@ -885,7 +975,16 @@ public abstract class Field  implements Serializable, DataContainer
 
    public void setCoords(float[] coords)
    {
-	  assert( coords.length % (nSpace * nNodes) == 0 );
+       if(coords == null) 
+       {
+           this.timeCoords = null;
+           this.coords = null;
+           coordsHash = -1;
+           updateExtents();
+           return;
+       }
+       
+      assert( coords.length % (nSpace * nNodes) == 0 );
       int nFrames = coords.length / (nSpace * nNodes);
       if (coords.length != nFrames * nSpace * nNodes) return;
       if (this.timeCoords == null)
@@ -894,16 +993,17 @@ public abstract class Field  implements Serializable, DataContainer
          this.timeCoords.clear();
       this.coords = null;
       if(nFrames == 1) {
-          timeCoords.add(coords);          
+          timeCoords.add(coords);
       } else {
-        for (int i = 0; i < nFrames; i++) 
+        for (int i = 0; i < nFrames; i++)
         {
             float[] c = new float[nSpace*nNodes];
             System.arraycopy(coords, i * nSpace*nNodes, c, 0, nSpace*nNodes);
             timeCoords.setData(c, i);
         }
-      }    
+      }
       this.coords = timeCoords.getData(0);
+      coordsHash = RabinHashFunction.hash(this.coords);
       updateExtents();
    }
 
@@ -914,9 +1014,17 @@ public abstract class Field  implements Serializable, DataContainer
        }
        return out;
    }
-   
+
    public void setCoords(float[] coords, float[] time)
-   {      
+   {
+       if(coords == null) {
+           this.timeCoords = null;
+           this.coords = null;
+           coordsHash = -1;
+           updateExtents();
+           return;
+       }
+       
       int nFrames = coords.length / (nSpace * nNodes);
       if (coords.length != nFrames * nSpace * nNodes) return;
       if(time == null  || time.length != nFrames) return;
@@ -926,73 +1034,72 @@ public abstract class Field  implements Serializable, DataContainer
          this.timeCoords.clear();
       this.coords = null;
       if(nFrames == 1) {
-          timeCoords.add(coords);          
+          timeCoords.add(coords);
       } else {
-        for (int i = 0; i < nFrames; i++) 
+        for (int i = 0; i < nFrames; i++)
         {
             float[] c = new float[nSpace*nNodes];
             System.arraycopy(coords, i * nSpace*nNodes, c, 0, nSpace*nNodes);
             timeCoords.setData(c, time[i]);
         }
-      }      
+      }
+      this.coords = timeCoords.getData(currentTime);
+      coordsHash = RabinHashFunction.hash(this.coords);
       updateExtents();
    }
-   
-   
+
+
    public void setCoordsDP(double[] coords)
    {
-      int nFrames = getNFrames();
-      if (nNodes == 0) 
-      {
-         nNodes = coords.length/(nSpace*nFrames);
-      } 
-      else
-      {
-         int n = coords.length/(nSpace*nNodes);
-         if (coords.length != n*nSpace*nNodes)
-            return;
-         nFrames = n;
-      }
-      if (this.timeCoords == null)
-         this.timeCoords = new TimeData<float[]>();
-      else
-         this.timeCoords.clear();
-      this.coords = null;
-      for (int i = 0; i < nFrames; i++) 
-      {
-         float[] c = new float[nSpace*nNodes];
-         int k = i * nSpace * nNodes;
-         for (int j = 0; j < c.length; j++) 
-            c[j] = (float)coords[k + j];
-         this.timeCoords.add(c);
-      }      
-      updateExtents();
+       if (coords == null) {
+           this.timeCoords = null;
+           this.coords = null;
+           coordsHash = -1;
+           updateExtents();
+           return;
+       }
+
+       assert (coords.length % (nSpace * nNodes) == 0);
+       int nFrames = coords.length / (nSpace * nNodes);
+       if (coords.length != nFrames * nSpace * nNodes) {
+           return;
+       }
+       if (this.timeCoords == null) {
+           this.timeCoords = new TimeData<float[]>();
+       } else {
+           this.timeCoords.clear();
+       }
+       this.coords = null;
+       for (int i = 0; i < nFrames; i++) {
+           int k = i * nSpace * nNodes;
+           float[] c = new float[nSpace * nNodes];
+           for (int j = 0; j < c.length; j++) {
+               c[j] = (float) coords[k + j];
+           }
+           timeCoords.setData(c, i);
+       }
+       this.coords = timeCoords.getData(currentTime);
+       coordsHash = RabinHashFunction.hash(this.coords);
+       updateExtents();
    }
-//   
+
    abstract public float[] getNormals();
-//   {
-//      return null;
-//   }
-//
    abstract public void setNormals(float[] normals);
-//   {
-//      this.normals = normals;
-//   }
-//   
+   
    public boolean isDataCompatibleWith(Field f)
    {
       if (f == null)
          return false;
       return schema.isDataCompatibleWith(f.getSchema());
    }
-   
+
    public boolean isFullyCompatibleWith(Field f)
    {
       if (f == null)
          return false;
       return schema.isDataCompatibleWith(f.getSchema(), true, true);
    }
-   
+
    public boolean isDataCompatibleWith(FieldSchema s)
    {
       return schema.isDataCompatibleWith(s);
@@ -1097,12 +1204,12 @@ public abstract class Field  implements Serializable, DataContainer
         }
         this.axesNames = axesNames;
     }
- 
+
    protected float[] bCoords(Tetra tet, float[] p)
    {
       if (tet == null || timeCoords == null || timeCoords.isEmpty())
          return null;
-      float[] c = timeCoords.get(currentFrame);
+      float[] c = timeCoords.getData(currentTime);
       int[] verts = tet.getVertices();
       int l = 3 * verts[0];
       float[][] A  = new float[3][3];
@@ -1117,14 +1224,14 @@ public abstract class Field  implements Serializable, DataContainer
             A[i][j] = c[3 * verts[j + 1] + i] - v0[i];
       }
       float[] x = NumericalMethods.lsolve(A, b);
-      if (x == null || x[0] < 0 || x[1] < 0 || x[2] < 0 || x[0] + x[1] + x[2] > 1) 
+      if (x == null || x[0] < 0 || x[1] < 0 || x[2] < 0 || x[0] + x[1] + x[2] > 1)
          return null;
       float[] res = new float[4];
       System.arraycopy(x, 0, res, 1, 3);
       res[0] = 1 - (x[0] + x[1] + x[2]);
       return res;
-   } 
-   
+   }
+
    protected float[] bCoords(Triangle triangle, float[] p)
    {
       if (triangle == null || timeCoords == null || timeCoords.isEmpty())
@@ -1144,14 +1251,14 @@ public abstract class Field  implements Serializable, DataContainer
             A[i][j] = c[nSpace * verts[j + 1] + i] - v0[i];
       }
       float[] x = NumericalMethods.lsolve(A, b);
-      if (x == null || x[0] < 0 || x[1] < 0 || x[0] + x[1] > 1) 
+      if (x == null || x[0] < 0 || x[1] < 0 || x[0] + x[1] > 1)
          return null;
       float[] res = new float[3];
       System.arraycopy(x, 0, res, 1, 2);
       res[0] = 1 - (x[0] + x[1]);
       return res;
    }
-   
+
    public int getLastValidFrame()
    {
       return lastValidFrame;
@@ -1161,32 +1268,33 @@ public abstract class Field  implements Serializable, DataContainer
    {
       this.lastValidFrame = lastValidFrame;
    }
-   
+
    public float[]  produceCoords(float time)
    {
       return timeCoords.produceData(time, DataArray.FIELD_DATA_FLOAT, nSpace * nNodes);
    }
-   
+
    public float[] getCoords(float time)
    {
       return timeCoords.getData(time);
    }
-   
+
    public boolean[]  produceMask(float time)
    {
       return timeMask.produceData(time, DataArray.FIELD_DATA_BOOLEAN, nNodes);
    }
-   
+
    public boolean[] getMask(float time)
    {
       return timeMask.getData(time);
    }
 
+   @Override
    public float getCurrentTime()
    {
       return currentTime;
    }
-   
+
    public float getStartTime()
    {
       float t = Float.MAX_VALUE;
@@ -1199,7 +1307,7 @@ public abstract class Field  implements Serializable, DataContainer
             t = dataArray.getStartTime();
       return t;
    }
-   
+
    public float getEndTime()
    {
       float t = -Float.MAX_VALUE;
@@ -1212,19 +1320,19 @@ public abstract class Field  implements Serializable, DataContainer
             t = dataArray.getEndTime();
       return t;
    }
-   
+
    public boolean isCoordTimestep(float t)
    {
       return timeCoords != null && !timeCoords.isEmpty() && timeCoords.isTimestep(t);
    }
-   
+
    public boolean isMaskTimestep(float t)
    {
       return timeMask != null && !timeMask.isEmpty() && timeMask.isTimestep(t);
    }
-   
+
    public float[] getAllTimesteps()
-   {      
+   {
       Set<Float> tSteps = new HashSet<Float>();
       if (timeCoords != null && !timeCoords.isEmpty())
          for (Float t : timeCoords.getTimeSeries())
@@ -1261,7 +1369,7 @@ public abstract class Field  implements Serializable, DataContainer
       }
       return false;
    }
-   
+
    public String getTimeUnit()
    {
       return timeUnit;
@@ -1271,40 +1379,42 @@ public abstract class Field  implements Serializable, DataContainer
    {
       this.timeUnit = timeUnit;
    }
-   
+
    public TimeData<float[]> getTimeCoords()
    {
       return timeCoords;
    }
-      
+
    public boolean isCoords()
    {
       return timeCoords != null && !timeCoords.isEmpty();
    }
-      
+
    public void setCoords(float[] c, float t)
    {
       if(timeCoords == null)
           this.timeCoords = new TimeData<float[]>();
       timeCoords.setData(c, t);
+      if(t == currentTime)
+          coordsHash = RabinHashFunction.hash(c);
       updateExtents();
    }
-   
+
    public void setMask(boolean[] m, float t)
    {
        if(timeMask == null)
            this.timeMask = new TimeData<boolean[]>();
-       
+
       timeMask.setData(m, t);
       updateExtents();
    }
-   
+
    public void updateTimesteps()
    {
-      
+
    }
-   
-   public Vector getTimesteps()
+
+   public ArrayList getTimesteps()
    {
       return timesteps;
    }
@@ -1313,7 +1423,7 @@ public abstract class Field  implements Serializable, DataContainer
    {
       return trueDim;
    }
-   
+
    public boolean hasSimpleNumericComponent()
    {
       for (DataArray dataArray : data)
@@ -1321,7 +1431,7 @@ public abstract class Field  implements Serializable, DataContainer
             return true;
       return false;
    }
-   
+
    public boolean hasProperVectorComponent()
    {
       checkPureDim();
@@ -1330,10 +1440,10 @@ public abstract class Field  implements Serializable, DataContainer
             return true;
       return false;
    }
-   
+
    abstract public void checkPureDim();
-           
-   
+
+
    protected void pCreateGeoTree(GeoTreeNode root, int maxThr)
    {
       int inProcess = 0;
@@ -1346,7 +1456,7 @@ public abstract class Field  implements Serializable, DataContainer
          inProcess = 0;
          for (int i = 0; i < nodesInProcess.length; i++)
          {
-            if (threadPool[i] == null) 
+            if (threadPool[i] == null)
                continue;
             else if (threadPool[i].isAlive())
                inProcess += 1;
@@ -1379,9 +1489,13 @@ public abstract class Field  implements Serializable, DataContainer
             Thread.sleep(100);
          } catch (InterruptedException ex)
          {
-            Logger.getLogger(Field.class.getName()).log(Level.SEVERE, null, ex);
+             LOGGER.error("thread interrupted", ex);
          }
       }
    }
    
+   public abstract int[] getIndices(int axis);
+   public abstract float[] getFIndices(int axis);
+   public abstract double[] getDIndices(int axis);
+
 }

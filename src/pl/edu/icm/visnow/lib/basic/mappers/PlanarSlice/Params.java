@@ -59,15 +59,16 @@ public class Params extends Parameters
    {
       new ParameterEgg<Integer>(AXIS, ParameterType.independent, 2),
       new ParameterEgg<Integer>(TYPE, ParameterType.independent, 0),
-      new ParameterEgg<float[]>(COEFFS, ParameterType.independent, new float[]{0,0,1}),
+      new ParameterEgg<float[]>(COEFFS, ParameterType.independent, null),
       new ParameterEgg<Float>(RIGHT_SIDE, ParameterType.independent, .0f),
-      new ParameterEgg<Integer>(THREADS, ParameterType.independent, Runtime.getRuntime().availableProcessors())
+      new ParameterEgg<Integer>(THREADS, ParameterType.independent, pl.edu.icm.visnow.system.main.VisNow.availableProcessors())
    };
 
 
    public Params()
    {
       super(eggs);
+      setValue(COEFFS, new float[]{0,0,1});
    }
 
    public int getAxis()

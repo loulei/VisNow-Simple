@@ -38,7 +38,7 @@ exception statement from your version. */
 package pl.edu.icm.visnow.lib.basic.mappers.AnimatedStream;
 
 
-import java.util.Vector;
+import java.util.ArrayList;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import pl.edu.icm.visnow.datamaps.ColorMapManager;
@@ -81,7 +81,7 @@ public class AnimatedStream extends IrregularOutField1DVisualizationModule imple
    protected int dir           = 0;
    protected int nNodes;
    protected int outNNodes;
-   protected Vector<float[]> inCoords;
+   protected ArrayList<float[]> inCoords;
    protected float[] outCoords;
    private boolean animating    = false;
    private boolean renderDone   = true;
@@ -106,7 +106,7 @@ public class AnimatedStream extends IrregularOutField1DVisualizationModule imple
                updateOutField();
          }
       });
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          public void run()
          {
@@ -176,7 +176,6 @@ public class AnimatedStream extends IrregularOutField1DVisualizationModule imple
    {
       outObj.setCreator(this);
       irregularFieldGeometry = new IrregularFieldGeometry();
-      outObj.getGeometryObj().setUserData(getName());
       setOutputValue("outObj", new VNGeometryObject(outObj));
    }
    
@@ -212,8 +211,7 @@ public class AnimatedStream extends IrregularOutField1DVisualizationModule imple
       outNNodes = nNodes*(segmentLength+1)*nSegments;
       frame = 0;
       
-      outField = new IrregularField();
-      outField.setNNodes(outNNodes);
+      outField = new IrregularField(outNNodes);
       outField.setNSpace(3);
       outCoords = new float[outField.getNNodes() * outField.getNSpace()];
       outField.setCoords(outCoords);

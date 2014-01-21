@@ -42,7 +42,7 @@ import java.util.List;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public class Timestep
 {

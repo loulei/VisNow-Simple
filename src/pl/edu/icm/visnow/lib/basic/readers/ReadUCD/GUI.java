@@ -125,6 +125,7 @@ public class GUI extends javax.swing.JPanel
       urlButton = new javax.swing.JRadioButton();
       gridButton = new javax.swing.JRadioButton();
       materialAsSetsCheckBox = new javax.swing.JCheckBox();
+      indicesBox = new javax.swing.JCheckBox();
 
       setBorder(javax.swing.BorderFactory.createTitledBorder(""));
       setMinimumSize(new java.awt.Dimension(180, 500));
@@ -147,6 +148,7 @@ public class GUI extends javax.swing.JPanel
       gridBagConstraints = new java.awt.GridBagConstraints();
       gridBagConstraints.gridx = 0;
       gridBagConstraints.gridy = 3;
+      gridBagConstraints.gridwidth = 3;
       gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
       gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
       gridBagConstraints.weightx = 1.0;
@@ -183,9 +185,10 @@ public class GUI extends javax.swing.JPanel
          }
       });
       gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 2;
-      gridBagConstraints.gridy = 3;
-      gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 8;
+      gridBagConstraints.gridwidth = 3;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
       gridBagConstraints.weightx = 1.0;
       gridBagConstraints.insets = new java.awt.Insets(1, 0, 0, 0);
       add(rereadButton, gridBagConstraints);
@@ -201,12 +204,13 @@ public class GUI extends javax.swing.JPanel
       });
       gridBagConstraints = new java.awt.GridBagConstraints();
       gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 5;
+      gridBagConstraints.gridy = 7;
+      gridBagConstraints.gridwidth = 3;
       gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
       add(displayBox, gridBagConstraints);
 
       fieldDescription.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-      fieldDescription.setText(null);
+      fieldDescription.setText("null");
       fieldDescription.setVerticalAlignment(javax.swing.SwingConstants.TOP);
       fieldDescription.setMaximumSize(new java.awt.Dimension(700, 250));
       fieldDescription.setMinimumSize(new java.awt.Dimension(400, 170));
@@ -215,7 +219,7 @@ public class GUI extends javax.swing.JPanel
 
       gridBagConstraints = new java.awt.GridBagConstraints();
       gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 6;
+      gridBagConstraints.gridy = 9;
       gridBagConstraints.gridwidth = 3;
       gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
       gridBagConstraints.weightx = 1.0;
@@ -258,6 +262,21 @@ public class GUI extends javax.swing.JPanel
       gridBagConstraints.gridwidth = 3;
       gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
       add(materialAsSetsCheckBox, gridBagConstraints);
+
+      indicesBox.setText("add cell indices");
+      indicesBox.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            indicesBoxActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 5;
+      gridBagConstraints.gridwidth = 3;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      add(indicesBox, gridBagConstraints);
    }// </editor-fold>//GEN-END:initComponents
 
    private void selectButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_selectButtonActionPerformed
@@ -298,8 +317,13 @@ private void rereadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 
 private void displayBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_displayBoxActionPerformed
 {//GEN-HEADEREND:event_displayBoxActionPerformed
-   params.setValue("show", displayBox.isSelected());
+   params.setShow(displayBox.isSelected());
 }//GEN-LAST:event_displayBoxActionPerformed
+
+   private void indicesBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_indicesBoxActionPerformed
+   {//GEN-HEADEREND:event_indicesBoxActionPerformed
+      params.setIndices(indicesBox.isSelected());
+   }//GEN-LAST:event_indicesBoxActionPerformed
 
    public Params getParams()
    {
@@ -317,6 +341,7 @@ private void displayBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRS
    private javax.swing.JRadioButton fileButton;
    private javax.swing.JTextField fileNameField;
    private javax.swing.JRadioButton gridButton;
+   private javax.swing.JCheckBox indicesBox;
    private javax.swing.JScrollPane jScrollPane1;
    private javax.swing.JCheckBox materialAsSetsCheckBox;
    private javax.swing.JLabel moduleLabel;

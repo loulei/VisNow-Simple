@@ -60,6 +60,12 @@ public abstract class GeometryTool implements MouseMotionListener, MouseListener
 
    public abstract boolean isMouseWheelBlocking();
 
+   protected boolean holding = false;
+   
+   public boolean isHolding() {
+        return holding;
+   }
+
    public abstract int[][] getPoints();
 
    public abstract Metadata[] getPointMetadata();

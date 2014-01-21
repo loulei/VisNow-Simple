@@ -49,7 +49,12 @@ import pl.edu.icm.visnow.lib.utils.numeric.NumericalMethods;
  */
 public class HistogramBuilder {
     
-    public static float[] buildDataHistogram(int[] histDims, DataArray[] data, HistogramOperation operation, Condition[] conditions, Condition.Logic[] conditionsLogic) {
+    public static float[] buildDataHistogram(
+            int[] histDims, boolean roundByteDimsTo32,
+            DataArray[] data, 
+            HistogramOperation operation, 
+            Condition[] conditions, Condition.Logic[] conditionsLogic) {
+        
         if (histDims == null || data == null || histDims.length != data.length || operation == null) {
             return null;
         }
@@ -73,7 +78,7 @@ public class HistogramBuilder {
         int nData = 1;
 
         for (int i = 0; i < nComps; i++) {
-            if (data[i].getType() == DataArray.FIELD_DATA_BYTE) {
+            if (roundByteDimsTo32 && data[i].getType() == DataArray.FIELD_DATA_BYTE) {
                 minima[i] = 0;
                 if (histDims[i] > 128) {
                     histDims[i] = 256;
@@ -260,7 +265,11 @@ public class HistogramBuilder {
         return hist;
     }
 
-    public static float[] buildVectorDataHistogram(int[] histDims, DataArray[] data, HistogramOperation operation, Condition[] conditions, Condition.Logic[] conditionsLogic) {
+    public static float[] buildVectorDataHistogram(
+            int[] histDims, boolean roundByteDimsTo32,
+            DataArray[] data, HistogramOperation operation, 
+            Condition[] conditions, Condition.Logic[] conditionsLogic) {
+        
         if (histDims == null || data == null || histDims.length != data.length || operation == null || operation.getComponent() == null) {
             return null;
         }
@@ -284,7 +293,7 @@ public class HistogramBuilder {
         int nData = 1;
 
         for (int i = 0; i < nComps; i++) {
-            if (data[i].getType() == DataArray.FIELD_DATA_BYTE) {
+            if (roundByteDimsTo32 && data[i].getType() == DataArray.FIELD_DATA_BYTE) {
                 minima[i] = 0;
                 if (histDims[i] > 128) {
                     histDims[i] = 256;

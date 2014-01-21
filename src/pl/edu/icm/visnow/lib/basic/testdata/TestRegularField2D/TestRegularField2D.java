@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,7 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.basic.testdata.TestRegularField2D;
 
@@ -43,16 +45,17 @@ import pl.edu.icm.visnow.datasets.RegularField;
 import pl.edu.icm.visnow.datasets.dataarrays.BitArray;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
 import pl.edu.icm.visnow.engine.core.OutputEgg;
-import pl.edu.icm.visnow.lib.templates.visualization.modules.RegularOutFieldVisualizationModule;
+import pl.edu.icm.visnow.lib.templates.visualization.modules.OutFieldVisualizationModule;
 import pl.edu.icm.visnow.lib.types.VNRegularField;
 import pl.edu.icm.visnow.lib.utils.SwingInstancer;
+import pl.edu.icm.visnow.system.main.VisNow;
 
 /**
  * @author  Krzysztof S. Nowinski (know@icm.edu.pl)
  * Warsaw University, Interdisciplinary Centre
  * for Mathematical and Computational Modelling
  */
-public class TestRegularField2D extends RegularOutFieldVisualizationModule
+public class TestRegularField2D extends OutFieldVisualizationModule
 {
 
    public static OutputEgg[] outputEggs = null;
@@ -73,8 +76,9 @@ public class TestRegularField2D extends RegularOutFieldVisualizationModule
    protected GUI computeUI = null;
    public TestRegularField2D()
    {
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
+         @Override
          public void run()
          {
             computeUI = new GUI();
@@ -84,6 +88,7 @@ public class TestRegularField2D extends RegularOutFieldVisualizationModule
       setPanel(ui);
       computeUI.addChangeListener(new ChangeListener()
       {
+         @Override
          public void stateChanged(ChangeEvent evt)
          {
             startAction();
@@ -91,8 +96,8 @@ public class TestRegularField2D extends RegularOutFieldVisualizationModule
       });
    }
 
-   public static boolean isGenerator()
-   {
+   @Override
+   public boolean isGenerator() {
       return true;
    }
 
@@ -179,11 +184,11 @@ public class TestRegularField2D extends RegularOutFieldVisualizationModule
          }
       }
       int[] dims = new int[]{n,n};
-      outField = new RegularField();
-      outField.setDims(dims);
+      outField = new RegularField(dims);
+      outRegularField = (RegularField)outField;
       float[][] points =
       {{-.5f, -.5f, 0}, {.5f, .5f, 0}};
-      outField.setPts(points);
+      outRegularField.setExtents(points);
       data0 = new float[n * n];
       data1 = new float[n * n];
       data2 = new float[n * n];
@@ -211,39 +216,37 @@ public class TestRegularField2D extends RegularOutFieldVisualizationModule
          }
       setProgress(1);
       DataArray bdta = DataArray.create(data0, 1, "gaussians");
-      outField.addData(bdta);
-      outField.addData(DataArray.create(data1, 1, "gaussians1"));
-      outField.addData(DataArray.create(data2, 1, "gaussians2"));
-      outField.addData(DataArray.create(grad,  2, "gaussians_gradient"));
+      outRegularField.addData(bdta);
+      outRegularField.addData(DataArray.create(data1, 1, "gaussians1"));
+      outRegularField.addData(DataArray.create(data2, 1, "gaussians2"));
+      outRegularField.addData(DataArray.create(grad,  2, "gaussians_gradient"));
       
       float min = bdta.getMinv();
       float max = bdta.getMaxv();
       float d = 255 / (max - min);
       for (int i = 0; i < data0.length; i++)
-         bData[i] = (byte)(0xff & (int)(d * (data0[i] - min)));
+         bData[i] = (byte)(0xff & (int)(0.5 * d * (data0[i] - min) + 20));
       bdta = DataArray.create(bData,  1, "byte_gaussians");
-      bdta.setPhysMin(min);
-      bdta.setPhysMax(max);
-      outField.addData(bdta);
+      bdta.setPhysMin(0.3f);
+      bdta.setPhysMax(0.7f);
+      outRegularField.addData(bdta);
       
-      outField.addData(DataArray.create(sData,  1, "short_gaussians"));
-      outField.addData(DataArray.create(iData,  1, "int_gaussians"));
-      outField.addData(DataArray.create(fReData, fImData, 1, "complex_gaussians"));
-      outField.addData(DataArray.create(strData,  1, "string_gaussians"));
-      outField.addData(DataArray.create(bitData,  1, "logic_gaussians"));
+      outRegularField.addData(DataArray.create(sData,  1, "short_gaussians"));
+      outRegularField.addData(DataArray.create(iData,  1, "int_gaussians"));
+      outRegularField.addData(DataArray.create(fReData, fImData, 1, "complex_gaussians"));
+      outRegularField.addData(DataArray.create(strData,  1, "string_gaussians"));
+      outRegularField.addData(DataArray.create(bitData,  1, "logic_gaussians"));
       bdta.addData(datax, 1);
-      outField.setCurrentFrame(0);
+      outRegularField.setCurrentTime(outRegularField.getStartTime());
    }
 
    @Override
-   public void onInitFinished()
+   public void onInitFinishedLocal()
    {
-      super.onInitFinished();
-      createTestRegularField(computeUI.getResolution(), computeUI.getNThreads());
+      createTestRegularField(computeUI.getResolution(), VisNow.availableProcessors());
       lastD = computeUI.getResolution();
-         setOutputValue("outField", new VNRegularField(outField));
-      if (!prepareOutputGeometry())
-         return;
+      setOutputValue("outField", new VNRegularField(outRegularField));
+      prepareOutputGeometry();
       show();
    }
 
@@ -254,10 +257,9 @@ public class TestRegularField2D extends RegularOutFieldVisualizationModule
       if (lastD == computeUI.getResolution())
          return;
       lastD = computeUI.getResolution();
-      createTestRegularField(computeUI.getResolution(), computeUI.getNThreads());
-      setOutputValue("outField", new VNRegularField(outField));
-      if (!prepareOutputGeometry())
-         return;
+      createTestRegularField(computeUI.getResolution(), VisNow.availableProcessors());
+      setOutputValue("outField", new VNRegularField(outRegularField));
+      prepareOutputGeometry();
       show();
    }
 }

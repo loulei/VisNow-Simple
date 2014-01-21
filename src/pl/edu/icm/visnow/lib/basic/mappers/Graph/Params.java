@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,8 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.lib.basic.mappers.Graph;
 
@@ -50,31 +53,31 @@ public class Params extends Parameters
 {
    protected static ParameterEgg[] eggs = new ParameterEgg[]
    {
-      new ParameterEgg<int[]>("horizontal extents", ParameterType.dependent, new int[]{30,90}),
-      new ParameterEgg<int[]>("vertical extents",   ParameterType.dependent, new int[]{75,97}),
+      new ParameterEgg<int[]>("horizontal extents", ParameterType.dependent, null),
+      new ParameterEgg<int[]>("vertical extents",   ParameterType.dependent, null),
       new ParameterEgg<Color>("color",              ParameterType.independent, Color.WHITE),
-      new ParameterEgg<Integer>("font size",        ParameterType.independent, 15),
+      new ParameterEgg<Float>("font size",          ParameterType.independent, .014f),
       new ParameterEgg<Float>("line width",         ParameterType.independent, 2.f),
-      new ParameterEgg<String[]>("axes labels",     ParameterType.independent, new String[] {"x", "y"}),
+      new ParameterEgg<String[]>("axes labels",     ParameterType.independent, null),
       new ParameterEgg<String>("title",             ParameterType.independent, ""),
       new ParameterEgg<DisplayedData[]>("data",     ParameterType.independent, null),
       new ParameterEgg<Boolean>("color legend",     ParameterType.independent, false),
       new ParameterEgg<Boolean>("refresh",          ParameterType.independent, false),
    };
-  
+
    public Params()
    {
-      super(eggs);     
+      super(eggs);
       setValue("horizontal extents", new int[] {30, 90});
       setValue("vertical extents", new int[] {75,97});
-      setValue("axes labels", new String[]{"x", "y"});      
+      setValue("axes labels", new String[]{"x", "y"});
    }
-   
+
    public int[] getHorizontalExtents()
    {
       return (int[])getValue("horizontal extents");
    }
-   
+
    public void setHorizontalExtents(int low, int up)
    {
       int[] hex = getHorizontalExtents();
@@ -82,12 +85,12 @@ public class Params extends Parameters
       hex[1] = up;
       fireStateChanged();
    }
-   
+
    public int[] getVerticalExtents()
    {
       return (int[])getValue("vertical extents");
    }
-   
+
    public void setVerticalExtents(int low, int up)
    {
       int[] hex = getVerticalExtents();
@@ -95,101 +98,101 @@ public class Params extends Parameters
       hex[1] = up;
       fireStateChanged();
    }
-   
+
    public Color getColor()
    {
       return (Color)getValue("color");
    }
-   
+
    public void setColor(Color color)
    {
       setValue("color", color);
       fireStateChanged();
    }
-   
+
     public DisplayedData[] getDisplayedData()
    {
       return (DisplayedData[])getValue("data");
    }
-   
+
    public void setDisplayedData(DisplayedData[] displayedData)
    {
       setValue("data", displayedData);
       fireStateChanged();
    }
-   
-   public int getFontSize()
+
+   public float getFontSize()
    {
-      return (Integer)getValue("font size");
+      return (Float)getValue("font size");
    }
-   
-   public void setFontSize(int size)
+
+   public void setFontSize(float size)
    {
       setValue("font size", size);
       fireStateChanged();
    }
-   
+
    public float getLineWidth()
    {
       return (Float)getValue("line width");
    }
-   
+
    public void setLineWidth(float width)
    {
       setValue("line width", width);
       fireStateChanged();
    }
-   
+
    public String[] getAxesLabels()
    {
       return (String[])getValue("axes labels");
    }
-   
+
    public void setAxesLabels(String[] labels)
    {
       setValue("axes labels", labels);
       fireStateChanged();
    }
-   
-  
+
+
    public String getTitle()
    {
       return (String)getValue("title");
    }
-   
+
    public void setTitle(String title)
    {
       setValue("title", title);
       fireStateChanged();
    }
-   
+
    public void updateTable()
    {
       fireStateChanged();
    }
-   
+
    public boolean isColorLegend()
    {
       return (Boolean)getValue("color legend");
    }
-   
+
    public void setColorLegend(boolean cl)
    {
       setValue("color legend", cl);
       fireStateChanged();
    }
-   
+
    public boolean isRefresh()
    {
       boolean r = (Boolean)getValue("refresh");
       setValue("refresh", false);
       return r;
    }
-   
+
    public void setRefresh(boolean r)
    {
       setValue("refresh", false);
       fireStateChanged();
    }
-   
+
 }

@@ -37,7 +37,7 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.lib.utils;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class IntDataCache
 {
@@ -46,7 +46,7 @@ public class IntDataCache
    private final int cacheSize;
    private final int veclen;
    private int nElements = 0;
-   private Vector<int[]> elements = new Vector<int[]>();
+   private ArrayList<int[]> elements = new ArrayList<int[]>();
    private int[] currentArr;
    private int currentIndex;
 

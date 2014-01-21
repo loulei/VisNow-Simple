@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,7 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.geometries.objects;
 import java.awt.Color;
@@ -88,14 +90,26 @@ public class GeometryObject implements GeometryParent, Comparable
    protected static final int SHININESS               = 32;
    protected static final int LINEWIDTH               = 64;
    protected static final int LINESTYLE               = 128;
-   
-   protected static final int WINDOW_SETTING          = 1;
-   protected static final int WINDOW_REMOWING         = -1;
-   
-   protected static int timeStamp                     = 0;
+    /**
+     * Previously: WINDOW_SETTING.
+     * Informs that the GeometryObject is just being added to Java3D scene. It's not clear why it is
+     * called in the middle of adding though.
+     */
+   protected static final int SCENE_TREE_BEING_ADDED = 1;
+    /**
+     * Informs that the GeometryObject has been just added to Java3D scene.
+     */
+   protected static final int SCENE_ADDED = 2;
+    /**
+     * Previously: WINDOW_REMOVING.
+     * Informs that the GeometryObject is about to be removed from Java3D scene.
+     */
+   protected static final int SCENE_TREE_ABOUT_TO_REMOVE = -1;
+//
+   protected static int timeStamp = 0;
    protected int id                                   = 0;
    protected OpenBranchGroup geometryObj              = new OpenBranchGroup();
-   protected OpenBranchGroup outObj                   = new OpenBranchGroup();
+   protected final OpenBranchGroup outObj             = new OpenBranchGroup();
    protected GeometryObject2DStruct outObj2DStruct    = new GeometryObject2DStruct();
    protected OpenTransformGroup transformObj          = new OpenTransformGroup();
    protected GeometryParent parent                    = null;
@@ -105,17 +119,11 @@ public class GeometryObject implements GeometryParent, Comparable
    protected AbstractRenderingParams renderingParams  = new RenderingParams(this);
    protected OpenAppearance appearance                = renderingParams.getAppearance();
    protected OpenAppearance lineAppearance            = renderingParams.getLineAppearance();
-//   protected OpenAppearance pointAppearance           = renderingParams.getLineAppearance();
-//   protected OpenMaterial mat                         = (OpenMaterial)appearance.getMaterial();
-//   protected OpenTransparencyAttributes objTrans      = (OpenTransparencyAttributes)appearance.getTransparencyAttributes();
-//   protected OpenPolygonAttributes polygonAttrs       = (OpenPolygonAttributes)appearance.getPolygonAttributes();
-//   protected OpenLineAttributes lineAttrs             = (OpenLineAttributes)appearance.getLineAttributes();
-//   protected OpenColoringAttributes coloringAttrs     = (OpenColoringAttributes)appearance.getColoringAttributes();
-//   protected OpenPointAttributes pointAttrs           = (OpenPointAttributes)appearance.getPointAttributes();
    protected RenderingWindowInterface renderingWindow = null;
    protected RenderWindowListeningModule creator      = null;
    protected float[][] ownExtents                     = {{Float.MAX_VALUE,Float.MAX_VALUE,Float.MAX_VALUE},{-Float.MAX_VALUE,-Float.MAX_VALUE,-Float.MAX_VALUE}};
    protected float[][] extents                        = {{Float.MAX_VALUE,Float.MAX_VALUE,Float.MAX_VALUE},{-Float.MAX_VALUE,-Float.MAX_VALUE,-Float.MAX_VALUE}};
+   protected float[][] maxExtents                     = {{Float.MAX_VALUE,Float.MAX_VALUE,Float.MAX_VALUE},{-Float.MAX_VALUE,-Float.MAX_VALUE,-Float.MAX_VALUE}};//{{0,0,0},{0,0,0}};
    protected Texture2D texture                        = null;
    protected TextureAttributes ta                     = new TextureAttributes();
    protected Vector<Geometry2D> geometries2D          = new Vector<Geometry2D>();
@@ -126,14 +134,19 @@ public class GeometryObject implements GeometryParent, Comparable
    /**
     * Creates a new instance of GeometryObject
     */
-   
+
+   /**
+    * Creates a new instance of GeometryObject
+    * @param name object name 
+    * @param timestamp timestamp used for rendering synchronization
+    */
    public GeometryObject(String name, int timestamp)
    {
       id = timestamp;
       this.name = name+id;
       appearance.setUserData(this);
       lineAppearance.setUserData(this);
-      backgroundColorListener    = new ColorListener()
+      backgroundColorListener = new ColorListener()
       {
          @Override
          public void colorChoosen(ColorEvent e)
@@ -147,17 +160,17 @@ public class GeometryObject implements GeometryParent, Comparable
       outObj.addChild(transformObj);
       outObj.setName(name);
       outObj2DStruct.setName(name);
-      
-      
+
+
        currentTransformListener = new TransformListener() {
           @Override
           public void transformChanged(TransformEvent e) {
               updateExtents();
           }
        };
-       currentTransform.addTransformListener(currentTransformListener);     
+       currentTransform.addTransformListener(currentTransformListener);
    }
-   
+
    public GeometryObject(String name)
    {
       this(name, timeStamp);
@@ -201,7 +214,6 @@ public class GeometryObject implements GeometryParent, Comparable
    /**
     * Notifies all registered listeners about the event.
     *
-    * @param object Parameter #1 of the <CODE>ChangeEvent<CODE> constructor.
     */
    public void firePickChanged(MouseEvent evt, LocalToWindow localToWindow)
    {
@@ -219,36 +231,39 @@ public class GeometryObject implements GeometryParent, Comparable
       for (PickListener listener: PickListenerList)
          listener.pickChanged(e);
    }
-   
+
    @Override
    public int getAreaWidth()
    {
       if (parent==null)
          return 100;
-         return parent.getAreaWidth();
+      return parent.getAreaWidth();
    }
-   
+
    @Override
    public int getAreaHeight()
    {
       if (parent==null)
          return 100;
-         return parent.getAreaHeight();
+      return parent.getAreaHeight();
    }
-   
-   public void drawLocal2D(J3DGraphics2D vGraphics, LocalToWindow ltw)
+
+   public void drawLocal2D(J3DGraphics2D vGraphics, LocalToWindow ltw, int w, int h)
    {
    }
-   
+
    public void setParentGeom(GeometryParent parent)
    {
-      synchronized(parent)
-      {
+      if (parent == null)
          this.parent = parent;
-         getRenderingParams().setParentParams(parent.getRenderingParams());
-      }
+      else
+         synchronized (parent)
+         {
+            this.parent = parent;
+            getRenderingParams().setParentParams(parent.getRenderingParams());
+         }
    }
-   
+
    public void attach()
    {
       if (parent!=null)
@@ -257,7 +272,7 @@ public class GeometryObject implements GeometryParent, Comparable
             parent.addChild(this);
          }
    }
-   
+
    public boolean detach()
    {
       if (parent!=null)
@@ -269,7 +284,7 @@ public class GeometryObject implements GeometryParent, Comparable
       }
       return false;
    }
-   
+
    @Override
    public synchronized void addChild(GeometryObject child)
    {
@@ -281,7 +296,7 @@ public class GeometryObject implements GeometryParent, Comparable
       child.setParentGeom(this);
       if (geomChildren.add(child))
       {
-         child.consumeRenderingWindowInfo(renderingWindow, WINDOW_SETTING);
+         child.consumeRenderingWindowInfo(renderingWindow, SCENE_TREE_BEING_ADDED);
          if (child.getGeometryObj().getParent() != null)
             child.getGeometryObj().detach();
          try
@@ -291,12 +306,12 @@ public class GeometryObject implements GeometryParent, Comparable
          {
             System.out.println("dangling geometric reference");
          }
-         //setExtents(child.getExtents());
          updateExtents();
+         child.consumeRenderingWindowInfo(renderingWindow, SCENE_ADDED);
       }
    }
-   
-    @Override
+
+   @Override
    public OpenBranchGroup getGeometryObj()
    {
       return outObj;
@@ -306,7 +321,7 @@ public class GeometryObject implements GeometryParent, Comparable
    {
       return outObj2DStruct;
    }
-    
+
    public SignalingTransform3D getCurrentTransform()
    {
       return currentTransform;
@@ -321,20 +336,22 @@ public class GeometryObject implements GeometryParent, Comparable
       this.currentTransform.addTransformListener(currentTransformListener);
    }
 
+   
    @Override
    public synchronized void clearAllGeometry()
    {
-      try 
+      try
       {
-         for (GeometryObject child : geomChildren) 
+         for (GeometryObject child : geomChildren)
          {
-            child.consumeRenderingWindowInfo(renderingWindow, WINDOW_REMOWING);
+            child.consumeRenderingWindowInfo(renderingWindow, SCENE_TREE_ABOUT_TO_REMOVE);
          }
          geomChildren.clear();
          geometryObj.removeAllChildren();
+         this.setExtents(maxExtents);
       } catch (Exception e) {}
    }
-   
+
    /**
     * Tests if geometry is empty.
     * @return true if geometry object has no children
@@ -342,7 +359,7 @@ public class GeometryObject implements GeometryParent, Comparable
    public boolean isEmpty() {
        return !geometryObj.getAllChildren().hasMoreElements();
    }
-   
+
    private void updateAppearance(Node node)
    {
          if (node instanceof OpenShape3D && ((OpenShape3D)node).getAppearance() == null)
@@ -360,10 +377,10 @@ public class GeometryObject implements GeometryParent, Comparable
       }
 
    }
-   
+
    @Override
    public void addNode(Node node)
-   { 
+   {
       synchronized (geometryObj)
       {
          updateAppearance(node);
@@ -379,13 +396,24 @@ public class GeometryObject implements GeometryParent, Comparable
 
    @Override
    public synchronized boolean removeChild(GeometryObject child)
-   { 
-      child.consumeRenderingWindowInfo(renderingWindow, WINDOW_REMOWING);
+   {
+      child.consumeRenderingWindowInfo(renderingWindow, SCENE_TREE_ABOUT_TO_REMOVE);
       boolean success = geomChildren.remove(child);
       geometryObj.removeChild(child.getGeometryObj());
+      updateExtents();
       return success;
-   }
+   }   
    
+   public boolean isAncestor(GeometryObject obj)
+   {
+      if (geomChildren.contains(obj))
+         return true;
+      for (GeometryObject child : geomChildren)
+         if (child.isAncestor(obj))
+            return true;
+      return false;
+   }
+
    protected synchronized void refresh()
    {
       if (parent!=null)
@@ -396,16 +424,10 @@ public class GeometryObject implements GeometryParent, Comparable
       if (parent!=null)
          parent.addChild(this);
    }
-   
+
    @Override
-   public void draw2D(J3DGraphics2D vGraphics, LocalToWindow ltw)
+   public void draw2D(J3DGraphics2D vGraphics, LocalToWindow ltw, int w, int h)
    {
-      int h = 100, w = 100;
-      if (renderingWindow != null)
-      {
-         h = renderingWindow.getHeight();
-         w = renderingWindow.getWidth();
-      }
       localToWindow = ltw;
       Font f = vGraphics.getFont();
       Color c = vGraphics.getColor();
@@ -416,33 +438,37 @@ public class GeometryObject implements GeometryParent, Comparable
       else
          localToWindow.update(transformObj);
       for (GeometryObject g: geomChildren)
-         g.draw2D(vGraphics, localToWindow);
-      drawLocal2D(vGraphics, localToWindow);
+         g.draw2D(vGraphics, localToWindow, w, h);
+      drawLocal2D(vGraphics, localToWindow, w, h);
+//      System.out.println(""+this+" "+geometries2D.size());
       for (Geometry2D geometry2D : geometries2D)
          if (geometry2D != null)
+         {
+//            System.out.println("drawing "+geometry2D.getName()+" "+this);
             geometry2D.draw2D(vGraphics, localToWindow, h, w);
+         }
       vGraphics.setColor(c);
       vGraphics.setFont(f);
    }
-   
+
    public String getName()
    {
       return name;
    }
-   
+
    public void setName(String name)
    {
-      this.name = name+id;
-      transformObj.setName(name+"transformObj");
-      outObj.setName(name+"outObj");
-      geometryObj.setName(name+"geomObj");
+      this.name = name + "_" + id;
+      transformObj.setName(name + "transformObj");
+      outObj.setName(name + "outObj");
+      geometryObj.setName(name + "geomObj");
    }
-   
+
    public int getId()
    {
       return id;
    }
-   
+
    @Override
    public int compareTo(Object obj)
    {
@@ -451,59 +477,51 @@ public class GeometryObject implements GeometryParent, Comparable
          GeometryObject g = (GeometryObject)obj;
          if (id<g.getId())
             return -1;
-         
+
          if (id > g.getId())
              return 1;return 0;
       }
       return 0;
    }
-   
+
    @Override
    public void setScale(double s)
    {
       if (parent!=null)
          parent.setScale(s);
    }
-   
+
    @Override
    public SortedSet<GeometryObject> getChildren()
    {
       return geomChildren;
    }
-   
+
    @Override
    public void revalidate()
    {
       if (parent!=null)
          parent.revalidate();
    }
-   
+
    @Override
    public String toString()
    {
       return name;
    }
-   
+
    public float[][] getExtents()
    {
       return extents;
    }
-   
+
    @Override
    public void updateExtents()
    {
       for (int i = 0; i < 3; i++)
       {
-         if (ownExtents[0][i]>=ownExtents[1][i])
-         {
-            extents[0][i] = Float.MAX_VALUE;
-            extents[1][i] = -Float.MAX_VALUE;
-         }
-         else
-         {
             extents[0][i] = ownExtents[0][i];
             extents[1][i] = ownExtents[1][i];
-         }
       }
       for (GeometryObject obj : geomChildren)
       {
@@ -514,22 +532,20 @@ public class GeometryObject implements GeometryParent, Comparable
             if (ext[1][i]>extents[1][i]) extents[1][i] = ext[1][i];
          }
       }
-      
+
       if(currentTransform != null) {
           Transform3D tr = currentTransform.getTransform();
           Point3f pt = new Point3f(extents[0]);
           tr.transform(pt);
           pt.get(extents[0]);
-          
+
           pt = new Point3f(extents[1]);
           tr.transform(pt);
-          pt.get(extents[1]);          
+          pt.get(extents[1]);
       }
-      
-      
-      
       if (parent!=null)
          parent.updateExtents();
+   
    }
 
    @Override
@@ -542,7 +558,7 @@ public class GeometryObject implements GeometryParent, Comparable
             ownExtents[j][i] = ext[j][i];
       updateExtents();
    }
-   
+
    private void printGeomDebugInfo(Node node)
    {
       System.out.println(""+this);
@@ -582,7 +598,7 @@ public class GeometryObject implements GeometryParent, Comparable
             System.out.println("other");
       }
    }
-   
+
    @Override
    public void printDebugInfo()
    {
@@ -591,32 +607,42 @@ public class GeometryObject implements GeometryParent, Comparable
       for (GeometryObject next: geomChildren)
          next.printDebugInfo();
    }
-   
+
    public void traverseGeometry(int function)
    {
       for (GeometryObject obj: geomChildren)
          obj.traverseGeometry(function);
       traverseGeometry(geometryObj, function);
    }
-   
+
+    /**
+     * Notifies this object about being removed from the scene tree or being added to it.
+     * <p/>
+     * @param renderingWindow
+     * @param function        event, possible values: SCENE_TREE_ABOUT_TO_REMOVE, SCENE_TREE_BEING_ADDED or
+     *                        SCENE_ADDED
+     */
    public void consumeRenderingWindowInfo(RenderingWindowInterface renderingWindow, int function)
    {
       for (GeometryObject obj: geomChildren)
          obj.consumeRenderingWindowInfo(renderingWindow, function);
       try
       {
-         if (function == WINDOW_REMOWING && renderingWindow != null && creator != null)
+         if (function == SCENE_TREE_ABOUT_TO_REMOVE && renderingWindow != null && creator != null)
          {
             renderingWindow.removeBgrColorListener(backgroundColorListener);
             renderingWindow.removeBgrColorListener(creator.getBackgroundColorListener());
-            renderingWindow.removePick3DListener(creator.getPick3DListener());
-            renderingWindow.removeProjectionListener(creator.getProjectionListener());
-            renderingWindow.removeFrameRenderedListener(creator.getFrameRenderedListener());
+            if (creator.getPick3DListener() != null)
+                renderingWindow.removePick3DListener(creator.getPick3DListener());
+            if (creator.getProjectionListener() != null)
+                renderingWindow.removeProjectionListener(creator.getProjectionListener());
+            if (creator.getFrameRenderedListener() != null)
+                renderingWindow.removeFrameRenderedListener(creator.getFrameRenderedListener());
             this.renderingWindow = null;
          }
          if (renderingWindow != null)
             this.renderingWindow = renderingWindow;
-         if (function == WINDOW_SETTING && renderingWindow != null && creator != null)
+         if (function == SCENE_TREE_BEING_ADDED && renderingWindow != null && creator != null)
          {
             renderingWindow.addBgrColorListener(backgroundColorListener);
             renderingWindow.addBgrColorListener(creator.getBackgroundColorListener());
@@ -628,7 +654,7 @@ public class GeometryObject implements GeometryParent, Comparable
       {
       }
    }
-   
+
    public void traverseGeometry(Node node, int function)
    {
       if (node instanceof Group)
@@ -669,31 +695,31 @@ public class GeometryObject implements GeometryParent, Comparable
       transformObj.setTransform(transform);
       currentTransform.setTransform(transform);
    }
-   
+
    @Override
    public void setTransparency()
    {
       traverseGeometry(TRANSPARENCY);
    }
-   
+
    @Override
    public void setShininess()
    {
       traverseGeometry(SHININESS);
    }
-   
+
    @Override
    public void setLineThickness()
    {
       traverseGeometry(geometryObj,LINEWIDTH);
    }
-   
+
    @Override
    public void setLineStyle()
    {
       traverseGeometry(geometryObj,LINESTYLE);
    }
-	
+
    @Override
    public void setColor()
    {
@@ -726,7 +752,7 @@ public class GeometryObject implements GeometryParent, Comparable
       return creator;
    }
 
-   public void setCreator(RenderWindowListeningModule creator)
+   public final void setCreator(RenderWindowListeningModule creator)
    {
       this.creator = creator;
    }
@@ -735,7 +761,7 @@ public class GeometryObject implements GeometryParent, Comparable
    {
       geometries2D.add(g);
    }
-   
+
    public void removeGeometry2D(Geometry2D g)
    {
       geometries2D.remove(g);
@@ -746,9 +772,24 @@ public class GeometryObject implements GeometryParent, Comparable
       geometries2D.clear();
    }
 
+   public Vector<Geometry2D> getGeometries2D()
+   {
+      return geometries2D;
+   }
+
    public ColorListener getBackgroundColorListener()
    {
       return backgroundColorListener;
+   }
+   
+   public OpenTransformGroup getTransformObj()
+   {
+      return transformObj;
+   }
+
+   public LocalToWindow getLocalToWindow()
+   {
+      return localToWindow;
    }
 
    /**
@@ -759,26 +800,30 @@ public class GeometryObject implements GeometryParent, Comparable
 
    /**
     * Registers RenderEventColorListener to receive events.
-    * @param ColorListener The ColorListener to register.
-    */
+   */
    public synchronized void addBgrColorListener(ColorListener colorListener)
    {
-      bgrColorListenerList.add(colorListener);
+      if(!bgrColorListenerList.contains(colorListener))
+        bgrColorListenerList.add(colorListener);
    }
 
    /**
     * Removes RenderEventColorListener from the list of ColorListeners.
-    * @param ColorListener The ColorListener to remove.
+    * @param colorListener The ColorListener to remove.
     */
    public synchronized void removeBgrColorListener(ColorListener colorListener)
    {
       bgrColorListenerList.remove(colorListener);
    }
+   
+   public synchronized void clearBgrColorListeners()
+   {
+      bgrColorListenerList.clear();
+   }
 
    /**
     * Notifies all registered ColorListeners about the event.
     *
-    * @param object Parameter #1 of the <CODE>ChangeEvent<CODE> constructor.
     */
    public void fireBgrChanged(Color color)
    {
@@ -786,15 +831,15 @@ public class GeometryObject implements GeometryParent, Comparable
       for (ColorListener colorListener : bgrColorListenerList)
          colorListener.colorChoosen(e);
    }
-   
+
    protected ChangeListener renderingListener;
-     
+
    public void fireStartRendering()
    {
       if (renderingListener != null)
          renderingListener.stateChanged(new ChangeEvent(true));
    }
-      
+
    public void fireStopRendering()
    {
       if (renderingListener != null)
@@ -811,13 +856,12 @@ public class GeometryObject implements GeometryParent, Comparable
       this.renderingListener = renderingListener;
    }
 
-   
    protected Display3DPanel myViewer = null;
-   
+
    public void setCurrentViewer(Display3DPanel panel) {
        this.myViewer = panel;
-       outObj.setCurrentViewer(panel); 
-       
+       outObj.setCurrentViewer(panel);
+
        for(GeometryObject child : geomChildren) {
            child.setCurrentViewer(panel);
        }
@@ -825,7 +869,12 @@ public class GeometryObject implements GeometryParent, Comparable
    public Display3DPanel getCurrentViewer() {
        return myViewer;
    }
-
    
-
+   @Override
+   public Color getBackgroundColor()
+   {
+      if (parent != null)
+         return parent.getBackgroundColor();
+      return Color.BLACK;
+   }
 }

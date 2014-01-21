@@ -10,6 +10,7 @@
                 <param name="AFFINE" value="true"/>
             </schema>
         </output>
+        <geometryOutput/>
     </outputs>
 </module>
 

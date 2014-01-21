@@ -1,5 +1,6 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+Copyright (C) 2006-2013 University of Warsaw, ICM
 
 This file is part of GNU Classpath.
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -33,19 +34,22 @@ module.  An independent module is a module which is not derived from
 or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+exception statement from your version.
+*/
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.lib.basic.filters.ComponentOperations;
 
-import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import pl.edu.icm.visnow.datasets.Field;
+import pl.edu.icm.visnow.datasets.IrregularField;
 import pl.edu.icm.visnow.datasets.RegularField;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArraySchema;
@@ -61,6 +65,7 @@ public class GUI extends javax.swing.JPanel
    private Params params = new Params();
    private Field inField = null;
    private RegularField inRegularField = null;
+   private IrregularField inIrregularField = null;
    private int nComps = 0;
    private static final String[] actionTableHeader = new String[]
    {
@@ -133,6 +138,7 @@ public class GUI extends javax.swing.JPanel
       updateGUI();
       maskComponentSelector.setAddNullComponent(true);
       maskComponentSelector.setScalarComponentsOnly(true);
+      maskComponentSelector.setStartNull(true);
    }
 
    /** This method is called from within the constructor to
@@ -145,7 +151,6 @@ public class GUI extends javax.swing.JPanel
         java.awt.GridBagConstraints gridBagConstraints;
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        jPanel2 = new javax.swing.JPanel();
         mainPanel = new javax.swing.JPanel();
         runButton = new javax.swing.JButton();
         autoCheckBox = new javax.swing.JCheckBox();
@@ -156,26 +161,37 @@ public class GUI extends javax.swing.JPanel
         maskPanel = new javax.swing.JPanel();
         maskComponentSelector = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
         maskRangeSlider = new pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider();
-        jPanel1 = new javax.swing.JPanel();
         recomputeMinMaxBox = new javax.swing.JCheckBox();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         coordsPanel = new javax.swing.JPanel();
+        useCoordsCB = new javax.swing.JCheckBox();
         jScrollPane6 = new javax.swing.JScrollPane();
         jPanel3 = new javax.swing.JPanel();
         indexComponentCB = new javax.swing.JCheckBox();
         xPanel = new javax.swing.JPanel();
         xComponentSelector = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
-        xScaleSlider = new pl.edu.icm.visnow.gui.widgets.FloatSlider();
         yPanel = new javax.swing.JPanel();
         yComponentSelector = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
-        yScaleSlider = new pl.edu.icm.visnow.gui.widgets.FloatSlider();
         zPanel = new javax.swing.JPanel();
         zComponentSelector = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
-        zScaleSlider = new pl.edu.icm.visnow.gui.widgets.FloatSlider();
-        topPanel = new javax.swing.JPanel();
-        useCoordsCB = new javax.swing.JCheckBox();
-        dim1RB = new javax.swing.JRadioButton();
-        dim2RB = new javax.swing.JRadioButton();
-        dim3RB = new javax.swing.JRadioButton();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        xScaleField = new pl.edu.icm.visnow.gui.components.FloatFormattedTextField();
+        xShiftField = new pl.edu.icm.visnow.gui.components.FloatFormattedTextField();
+        yScaleField = new pl.edu.icm.visnow.gui.components.FloatFormattedTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        yShiftField = new pl.edu.icm.visnow.gui.components.FloatFormattedTextField();
+        zScaleField = new pl.edu.icm.visnow.gui.components.FloatFormattedTextField();
+        zShiftField = new pl.edu.icm.visnow.gui.components.FloatFormattedTextField();
+        jLabel9 = new javax.swing.JLabel();
+        xVarShiftField = new pl.edu.icm.visnow.gui.components.FloatFormattedTextField();
+        jLabel10 = new javax.swing.JLabel();
+        yVarShiftField = new pl.edu.icm.visnow.gui.components.FloatFormattedTextField();
+        jLabel11 = new javax.swing.JLabel();
+        zVarShiftField = new pl.edu.icm.visnow.gui.components.FloatFormattedTextField();
         functionPane1 = new javax.swing.JTabbedPane();
         vectorPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -192,21 +208,9 @@ public class GUI extends javax.swing.JPanel
         jLabel2 = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
         complexSplitTable = new javax.swing.JTable();
-        jPanel5 = new javax.swing.JPanel();
+        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
-        setMaximumSize(new java.awt.Dimension(230, 800));
-        setMinimumSize(new java.awt.Dimension(190, 450));
-        setPreferredSize(new java.awt.Dimension(230, 600));
-        setLayout(new java.awt.GridBagLayout());
-
-        jPanel2.setMaximumSize(new java.awt.Dimension(32767, 600));
-        jPanel2.setPreferredSize(new java.awt.Dimension(100, 500));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1.0;
-        add(jPanel2, gridBagConstraints);
+        setLayout(new java.awt.BorderLayout());
 
         mainPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -222,6 +226,7 @@ public class GUI extends javax.swing.JPanel
         mainPanel.add(runButton, gridBagConstraints);
 
         autoCheckBox.setText("auto");
+        autoCheckBox.setToolTipText("<html>auto run if new field appears<br/>\n (works only when new field is compatible with previous one)</html>");
         autoCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 autoCheckBoxActionPerformed(evt);
@@ -234,21 +239,11 @@ public class GUI extends javax.swing.JPanel
 
         functionPane.setToolTipText("<html>combine scalars as Re/Im part<p>split complex values into Re/Im<p>compute module and argument</html>");
         functionPane.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        functionPane.setMaximumSize(new java.awt.Dimension(32767, 400));
-        functionPane.setMinimumSize(new java.awt.Dimension(170, 200));
-        functionPane.setOpaque(true);
-        functionPane.setPreferredSize(new java.awt.Dimension(220, 300));
-        functionPane.setRequestFocusEnabled(false);
 
         componentselectorPanel.setToolTipText("<html>change component type, <p>drop or apply algebraic function</html> ");
-        componentselectorPanel.setMaximumSize(new java.awt.Dimension(2147483647, 400));
-        componentselectorPanel.setPreferredSize(new java.awt.Dimension(220, 350));
         componentselectorPanel.setLayout(new java.awt.BorderLayout());
 
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        jScrollPane1.setMaximumSize(new java.awt.Dimension(32767, 290));
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(180, 200));
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(220, 250));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(100, 200));
 
         actionTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -273,26 +268,24 @@ public class GUI extends javax.swing.JPanel
                 return canEdit [columnIndex];
             }
         });
-        actionTable.setMaximumSize(new java.awt.Dimension(400, 1000));
-        actionTable.setMinimumSize(new java.awt.Dimension(280, 240));
-        actionTable.setPreferredSize(new java.awt.Dimension(300, 300));
         jScrollPane1.setViewportView(actionTable);
-        actionTable.getColumnModel().getColumn(0).setPreferredWidth(130);
-        actionTable.getColumnModel().getColumn(1).setResizable(false);
-        actionTable.getColumnModel().getColumn(1).setPreferredWidth(50);
-        actionTable.getColumnModel().getColumn(2).setResizable(false);
-        actionTable.getColumnModel().getColumn(2).setPreferredWidth(50);
-        actionTable.getColumnModel().getColumn(3).setResizable(false);
-        actionTable.getColumnModel().getColumn(3).setPreferredWidth(50);
-        actionTable.getColumnModel().getColumn(4).setResizable(false);
-        actionTable.getColumnModel().getColumn(4).setPreferredWidth(50);
+        if (actionTable.getColumnModel().getColumnCount() > 0) {
+            actionTable.getColumnModel().getColumn(0).setPreferredWidth(130);
+            actionTable.getColumnModel().getColumn(1).setResizable(false);
+            actionTable.getColumnModel().getColumn(1).setPreferredWidth(50);
+            actionTable.getColumnModel().getColumn(2).setResizable(false);
+            actionTable.getColumnModel().getColumn(2).setPreferredWidth(50);
+            actionTable.getColumnModel().getColumn(3).setResizable(false);
+            actionTable.getColumnModel().getColumn(3).setPreferredWidth(50);
+            actionTable.getColumnModel().getColumn(4).setResizable(false);
+            actionTable.getColumnModel().getColumn(4).setPreferredWidth(50);
+        }
 
         componentselectorPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         functionPane.addTab("basic", componentselectorPanel);
 
         maskPanel.setToolTipText("mask as invalid values outside specified range");
-        maskPanel.setMaximumSize(new java.awt.Dimension(2147483647, 400));
         maskPanel.setLayout(new java.awt.GridBagLayout());
 
         maskComponentSelector.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -301,20 +294,15 @@ public class GUI extends javax.swing.JPanel
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
         maskPanel.add(maskComponentSelector, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         maskPanel.add(maskRangeSlider, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1.0;
-        maskPanel.add(jPanel1, gridBagConstraints);
 
         recomputeMinMaxBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         recomputeMinMaxBox.setText("recompute min/max for data arrays");
@@ -325,26 +313,32 @@ public class GUI extends javax.swing.JPanel
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
         maskPanel.add(recomputeMinMaxBox, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.weighty = 1.0;
+        maskPanel.add(filler1, gridBagConstraints);
 
         functionPane.addTab("mask", maskPanel);
 
-        coordsPanel.setMaximumSize(new java.awt.Dimension(2147483647, 400));
-        coordsPanel.setMinimumSize(new java.awt.Dimension(200, 400));
-        coordsPanel.setPreferredSize(new java.awt.Dimension(200, 400));
         coordsPanel.setLayout(new java.awt.BorderLayout());
 
-        jScrollPane6.setMinimumSize(new java.awt.Dimension(175, 195));
-        jScrollPane6.setPreferredSize(new java.awt.Dimension(215, 295));
+        useCoordsCB.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        useCoordsCB.setText("set coordinates from data");
+        useCoordsCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                useCoordsCBActionPerformed(evt);
+            }
+        });
+        coordsPanel.add(useCoordsCB, java.awt.BorderLayout.NORTH);
 
-        jPanel3.setMinimumSize(new java.awt.Dimension(170, 300));
-        jPanel3.setPreferredSize(new java.awt.Dimension(210, 450));
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
         indexComponentCB.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
         indexComponentCB.setText("add index component");
+        indexComponentCB.setToolTipText("adds integer component (node index)");
         indexComponentCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 indexComponentCBActionPerformed(evt);
@@ -352,7 +346,8 @@ public class GUI extends javax.swing.JPanel
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -378,29 +373,10 @@ public class GUI extends javax.swing.JPanel
         gridBagConstraints.weightx = 1.0;
         xPanel.add(xComponentSelector, gridBagConstraints);
 
-        xScaleSlider.setMax(10.0F);
-        xScaleSlider.setMinimumSize(new java.awt.Dimension(90, 40));
-        xScaleSlider.setPreferredSize(new java.awt.Dimension(200, 40));
-        xScaleSlider.setShowingFields(false);
-        xScaleSlider.setToolTipText("x coordinate scale");
-        xScaleSlider.setVal(1.0F);
-        xScaleSlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                xScaleSliderStateChanged(evt);
-            }
-        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        xPanel.add(xScaleSlider, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -425,29 +401,10 @@ public class GUI extends javax.swing.JPanel
         gridBagConstraints.weightx = 1.0;
         yPanel.add(yComponentSelector, gridBagConstraints);
 
-        yScaleSlider.setMax(10.0F);
-        yScaleSlider.setMinimumSize(new java.awt.Dimension(90, 40));
-        yScaleSlider.setPreferredSize(new java.awt.Dimension(200, 40));
-        yScaleSlider.setShowingFields(false);
-        yScaleSlider.setToolTipText("y coordinate scale");
-        yScaleSlider.setVal(1.0F);
-        yScaleSlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                yScaleSliderStateChanged(evt);
-            }
-        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        yPanel.add(yScaleSlider, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -472,101 +429,160 @@ public class GUI extends javax.swing.JPanel
         gridBagConstraints.weightx = 1.0;
         zPanel.add(zComponentSelector, gridBagConstraints);
 
-        zScaleSlider.setMax(10.0F);
-        zScaleSlider.setMinimumSize(new java.awt.Dimension(90, 40));
-        zScaleSlider.setPreferredSize(new java.awt.Dimension(200, 40));
-        zScaleSlider.setShowingFields(false);
-        zScaleSlider.setToolTipText("z coordinate scale");
-        zScaleSlider.setVal(1.0F);
-        zScaleSlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                zScaleSliderStateChanged(evt);
-            }
-        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        zPanel.add(zScaleSlider, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         jPanel3.add(zPanel, gridBagConstraints);
 
-        jScrollPane6.setViewportView(jPanel3);
-
-        coordsPanel.add(jScrollPane6, java.awt.BorderLayout.CENTER);
-
-        topPanel.setLayout(new java.awt.GridBagLayout());
-
-        useCoordsCB.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        useCoordsCB.setText("set coordinates from data");
-        useCoordsCB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                useCoordsCBActionPerformed(evt);
-            }
-        });
+        jLabel3.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel3.setText("y variable shift");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 3, 2, 5);
-        topPanel.add(useCoordsCB, gridBagConstraints);
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel3.add(jLabel3, gridBagConstraints);
 
-        buttonGroup1.add(dim1RB);
-        dim1RB.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-        dim1RB.setText("1D");
-        dim1RB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dim1RBActionPerformed(evt);
-            }
-        });
+        jLabel4.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel4.setText("x scale");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 0.3;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel3.add(jLabel4, gridBagConstraints);
+
+        jLabel5.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel5.setText("x coord shift");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel3.add(jLabel5, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        jPanel3.add(xScaleField, gridBagConstraints);
+
+        xShiftField.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel3.add(xShiftField, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel3.add(yScaleField, gridBagConstraints);
+
+        jLabel6.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel6.setText("y coord shift");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel3.add(jLabel6, gridBagConstraints);
+
+        jLabel7.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel7.setText("z variable shift");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel3.add(jLabel7, gridBagConstraints);
+
+        jLabel8.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel8.setText("z coord shift");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 11;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel3.add(jLabel8, gridBagConstraints);
+
+        yShiftField.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel3.add(yShiftField, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel3.add(zScaleField, gridBagConstraints);
+
+        zShiftField.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 11;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel3.add(zShiftField, gridBagConstraints);
+
+        jLabel9.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel9.setText("x variable shift");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 0.3;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
-        topPanel.add(dim1RB, gridBagConstraints);
+        jPanel3.add(jLabel9, gridBagConstraints);
 
-        buttonGroup1.add(dim2RB);
-        dim2RB.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-        dim2RB.setText("2D");
-        dim2RB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dim2RBActionPerformed(evt);
-            }
-        });
+        xVarShiftField.setText("0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        topPanel.add(dim2RB, gridBagConstraints);
-
-        buttonGroup1.add(dim3RB);
-        dim3RB.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-        dim3RB.setText("3D");
-        dim3RB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dim3RBActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
-        topPanel.add(dim3RB, gridBagConstraints);
+        jPanel3.add(xVarShiftField, gridBagConstraints);
 
-        coordsPanel.add(topPanel, java.awt.BorderLayout.PAGE_START);
+        jLabel10.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel10.setText("y scale");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel3.add(jLabel10, gridBagConstraints);
+
+        yVarShiftField.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel3.add(yVarShiftField, gridBagConstraints);
+
+        jLabel11.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel11.setText("z scale");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel3.add(jLabel11, gridBagConstraints);
+
+        zVarShiftField.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel3.add(zVarShiftField, gridBagConstraints);
+
+        jScrollPane6.setViewportView(jPanel3);
+
+        coordsPanel.add(jScrollPane6, java.awt.BorderLayout.CENTER);
 
         functionPane.addTab("coords", coordsPanel);
 
@@ -576,26 +592,15 @@ public class GUI extends javax.swing.JPanel
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.weighty = 0.5;
         mainPanel.add(functionPane, gridBagConstraints);
 
         functionPane1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        functionPane1.setMaximumSize(new java.awt.Dimension(32767, 400));
-        functionPane1.setMinimumSize(new java.awt.Dimension(170, 250));
-        functionPane1.setPreferredSize(new java.awt.Dimension(220, 300));
 
         vectorPanel.setToolTipText("<html>combine scalars into vector<p>compute norm or split vector in scalars</html>");
-        vectorPanel.setMaximumSize(new java.awt.Dimension(2147483647, 300));
-        vectorPanel.setMinimumSize(new java.awt.Dimension(180, 190));
-        vectorPanel.setOpaque(false);
-        vectorPanel.setPreferredSize(new java.awt.Dimension(223, 290));
-        vectorPanel.setRequestFocusEnabled(false);
         vectorPanel.setLayout(new java.awt.GridBagLayout());
 
-        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        jScrollPane2.setMinimumSize(new java.awt.Dimension(180, 90));
-        jScrollPane2.setOpaque(false);
-        jScrollPane2.setPreferredSize(new java.awt.Dimension(220, 140));
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(100, 100));
 
         createVectorsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -623,34 +628,25 @@ public class GUI extends javax.swing.JPanel
             }
         });
         createVectorsTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        createVectorsTable.setFocusable(false);
-        createVectorsTable.setGridColor(new java.awt.Color(200, 200, 200));
-        createVectorsTable.setInheritsPopupMenu(true);
-        createVectorsTable.setMaximumSize(new java.awt.Dimension(240, 400));
-        createVectorsTable.setMinimumSize(new java.awt.Dimension(180, 300));
-        createVectorsTable.setPreferredSize(new java.awt.Dimension(220, 300));
-        createVectorsTable.setRequestFocusEnabled(false);
         createVectorsTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane2.setViewportView(createVectorsTable);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.weighty = 0.5;
         vectorPanel.add(jScrollPane2, gridBagConstraints);
 
         force3DBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         force3DBox.setText("force 3D vectors");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
         vectorPanel.add(force3DBox, gridBagConstraints);
 
-        jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        jScrollPane3.setMinimumSize(new java.awt.Dimension(180, 90));
-        jScrollPane3.setPreferredSize(new java.awt.Dimension(453, 140));
+        jScrollPane3.setPreferredSize(new java.awt.Dimension(100, 100));
 
         vectorOperationsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -678,34 +674,25 @@ public class GUI extends javax.swing.JPanel
                 return canEdit [columnIndex];
             }
         });
-        vectorOperationsTable.setMaximumSize(new java.awt.Dimension(2147483647, 300));
-        vectorOperationsTable.setMinimumSize(new java.awt.Dimension(180, 200));
-        vectorOperationsTable.setPreferredSize(new java.awt.Dimension(225, 200));
         jScrollPane3.setViewportView(vectorOperationsTable);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipady = 1;
-        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.5;
         vectorPanel.add(jScrollPane3, gridBagConstraints);
 
         functionPane1.addTab("vectors", vectorPanel);
 
         complexPanel.setLayout(new java.awt.GridBagLayout());
 
-        complexCombinePanel.setMinimumSize(new java.awt.Dimension(200, 200));
-        complexCombinePanel.setPreferredSize(new java.awt.Dimension(200, 200));
-        complexCombinePanel.setLayout(new java.awt.GridBagLayout());
+        complexCombinePanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel1.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         jLabel1.setText("Combine components to complex");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 0);
-        complexCombinePanel.add(jLabel1, gridBagConstraints);
+        complexCombinePanel.add(jLabel1, java.awt.BorderLayout.NORTH);
+
+        jScrollPane4.setPreferredSize(new java.awt.Dimension(100, 100));
 
         complexCombineTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -732,20 +719,10 @@ public class GUI extends javax.swing.JPanel
                 return types [columnIndex];
             }
         });
-        complexCombineTable.setFocusable(false);
-        complexCombineTable.setRequestFocusEnabled(false);
         complexCombineTable.setRowSelectionAllowed(false);
         jScrollPane4.setViewportView(complexCombineTable);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
-        complexCombinePanel.add(jScrollPane4, gridBagConstraints);
+        complexCombinePanel.add(jScrollPane4, java.awt.BorderLayout.CENTER);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
@@ -753,17 +730,12 @@ public class GUI extends javax.swing.JPanel
         gridBagConstraints.weightx = 1.0;
         complexPanel.add(complexCombinePanel, gridBagConstraints);
 
-        complexSplitPanel.setMinimumSize(new java.awt.Dimension(200, 200));
-        complexSplitPanel.setPreferredSize(new java.awt.Dimension(200, 200));
-        complexSplitPanel.setLayout(new java.awt.GridBagLayout());
+        complexSplitPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel2.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         jLabel2.setText("Split complex components");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 0);
-        complexSplitPanel.add(jLabel2, gridBagConstraints);
+        complexSplitPanel.add(jLabel2, java.awt.BorderLayout.NORTH);
+
+        jScrollPane5.setPreferredSize(new java.awt.Dimension(100, 100));
 
         complexSplitTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -781,20 +753,10 @@ public class GUI extends javax.swing.JPanel
                 return types [columnIndex];
             }
         });
-        complexSplitTable.setFocusable(false);
-        complexSplitTable.setRequestFocusEnabled(false);
         complexSplitTable.setRowSelectionAllowed(false);
         jScrollPane5.setViewportView(complexSplitTable);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
-        complexSplitPanel.add(jScrollPane5, gridBagConstraints);
+        complexSplitPanel.add(jScrollPane5, java.awt.BorderLayout.CENTER);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -805,12 +767,8 @@ public class GUI extends javax.swing.JPanel
         complexPanel.add(complexSplitPanel, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        complexPanel.add(jPanel5, gridBagConstraints);
+        complexPanel.add(filler2, gridBagConstraints);
 
         functionPane1.addTab("complex", complexPanel);
 
@@ -819,38 +777,12 @@ public class GUI extends javax.swing.JPanel
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.5;
         mainPanel.add(functionPane1, gridBagConstraints);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        add(mainPanel, gridBagConstraints);
+        add(mainPanel, java.awt.BorderLayout.NORTH);
     }// </editor-fold>//GEN-END:initComponents
-
-   private void dim1RBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dim1RBActionPerformed
-      if (dim1RB.isSelected())
-      {
-         params.setNDims(1);
-         updateGUI();
-      }
-}//GEN-LAST:event_dim1RBActionPerformed
-
-   private void dim2RBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dim2RBActionPerformed
-      if (dim2RB.isSelected())
-      {
-         params.setNDims(2);
-         updateGUI();
-      }
-   }//GEN-LAST:event_dim2RBActionPerformed
-
-   private void dim3RBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dim3RBActionPerformed
-      if (dim3RB.isSelected())
-      {
-         params.setNDims(3);
-         updateGUI();
-      }
-   }//GEN-LAST:event_dim3RBActionPerformed
 
    private void indexComponentCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_indexComponentCBActionPerformed
       params.setAddIndexComponent(indexComponentCB.isSelected());
@@ -860,55 +792,13 @@ public class GUI extends javax.swing.JPanel
       params.setXCoordComponent(xComponentSelector.getComponent());
 }//GEN-LAST:event_xComponentSelectorStateChanged
 
-   private void xScaleSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_xScaleSliderStateChanged
-      {
-         float min = xScaleSlider.getMin();
-         float max = xScaleSlider.getMax();
-         float val = xScaleSlider.getVal();
-         if (min != params.getXCoordScaleMin())
-            params.setXCoordScaleMin(min);
-         if (max != params.getXCoordScaleMax())
-            params.setXCoordScaleMax(max);
-         if (val != params.getXCoordScaleVal())
-            params.setXCoordScaleVal(val);
-      }
-}//GEN-LAST:event_xScaleSliderStateChanged
-
    private void yComponentSelectorStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_yComponentSelectorStateChanged
       params.setYCoordComponent(yComponentSelector.getComponent());
 }//GEN-LAST:event_yComponentSelectorStateChanged
 
-   private void yScaleSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_yScaleSliderStateChanged
-      {
-         float min = yScaleSlider.getMin();
-         float max = yScaleSlider.getMax();
-         float val = yScaleSlider.getVal();
-         if (min != params.getYCoordScaleMin())
-            params.setYCoordScaleMin(min);
-         if (max != params.getYCoordScaleMax())
-            params.setYCoordScaleMax(max);
-         if (val != params.getYCoordScaleVal())
-            params.setYCoordScaleVal(val);
-      }
-}//GEN-LAST:event_yScaleSliderStateChanged
-
    private void zComponentSelectorStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_zComponentSelectorStateChanged
       params.setZCoordComponent(zComponentSelector.getComponent());
 }//GEN-LAST:event_zComponentSelectorStateChanged
-
-   private void zScaleSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_zScaleSliderStateChanged
-      {
-         float min = zScaleSlider.getMin();
-         float max = zScaleSlider.getMax();
-         float val = zScaleSlider.getVal();
-         if (min != params.getZCoordScaleMin())
-            params.setZCoordScaleMin(min);
-         if (max != params.getZCoordScaleMax())
-            params.setZCoordScaleMax(max);
-         if (val != params.getZCoordScaleVal())
-            params.setZCoordScaleVal(val);
-      }
-}//GEN-LAST:event_zScaleSliderStateChanged
 
    private void useCoordsCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useCoordsCBActionPerformed
       params.setUseCoords(useCoordsCB.isSelected());
@@ -924,8 +814,20 @@ private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
       params.setMaskComponent(maskComponentSelector.getComponent());
       if (maskComponentSelector.getComponent() < 0)
          return;
-      DataArray da = inField.getData(maskComponentSelector.getComponent());
-      maskRangeSlider.setMinMax(da.getMinv(), da.getMaxv());
+      int i = maskComponentSelector.getComponent();
+      if(i < inField.getNData()) {
+          DataArray da = inField.getData(i);
+          maskRangeSlider.setMinMax(da.getMinv(), da.getMaxv());
+      } else if(i == inField.getNData()) { //x coordinate
+          float[][] ext = inField.getExtents();
+          maskRangeSlider.setMinMax(ext[0][0], ext[1][0]);          
+      } else if(i == inField.getNData()+1) { //y coordinate
+          float[][] ext = inField.getExtents();
+          maskRangeSlider.setMinMax(ext[0][1], ext[1][1]);          
+      } else if(i == inField.getNData()+2) { //z coordinate
+          float[][] ext = inField.getExtents();
+          maskRangeSlider.setMinMax(ext[0][2], ext[1][2]);          
+      }
    }//GEN-LAST:event_maskComponentSelectorStateChanged
 
    private void recomputeMinMaxBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_recomputeMinMaxBoxActionPerformed
@@ -952,10 +854,31 @@ private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
       this.inField = inField;
       if (inField instanceof RegularField)
          inRegularField = (RegularField) inField;
+      else
+         inIrregularField = (IrregularField)inField;
       maskComponentSelector.setDataSchema(inField.getSchema());
-      maskComponentSelector.setSelectedIndex(maskComponentSelector.getnItems());
+      maskComponentSelector.setNull();
+      
+      String[] coordItems = null;
+      int[] coordIndices = null;
+      switch(inField.getNSpace()) {
+          case 3:
+              coordItems = new String[]{"x coord","y coord","z coord"};
+              coordIndices = new int[]{inField.getNData(),inField.getNData()+1,inField.getNData()+2};
+              break;
+          case 2:
+              coordItems = new String[]{"x coord","y coord"};
+              coordIndices = new int[]{inField.getNData(),inField.getNData()+1};
+              break;
+          case 1:
+              coordItems = new String[]{"x coord"};
+              coordIndices = new int[]{inField.getNData()};
+              break;
+      }      
+      maskComponentSelector.addExtraItems(coordItems, coordIndices);
+      
       updateGUI();
-      Vector<DataArraySchema> components = inField.getSchema().getComponentSchemas();
+      ArrayList<DataArraySchema> components = inField.getSchema().getComponentSchemas();
       nComps = components.size();
       Object[][] actionTableContent = new Object[nComps][5];
       for (int i = 0; i < nComps; i++)
@@ -966,6 +889,13 @@ private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
          actionTableContent[i][3] = inField.getData(i).getMinv() - .1f;
          actionTableContent[i][4] = inField.getData(i).getMaxv() + .1f;
       }
+      
+      //TODO: create column name enum
+      //remove non-convertible components from editing
+      final boolean[] convertible = new boolean[nComps];      
+      for (int i = 0; i< nComps; i++)
+          convertible[i] = inField.getData(i).isNumericConvertible();          
+
       DefaultTableModel tm = new javax.swing.table.DefaultTableModel(actionTableContent, actionTableHeader)
       {
          @Override
@@ -973,6 +903,12 @@ private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
          {
             return actionTableTypes[columnIndex];
          }
+
+          @Override
+          public boolean isCellEditable(int row, int column) {
+              if (column == 1) return convertible[row];
+              else return super.isCellEditable(row, column);
+          }
       };
       actionTable.setModel(tm);
       for (int i = 0; i < 5; i++)
@@ -980,6 +916,7 @@ private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
       SteppedComboBox comboBox = new SteppedComboBox(Params.actionNames);
       comboBox.setFont(new java.awt.Font("Dialog", 0, 12));
       setUpComponentColumn(comboBox, actionTable.getColumnModel().getColumn(1));
+            
       nComps = components.size();
       compNames.clear();
       vCompNames.clear();
@@ -1038,7 +975,8 @@ private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
       };
       vectorOperationsTable.setModel(vtm);
 
-      
+      if (params != null)
+         params.setMaskComponent(-1);
 //      Object[][] complexSpltTableContent = new Object[nComplexComps][5];
 //      for (int i = 0; i < nComplexComps; i++)
 //      {
@@ -1071,151 +1009,60 @@ private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 
    private void updateGUI()
    {
-      if (inRegularField == null)
-      {
-         useCoordsCB.setEnabled(false);
-         coordsPanel.setVisible(false);
-         dim1RB.setEnabled(false);
-         dim2RB.setEnabled(false);
-         dim3RB.setEnabled(false);
-         xComponentSelector.setEnabled(false);
-         yComponentSelector.setEnabled(false);
-         zComponentSelector.setEnabled(false);
-         xScaleSlider.setEnabled(false);
-         yScaleSlider.setEnabled(false);
-         zScaleSlider.setEnabled(false);
-         indexComponentCB.setEnabled(false);
-         complexCombinePanel.setVisible(false);
-         complexSplitPanel.setVisible(false);         
-         return;
-      }
+      
       coordsPanel.setVisible(true);
       useCoordsCB.setEnabled(true);
       useCoordsCB.setSelected(params.isUseCoords());
 
       if (params.isUseCoords())
       {
-         int nDims = inRegularField.getDims().length;
-         dim1RB.setEnabled(nDims == 1);
-         dim2RB.setEnabled(nDims <= 2);
-         dim3RB.setEnabled(nDims <= 3);
-         dim1RB.setVisible(nDims == 1);
-         dim2RB.setVisible(nDims <= 2);
-         dim3RB.setVisible(nDims <= 3);
-         switch (params.getNDims())
+         String[] extraNames = null;
+         int[] extraIndices = null;
+         if (inIrregularField != null)
          {
-            case 1:
-               dim1RB.setSelected(true);
-               xComponentSelector.setEnabled(true);
-               yComponentSelector.setEnabled(false);
-               zComponentSelector.setEnabled(false);
-               xScaleSlider.setEnabled(true);
-               yScaleSlider.setEnabled(false);
-               zScaleSlider.setEnabled(false);
-               xPanel.setVisible(true);
-               yPanel.setVisible(false);
-               zPanel.setVisible(false);
-               break;
-            case 2:
-               dim2RB.setSelected(true);
-               xComponentSelector.setEnabled(true);
-               yComponentSelector.setEnabled(true);
-               zComponentSelector.setEnabled(false);
-               xScaleSlider.setEnabled(true);
-               yScaleSlider.setEnabled(true);
-               zScaleSlider.setEnabled(false);
-               xPanel.setVisible(true);
-               yPanel.setVisible(true);
-               zPanel.setVisible(false);
-               break;
-            case 3:
-               dim3RB.setSelected(true);
-               xComponentSelector.setEnabled(true);
-               yComponentSelector.setEnabled(true);
-               zComponentSelector.setEnabled(true);
-               xScaleSlider.setEnabled(true);
-               yScaleSlider.setEnabled(true);
-               zScaleSlider.setEnabled(true);
-               xPanel.setVisible(true);
-               yPanel.setVisible(true);
-               zPanel.setVisible(true);
-               break;
+            complexCombinePanel.setVisible(false);
+            complexSplitPanel.setVisible(false); 
+            extraNames = new String[] {"x", "y", "z", "0"};
+            extraIndices = new int[] {-10, -11, -12, -100};
          }
-
-         String[] extraNames;
-         int[] extraIndices;
-         switch (nDims)
+         else if (inRegularField != null)
          {
-            case 1:
-               extraNames = new String[2];
-               extraNames[0] = "i";
-               extraNames[1] = "0";
-               extraIndices = new int[2];
-               extraIndices[0] = -1;
-               extraIndices[1] = -100;
-               break;
-            case 2:
-               extraNames = new String[3];
-               extraNames[0] = "i";
-               extraNames[1] = "j";
-               extraNames[2] = "0";
-               extraIndices = new int[3];
-               extraIndices[0] = -1;
-               extraIndices[1] = -2;
-               extraIndices[2] = -100;
-               break;
-            default:
-               extraNames = new String[4];
-               extraNames[0] = "i";
-               extraNames[1] = "j";
-               extraNames[2] = "k";
-               extraNames[3] = "0";
-               extraIndices = new int[4];
-               extraIndices[0] = -1;
-               extraIndices[1] = -2;
-               extraIndices[2] = -3;
-               extraIndices[2] = -100;
-               break;
+            int nDims = inRegularField.getDims().length;
+            switch (nDims)
+            {
+               case 1:
+                  extraNames = new String[]{"x", "y", "z", "i", "0"};
+                  extraIndices = new int[] {-10, -11, -12, -1, -100};
+                  break;
+               case 2:
+                  extraNames = new String[]{"x", "y", "z", "i", "j", "0"};
+                  extraIndices = new int[] {-10, -11, -12, -1, -2, -100};
+                  break;
+               default:
+                  extraNames = new String[]{"x", "y", "z", "i", "j", "k", "0"};
+                  extraIndices = new int[] {-10, -11, -12, -1, -2, -3, -100};
+                  break;
+            }
+
          }
 
          xComponentSelector.addExtraItems(extraNames, extraIndices);
-         xComponentSelector.setDataSchema(inRegularField.getSchema());
+         xComponentSelector.setDataSchema(inField.getSchema());
          xComponentSelector.setComponent(params.getXCoordComponent());
-         xScaleSlider.setMinMax(params.getXCoordScaleMin(), params.getXCoordScaleMax());
-         xScaleSlider.setValue(params.getXCoordScaleVal(), true);
 
          yComponentSelector.addExtraItems(extraNames, extraIndices);
-         yComponentSelector.setDataSchema(inRegularField.getSchema());
+         yComponentSelector.setDataSchema(inField.getSchema());
          yComponentSelector.setComponent(params.getYCoordComponent());
-         yScaleSlider.setMinMax(params.getYCoordScaleMin(), params.getYCoordScaleMax());
-         yScaleSlider.setValue(params.getYCoordScaleVal(), true);
 
          zComponentSelector.addExtraItems(extraNames, extraIndices);
-         zComponentSelector.setDataSchema(inRegularField.getSchema());
+         zComponentSelector.setDataSchema(inField.getSchema());
          zComponentSelector.setComponent(params.getZCoordComponent());
-         zScaleSlider.setMinMax(params.getZCoordScaleMin(), params.getZCoordScaleMax());
-         zScaleSlider.setValue(params.getZCoordScaleVal(), true);
 
          indexComponentCB.setEnabled(true);
          indexComponentCB.setSelected(params.isAddIndexComponent());
 
       } else
       {
-         dim1RB.setEnabled(false);
-         dim2RB.setEnabled(false);
-         dim3RB.setEnabled(false);
-         dim1RB.setVisible(false);
-         dim2RB.setVisible(false);
-         dim3RB.setVisible(false);
-         xComponentSelector.setEnabled(false);
-         yComponentSelector.setEnabled(false);
-         zComponentSelector.setEnabled(false);
-         xScaleSlider.setEnabled(false);
-         yScaleSlider.setEnabled(false);
-         zScaleSlider.setEnabled(false);
-         xPanel.setVisible(false);
-         yPanel.setVisible(false);
-         zPanel.setVisible(false);
          indexComponentCB.setEnabled(false);
       }
       
@@ -1426,6 +1273,22 @@ private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
           params.setComplexSplitArg(new boolean[]{});
       }
       
+      params.setXCoordComponent(xComponentSelector.getComponent());
+      params.setYCoordComponent(yComponentSelector.getComponent());
+      params.setZCoordComponent(zComponentSelector.getComponent());
+      
+      params.setXVarShift(xVarShiftField.getValue());
+      params.setYVarShift(yVarShiftField.getValue());
+      params.setZVarShift(zVarShiftField.getValue());
+      
+      params.setXCoordScale(xScaleField.getValue());
+      params.setYCoordScale(yScaleField.getValue());
+      params.setZCoordScale(zScaleField.getValue());
+      
+      params.setXCoordShift(xShiftField.getValue());
+      params.setYCoordShift(yShiftField.getValue());
+      params.setZCoordShift(zShiftField.getValue());
+      
       params.fireStateChanged();
    }
    
@@ -1441,19 +1304,24 @@ private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     private javax.swing.JPanel componentselectorPanel;
     private javax.swing.JPanel coordsPanel;
     private javax.swing.JTable createVectorsTable;
-    private javax.swing.JRadioButton dim1RB;
-    private javax.swing.JRadioButton dim2RB;
-    private javax.swing.JRadioButton dim3RB;
+    private javax.swing.Box.Filler filler1;
+    private javax.swing.Box.Filler filler2;
     private javax.swing.JCheckBox force3DBox;
     private javax.swing.JTabbedPane functionPane;
     private javax.swing.JTabbedPane functionPane1;
     private javax.swing.JCheckBox indexComponentCB;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -1466,18 +1334,23 @@ private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     private pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider maskRangeSlider;
     private javax.swing.JCheckBox recomputeMinMaxBox;
     private javax.swing.JButton runButton;
-    private javax.swing.JPanel topPanel;
     private javax.swing.JCheckBox useCoordsCB;
     private javax.swing.JTable vectorOperationsTable;
     private javax.swing.JPanel vectorPanel;
     private pl.edu.icm.visnow.lib.gui.DataComponentSelector xComponentSelector;
     private javax.swing.JPanel xPanel;
-    private pl.edu.icm.visnow.gui.widgets.FloatSlider xScaleSlider;
+    private pl.edu.icm.visnow.gui.components.FloatFormattedTextField xScaleField;
+    private pl.edu.icm.visnow.gui.components.FloatFormattedTextField xShiftField;
+    private pl.edu.icm.visnow.gui.components.FloatFormattedTextField xVarShiftField;
     private pl.edu.icm.visnow.lib.gui.DataComponentSelector yComponentSelector;
     private javax.swing.JPanel yPanel;
-    private pl.edu.icm.visnow.gui.widgets.FloatSlider yScaleSlider;
+    private pl.edu.icm.visnow.gui.components.FloatFormattedTextField yScaleField;
+    private pl.edu.icm.visnow.gui.components.FloatFormattedTextField yShiftField;
+    private pl.edu.icm.visnow.gui.components.FloatFormattedTextField yVarShiftField;
     private pl.edu.icm.visnow.lib.gui.DataComponentSelector zComponentSelector;
     private javax.swing.JPanel zPanel;
-    private pl.edu.icm.visnow.gui.widgets.FloatSlider zScaleSlider;
+    private pl.edu.icm.visnow.gui.components.FloatFormattedTextField zScaleField;
+    private pl.edu.icm.visnow.gui.components.FloatFormattedTextField zShiftField;
+    private pl.edu.icm.visnow.gui.components.FloatFormattedTextField zVarShiftField;
     // End of variables declaration//GEN-END:variables
 }

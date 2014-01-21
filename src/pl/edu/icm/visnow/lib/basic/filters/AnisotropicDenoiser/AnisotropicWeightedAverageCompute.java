@@ -245,7 +245,7 @@ public class AnisotropicWeightedAverageCompute extends AbstractAnisotropicWeight
                break;
          }
          System.out.println("elapsed time "+(System.currentTimeMillis()-t0)/(1000.f));
-         System.out.println("average slice time "+((System.currentTimeMillis()-t0)/(1000.f*(dims[dims.length-1]-2*radius+1))));
+         System.out.println("average slice time using "+nThreads+" thread(s): "+((System.currentTimeMillis()-t0)/(1000.f*(dims[dims.length-1]-2*radius+1))));
       }
       if (outField.getNData() > 0)
          return outField;

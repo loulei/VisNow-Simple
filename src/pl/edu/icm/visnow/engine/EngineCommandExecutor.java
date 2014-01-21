@@ -37,6 +37,7 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.engine;
 
+import org.apache.log4j.Logger;
 import pl.edu.icm.visnow.engine.core.LinkName;
 import pl.edu.icm.visnow.engine.core.ModuleCore;
 import pl.edu.icm.visnow.engine.core.Link;
@@ -50,7 +51,8 @@ import pl.edu.icm.visnow.engine.main.ModuleBox;
  */
 public class EngineCommandExecutor
 {
-
+   private static final Logger LOGGER = Logger.getLogger(EngineCommandExecutor.class);
+    
    private static boolean debug = false;
    private Engine engine;
 
@@ -59,17 +61,23 @@ public class EngineCommandExecutor
       return engine;
    }
 
-   public void addLink(LinkName name, boolean active)
+   public boolean addLink(LinkName name, boolean active)
    {
+      if(getEngine().getLink(name) != null) {
+          return false;
+      }
+       
       ModuleBox receivingModule = getEngine().getModule(name.getInputModule());
       Link link = new Link(
               getEngine().getModule(name.getOutputModule()).getOutput(name.getOutputPort()),
-                                    receivingModule.getInput(name.getInputPort()));
+                                    receivingModule.getInput(name.getInputPort()));      
       getEngine().getLinks().put(name, link);
+      return true;
    }
 
    public void addModule(String name, ModuleCore core)
    {
+      core.setApplication(this.getEngine().getApplication());
       ModuleBox mb = new ModuleBox(getEngine(), name, core);
       getEngine().getModules().put(name, mb);
       mb.run();
@@ -77,6 +85,7 @@ public class EngineCommandExecutor
 
    public boolean deleteLink(LinkName name)
    {
+       LOGGER.debug("Link name: " + name);
       if (debug)
          System.out.println(name.toString());
       Link link = getEngine().getLink(name);

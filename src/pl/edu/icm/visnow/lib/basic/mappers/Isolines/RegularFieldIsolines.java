@@ -425,7 +425,7 @@ public class RegularFieldIsolines
          k += polys[i];
       }
 
-      outField = new IrregularField();
+      outField = new IrregularField(nNodes);
       float[] outThr = new float[nNodes];
       for (int i = 0, k = 0; i < lines.length; i++)
       {
@@ -441,7 +441,6 @@ public class RegularFieldIsolines
          outData[i].recomputeMinMax();
          outField.addData(outData[i]);
       }
-      outField.setNNodes(nNodes);
       outField.setNSpace(3);
       outField.setCoords(coords);
       CellSet cellSet = new CellSet(inField.getName() + "isolines");

@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,7 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.geometries.objects;
 
@@ -54,16 +56,17 @@ import pl.edu.icm.visnow.system.main.VisNow;
 abstract public class FieldGeometry extends DataMappedGeometryObject
 {
    protected Field field;
-   
+
    protected OpenBranchGroup geometries = new OpenBranchGroup();
    protected TransformParams transformParams = null;
    protected OpenTransformGroup transformedGeometries = new OpenTransformGroup();
+   protected boolean ignoreUpdate = false;
    
    public FieldGeometry()
    {
       this("");
    }
-   
+
    public FieldGeometry(String name)
    {
       this.name = name;
@@ -73,23 +76,18 @@ abstract public class FieldGeometry extends DataMappedGeometryObject
          @Override
          public void colorChoosen(ColorEvent e)
          {
-            fireStateChanged(e.getSelectedColor());
+            fireBgrColorChanged(e.getSelectedColor());
          }
       };
    }
 
-   public boolean isNewParams()
-   {
-      return newParams;
-   }
-   
-   public void fireStateChanged(Color color)
+   public void fireBgrColorChanged(Color color)
    {
       ColorEvent e = new ColorEvent(this, color);
       for (ColorListener colorListener : bgrColorListenerList)
          colorListener.colorChoosen(e);
    }
- 
+
    abstract public void createGeometry(Field inField);
    abstract public OpenBranchGroup getGeometry(Field inField);
    abstract public void updateGeometry(Field inField);
@@ -102,4 +100,18 @@ abstract public class FieldGeometry extends DataMappedGeometryObject
    abstract public boolean setField(Field inField, boolean createParams);
    abstract public boolean setField(Field inField);
    abstract public Field getField();
+
+    /**
+     * @return the ignoreUpdate
+     */
+    public boolean isIgnoreUpdate() {
+        return ignoreUpdate;
+    }
+
+    /**
+     * @param ignoreUpdate the ignoreUpdate to set
+     */
+    public void setIgnoreUpdate(boolean ignoreUpdate) {
+        this.ignoreUpdate = ignoreUpdate;
+    }
 }

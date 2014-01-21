@@ -49,25 +49,36 @@ public class PointDescriptor {
     protected int[] indices;
     protected float[] worldCoords;
     protected float[] physicalCoords;
+    private int membership = -1;
 
+    public PointDescriptor(String s, int[] p, float[] c, int membership) {
+        this.name = s;
+        this.indices = p;
+        this.worldCoords = c;
+        this.membership = membership;
+    }
+    
+    
     public PointDescriptor(String s, int[] p, float[] c) {
-        name = s;
-        indices = p;
-        worldCoords = c;
+        this(s,p,c,-1);
     }
 
-    public PointDescriptor(int[] p, float[] c) {
-        name = "p" + nextPoint();
-        indices = p;
-        worldCoords = c;
+    public PointDescriptor(int n, int[] p, float[] c, int membership) {
+        this("p" + n, p , c, membership);
     }
 
     public PointDescriptor(int n, int[] p, float[] c) {
-        name = "p" + n;
-        indices = p;
-        worldCoords = c;
+        this("p" + n, p , c, -1);
+    }
+    
+    public PointDescriptor(int[] p, float[] c, int membership) {
+        this(nextPoint(), p, c, membership);
     }
 
+    public PointDescriptor(int[] p, float[] c) {
+        this(p , c, -1);
+    }   
+    
     public int[] getIndices() {
         return indices;
     }
@@ -119,5 +130,19 @@ public class PointDescriptor {
 
     public boolean isDependant() {
         return false;
+    }
+
+    /**
+     * @return the membership
+     */
+    public int getMembership() {
+        return membership;
+    }
+
+    /**
+     * @param membership the membership to set
+     */
+    public void setMembership(int membership) {
+        this.membership = membership;
     }
 }

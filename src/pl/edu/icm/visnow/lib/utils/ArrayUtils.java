@@ -39,7 +39,7 @@ package pl.edu.icm.visnow.lib.utils;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public class ArrayUtils
 {
@@ -208,7 +208,7 @@ public class ArrayUtils
       {
          float d = (Integer.MAX_VALUE - Integer.MIN_VALUE) / (max - min);
          for (int i = 0; i < out.length; i++)
-            out[i] = (int)(Integer.MIN_VALUE - d * (in[i] - min));
+            out[i] = (int)(Integer.MIN_VALUE + d * (in[i] - min));
       }
       else
          for (int i = 0; i < out.length; i++)
@@ -223,7 +223,7 @@ public class ArrayUtils
       {
          float d = (Integer.MAX_VALUE - Integer.MIN_VALUE) / (max - min);
          for (int i = 0; i < out.length; i++)
-            out[i] = (int)(Integer.MIN_VALUE - d * (in[i] - min));
+            out[i] = (int)(Integer.MIN_VALUE + d * (in[i] - min));
       }
       else
          for (int i = 0; i < out.length; i++)

@@ -150,8 +150,7 @@ public class ImagePanel extends JPanel
 
    public void setImage(String path)
    {
-      Image tmp = ImageUtilities.blockingLoad(path);
-      this.setImage(ImageUtilities.makeBufferedImage(tmp));
+      this.setImage(ImageUtilities.loadImage(path));
    }
 
    public BufferedImage getImage()

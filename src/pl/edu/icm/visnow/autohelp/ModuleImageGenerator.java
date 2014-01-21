@@ -52,6 +52,7 @@ import pl.edu.icm.visnow.engine.core.ModuleCore;
 import pl.edu.icm.visnow.engine.core.ModuleXMLReader;
 import pl.edu.icm.visnow.engine.main.ModuleBox;
 import pl.edu.icm.visnow.lib.utils.ImageUtilities;
+import pl.edu.icm.visnow.lib.utils.SwingInstancer;
 import pl.edu.icm.visnow.system.main.VisNow;
 
 /**
@@ -60,68 +61,65 @@ import pl.edu.icm.visnow.system.main.VisNow;
  * 
  */
 public class ModuleImageGenerator {
+    private static boolean buildPro = false;
 
-    private static String libraryXml = "simple_library.xml";
-    
-    public static void main(String[] args) {
-        String[] args2 = null;
-        if(args == null || args.length < 1) {
-            args2 = new String[1];
-            args2[0] = "-easy";
-        } else {
-            args2 = new String[args.length + 1];
-            args2[0] = "-easy";
-            for (int i = 0; i < args.length; i++) {
-                if(args[i].equals("-full")) {
-                    args2[i+1] = "";
-                    continue;
-                }
-                args2[i+1] = args[i];                
-            }
+    public static void main(final String[] args) {
+        if(args != null && args.length == 1) {
+            buildPro = (args[0].equals("-pro"));
         }
-        VisNow.mainBlocking(args2, false);
-
-        String workDir = System.getProperty("user.dir");
-        String srcDir = workDir + File.separator + "src";
-        System.out.println("scanning source dir: " + srcDir + File.separator + libraryXml);
-
-        ArrayList<String> modulePackageFilters = new ArrayList<String>();
-        modulePackageFilters.add("pl.edu.icm.visnow.lib.basic");
-        modulePackageFilters.add("pl.edu.icm.visnow.lib.chemistry");
-        ArrayList<String> modules = AutoHelpGenerator.listModules(srcDir + File.separator + libraryXml, modulePackageFilters);
-        //ArrayList<String> modules = new ArrayList<String>();
-        //modules.add("pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D");
-        //modules.add("pl.edu.icm.visnow.lib.basic.mappers.VolumeRenderer");
         
-        System.out.println("done.");
+        SwingInstancer.swingRunAndWait(new Runnable() {
+            @Override
+            public void run() {
+                String libraryXml = buildPro?AutoHelpGenerator.LIBRARY_XML_PRO:AutoHelpGenerator.LIBRARY_XML_SIMPLE;
+                String[] vnargs;
+                if(buildPro) {
+                    vnargs = new String[] {"-full"};
+                } else {
+                    vnargs = new String[] {"-easy"};
+                }                
+                VisNow.mainBlocking(vnargs, false);
 
-        for (int i = 0; i < modules.size(); i++) {
-            String module = modules.get(i);
-            BufferedImage img = createModuleImage(srcDir, module);
-            if (img == null) {
-                continue;
-            }
-            try {
-                String location = srcDir + File.separator + 
-                    AutoHelpGenerator.AUTOHELP_ROOT + File.separator + 
-                    AutoHelpGenerator.AUTOHELP_MODULES_DIR + File.separator +
-                    module + File.separator +
-                    "resources" + File.separator;
-                String imageFileName = "module_image_" + module + ".png";
-                File dir = new File(location);
-                if(!dir.exists()) {
-                    dir.mkdirs();
+                String workDir = System.getProperty("user.dir");
+                String srcDir = workDir + File.separator + "src";
+                System.out.println("scanning source dir: " + srcDir + File.separator + libraryXml);
+
+                ArrayList<String> modulePackageFilters = new ArrayList<String>();
+                modulePackageFilters.add("pl.edu.icm.visnow.lib.basic");
+                modulePackageFilters.add("pl.edu.icm.visnow.lib.chemistry");
+                ArrayList<String> modules = AutoHelpGenerator.listModules(srcDir + File.separator + libraryXml, modulePackageFilters);
+                System.out.println("done.");
+
+                for (int i = 0; i < modules.size(); i++) {
+                    String module = modules.get(i);
+                    BufferedImage img = createModuleImage(srcDir, module);
+                    if (img == null) {
+                        continue;
+                    }
+                    try {
+                        String location = srcDir + File.separator + 
+                            AutoHelpGenerator.AUTOHELP_ROOT + File.separator + 
+                            AutoHelpGenerator.AUTOHELP_MODULES_DIR + File.separator +
+                            module + File.separator +
+                            "resources" + File.separator;
+                        String imageFileName = "module_image_" + module + ".png";
+                        File dir = new File(location);
+                        if(!dir.exists()) {
+                            dir.mkdirs();
+                        }
+                        File imgFile = new File(location + File.separator + imageFileName);
+                        ImageUtilities.writePng(img, imgFile);
+                        System.out.println("   written image " + (i + 1) + " of " + modules.size() + ": " + imageFileName);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                        continue;
+                    }
                 }
-                File imgFile = new File(location + File.separator + imageFileName);
-                ImageUtilities.writePng(img, imgFile);
-                System.out.println("   written image " + (i + 1) + " of " + modules.size() + ": " + imageFileName);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                continue;
+                System.out.println("done.");
+                //System.exit(0);
             }
-        }
-        System.out.println("done.");
-        System.exit(0);
+        });
+        
     }
 
     private static BufferedImage createModuleImage(String srcDir, String module) {
@@ -139,7 +137,7 @@ public class ModuleImageGenerator {
                 System.err.println("Error reading module.xml for module: " + module);
                 return null;
             }
-            String[] moduleInfo = ModuleXMLReader.getModuleInfoFromStream(module, is);
+            String[] moduleInfo = ModuleXMLReader.getModuleInfoFromStream(module, is, null);
             is.close();
             moduleName = moduleInfo[0];
             moduleClass = moduleInfo[1];

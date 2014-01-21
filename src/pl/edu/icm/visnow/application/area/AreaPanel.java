@@ -1,5 +1,6 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+Copyright (C) 2006-2013 University of Warsaw, ICM
 
 This file is part of GNU Classpath.
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -33,7 +34,9 @@ module.  An independent module is a module which is not derived from
 or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+exception statement from your version.
+*/
+//</editor-fold>
 
 package pl.edu.icm.visnow.application.area;
 
@@ -47,16 +50,12 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import pl.edu.icm.visnow.application.area.widgets.BgPanel;
 import pl.edu.icm.visnow.application.area.widgets.LinkConnectingPanel;
@@ -88,7 +87,7 @@ public class AreaPanel extends JPanel implements DropTargetListener {
     public static Integer moduleSmokeI = new Integer(65);
     public static Integer moduleDragI  = new Integer(70);
     public static Integer rectangleSelectionI = new Integer(90);
-    public static Integer progressI    = new Integer(99);
+    public static Integer progressI    = new Integer(99);    
     //</editor-fold>
     
 
@@ -106,8 +105,7 @@ public class AreaPanel extends JPanel implements DropTargetListener {
     private JLayeredPane layeredPane = new JLayeredPane();
     private JScrollPane scrollPane = new JScrollPane();
     private BgPanel bgPanel = new BgPanel();
-
-
+       
     protected AreaPanel(Area area) {
         this.area = area;
         layeredPane.setPreferredSize(new java.awt.Dimension(800,600));
@@ -163,15 +161,23 @@ public class AreaPanel extends JPanel implements DropTargetListener {
         menu.add(newModuleMenu);
         
         this.addComponentListener(new ComponentListener() {
+            @Override
             public void componentResized(ComponentEvent e) {onResize(e);}
+            @Override
             public void componentMoved(ComponentEvent e) {}
+            @Override
             public void componentShown(ComponentEvent e) {onResize(e);}
+            @Override
             public void componentHidden(ComponentEvent e) {}
         });
         layeredPane.addComponentListener(new ComponentListener() {
+            @Override
             public void componentResized(ComponentEvent e) {onLayeredPaneResize(e);}
+            @Override
             public void componentMoved(ComponentEvent e) {}
+            @Override
             public void componentShown(ComponentEvent e) {onLayeredPaneResize(e);}
+            @Override
             public void componentHidden(ComponentEvent e) {}
         });
 
@@ -414,42 +420,66 @@ public class AreaPanel extends JPanel implements DropTargetListener {
         linkPanels.put(newLinkName, lp);
     }
 
+    @Override
     public void dragEnter(DropTargetDragEvent dtde) {
-        //if(dtde.isDataFlavorSupported(MLibrariesPanel.moduleAdderFlavor)) return;
-        //this.getDropTarget().setActive(false);
-        //this.getDropTarget().
         
-        //this.getArea().getApplication().getFrames().getApplicationFrame().getMajor().
-        //dtde.rejectDrag();
-        //System.out.println("DENTER!");
     }
 
+    @Override
     public void dragOver(DropTargetDragEvent dtde) {
         
     }
 
+    @Override
     public void dropActionChanged(DropTargetDragEvent dtde) {
 
     }
 
+    @Override
     public void dragExit(DropTargetEvent dte) {
-        //System.out.println("DEXIT!");
+
     }
 
+    @Override
     public void drop(DropTargetDropEvent dtde) {
         try {
-            //System.out.println("DROP!");
-            //DataFlavor[] tab=dtde.getTransferable().getTransferDataFlavors();
-            //for(DataFlavor f: tab)
-            //    System.out.println(f.getHumanPresentableName());
             ModuleAdder ma = (ModuleAdder) dtde.getTransferable().getTransferData(MLibrariesPanel.moduleAdderFlavor);
             ma.setLocation(dtde.getLocation());
             new Thread(ma).start();
-        } catch (UnsupportedFlavorException ex) {
+        } catch (UnsupportedFlavorException ex) {            
         } catch (IOException ex) {
         }
     }
 
+    private JWindow floatingWindow = null;
+    
+    public void setFloatingComponent(JComponent comp, Point positionOnScreen) {
+        if(floatingWindow != null) {
+            floatingWindow.dispose();
+            floatingWindow = null;
+        }
+        
+        floatingWindow = new JWindow();
+        floatingWindow.add(comp);
+        floatingWindow.setLocation(positionOnScreen);
+        floatingWindow.pack();
+        floatingWindow.setVisible(true);        
+    }
+
+    public void setFloatingComponentPosition(Point positionOnScreen) {
+        if(floatingWindow != null) {
+            floatingWindow.setLocation(positionOnScreen);
+            floatingWindow.pack();
+            floatingWindow.repaint();
+        }
+    }
+    
+    public void removeFloatingComponent() {
+        if(floatingWindow != null) {
+            floatingWindow.dispose();
+            floatingWindow = null;
+        }
+    }
 
 
     

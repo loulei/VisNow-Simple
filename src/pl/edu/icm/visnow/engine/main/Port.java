@@ -97,6 +97,17 @@ public abstract class Port extends Element {
         int maxc2 = p.getMaxConnections();
         int currc2 = p.getLinks().size();
         
+        for (int i = 0; i < this.links.size(); i++) {
+            Link l = this.links.get(i);
+            if(this.isInput()) {
+                if(l.getOutput() == p)
+                    return false;       
+            } else if(p.isInput()) {
+                if(l.getInput() == p)
+                    return false;      
+            }
+        }                        
+        
         if(this.isInput()) {
             return ((maxc1 == -1 || currc1 < maxc1) && 
                     (maxc2 == -1 || currc2 < maxc2) && 

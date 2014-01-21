@@ -7,9 +7,9 @@
        </input>
     </inputs>
     <outputs>
-        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNField">
-        </output>
         <output name="regularOutField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+        </output>
+        <output name="irregularOutField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
         </output>
         <geometryOutput/>
    </outputs>

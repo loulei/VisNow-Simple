@@ -1,40 +1,39 @@
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+ Copyright (C) 2006-2013 University of Warsaw, ICM
 
-This file is part of GNU Classpath.
+ This file is part of GNU Classpath.
 
-GNU Classpath is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+ GNU Classpath is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
 
-GNU Classpath is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
+ GNU Classpath is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+ You should have received a copy of the GNU General Public License
+ along with GNU Classpath; see the file COPYING.  If not, write to the 
+ University of Warsaw, Interdisciplinary Centre for Mathematical and 
+ Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
 
-Linking this library statically or dynamically with other modules is
-making a combined work based on this library.  Thus, the terms and
-conditions of the GNU General Public License cover the whole
-combination.
+ Linking this library statically or dynamically with other modules is
+ making a combined work based on this library.  Thus, the terms and
+ conditions of the GNU General Public License cover the whole
+ combination.
 
-As a special exception, the copyright holders of this library give you
-permission to link this library with independent modules to produce an
-executable, regardless of the license terms of these independent
-modules, and to copy and distribute the resulting executable under
-terms of your choice, provided that you also meet, for each linked
-independent module, the terms and conditions of the license of that
-module.  An independent module is a module which is not derived from
-or based on this library.  If you modify this library, you may extend
-this exception to your version of the library, but you are not
-obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
-
+ As a special exception, the copyright holders of this library give you
+ permission to link this library with independent modules to produce an
+ executable, regardless of the license terms of these independent
+ modules, and to copy and distribute the resulting executable under
+ terms of your choice, provided that you also meet, for each linked
+ independent module, the terms and conditions of the license of that
+ module.  An independent module is a module which is not derived from
+ or based on this library.  If you modify this library, you may extend
+ this exception to your version of the library, but you are not
+ obligated to do so.  If you do not wish to do so, delete this
+ exception statement from your version. */
 package pl.edu.icm.visnow.lib.types;
 
 import java.util.ArrayList;
@@ -42,14 +41,13 @@ import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
 
 /**
  *
- * @author Bartosz Borucki (babor@icm.edu.pl)
- * University of Warsaw, Interdisciplinary Centre
- * for Mathematical and Computational Modelling
+ * @author Bartosz Borucki (babor@icm.edu.pl) University of Warsaw,
+ * Interdisciplinary Centre for Mathematical and Computational Modelling
  */
 public class VNDataSchemaComparator {
 
     public static final long FIELD = 1;
-    public static final long NSPACE = 1 << 1;
+    public static final long NSPACE = 1 << 1;    
     public static final long REGULAR = 1 << 2;
     public static final long NDIMS = 1 << 3;
     public static final long DIMS = 1 << 4;
@@ -61,8 +59,8 @@ public class VNDataSchemaComparator {
     public static final long DATA_TYPE = 1 << 10;
     public static final long DATA_TYPES = 1 << 11;
     public static final long DATA_NAME = 1 << 12;
-    public static final long DATA_NAMES = 1 << 13;
-    public static final long IRREGULAR = 1 << 14;    
+    public static final long DATA_NAMES = 1 << 13;    
+    public static final long IRREGULAR = 1 << 14;
     public static final long CELLSETS = 1 << 15;
     public static final long NCELLSETS = 1 << 16;
     public static final long NCELLDATA = 1 << 17;
@@ -80,15 +78,18 @@ public class VNDataSchemaComparator {
     public static final long CELLS_QUAD = 1 << 29;
     public static final long CELLS_TETRA = 1 << 30;
     public static final long CELLS_PYRAMID = 1 << 31;
-    public static final long CELLS_PRISM = ((long)1) << 32;
-    public static final long CELLS_HEXAHEDRON = ((long)1) << 33;
-    public static final long TIME = ((long)1) << 34;
-    public static final long CELLS_2D =((long)1) << 35;
-    public static final long CELLS_3D = ((long)1) << 36;
-    
+    public static final long CELLS_PRISM = ((long) 1) << 32;
+    public static final long CELLS_HEXAHEDRON = ((long) 1) << 33;
+    public static final long TIME = ((long) 1) << 34;
+    public static final long CELLS_2D = ((long) 1) << 35;
+    public static final long CELLS_3D = ((long) 1) << 36;
     public static final long IRREGULAR_FIELD = IRREGULAR | FIELD;
     public static final long MASK_NULL = 0;
-    
+    public static final long MASK_ALL_REGULAR = FIELD | REGULAR | NDIMS | DIMS | AFFINE | COORDS;
+    public static final long MASK_ALL_IRREGULAR = FIELD | IRREGULAR | CELLSETS | NCELLSETS | NCELLDATA | 
+            CELLDATA_VECLEN | CELLDATA_VECLENS | CELLDATA_TYPE | CELLDATA_TYPES | CELLDATA_NAME | CELLDATA_NAMES |
+            CELLS_POINT | CELLS_PRISM | CELLS_HEXAHEDRON | CELLS_PYRAMID | CELLS_QUAD | CELLS_SEGMENT | CELLS_TETRA | CELLS_TRIANGLE |
+            CELLS_2D | CELLS_3D;    
 
     public static long correctMask(long inMask) {
         long outMask = inMask;
@@ -183,7 +184,7 @@ public class VNDataSchemaComparator {
         if ((outMask & CELLDATA_NAMES) == CELLDATA_NAMES) {
             outMask = outMask | NCELLDATA | CELLSETS | IRREGULAR | FIELD;
         }
-        
+
         if ((outMask & CELLSET_NAME) == CELLSET_NAME) {
             outMask = outMask | CELLSETS | IRREGULAR | FIELD;
         }
@@ -203,7 +204,7 @@ public class VNDataSchemaComparator {
         if ((outMask & CELLS_3D) == CELLS_3D) {
             outMask = outMask | CELLSETS | IRREGULAR | FIELD;
         }
-        
+
         if ((outMask & CELLS_SEGMENT) == CELLS_SEGMENT) {
             outMask = outMask | CELLS_2D | CELLSETS | IRREGULAR | FIELD;
         }
@@ -360,7 +361,25 @@ public class VNDataSchemaComparator {
                 boolean result = false;
                 for (int i = 0; i < types1.length; i++) {
                     for (int j = 0; j < types2.length; j++) {
-                        if (types1[i] == types2[j]) {
+                        if (types1[i] == VNDataSchema.FIELD_DATA_SIMPLE_NUMERIC) {
+                            if(types2[i] == DataArray.FIELD_DATA_BYTE || 
+                               types2[i] == DataArray.FIELD_DATA_SHORT || 
+                               types2[i] == DataArray.FIELD_DATA_INT || 
+                               types2[i] == DataArray.FIELD_DATA_FLOAT || 
+                               types2[i] == DataArray.FIELD_DATA_DOUBLE) {
+                                    result = true;
+                                    break;                                
+                            }
+                        } else if (types2[j] == VNDataSchema.FIELD_DATA_SIMPLE_NUMERIC) {
+                            if(types1[i] == DataArray.FIELD_DATA_BYTE || 
+                               types1[i] == DataArray.FIELD_DATA_SHORT || 
+                               types1[i] == DataArray.FIELD_DATA_INT || 
+                               types1[i] == DataArray.FIELD_DATA_FLOAT || 
+                               types1[i] == DataArray.FIELD_DATA_DOUBLE) {
+                                    result = true;
+                                    break;                                
+                            }
+                        } else if (types1[i] == types2[j]) {
                             result = true;
                             break;
                         }
@@ -443,20 +462,20 @@ public class VNDataSchemaComparator {
                     return false;
                 }
             }
-            
+
             if ((ccm & NCELLSETS) == NCELLSETS) {
                 if (data1.getNCellSets() != data2.getNCellSets()) {
                     return false;
                 }
             }
-            
+
             if ((ccm & NCELLDATA) == NCELLDATA) {
                 int[] ncelldata1 = data1.getNCellData();
                 int[] ncelldata2 = data2.getNCellData();
                 if (ncelldata1 == null || ncelldata2 == null) {
                     return false;
                 }
-                
+
                 boolean result = false;
                 for (int i = 0; i < ncelldata1.length; i++) {
                     for (int j = 0; j < ncelldata2.length; j++) {
@@ -487,17 +506,18 @@ public class VNDataSchemaComparator {
                 for (int i = 0; i < veclens1.length; i++) {
                     for (int j = 0; j < veclens2.length; j++) {
                         tmp1 = veclens1[i];
-                        tmp2 = veclens2[j];                        
-                        if(tmp1.length == tmp2.length) {
+                        tmp2 = veclens2[j];
+                        if (tmp1.length == tmp2.length) {
                             for (int k = 0; k < tmp2.length; k++) {
-                                if(tmp1[k] == tmp2[k]) {
+                                if (tmp1[k] == tmp2[k]) {
                                     result = false;
-                                    break;              
+                                    break;
                                 }
                             }
                         }
-                        if(result)
+                        if (result) {
                             break;
+                        }
                     }
                     if (result) {
                         break;
@@ -521,17 +541,17 @@ public class VNDataSchemaComparator {
                 for (int i = 0; i < veclens1.length; i++) {
                     for (int j = 0; j < veclens2.length; j++) {
                         tmp1 = veclens1[i];
-                        tmp2 = veclens2[j];                        
-                        if(tmp1.length == tmp2.length) {
+                        tmp2 = veclens2[j];
+                        if (tmp1.length == tmp2.length) {
                             tmpresult = true;
                             for (int k = 0; k < tmp2.length; k++) {
-                                if(tmp1[k] != tmp2[k]) {
+                                if (tmp1[k] != tmp2[k]) {
                                     tmpresult = false;
-                                    break;              
+                                    break;
                                 }
                             }
                         }
-                        if(tmpresult) {
+                        if (tmpresult) {
                             result = true;
                             break;
                         }
@@ -558,17 +578,18 @@ public class VNDataSchemaComparator {
                 for (int i = 0; i < types1.length; i++) {
                     for (int j = 0; j < types2.length; j++) {
                         tmp1 = types1[i];
-                        tmp2 = types2[j];                        
-                        if(tmp1.length == tmp2.length) {
+                        tmp2 = types2[j];
+                        if (tmp1.length == tmp2.length) {
                             for (int k = 0; k < tmp2.length; k++) {
-                                if(tmp1[k] == tmp2[k]) {
+                                if (tmp1[k] == tmp2[k]) {
                                     result = false;
-                                    break;              
+                                    break;
                                 }
                             }
                         }
-                        if(result)
+                        if (result) {
                             break;
+                        }
                     }
                     if (result) {
                         break;
@@ -592,17 +613,17 @@ public class VNDataSchemaComparator {
                 for (int i = 0; i < types1.length; i++) {
                     for (int j = 0; j < types2.length; j++) {
                         tmp1 = types1[i];
-                        tmp2 = types2[j];                        
-                        if(tmp1.length == tmp2.length) {
+                        tmp2 = types2[j];
+                        if (tmp1.length == tmp2.length) {
                             tmpresult = true;
                             for (int k = 0; k < tmp2.length; k++) {
-                                if(tmp1[k] != tmp2[k]) {
+                                if (tmp1[k] != tmp2[k]) {
                                     tmpresult = false;
-                                    break;              
+                                    break;
                                 }
                             }
                         }
-                        if(tmpresult) {
+                        if (tmpresult) {
                             result = true;
                             break;
                         }
@@ -629,17 +650,18 @@ public class VNDataSchemaComparator {
                 for (int i = 0; i < names1.length; i++) {
                     for (int j = 0; j < names2.length; j++) {
                         tmp1 = names1[i];
-                        tmp2 = names2[j];                        
-                        if(tmp1.length == tmp2.length) {
+                        tmp2 = names2[j];
+                        if (tmp1.length == tmp2.length) {
                             for (int k = 0; k < tmp2.length; k++) {
-                                if(tmp1[k].equals(tmp2[k])) {
+                                if (tmp1[k].equals(tmp2[k])) {
                                     result = false;
-                                    break;              
+                                    break;
                                 }
                             }
                         }
-                        if(result)
+                        if (result) {
                             break;
+                        }
                     }
                     if (result) {
                         break;
@@ -663,17 +685,17 @@ public class VNDataSchemaComparator {
                 for (int i = 0; i < names1.length; i++) {
                     for (int j = 0; j < names2.length; j++) {
                         tmp1 = names1[i];
-                        tmp2 = names2[j];                        
-                        if(tmp1.length == tmp2.length) {
+                        tmp2 = names2[j];
+                        if (tmp1.length == tmp2.length) {
                             tmpresult = true;
                             for (int k = 0; k < tmp2.length; k++) {
-                                if(!tmp1[k].equals(tmp2[k])) {
+                                if (!tmp1[k].equals(tmp2[k])) {
                                     tmpresult = false;
-                                    break;              
+                                    break;
                                 }
                             }
                         }
-                        if(tmpresult) {
+                        if (tmpresult) {
                             result = true;
                             break;
                         }
@@ -686,7 +708,7 @@ public class VNDataSchemaComparator {
                     return false;
                 }
             }
-            
+
             if ((ccm & CELLSET_NAME) == CELLSET_NAME) {
                 String[] names1 = data1.getCellSetNames();
                 String[] names2 = data2.getCellSetNames();
@@ -745,7 +767,7 @@ public class VNDataSchemaComparator {
                     return false;
                 }
             }
-            
+
             if ((ccm & CELLS_SEGMENT) == CELLS_SEGMENT) {
                 if (data1.hasCellsSegment() != data2.hasCellsSegment()) {
                     return false;
@@ -979,7 +1001,7 @@ public class VNDataSchemaComparator {
         if (str.equals("CELLDATA_NAMES")) {
             return CELLDATA_NAMES;
         }
-        
+
         if (str.equals("CELLSET_NAME")) {
             return CELLSET_NAME;
         }
@@ -987,7 +1009,7 @@ public class VNDataSchemaComparator {
         if (str.equals("CELLSET_NAMES")) {
             return CELLSET_NAMES;
         }
-        
+
         if (str.equals("CELLS_POINT")) {
             return CELLS_POINT;
         }
@@ -999,43 +1021,43 @@ public class VNDataSchemaComparator {
         if (str.equals("CELLS_3D")) {
             return CELLS_3D;
         }
-        
+
         if (str.equals("CELLS_SEGMENT")) {
             return CELLS_SEGMENT;
         }
-        
+
         if (str.equals("CELLS_TRIANGLE")) {
             return CELLS_TRIANGLE;
         }
-        
+
         if (str.equals("CELLS_QUAD")) {
             return CELLS_QUAD;
         }
-        
+
         if (str.equals("CELLS_TETRA")) {
             return CELLS_TETRA;
         }
-        
+
         if (str.equals("CELLS_PYRAMID")) {
             return CELLS_PYRAMID;
         }
-        
+
         if (str.equals("CELLS_PRISM")) {
             return CELLS_PRISM;
         }
-        
+
         if (str.equals("CELLS_HEXAHEDRON")) {
             return CELLS_HEXAHEDRON;
         }
-        
+
         if (str.equals("TIME")) {
             return TIME;
         }
-        
+
         return -1;
     }
 
-    public static String getDescription(VNDataSchemaInterface vndsi, long vndsc, String newline) {
+    public static String getDescription(VNDataSchemaInterface vndsi, long vndsc, String newline, String tab) {
         String str = "";
         if (vndsc == MASK_NULL) {
             return "everything";
@@ -1079,7 +1101,7 @@ public class VNDataSchemaComparator {
             }
 
         }
-        
+
         if ((ccm & IRREGULAR) == IRREGULAR) {
             str += "Irregular Field ";
 
@@ -1088,28 +1110,29 @@ public class VNDataSchemaComparator {
             }
 
         }
-        
-        if ((ccm & TIME) == TIME) {            
-            str += ""+(vndsi.isTime()?"with":"without")+" time frames ";
+
+        if ((ccm & TIME) == TIME) {
+            str += "" + (vndsi.isTime() ? "with" : "without") + " time frames ";
         }
         str += newline;
-        
-        
+
+
         if ((ccm & FIELD) == FIELD) {
             if ((ccm & NDATA) == NDATA) {
-                str += "" + vndsi.getNData() + " components" + newline;
+                str += tab + vndsi.getNData() + " components" + newline;
             }
 
             if ((ccm & DATA_VECLEN) == DATA_VECLEN) {
                 int[] v = vndsi.getDataVeclens();
                 for (int i = 0; i < v.length; i++) {
-                    str += "at least one " + (v[i] == 1 ? "scalar" : ("veclen=" + v[i])) + " component" + newline;
+                    //str += "at least one " + (v[i] == 1 ? "scalar" : ("veclen=" + v[i])) + " component" + newline;
+                    str += tab + (v[i] == 1 ? "scalar" : ("veclen=" + v[i])) + " component" + newline;
                 }
             }
 
             if ((ccm & DATA_VECLENS) == DATA_VECLENS) {
                 int[] v = vndsi.getDataVeclens();
-                str += "with veclen=";
+                str += tab + "with veclen=";
                 for (int i = 0; i < v.length; i++) {
                     str += "" + v[i];
                     if (i < v.length - 1) {
@@ -1122,13 +1145,17 @@ public class VNDataSchemaComparator {
             if ((ccm & DATA_TYPE) == DATA_TYPE) {
                 int[] v = vndsi.getDataTypes();
                 for (int i = 0; i < v.length; i++) {
-                    str += "at least one component of type " + DataArray.getTypeName(v[i]) + newline;
+                    //str += "at least one component of type " + DataArray.getTypeName(v[i]) + newline;
+                    if(v[i] == VNDataSchema.FIELD_DATA_SIMPLE_NUMERIC)
+                        str += tab + "component of simple numeric type" + newline;
+                    else                        
+                        str += tab + "component of type " + DataArray.getTypeName(v[i]) + newline;
                 }
             }
 
             if ((ccm & DATA_TYPES) == DATA_TYPES) {
                 int[] v = vndsi.getDataVeclens();
-                str += "with types=";
+                str += tab + "with types=";
                 for (int i = 0; i < v.length; i++) {
                     str += "" + DataArray.getTypeName(v[i]);
                     if (i < v.length - 1) {
@@ -1141,13 +1168,14 @@ public class VNDataSchemaComparator {
             if ((ccm & DATA_NAME) == DATA_NAME) {
                 String[] v = vndsi.getDataNames();
                 for (int i = 0; i < v.length; i++) {
-                    str += "at least one component named '" + v[i] + "'" + newline;
+                    //str += "at least one component named '" + v[i] + "'" + newline;
+                    str += tab + "component named '" + v[i] + "'" + newline;
                 }
             }
 
             if ((ccm & DATA_NAMES) == DATA_NAMES) {
                 String[] v = vndsi.getDataNames();
-                str += "with names=";
+                str += tab + "with names=";
                 for (int i = 0; i < v.length; i++) {
                     str += "" + v[i];
                     if (i < v.length - 1) {
@@ -1157,23 +1185,25 @@ public class VNDataSchemaComparator {
                 str += newline;
             }
         }
-        
+
         if ((ccm & IRREGULAR) == IRREGULAR && (ccm & CELLSETS) == CELLSETS) {
-            
-            if((ccm & NCELLSETS) == NCELLSETS)
-                str += "" + vndsi.getNCellSets() + " cell sets" + newline;
-            
+
+            if ((ccm & NCELLSETS) == NCELLSETS) {
+                str += tab + vndsi.getNCellSets() + " cell sets" + newline;
+            }
+
             if ((ccm & CELLSET_NAME) == CELLSET_NAME) {
                 String[] v = vndsi.getCellSetNames();
                 for (int i = 0; i < v.length; i++) {
-                    str += "at least one cell set named '" + v[i] + "'" + newline;
+                    //str += "at least one cell set named '" + v[i] + "'" + newline;
+                    str += tab + "cell set named '" + v[i] + "'" + newline;
                 }
             }
 
-            
+
             if ((ccm & CELLSET_NAMES) == CELLSET_NAMES) {
                 String[] v = vndsi.getCellSetNames();
-                str += "with names=";
+                str += tab + "with names=";
                 for (int i = 0; i < v.length; i++) {
                     str += "" + v[i];
                     if (i < v.length - 1) {
@@ -1182,33 +1212,34 @@ public class VNDataSchemaComparator {
                 }
                 str += newline;
             }
-         
+
             if ((ccm & NCELLDATA) == NCELLDATA) {
                 //str += "" + vndsi.getNCellData() + " cell components" + newline;
+                str += tab;
                 int[] v = vndsi.getNCellData();
                 for (int i = 0; i < v.length; i++) {
                     str += "" + v[i];
-                    if(i < v.length-1)
+                    if (i < v.length - 1) {
                         str += ",";
+                    }
                 }
-                        
                 str += " cell components in cellsets" + newline;
             }
 
             if ((ccm & CELLDATA_VECLEN) == CELLDATA_VECLEN) {
-                int[][] v = vndsi.getCellDataVeclens();                
+                int[][] v = vndsi.getCellDataVeclens();
                 for (int i = 0; i < v.length; i++) {
                     for (int j = 0; j < v[i].length; j++) {
-                        str += "at least one " 
-                                + (v[i][j] == 1 ? "scalar" : ("veclen=" + v[i][j])) + " cell component" + newline;
+                        //str += "at least one " + (v[i][j] == 1 ? "scalar" : ("veclen=" + v[i][j])) + " cell component" + newline;
+                        str += tab + (v[i][j] == 1 ? "scalar" : ("veclen=" + v[i][j])) + " cell component" + newline;
                     }
                 }
             }
 
             if ((ccm & CELLDATA_VECLENS) == CELLDATA_VECLENS) {
-                int[][] v = vndsi.getCellDataVeclens();                
+                int[][] v = vndsi.getCellDataVeclens();
                 for (int i = 0; i < v.length; i++) {
-                    str += "with cellset veclen=";
+                    str += tab + "with cellset veclen=";
                     for (int j = 0; j < v[i].length; j++) {
                         str += "" + v[i][j];
                         if (j < v[i].length - 1) {
@@ -1217,23 +1248,23 @@ public class VNDataSchemaComparator {
                     }
                     str += newline;
                 }
-                
+
             }
 
             if ((ccm & CELLDATA_TYPE) == CELLDATA_TYPE) {
                 int[][] v = vndsi.getCellDataTypes();
                 for (int i = 0; i < v.length; i++) {
                     for (int j = 0; j < v[i].length; j++) {
-                        str += "at least one cell component of type " 
-                                + DataArray.getTypeName(v[i][j]) + newline;
+                        //str += "at least one cell component of type " + DataArray.getTypeName(v[i][j]) + newline;
+                        str += tab + "cell component of type " + DataArray.getTypeName(v[i][j]) + newline;
                     }
                 }
             }
 
             if ((ccm & CELLDATA_TYPES) == CELLDATA_TYPES) {
-                int[][] v = vndsi.getCellDataVeclens();                
+                int[][] v = vndsi.getCellDataVeclens();
                 for (int i = 0; i < v.length; i++) {
-                    str += "with types=";
+                    str += tab + "with types=";
                     for (int j = 0; j < v[i].length; j++) {
                         str += "" + DataArray.getTypeName(v[i][j]);
                         if (j < v[i].length - 1) {
@@ -1248,87 +1279,108 @@ public class VNDataSchemaComparator {
                 String[][] v = vndsi.getCellDataNames();
                 for (int i = 0; i < v.length; i++) {
                     for (int j = 0; j < v[i].length; j++) {
-                        str += "at least one cell component named '" + v[i][j] + "'" + newline;
+                        //str += "at least one cell component named '" + v[i][j] + "'" + newline;
+                        str += tab + "cell component named '" + v[i][j] + "'" + newline;
                     }
                 }
             }
 
             if ((ccm & CELLDATA_NAMES) == CELLDATA_NAMES) {
                 String[][] v = vndsi.getCellDataNames();
-                
+
                 for (int i = 0; i < v.length; i++) {
-                    str += "with names=";
+                    str += tab + "with names=";
                     for (int j = 0; j < v[i].length; j++) {
                         str += "" + v[i][j];
                         if (j < v[i].length - 1) {
                             str += ",";
                         }
-                    }                    
+                    }
                     str += newline;
                 }
-                
+
             }
-            
+
             if ((ccm & CELLS_POINT) == CELLS_POINT) {
                 boolean v = vndsi.hasCellsPoint();
-                if(v)                    
-                    str += "at least one cellset containing POINT cells" + newline;
+                if (v) {
+                    //str += "at least one with POINT cells" + newline;
+                    str += tab + "with POINT cells" + newline;
+                }
             }
 
             if ((ccm & CELLS_2D) == CELLS_2D) {
                 boolean v = vndsi.hasCells2D();
-                if(v)                    
-                    str += "at least one cellset containing 2D cells" + newline;
+                if (v) {
+                    //str += "at least one with 2D cells" + newline;
+                    str += tab + "with 2D cells" + newline;
+                }
             }
 
             if ((ccm & CELLS_3D) == CELLS_3D) {
                 boolean v = vndsi.hasCells3D();
-                if(v)                    
-                    str += "at least one cellset containing 3D cells" + newline;
+                if (v) {
+                    //str += "at least one with 3D cells" + newline;
+                    str += tab + "with 3D cells" + newline;
+                }
             }
-            
+
             if ((ccm & CELLS_SEGMENT) == CELLS_SEGMENT) {
                 boolean v = vndsi.hasCellsSegment();
-                if(v)                    
-                    str += "at least one cellset containing SEGMENT cells" + newline;
+                if (v) {
+                    //str += "at least one with SEGMENT cells" + newline;
+                    str += tab + "with SEGMENT cells" + newline;
+                }
             }
 
             if ((ccm & CELLS_TRIANGLE) == CELLS_TRIANGLE) {
                 boolean v = vndsi.hasCellsTriangle();
-                if(v)                    
-                    str += "at least one cellset containing TRIANGLE cells" + newline;
+                if (v) {
+                    //str += "at least one with TRIANGLE cells" + newline;
+                    str += tab + "with TRIANGLE cells" + newline;
+                }
             }
 
             if ((ccm & CELLS_QUAD) == CELLS_QUAD) {
                 boolean v = vndsi.hasCellsQuad();
-                if(v)                    
-                    str += "at least one cellset containing QUAD cells" + newline;
+                if (v) {
+                    //str += "at least one with QUAD cells" + newline;
+                    str += tab + "with QUAD cells" + newline;
+                }
             }
 
             if ((ccm & CELLS_TETRA) == CELLS_TETRA) {
                 boolean v = vndsi.hasCellsTetra();
-                if(v)                    
-                    str += "at least one cellset containing TETRA cells" + newline;
+                if (v) {
+                    //str += "at least one with TETRA cells" + newline;
+                    str += tab + "with TETRA cells" + newline;
+                }
             }
 
             if ((ccm & CELLS_PYRAMID) == CELLS_PYRAMID) {
                 boolean v = vndsi.hasCellsPyramid();
-                if(v)                    
-                    str += "at least one cellset containing PYRAMID cells" + newline;
+                if (v) {
+                    //str += "at least one with PYRAMID cells" + newline;
+                    str += tab + "with PYRAMID cells" + newline;
+                }
             }
 
             if ((ccm & CELLS_PRISM) == CELLS_PRISM) {
                 boolean v = vndsi.hasCellsPrism();
-                if(v)                    
-                    str += "at least one cellset containing PRISM cells" + newline;
+                if (v) {
+                    //str += "at least one with PRISM cells" + newline;
+                    str += tab + "with PRISM cells" + newline;
+                }
             }
 
             if ((ccm & CELLS_HEXAHEDRON) == CELLS_HEXAHEDRON) {
                 boolean v = vndsi.hasCellsHexahedron();
-                if(v)                    
-                    str += "at least one cellset containing HEXAHEDRON cells" + newline;
+                if (v) {
+                    //str += "at least one with HEXAHEDRON cells" + newline;
+                    str += tab + "with HEXAHEDRON cells" + newline;
+                }
             }
-            
+
         }
 
         if (str.endsWith(newline)) {
@@ -1338,7 +1390,197 @@ public class VNDataSchemaComparator {
         return str;
     }
 
-   private VNDataSchemaComparator()
-   {
-   }
+    private VNDataSchemaComparator() {
+    }
+
+//    public static String getFullDescription(VNDataSchemaInterface vndsi, String newline, String tab) {
+//        String str = "";
+//
+//        if (vndsi.isRegular()) {
+//            str += "Regular Field ";
+//            str += "" + vndsi.getNDims() + "D ";
+//            str += "" + vndsi.getNSpace() + "-space ";
+//            str += "dimensions = {";
+//            for (int i = 0; i < vndsi.getDims().length; i++) {
+//                str += "" + vndsi.getDims()[i];
+//                if (i < vndsi.getDims().length - 1) {
+//                    str += ",";
+//                }
+//            }
+//            str += "} ";
+//
+//            if (vndsi.isAffine()) {
+//                str += "with affine geometry ";
+//            } else {
+//                str += "with explicit coordinates ";
+//            }
+//
+//            if (vndsi.isTime()) {
+//                str += "with time frames ";
+//            } else {
+//                str += "without time frames ";
+//            }
+//
+//            str += newline;
+//
+//        }
+//
+//        if (vndsi.isIrregular()) {
+//            str += "Irregular Field ";
+//            str += "" + vndsi.getNSpace() + "-space";
+//            if (vndsi.isTime()) {
+//                str += "with time frames ";
+//            } else {
+//                str += "without time frames ";
+//            }
+//
+//            str += newline;
+//        }
+//
+//
+//        if (vndsi.isField()) {
+//            str += tab + vndsi.getNData() + " components" + newline;
+//
+//            str += tab + "with ";
+//            if (vndsi.getDataVeclens() != null) {
+//                for (int i = 0; i < vndsi.getDataVeclens().length; i++) {
+//                    if (vndsi.getDataVeclens()[i] == 0) {
+//                        str += "scalar";
+//                        if (vndsi.getDataVeclens().length > 1) {
+//                            str += ", ";
+//                        }
+//                        break;
+//                    }
+//                }
+//                str += "veclen=";
+//                for (int i = 0; i < vndsi.getDataVeclens().length; i++) {
+//                    if (vndsi.getDataVeclens()[i] == 0) {
+//                        continue;
+//                    }
+//                    str += "" + vndsi.getDataVeclens()[i];
+//                    if (i < vndsi.getDataVeclens().length - 1) {
+//                        str += ",";
+//                    }
+//                }
+//                str += newline;
+//            }
+//
+//            if (vndsi.getDataTypes() != null) {
+//                str += tab + "with types=";
+//                for (int i = 0; i < vndsi.getDataTypes().length; i++) {
+//                    str += "" + DataArray.getTypeName(vndsi.getDataTypes()[i]);
+//                    if (i < vndsi.getDataTypes().length - 1) {
+//                        str += ",";
+//                    }
+//                }
+//                str += newline;
+//            }
+//
+//            if (vndsi.getDataNames() != null) {
+//                str += tab + "with names=";
+//                for (int i = 0; i < vndsi.getDataNames().length; i++) {
+//                    str += "" + vndsi.getDataNames()[i];
+//                    if (i < vndsi.getDataNames().length - 1) {
+//                        str += ",";
+//                    }
+//                }
+//                str += newline;
+//            }
+//        }
+//
+//        if (vndsi.isIrregular() && vndsi.isCellSets()) {
+//            str += tab + vndsi.getNCellSets() + " cell sets:" + newline;
+//
+//            for (int cs = 0; cs < vndsi.getNCellSets(); cs++) {
+//                str += tab;
+//                if (vndsi.getCellSetNames() != null) {
+//                    str += "name=" + vndsi.getCellSetNames()[cs]+", ";
+//                }
+//
+//                if (vndsi.getNCellData() != null) {
+//                    str += vndsi.getNCellData()[cs] + " cell components, ";
+//                }
+//
+//                if (vndsi.getCellDataVeclens() != null) {
+//                    str += tab + "with cellset veclen=";
+//                    for (int j = 0; j < vndsi.getCellDataVeclens().length; j++) {
+//                        str += "" + vndsi.getCellDataVeclens()[j];
+//                        if (j < vndsi.getCellDataVeclens().length - 1) {
+//                            str += ",";
+//                        }
+//                    }
+//                    str += newline;
+//
+//                }
+//
+//                if (vndsi.getCellDataTypes() != null) {
+//                    str += tab + "with types=";
+//                    for (int j = 0; j < vndsi.getCellDataTypes().length; j++) {
+//                        str += "" + DataArray.getTypeName(vndsi.getCellDataTypes()[j]);
+//                        if (j < vndsi.getCellDataTypes().length - 1) {
+//                            str += ",";
+//                        }
+//                    }
+//                    str += newline;
+//                }
+//
+//                if (vndsi.getCellDataNames() != null) {
+//                    str += tab + "with names=";
+//                    for (int j = 0; j < vndsi.getCellDataNames().length; j++) {
+//                        str += "" + vndsi.getCellDataNames()[j];
+//                        if (j < vndsi.getCellDataNames().length - 1) {
+//                            str += ",";
+//                        }
+//                    }
+//                    str += newline;
+//                }
+//
+//                if (vndsi.hasCellsPoint()) {
+//                    str += tab + "with POINT cells" + newline;
+//                }
+//
+//                if (vndsi.hasCellsSegment()) {
+//                    str += tab + "with SEGMENT cells" + newline;
+//                }
+//
+//                if (vndsi.hasCells2D()) {
+//                    str += tab + "with 2D cells" + newline;
+//                }
+//
+//                if (vndsi.hasCells3D()) {
+//                    str += tab + "with 3D cells" + newline;
+//                }
+//
+//                if (vndsi.hasCellsTriangle()) {
+//                    str += tab + "with TRIANGLE cells" + newline;
+//                }
+//
+//                if (vndsi.hasCellsQuad()) {
+//                    str += tab + "with QUAD cells" + newline;
+//                }
+//
+//                if (vndsi.hasCellsTetra()) {
+//                    str += tab + "with TETRA cells" + newline;
+//                }
+//
+//                if (vndsi.hasCellsPyramid()) {
+//                    str += tab + "with PYRAMID cells" + newline;
+//                }
+//
+//                if (vndsi.hasCellsPrism()) {
+//                    str += tab + "with PRISM cells" + newline;
+//                }
+//
+//                if (vndsi.hasCellsHexahedron()) {
+//                    str += tab + "with HEXAHEDRON cells" + newline;
+//                }
+//            }
+//        }
+//
+//        if (str.endsWith(newline)) {
+//            str = str.substring(0, str.lastIndexOf(newline));
+//        }
+//
+//        return str;
+//    }
 }

@@ -1,40 +1,39 @@
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+ Copyright (C) 2006-2013 University of Warsaw, ICM
 
-This file is part of GNU Classpath.
+ This file is part of GNU Classpath.
 
-GNU Classpath is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+ GNU Classpath is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
 
-GNU Classpath is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
+ GNU Classpath is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+ You should have received a copy of the GNU General Public License
+ along with GNU Classpath; see the file COPYING.  If not, write to the 
+ University of Warsaw, Interdisciplinary Centre for Mathematical and 
+ Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
 
-Linking this library statically or dynamically with other modules is
-making a combined work based on this library.  Thus, the terms and
-conditions of the GNU General Public License cover the whole
-combination.
+ Linking this library statically or dynamically with other modules is
+ making a combined work based on this library.  Thus, the terms and
+ conditions of the GNU General Public License cover the whole
+ combination.
 
-As a special exception, the copyright holders of this library give you
-permission to link this library with independent modules to produce an
-executable, regardless of the license terms of these independent
-modules, and to copy and distribute the resulting executable under
-terms of your choice, provided that you also meet, for each linked
-independent module, the terms and conditions of the license of that
-module.  An independent module is a module which is not derived from
-or based on this library.  If you modify this library, you may extend
-this exception to your version of the library, but you are not
-obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
-
+ As a special exception, the copyright holders of this library give you
+ permission to link this library with independent modules to produce an
+ executable, regardless of the license terms of these independent
+ modules, and to copy and distribute the resulting executable under
+ terms of your choice, provided that you also meet, for each linked
+ independent module, the terms and conditions of the license of that
+ module.  An independent module is a module which is not derived from
+ or based on this library.  If you modify this library, you may extend
+ this exception to your version of the library, but you are not
+ obligated to do so.  If you do not wish to do so, delete this
+ exception statement from your version. */
 package pl.edu.icm.visnow.lib.basic.readers.ReadImage;
 
 import java.awt.Color;
@@ -42,8 +41,11 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.Locale;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -64,12 +66,23 @@ public class GUI extends javax.swing.JPanel {
     private Browser browser = new Browser(extensions);
     private GridFrame gridFrame = new GridFrame();
     private FileNameExtensionFilter allImagesFilter =
-            new FileNameExtensionFilter("All image files", "jpg", "jpeg", "gif", "png", "JPG", "JPEG", "GIF", "PNG", "raw", "dat", "RAW", "DAT");
+            new FileNameExtensionFilter("All image files", "bmp", "BMP", "gif", "GIF", "jpg", "jpeg", "JPG", "JPEG", "icns", "ICNS", "ico", "ICO", "cur", "CUR",
+            "pcx", "PCX", "dcx", "DCX", "pnm", "PNM", "pgm", "PGM", "pbm", "PBM", "ppm", "PPM", "pam", "PAM", "png", "PNG", "psd", "PSD", "hdr", "HDR",
+            "tif", "TIF", "tiff", "TIFF", "wbmp", "WBMP", "xbm", "XBM", "xpm", "XPM", "raw", "dat", "RAW", "DAT");
+    private FileNameExtensionFilter bmpImagesFilter = new FileNameExtensionFilter("BMP images (*.bmp)", "bmp", "BMP");
+    private FileNameExtensionFilter gifImagesFilter = new FileNameExtensionFilter("GIF images (*.gif)", "gif", "GIF");
     private FileNameExtensionFilter jpegImagesFilter = new FileNameExtensionFilter("JPEG images (*.jpg, *.jpeg)", "jpg", "jpeg", "JPG", "JPEG");
-    private FileNameExtensionFilter gifImagesFilter =
-            new FileNameExtensionFilter("GIF images (*.gif)", "gif", "GIF");
-    private FileNameExtensionFilter pngImagesFilter =
-            new FileNameExtensionFilter("PNG images (*.png)", "png", "PNG");
+    private FileNameExtensionFilter icnsImagesFilter = new FileNameExtensionFilter("ICNS images (*.icns)", "icns", "ICNS");
+    private FileNameExtensionFilter icoImagesFilter = new FileNameExtensionFilter("ICO images (*.ico, *.cur)", "ico", "ICO", "cur", "CUR");
+    private FileNameExtensionFilter pcxImagesFilter = new FileNameExtensionFilter("PCX images (*.pcx, *.dcx)", "pcx", "PCX", "dcx", "DCX");
+    private FileNameExtensionFilter pnmImagesFilter = new FileNameExtensionFilter("PNM images (*.pnm, *.pgm, *.pbm, *.ppm, *.pam)", "pnm", "PNM", "pgm", "PGM", "pbm", "PBM", "ppm", "PPM", "pam", "PAM");
+    private FileNameExtensionFilter pngImagesFilter = new FileNameExtensionFilter("PNG images (*.png)", "png", "PNG");
+    private FileNameExtensionFilter psdImagesFilter = new FileNameExtensionFilter("PSD images (*.psd)", "psd", "PSD");
+    private FileNameExtensionFilter rgbeImagesFilter = new FileNameExtensionFilter("RGBE images (*.hdr)", "hdr", "HDR");
+    private FileNameExtensionFilter tiffImagesFilter = new FileNameExtensionFilter("TIFF images (*.tif, *.tiff)", "tif", "TIF", "tiff", "TIFF");
+    private FileNameExtensionFilter wbmpImagesFilter = new FileNameExtensionFilter("WBMP images (*.wbmp)", "wbmp", "WBMP");
+    private FileNameExtensionFilter xbmImagesFilter = new FileNameExtensionFilter("XBM images (*.xbm)", "xbm", "XBM");
+    private FileNameExtensionFilter xpmImagesFilter = new FileNameExtensionFilter("XPM  images (*.xpm)", "xpm", "XPM");
     private Image image = null;
     private JFileChooser fileChooser = new JFileChooser();
 
@@ -77,6 +90,7 @@ public class GUI extends javax.swing.JPanel {
      * Creates new form GUI
      */
     public GUI() {
+
         initComponents();
         messageLabel.setText("");
         gridFrame.setFileExtensions(extensions);
@@ -104,12 +118,24 @@ public class GUI extends javax.swing.JPanel {
         });
 
         fileChooser.addChoosableFileFilter(allImagesFilter);
-        fileChooser.addChoosableFileFilter(jpegImagesFilter);
+        fileChooser.addChoosableFileFilter(bmpImagesFilter);
         fileChooser.addChoosableFileFilter(gifImagesFilter);
+        fileChooser.addChoosableFileFilter(jpegImagesFilter);
+        fileChooser.addChoosableFileFilter(icnsImagesFilter);
+        fileChooser.addChoosableFileFilter(icoImagesFilter);
+        fileChooser.addChoosableFileFilter(pcxImagesFilter);
+        fileChooser.addChoosableFileFilter(pnmImagesFilter);
         fileChooser.addChoosableFileFilter(pngImagesFilter);
-        fileChooser.addChoosableFileFilter(allImagesFilter);
+        fileChooser.addChoosableFileFilter(psdImagesFilter);
+        fileChooser.addChoosableFileFilter(rgbeImagesFilter);
+        fileChooser.addChoosableFileFilter(tiffImagesFilter);
+        fileChooser.addChoosableFileFilter(wbmpImagesFilter);
+        fileChooser.addChoosableFileFilter(xbmImagesFilter);
+        fileChooser.addChoosableFileFilter(xpmImagesFilter);
+
         fileChooser.setLocation(0, 0);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setFileFilter(allImagesFilter);
 
     }
 
@@ -184,12 +210,11 @@ public class GUI extends javax.swing.JPanel {
         openMultipleButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
+        jPanel5 = new javax.swing.JPanel();
         imageList = new javax.swing.JTextPane();
 
-        setMinimumSize(new java.awt.Dimension(200, 150));
-        setPreferredSize(new java.awt.Dimension(200, 150));
         setRequestFocusEnabled(false);
-        setLayout(new java.awt.BorderLayout());
+        setLayout(new java.awt.GridBagLayout());
 
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
@@ -384,7 +409,12 @@ public class GUI extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 5);
         jPanel3.add(showCB, gridBagConstraints);
 
-        add(jPanel3, java.awt.BorderLayout.NORTH);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        add(jPanel3, gridBagConstraints);
 
         singleMultiplePane.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -447,18 +477,34 @@ public class GUI extends javax.swing.JPanel {
         singleImageTab.add(messageLabel, gridBagConstraints);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel1.setLayout(new java.awt.BorderLayout());
+        jPanel1.setLayout(new java.awt.GridBagLayout());
 
         imageDescription.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         imageDescription.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jPanel1.add(imageDescription, java.awt.BorderLayout.NORTH);
-        jPanel1.add(imagePanel, java.awt.BorderLayout.CENTER);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(imageDescription, gridBagConstraints);
+
+        imagePanel.setMinimumSize(new java.awt.Dimension(10, 400));
+        imagePanel.setPreferredSize(new java.awt.Dimension(10, 400));
+        imagePanel.setLayout(new java.awt.BorderLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel1.add(imagePanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         singleImageTab.add(jPanel1, gridBagConstraints);
 
@@ -521,8 +567,13 @@ public class GUI extends javax.swing.JPanel {
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel2.setLayout(new java.awt.BorderLayout());
 
+        jPanel5.setLayout(new java.awt.BorderLayout());
+
         imageList.setEditable(false);
-        jScrollPane1.setViewportView(imageList);
+        imageList.setPreferredSize(new java.awt.Dimension(10, 10));
+        jPanel5.add(imageList, java.awt.BorderLayout.CENTER);
+
+        jScrollPane1.setViewportView(jPanel5);
 
         jPanel2.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
@@ -538,7 +589,13 @@ public class GUI extends javax.swing.JPanel {
 
         singleMultiplePane.addTab("sequence", multipleImagesTab);
 
-        add(singleMultiplePane, java.awt.BorderLayout.CENTER);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        add(singleMultiplePane, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void imagePathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imagePathActionPerformed
@@ -566,6 +623,7 @@ public class GUI extends javax.swing.JPanel {
                 String[] files = new String[1];
                 files[0] = imagePath.getText();
                 params.setSource(InputSource.FILE);
+                params.setSequenceMode(false);
                 params.setFiles(files);
             }
         } else if (urlButton.isSelected()) {
@@ -576,8 +634,48 @@ public class GUI extends javax.swing.JPanel {
     }//GEN-LAST:event_browseButtonActionPerformed
 
     private void singleMultiplePaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_singleMultiplePaneStateChanged
-
         params.setFiles(null);
+        if(singleMultiplePane.getSelectedIndex() == 1) {
+            rLabel.setEnabled(false);
+            gLabel.setEnabled(false);
+            bLabel.setEnabled(false);
+            rTF.setEnabled(false);
+            gTF.setEnabled(false);
+            bTF.setEnabled(false);
+            preset1Button.setEnabled(false);
+            preset2Button.setEnabled(false);
+            preset3Button.setEnabled(false);
+            colorRB.setEnabled(false);
+            grayscaleRB.setEnabled(false);
+            showCB.setEnabled(false);
+        }
+        else {
+            colorRB.setEnabled(true);
+            grayscaleRB.setEnabled(true);
+            showCB.setEnabled(true);
+            if(grayscaleRB.isSelected()) {
+                rLabel.setEnabled(true);
+                gLabel.setEnabled(true);
+                bLabel.setEnabled(true);
+                rTF.setEnabled(true);
+                gTF.setEnabled(true);
+                bTF.setEnabled(true);
+                preset1Button.setEnabled(true);
+                preset2Button.setEnabled(true);
+                preset3Button.setEnabled(true);                
+            }
+            else {
+                rLabel.setEnabled(false);
+                gLabel.setEnabled(false);
+                bLabel.setEnabled(false);
+                rTF.setEnabled(false);
+                gTF.setEnabled(false);
+                bTF.setEnabled(false);
+                preset1Button.setEnabled(false);
+                preset2Button.setEnabled(false);
+                preset3Button.setEnabled(false);
+            }
+        }
     }//GEN-LAST:event_singleMultiplePaneStateChanged
 
     private void openMultipleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMultipleButtonActionPerformed
@@ -594,6 +692,9 @@ public class GUI extends javax.swing.JPanel {
             if (files == null) {
                 return;
             }
+            else if(files.length == 0) {
+                files = new File[] {fileChooser.getSelectedFile()};
+            }
 
             String[] paths = new String[files.length];
             for (int i = 0; i < paths.length; i++) {
@@ -601,6 +702,7 @@ public class GUI extends javax.swing.JPanel {
             }
             lastPath = paths[0].substring(0, paths[0].lastIndexOf(File.separator));
             VisNow.get().getMainConfig().setLastDataPath(lastPath, ReadImage.class);
+            params.setSequenceMode(true);
             params.setFiles(paths);
         }
     }//GEN-LAST:event_openMultipleButtonActionPerformed
@@ -628,7 +730,7 @@ public class GUI extends javax.swing.JPanel {
         bTF.setEnabled(true);
         preset1Button.setEnabled(true);
         preset2Button.setEnabled(true);
-        //preset3Button.setEnabled(true);
+        preset3Button.setEnabled(true);
         float[] rgb = params.getRGBWeights();
         rTF.setText(format.format(rgb[0]));
         gTF.setText(format.format(rgb[1]));
@@ -729,6 +831,7 @@ public class GUI extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel messageLabel;
     private javax.swing.JPanel multipleImagesTab;
@@ -769,4 +872,17 @@ public class GUI extends javax.swing.JPanel {
     public void activateOpenDialog() {
         browseButtonActionPerformed(null);
     }
+
+    public static void main(String[] args) {
+       VisNow.initLogging(true);       
+       Locale.setDefault(VisNow.LOCALE);
+       
+       JFrame f = new JFrame();
+       f.add(new GUI());
+       f.pack();
+       f.setLocation(400, 200);
+       f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+       f.setVisible(true);        
+    }
+
 }

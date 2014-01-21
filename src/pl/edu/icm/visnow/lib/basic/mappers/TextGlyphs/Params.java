@@ -62,13 +62,14 @@ public class Params extends Parameters
       new ParameterEgg<Float>("thr",                  ParameterType.dependent, .1f),
       new ParameterEgg<Float>("scale",                ParameterType.dependent, .02f),
       new ParameterEgg<String>("format",              ParameterType.dependent, "%4.1f"),
-      new ParameterEgg<int[]>("down",                 ParameterType.dependent, new int[] { 5, 5, 5}),
+      new ParameterEgg<int[]>("down",                 ParameterType.dependent, null),
       new ParameterEgg<Integer>("downsize",           ParameterType.dependent, 10),
    };
 
    public Params()
    {
       super(eggs);
+      setValue("down", new int[] { 5, 5, 5});
       fontParams.setThreeDimensional(true);
       fontParams.addChangeListener(new ChangeListener() {
 

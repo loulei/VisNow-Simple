@@ -385,7 +385,7 @@ public class ExtendedReadGadgetData {
 
 
         //read position timesequence       
-        int nThreads = Runtime.getRuntime().availableProcessors();
+        int nThreads = pl.edu.icm.visnow.system.main.VisNow.availableProcessors();
         FrameReaderFullThread[] threads = new FrameReaderFullThread[nThreads];
         for (int i = 0; i < threads.length; i++) {
             threads[i] = new FrameReaderFullThread(i, nThreads, nFrames, iPartsMax, nPartsMax, nParts, autoDownsize, headers, ids, valid, pos);
@@ -434,10 +434,9 @@ public class ExtendedReadGadgetData {
 
         //build out field and cellsets
         System.out.print("creating field...");
-        IrregularField outField = new IrregularField();
+        IrregularField outField = new IrregularField(nPartsMax);
 
         outField.setNSpace(3);
-        outField.setNNodes(nPartsMax);
         outField.setCoords(pos);
         outField.setMask(valid);
         if (readMask[0]) {
@@ -792,11 +791,10 @@ public class ExtendedReadGadgetData {
                 System.out.print("creating field...");
             }
 
-            outField = new IrregularField();
+            outField = new IrregularField(NumPart);
 
             outField.setNSpace(3);
-            outField.setNNodes(NumPart);
-            outField.setCoords(pos);
+              outField.setCoords(pos);
             if (readMask[0]) {
                 outField.addData(DataArray.create(vel, 3, "velocity"));
             }
@@ -1368,10 +1366,9 @@ public class ExtendedReadGadgetData {
                 System.out.print("creating field...");
             }
 
-            outField = new IrregularField();
+            outField = new IrregularField(dn_NumPart);
 
             outField.setNSpace(3);
-            outField.setNNodes(dn_NumPart);
             outField.setCoords(pos);
             if (readMask[0]) {
                 outField.addData(DataArray.create(vel, 3, "velocity"));
@@ -2116,10 +2113,9 @@ public class ExtendedReadGadgetData {
                 System.out.print("creating field...");
             }
 
-            outField = new IrregularField();
+            outField = new IrregularField(dn_NumPartC);
 
             outField.setNSpace(3);
-            outField.setNNodes(dn_NumPartC);
             outField.setCoords(pos);
             if (readMask[0]) {
                 outField.addData(DataArray.create(vel, 3, "velocity"));

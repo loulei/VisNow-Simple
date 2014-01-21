@@ -51,7 +51,7 @@ public class GeometryObject2DStruct implements Cloneable, ChangeListener {
 
     protected GeometryObject2D me;
     protected GeometryObject2DStruct parent = null;
-    protected Vector<GeometryObject2DStruct> children = new Vector<GeometryObject2DStruct>();
+    protected ArrayList<GeometryObject2DStruct> children = new ArrayList<GeometryObject2DStruct>();
 
     private String parentModulePort = "";
     
@@ -62,6 +62,8 @@ public class GeometryObject2DStruct implements Cloneable, ChangeListener {
     }
 
     public GeometryObject2DStruct(GeometryObject2D obj) {
+       if (obj == null)
+          return;
         this.me = obj;
         this.me.addChangeListener(this);
     }
@@ -89,7 +91,7 @@ public class GeometryObject2DStruct implements Cloneable, ChangeListener {
         if (layer >= children.size()) {
             children.add(child);
         } else {
-            children.insertElementAt(child, layer);
+            children.set(layer, child);
         }
         child.setParent(this);        
         fireStateChanged();
@@ -105,7 +107,7 @@ public class GeometryObject2DStruct implements Cloneable, ChangeListener {
         return children.remove(child);
     }
 
-    public Vector<GeometryObject2DStruct> getChildren() {
+    public ArrayList<GeometryObject2DStruct> getChildren() {
         return children;
     }
 
@@ -117,10 +119,16 @@ public class GeometryObject2DStruct implements Cloneable, ChangeListener {
     }
 
     public String getName() {
+        if(me == null)
+            return "N/A";
         return me.getName();
+        
     }
 
     public void setName(String name) {
+        if(me == null)
+            return;
+        
         me.setName(name);
         fireStateChanged();
     }
@@ -134,7 +142,7 @@ public class GeometryObject2DStruct implements Cloneable, ChangeListener {
             int index = children.indexOf(child);
             if (index > 0) {
                 children.remove(index);
-                children.insertElementAt(child, index - 1);
+                children.set(index - 1, child);
             }
         }
         fireStateChanged();
@@ -145,7 +153,7 @@ public class GeometryObject2DStruct implements Cloneable, ChangeListener {
             int index = children.indexOf(child);
             if (index >= 0 && index < children.size() - 1) {
                 children.remove(index);
-                children.insertElementAt(child, index + 1);
+                children.set(index + 1, child);
             }
         }
         fireStateChanged();
@@ -160,7 +168,7 @@ public class GeometryObject2DStruct implements Cloneable, ChangeListener {
         try {
             GeometryObject2DStruct out = (GeometryObject2DStruct) super.clone();
             out.parent = null;
-            out.children = new Vector<GeometryObject2DStruct>();
+            out.children = new ArrayList<GeometryObject2DStruct>();
             for (int i = 0; i < children.size(); i++) {
                 out.addChild((GeometryObject2DStruct) children.get(i).clone());
             }
@@ -175,9 +183,13 @@ public class GeometryObject2DStruct implements Cloneable, ChangeListener {
     }
 
     public void setGeometryObject2D(GeometryObject2D me) {
-        this.me.removeChangeListener(this);
+        if(this.me != null)
+            this.me.removeChangeListener(this);
+        
         this.me = me;
-        this.me.addChangeListener(this);
+        
+        if(this.me != null)
+            this.me.addChangeListener(this);
         fireStateChanged();
     }
 

@@ -71,7 +71,7 @@ public abstract class IrregularOutFieldVisualizationModule extends Visualization
     */
    public IrregularOutFieldVisualizationModule()
    {
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          @Override
          public void run()
@@ -81,14 +81,8 @@ public abstract class IrregularOutFieldVisualizationModule extends Visualization
       });
       timestamp = TimeStamper.getTimestamp();
       outObj.setName("object" + timestamp);
-   }
-
-   @Override
-   public void onInitFinished()
-   {
       irregularFieldGeometry = new IrregularFieldGeometry();
-      outObj.addBgrColorListener(irregularFieldGeometry.getBackgroundColorListener());
-      visInitFinished();
+      outObj.addBgrColorListener(irregularFieldGeometry.getBackgroundColorListener());      
    }
 
    protected void show()
@@ -152,7 +146,7 @@ public abstract class IrregularOutFieldVisualizationModule extends Visualization
 
          defaultDisplayParams();
 
-         SwingInstancer.swingRun(new Runnable()
+         SwingInstancer.swingRunAndWait(new Runnable()
          {
             @Override
             public void run()
@@ -185,7 +179,7 @@ public abstract class IrregularOutFieldVisualizationModule extends Visualization
          irregularFieldGeometry.updateCellSetData(n);
          if (updateUI)
          {
-            SwingInstancer.swingRun(new Runnable()
+            SwingInstancer.swingRunAndWait(new Runnable()
             {
                @Override
                public void run()

@@ -37,9 +37,9 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.lib.types;
 
+import java.util.ArrayList;
 import java.util.Vector;
 import pl.edu.icm.visnow.datasets.*;
-import pl.edu.icm.visnow.datasets.cells.Cell;
 
 /**
  * @author Krzysztof S. Nowinski (know@icm.edu.pl) Warsaw University, Interdisciplinary Centre for
@@ -55,14 +55,11 @@ public class VNField implements VNDataSchemaInterface
    private float[] maxVal = null;
    private float[] stdDevVal = null;
 
-   public VNField()
-   {
-   }
-
    public VNField(Field inField)
    {
       field = inField;
-      field.checkPureDim();
+      if(field != null)
+        field.checkPureDim();
    }
 
    public Field getField()
@@ -303,7 +300,7 @@ public class VNField implements VNDataSchemaInterface
          return null;
       }
 
-      Vector<CellSet> css = ((IrregularField) field).getCellSets();
+      ArrayList<CellSet> css = ((IrregularField) field).getCellSets();
       if (css == null || css.size() == 0)
          return null;
 
@@ -334,7 +331,7 @@ public class VNField implements VNDataSchemaInterface
          return null;
       }
 
-      Vector<CellSet> css = ((IrregularField) field).getCellSets();
+      ArrayList<CellSet> css = ((IrregularField) field).getCellSets();
       if (css == null || css.size() == 0)
          return null;
 
@@ -370,7 +367,7 @@ public class VNField implements VNDataSchemaInterface
          return null;
       }
 
-      Vector<CellSet> css = ((IrregularField) field).getCellSets();
+      ArrayList<CellSet> css = ((IrregularField) field).getCellSets();
       if (css == null || css.size() == 0)
          return null;
 
@@ -406,7 +403,7 @@ public class VNField implements VNDataSchemaInterface
          return null;
       }
 
-      Vector<CellSet> css = ((IrregularField) field).getCellSets();
+      ArrayList<CellSet> css = ((IrregularField) field).getCellSets();
       if (css == null || css.size() == 0)
          return null;
 
@@ -480,75 +477,79 @@ public class VNField implements VNDataSchemaInterface
       if (field == null || !this.isIrregular())
          return false;
 
-      if (type < 0 || type >= Cell.TYPES)
-         return false;
-
-      Vector<CellSet> css = ((IrregularField) field).getCellSets();
-      if (css == null || css.isEmpty())
-         return false;
-
-      for (int i = 0; i < css.size(); i++)
-      {
-         if (css.get(i).getCellArray(type) != null)
-            return true;
-
-         CellArray[] bndrs = css.get(i).getBoundaryCellArrays();
-         if (bndrs != null)
-            for (int j = 0; j < bndrs.length; j++)
-            {
-               if (bndrs[j] != null && bndrs[i].getType() == type)
-                  return true;
-            }
-      }
-      return false;
+      return ((IrregularField)field).hasCellsType(type);
    }
 
    @Override
    public boolean hasCellsPoint()
    {
-      return hasCellsType(Cell.POINT);
+      if (field == null || !this.isIrregular())
+         return false;
+
+      return ((IrregularField)field).hasCellsPoint();
    }
 
    @Override
    public boolean hasCellsSegment()
    {
-      return hasCellsType(Cell.SEGMENT);
+      if (field == null || !this.isIrregular())
+         return false;
+
+      return ((IrregularField)field).hasCellsSegment();
    }
 
    @Override
    public boolean hasCellsTriangle()
    {
-      return hasCellsType(Cell.TRIANGLE);
+      if (field == null || !this.isIrregular())
+         return false;
+
+      return ((IrregularField)field).hasCellsTriangle();
    }
 
    @Override
    public boolean hasCellsQuad()
    {
-      return hasCellsType(Cell.QUAD);
+      if (field == null || !this.isIrregular())
+         return false;
+
+      return ((IrregularField)field).hasCellsQuad();
    }
 
    @Override
    public boolean hasCellsTetra()
    {
-      return hasCellsType(Cell.TETRA);
+      if (field == null || !this.isIrregular())
+         return false;
+
+      return ((IrregularField)field).hasCellsTetra();
    }
 
    @Override
    public boolean hasCellsPyramid()
    {
-      return hasCellsType(Cell.PYRAMID);
+      if (field == null || !this.isIrregular())
+         return false;
+
+      return ((IrregularField)field).hasCellsPyramid();
    }
 
    @Override
    public boolean hasCellsPrism()
    {
-      return hasCellsType(Cell.PRISM);
+      if (field == null || !this.isIrregular())
+         return false;
+
+      return ((IrregularField)field).hasCellsPrism();
    }
 
    @Override
    public boolean hasCellsHexahedron()
    {
-      return hasCellsType(Cell.HEXAHEDRON);
+      if (field == null || !this.isIrregular())
+         return false;
+
+      return ((IrregularField)field).hasCellsHexahedron();
    }
 
    @Override
@@ -557,7 +558,7 @@ public class VNField implements VNDataSchemaInterface
       if (field == null || !this.isIrregular())
          return false;
 
-      return (hasCellsTriangle() || hasCellsQuad());
+      return ((IrregularField)field).hasCells2D();
    }
 
    @Override
@@ -565,7 +566,8 @@ public class VNField implements VNDataSchemaInterface
    {
       if (field == null || !this.isIrregular())
          return false;
-      return (hasCellsTetra() || hasCellsPyramid() || hasCellsPrism() || hasCellsHexahedron());
+
+      return ((IrregularField)field).hasCells3D();
    }
    
    @Override

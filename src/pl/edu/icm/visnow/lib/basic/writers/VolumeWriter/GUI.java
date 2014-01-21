@@ -72,7 +72,8 @@ public class GUI extends javax.swing.JPanel
     */
    @SuppressWarnings("unchecked")
    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-   private void initComponents() {
+   private void initComponents()
+   {
       java.awt.GridBagConstraints gridBagConstraints;
 
       fileChooser = new javax.swing.JFileChooser();
@@ -81,14 +82,16 @@ public class GUI extends javax.swing.JPanel
       jPanel1 = new javax.swing.JPanel();
       selectButton = new javax.swing.JButton();
 
+      setPreferredSize(new java.awt.Dimension(200, 300));
       setLayout(new java.awt.GridBagLayout());
 
-      java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("pl/edu/icm/visnow/lib/basic/writers/VolumeWriter/Bundle"); // NOI18N
-      tfFileName.setText(bundle.getString("GUI.tfFileName.text")); // NOI18N
+      tfFileName.setText("/tmp/vol.dat"); // NOI18N
       tfFileName.setMinimumSize(new java.awt.Dimension(4, 22));
       tfFileName.setPreferredSize(new java.awt.Dimension(78, 22));
-      tfFileName.addActionListener(new java.awt.event.ActionListener() {
-         public void actionPerformed(java.awt.event.ActionEvent evt) {
+      tfFileName.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
             tfFileNameActionPerformed(evt);
          }
       });
@@ -99,9 +102,11 @@ public class GUI extends javax.swing.JPanel
       gridBagConstraints.insets = new java.awt.Insets(2, 0, 2, 0);
       add(tfFileName, gridBagConstraints);
 
-      writeButton.setText(bundle.getString("GUI.writeButton.text")); // NOI18N
-      writeButton.addActionListener(new java.awt.event.ActionListener() {
-         public void actionPerformed(java.awt.event.ActionEvent evt) {
+      writeButton.setText("write file"); // NOI18N
+      writeButton.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
             writeButtonActionPerformed(evt);
          }
       });
@@ -116,11 +121,11 @@ public class GUI extends javax.swing.JPanel
       jPanel1.setLayout(jPanel1Layout);
       jPanel1Layout.setHorizontalGroup(
          jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addGap(0, 242, Short.MAX_VALUE)
+         .addGap(0, 239, Short.MAX_VALUE)
       );
       jPanel1Layout.setVerticalGroup(
          jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addGap(0, 166, Short.MAX_VALUE)
+         .addGap(0, 224, Short.MAX_VALUE)
       );
 
       gridBagConstraints = new java.awt.GridBagConstraints();
@@ -130,9 +135,11 @@ public class GUI extends javax.swing.JPanel
       gridBagConstraints.weighty = 1.0;
       add(jPanel1, gridBagConstraints);
 
-      selectButton.setText(bundle.getString("GUI.selectButton.text")); // NOI18N
-      selectButton.addActionListener(new java.awt.event.ActionListener() {
-         public void actionPerformed(java.awt.event.ActionEvent evt) {
+      selectButton.setText("select output file"); // NOI18N
+      selectButton.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
             selectButtonActionPerformed(evt);
          }
       });

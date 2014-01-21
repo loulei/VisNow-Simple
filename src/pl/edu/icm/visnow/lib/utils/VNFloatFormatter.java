@@ -46,8 +46,18 @@ package pl.edu.icm.visnow.lib.utils;
 public class VNFloatFormatter {
     
     public static String rangeFormat(float v, float[] range, String patternIn, String patternOut) {
+        return rangeFormat(v, range, patternIn, patternOut, null);
+    }
+
+    public static String rangeFormat(float v, float[] range, String patternIn, String patternOut, String patternInt) {
         if(range == null || range.length != 2 || patternIn == null || patternOut == null)
             return ""+v;
+        
+        if(patternInt != null) {
+            int rV = (int)v;
+            if(rV == v)
+                return String.format(patternInt, rV);
+        }
         
         if(v != 0 && (Math.abs(v) < range[0] || Math.abs(v) > range[1]))
             return String.format(patternOut, v);
@@ -58,9 +68,14 @@ public class VNFloatFormatter {
     public static final float[] defaultRange = new float[]{0.001f, 100000.0f};
     public static final String defaultPatternIn = "%4.3f";
     public static final String defaultPatternOut = "%.3e";
+    public static final String defaultPatternInt = "%d";
 
     public static String defaultRangeFormat(float v) {        
         return rangeFormat(v, defaultRange, defaultPatternIn, defaultPatternOut);
+    }
+
+    public static String defaultRangeFormatWithIntegers(float v) {        
+        return rangeFormat(v, defaultRange, defaultPatternIn, defaultPatternOut, defaultPatternInt);
     }
     
 }

@@ -56,13 +56,20 @@ public class PointDescriptorTableModel extends AbstractTableModel {
 
             @Override
             public void onGeometryParamsChanged(GeometryParamsEvent e) {
-                //if(e.getType() == GeometryParamsEvent.TYPE_POINT_ADDED || e.getType() == GeometryParamsEvent.TYPE_POINT_MODIFIED || e.getType() == GeometryParamsEvent.TYPE_POINT_REMOVED || e.getType() == GeometryParamsEvent.TYPE_ALL) {
-                if(e.getType() == GeometryParamsEvent.TYPE_POINT_ADDED || e.getType() == GeometryParamsEvent.TYPE_POINT_REMOVED || e.getType() == GeometryParamsEvent.TYPE_ALL) {
-                    fireTableDataChanged();
-                }
+                    if(e.getType() == GeometryParamsEvent.TYPE_POINT_MODIFIED || e.getType() == GeometryParamsEvent.TYPE_POINT_ADDED || e.getType() == GeometryParamsEvent.TYPE_POINT_REMOVED || e.getType() == GeometryParamsEvent.TYPE_ALL) {
+                        fireTableDataChanged();
+                    }
+                    if(e.getType() == GeometryParamsEvent.TYPE_POINT_CLASS) {
+                        fireTableStructureChanged();
+                    }
             }
         });
         this.pts = params.getPointsDescriptors();
+    }
+    
+    public void refresh() {
+        fireTableStructureChanged();
+        fireTableDataChanged();
     }
 
     @Override
@@ -75,7 +82,10 @@ public class PointDescriptorTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 4;
+        if(params.getCurrentClassId() == -1)
+            return 4;
+        else
+            return 5;
     }
 
     @Override
@@ -95,6 +105,8 @@ public class PointDescriptorTableModel extends AbstractTableModel {
                 return (Float)pts.get(rowIndex).getWorldCoords()[1];
             case 3:
                 return (Float)pts.get(rowIndex).getWorldCoords()[2];
+            case 4:
+                return (Integer)pts.get(rowIndex).getMembership();
         }
         return null;
     }
@@ -110,6 +122,8 @@ public class PointDescriptorTableModel extends AbstractTableModel {
                 return "y";
             case 3:
                 return "z";
+            case 4:
+                return "class";
             default:
                 return "";
         }
@@ -119,13 +133,15 @@ public class PointDescriptorTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int columnIndex) {
         if(columnIndex == 0)
             return String.class;
+        else if(columnIndex == 4)
+            return Integer.class;
         else
             return Float.class;
     }
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return !pts.get(rowIndex).isDependant();
+        return (columnIndex == 4 || !pts.get(rowIndex).isDependant());
     }
 
     @Override
@@ -138,6 +154,11 @@ public class PointDescriptorTableModel extends AbstractTableModel {
                 return;
             String tmp = (String)aValue;
             pts.get(row).setName(tmp);
+        } else if(column == 4) {
+            if(!(aValue instanceof Integer))
+                return;
+            Integer tmp = (Integer)aValue;
+            pts.get(row).setMembership(tmp);
         } else {
             if(!(aValue instanceof Float))
                 return;

@@ -45,7 +45,7 @@ package pl.edu.icm.visnow.geometries.geometryTemplates;
 public class VectorGlyphTemplates
 {
 
-   public static final int MAXLOD = 20;
+   public static final int MAXLOD = 21;
    protected static boolean ready = false;
    protected static Glyph[][] glyphs;
    protected static String[] glyphNames;

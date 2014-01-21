@@ -203,7 +203,7 @@ public class IrregularFieldIsosurface extends IsosurfaceEngine
 
    public IrregularField makeIsosurface(IsosurfaceParams p, float threshold)
    {   
-      IrregularField out = new IrregularField();
+      IrregularField out;
       fireStatusChanged(0);
       if (inField.getData(p.getIsoComponent()).getType() == DataArray.FIELD_DATA_BYTE)
          threshold = (int)threshold + .5f;
@@ -219,7 +219,7 @@ public class IrregularFieldIsosurface extends IsosurfaceEngine
           !inField.getData(componentNumber).isSimpleNumeric() ||
           threshold < inField.getData(componentNumber).getMinv() ||
           threshold > inField.getData(componentNumber).getMaxv())
-         return out;
+         return null;
       data = inField.getData(componentNumber);
       if (data.getVeclen() == 1)
          isoData = data.getFData();
@@ -266,7 +266,7 @@ public class IrregularFieldIsosurface extends IsosurfaceEngine
       
       int nIsoNodes = edgesCut.getnEdges();
       if (nIsoNodes < 3)
-         return out;
+         return null;
       
       int[] newNodeInds = new int[2 * nIsoNodes];
       float[] newNodeRatios = new float[nIsoNodes];
@@ -278,8 +278,8 @@ public class IrregularFieldIsosurface extends IsosurfaceEngine
          newNodeRatios[d.index]       = d.ratio;
       }
       
+      out = new IrregularField(nIsoNodes);
       out.setNSpace(3);
-      out.setNNodes(nIsoNodes);     
       
       float[] outCoords = new float[3 * nIsoNodes];
       for (int i = 0; i < nIsoNodes; i++)

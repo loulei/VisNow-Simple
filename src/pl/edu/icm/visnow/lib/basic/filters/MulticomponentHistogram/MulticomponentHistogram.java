@@ -78,7 +78,7 @@ public class MulticomponentHistogram  extends RegularOutFieldVisualizationModule
                 startAction();
             }
         });
-        SwingInstancer.swingRun(new Runnable() {
+        SwingInstancer.swingRunAndWait(new Runnable() {
 
             public void run() {
                 computeUI = new GUI();

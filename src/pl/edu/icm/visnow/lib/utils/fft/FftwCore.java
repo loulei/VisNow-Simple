@@ -53,47 +53,47 @@ public class FftwCore extends FftCore {
     /**
      * Procedure running Fast Fourier Transform calculations from real to complex 1D data, using FFTW native library.
      */
-    protected native void fft_r2c(float[] real, float[] imag);    
+    public native void fft_r2c(float[] real, float[] imag);    
 
     /**
      * Procedure running Fast Fourier Transform calculations from complex to complex 1D data, using FFTW native library.
      */    
-    protected native void fft_c2c(float[] real, float[] imag);    
+    public native void fft_c2c(float[] real, float[] imag);    
     
     /**
      * Procedure running Inverse Fast Fourier Transform calculations for 1D data, using FFTW native library.
      */    
-    protected native void ifft(float[] real, float[] imag);    
+    public native void ifft(float[] real, float[] imag);    
 
     /**
      * Procedure running Fast Fourier Transform calculations from real to complex 2D data, using FFTW native library.
      */
-    protected native void fft2_r2c(float[] real, float[] imag, int nx, int ny);    
+    public native void fft2_r2c(float[] real, float[] imag, int nx, int ny);    
 
     /**
      * Procedure running Fast Fourier Transform calculations from complex to complex 2D data, using FFTW native library.
      */
-    protected native void fft2_c2c(float[] real, float[] imag, int nx, int ny);    
+    public native void fft2_c2c(float[] real, float[] imag, int nx, int ny);    
     
     /**
      * Procedure running Inverse Fast Fourier Transform calculations for 2D data, using FFTW native library.
      */
-    protected native void ifft2(float[] real, float[] imag, int nx, int ny);    
+    public native void ifft2(float[] real, float[] imag, int nx, int ny);    
     
     /**
      * Procedure running Fast Fourier Transform calculations from real to complex 3D data, using FFTW native library.
      */
-    protected native void fft3_r2c(float[] real, float[] imag, int nx, int ny, int nz);   
+    public native void fft3_r2c(float[] real, float[] imag, int nx, int ny, int nz);   
     
     /**
      * Procedure running Fast Fourier Transform calculations from complex to complex 3D data, using FFTW native library.
      */
-    protected native void fft3_c2c(float[] real, float[] imag, int nx, int ny, int nz);    
+    public native void fft3_c2c(float[] real, float[] imag, int nx, int ny, int nz);    
     
     /**
      * Procedure running Inverse Fast Fourier Transform calculations for 3D data, using FFTW native library.
      */
-    protected native void ifft3(float[] real, float[] imag, int nx, int ny, int nz);    
+    public native void ifft3(float[] real, float[] imag, int nx, int ny, int nz);    
     
 }
 

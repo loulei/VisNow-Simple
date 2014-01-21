@@ -1,5 +1,6 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+Copyright (C) 2006-2013 University of Warsaw, ICM
 
 This file is part of GNU Classpath.
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -33,7 +34,9 @@ module.  An independent module is a module which is not derived from
 or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+exception statement from your version.
+*/
+//</editor-fold>
 
 package pl.edu.icm.visnow.datasets;
 
@@ -46,13 +49,14 @@ import java.awt.image.WritableRaster;
  */
 public class RegularFieldInterpolator {
 
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static byte[] getInterpolatedData(byte[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null) {
             return null;
         }
         byte[] c;
         int vlen;
-        int inexact = 0;
+        int inexact;  // flag of OR'ed values indicating which dimensions are inexact: 1 - u, 2 - v, 4 - w
         int i, j, k, m, n0, n1;
         switch (dims.length) {
             case 3:
@@ -249,7 +253,13 @@ public class RegularFieldInterpolator {
         }
         return null;
     }
-
+    
+    /** Returns interpolated data from an array and given <b>float indexes</b>. Depending on number
+     * of dimensions it calls:<br/>
+     * <code>getInterpolatedScalarData3D</code>,<br/>
+     * <code>getInterpolatedScalarData2D</code><br/>
+     * <code>or getInterpolatedScalarData1D</code> <br/>
+     */
     public static byte getInterpolatedScalarData(byte[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null) {
             return 0;
@@ -259,19 +269,20 @@ public class RegularFieldInterpolator {
             case 3:
                 return getInterpolatedScalarData3D(data, dims, u, v, w);
             case 2:
-                return getInterpolatedScalarData2D(data, dims, u, v, w);
+                return getInterpolatedScalarData2D(data, dims, u, v);
             case 1:
-                return getInterpolatedScalarData1D(data, dims, u, v, w);
+                return getInterpolatedScalarData1D(data, dims, u);
         }
         return 0;
     }
 
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static byte getInterpolatedScalarData3D(byte[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null || dims.length != 3) {
             return 0;
         }
         byte c = 0;
-        int inexact = 0;
+        int inexact; // flag of OR'ed values indicating which dimensions are inexact: 1 - u, 2 - v, 4 - w
         int i, j, k, m, n0, n1;
         if (data.length != dims[0] * dims[1] * dims[2]) {
             return 0;
@@ -348,13 +359,14 @@ public class RegularFieldInterpolator {
         return c;
     }
     
-    public static byte getInterpolatedScalarData2D(byte[] data, int[] dims, float u, float v, float w) {
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
+    public static byte getInterpolatedScalarData2D(byte[] data, int[] dims, float u, float v) {
         if (data == null || dims == null || dims.length != 2) {
             return 0;
         }
         byte c = 0;
-        int inexact = 0;
-        int i, j, k, m, n0, n1;
+        int inexact; // flag of OR'ed values indicating which dimensions are inexact: 1 - u, 2 - v (w is unused)
+        int i, j, m, n0;
         if (data.length != dims[0] * dims[1]) {
             return 0;
         }
@@ -401,12 +413,13 @@ public class RegularFieldInterpolator {
         return c;
     }
 
-    public static byte getInterpolatedScalarData1D(byte[] data, int[] dims, float u, float v, float w) {
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
+    public static byte getInterpolatedScalarData1D(byte[] data, int[] dims, float u) {
         if (data == null || dims == null || dims.length != 1) {
             return 0;
         }
         byte c = 0;
-        int inexact = 0;
+        int inexact; // flag 0 or 1 indicating whether dimension u is inexact (1) or exact (0)
         int i;
         if (data.length != dims[0]) {
             return 0;
@@ -418,7 +431,7 @@ public class RegularFieldInterpolator {
             u = dims[0] - 1;
         }
         inexact = 0;
-        i = (int) u;
+        i = (int) u; //TODO: BUG: u is trimmed instead of being rounded first!
         u -= i;
         if (u != 0) {
             inexact += 1;
@@ -429,6 +442,7 @@ public class RegularFieldInterpolator {
                 c = data[i];
                 break;
             case 1:
+                 
                 c = (byte) (u * (0xFF & data[i + 1]) + (1 - u) * (0xFF & data[i]));
                 break;
         }
@@ -870,7 +884,7 @@ public class RegularFieldInterpolator {
         }
         short[] c;
         int vlen;
-        int inexact = 0;
+        int inexact;
         int i, j, k, m, n0, n1;
         switch (dims.length) {
             case 3:
@@ -1085,6 +1099,7 @@ public class RegularFieldInterpolator {
         return 0;
     }
 
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static short getInterpolatedScalarData3D(short[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null || dims.length != 3) {
             return 0;
@@ -1167,6 +1182,7 @@ public class RegularFieldInterpolator {
         return c;
     }
 
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static short getInterpolatedScalarData2D(short[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null || dims.length != 2) {
             return 0;
@@ -1220,6 +1236,7 @@ public class RegularFieldInterpolator {
         return c;
     }
 
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static short getInterpolatedScalarData1D(short[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null || dims.length != 1) {
             return 0;
@@ -1591,6 +1608,7 @@ public class RegularFieldInterpolator {
         }
     }
     
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static int[] getInterpolatedData(int[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null) {
             return null;
@@ -1792,6 +1810,7 @@ public class RegularFieldInterpolator {
         return null;
     }
 
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static int getInterpolatedScalarData(int[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null) {
             return 0;
@@ -1808,6 +1827,7 @@ public class RegularFieldInterpolator {
         return 0;
     }
 
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static int getInterpolatedScalarData3D(int[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null || dims.length != 3) {
             return 0;
@@ -1889,6 +1909,7 @@ public class RegularFieldInterpolator {
         return c;
     }
 
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static int getInterpolatedScalarData2D(int[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null || dims.length != 2) {
             return 0;
@@ -1941,6 +1962,7 @@ public class RegularFieldInterpolator {
         return c;
     }
 
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static int getInterpolatedScalarData1D(int[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null || dims.length != 1) {
             return 0;
@@ -2514,6 +2536,7 @@ public class RegularFieldInterpolator {
         return null;
     }
 
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static float getInterpolatedScalarData(float[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null) {
             return 0.0f;
@@ -2530,6 +2553,7 @@ public class RegularFieldInterpolator {
         return 0.0f;
     }
 
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static float getInterpolatedScalarData3D(float[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null || dims.length != 3) {
             return 0.0f;
@@ -2611,6 +2635,7 @@ public class RegularFieldInterpolator {
         return c;
     }
 
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static float getInterpolatedScalarData2D(float[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null || dims.length != 2) {
             return 0.0f;
@@ -2663,6 +2688,7 @@ public class RegularFieldInterpolator {
         return c;
     }
 
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static float getInterpolatedScalarData1D(float[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null || dims.length != 1) {
             return 0.0f;
@@ -3258,6 +3284,7 @@ public class RegularFieldInterpolator {
         return 0.0f;
     }
 
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static double getInterpolatedScalarData3D(double[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null || dims.length != 3) {
             return 0.0;
@@ -3339,6 +3366,7 @@ public class RegularFieldInterpolator {
         return c;
     }
 
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static double getInterpolatedScalarData2D(double[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null || dims.length != 2) {
             return 0.0f;
@@ -3391,6 +3419,7 @@ public class RegularFieldInterpolator {
         return c;
     }
 
+    /** Returns interpolated data from an array and given <b>float indexes</b> */
     public static double getInterpolatedScalarData1D(double[] data, int[] dims, float u, float v, float w) {
         if (data == null || dims == null || dims.length != 1) {
             return 0.0;

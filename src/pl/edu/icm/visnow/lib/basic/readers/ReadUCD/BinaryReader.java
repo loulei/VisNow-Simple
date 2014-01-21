@@ -51,7 +51,7 @@ import pl.edu.icm.visnow.gui.widgets.FileErrorFrame;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public class BinaryReader extends Reader
 {
@@ -105,8 +105,7 @@ public class BinaryReader extends Reader
          int nnodedata = inStream.readInt();
          int ncelldata = inStream.readInt();
          int nListNodes = inStream.readInt();
-         outField = new IrregularField();
-         outField.setNNodes(nnodes);
+         outField = new IrregularField(nnodes);
          outField.setNSpace(3);
          
          int[] cellids      = new int[ncells];

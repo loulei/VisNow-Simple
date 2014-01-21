@@ -43,15 +43,15 @@ import java.awt.event.MouseListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import javax.swing.JFrame;
+//import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+//import javax.swing.SwingUtilities;
+//import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.log4j.Logger;
-import pl.edu.icm.visnow.lib.utils.SwingInstancer;
-import pl.edu.icm.visnow.system.main.VisNow;
+//import org.apache.log4j.Logger;
+//import pl.edu.icm.visnow.lib.utils.SwingInstancer;
+//import pl.edu.icm.visnow.system.main.VisNow;
 
 //TODO: - test if in EDT
 //TODO: - synchronize(active)
@@ -71,7 +71,7 @@ import pl.edu.icm.visnow.system.main.VisNow;
  */
 public class EnhancedIntSlider extends javax.swing.JPanel implements Serializable, MouseListener {
 
-    private static final Logger LOGGER = Logger.getLogger(EnhancedIntSlider.class);
+//    private static final Logger LOGGER = Logger.getLogger(EnhancedIntSlider.class);
     protected int min = 0;
     protected int max = 100;
     protected int val = 50;
@@ -250,7 +250,7 @@ private void showFieldsBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     }
 
 private void valFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_valFieldActionPerformed
-    LOGGER.trace("active: " + active);
+//    LOGGER.debug("active: " + active);
     if (!active) return; //return if passive 
 
     //1. get value
@@ -260,7 +260,7 @@ private void valFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_valFieldActionPerformed
 
 private void sliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderStateChanged
-    LOGGER.trace("active: " + active);
+//    LOGGER.debug("active: " + active);
     if (!active) return; //return if passive 
 
     //1. get value
@@ -269,7 +269,7 @@ private void sliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:
     else if (slider.getValue() == slider.getMaximum()) valNew = max;
     else valNew = rMin + slider.getValue() * delta;
 
-    LOGGER.trace("slider min/max/new: " + slider.getMinimum() + " " + slider.getMaximum() + " " + slider.getValue() + " min/max/cur/new: " + min + " " + max + " " + val + " :" + valNew);
+//    LOGGER.debug("slider min/max/new: " + slider.getMinimum() + " " + slider.getMaximum() + " " + slider.getValue() + " min/max/cur/new: " + min + " " + max + " " + val + " :" + valNew);
 
     //2. call active setter (validate values, update controls, call listeners) 
     setVal(valNew, true);
@@ -286,7 +286,7 @@ private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRS
 
 private void maxFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_maxFieldActionPerformed
 {//GEN-HEADEREND:event_maxFieldActionPerformed
-    LOGGER.trace("active: " + active);
+//    LOGGER.debug("active: " + active);
     if (!active) return; //return if passive 
 
     //1. get value
@@ -297,7 +297,7 @@ private void maxFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:
 
 private void minFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_minFieldActionPerformed
 {//GEN-HEADEREND:event_minFieldActionPerformed
-    LOGGER.trace("active: " + active);
+//    LOGGER.debug("active: " + active);
     if (!active) return; //return if passive 
 
     //1. get value
@@ -310,7 +310,7 @@ private void minFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:
      * Sets slider for current value of val.
      */
     private void sliderUpdateThumb() {
-        LOGGER.trace("rmin/rmax/delta/value " + rMin + " " + rMax + " " + delta + " " + val);
+//        LOGGER.debug("rmin/rmax/delta/value " + rMin + " " + rMax + " " + delta + " " + val);
         int sliderPos;
         if (val == max) sliderPos = slider.getMaximum();
         else if (val == min) sliderPos = slider.getMinimum();
@@ -328,8 +328,8 @@ private void minFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:
      * This method updates slider which results in sliderStateChanged.
      */
     private void sliderUpdateRange() {
-        SwingInstancer.swingRun(new Runnable() {
-            public void run() {
+//        SwingInstancer.swingRunAndWait(new Runnable() {
+//            public void run() {
                 double r = max - min;
                 if (r <= 0)
                     r = 1;
@@ -402,8 +402,8 @@ private void minFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:
                     ml = 1;
                 slider.setMinorTickSpacing(ml);
                 slider.repaint();
-            }
-        });
+//            }
+//        });
     }
 
     /**
@@ -594,7 +594,7 @@ private void minFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:
      * @param onChangeEvent if true then fireStateChange is called on change.
      */
     private void setVal(int valNew, boolean onChangeEvent) {
-        LOGGER.trace("valNew/onChange: " + valNew + " " + onChangeEvent + " isEventDispatchThread: " + SwingUtilities.isEventDispatchThread());
+//        LOGGER.debug("valNew/onChange: " + valNew + " " + onChangeEvent + " isEventDispatchThread: " + SwingUtilities.isEventDispatchThread());
         //1. switch to passive
         boolean prevActive = active;
         active = false; //passive update
@@ -704,7 +704,7 @@ private void minFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:
      * @param object Parameter #1 of the <CODE>ChangeEvent<CODE> constructor.
      */
     private void fireStateChanged() {
-        LOGGER.trace("Active: " + (!((slider.getValueIsAdjusting() && !adjusting) || !active)) + " value: " + val);
+//        LOGGER.debug("Active: " + (!((slider.getValueIsAdjusting() && !adjusting) || !active)) + " value: " + val);
         if ((slider.getValueIsAdjusting() && !adjusting) || !active)
             return;
         java.util.ArrayList list;
@@ -771,20 +771,37 @@ private void minFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:
             listener.mouseExited(e);
     }
 
-    public static void main(String[] a) {
-        JFrame f = new JFrame();
-        VisNow.initLogging(true);
-        final EnhancedIntSlider eis = new EnhancedIntSlider();
-        eis.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                LOGGER.trace("" + eis.getVal());
-            }
-        });
-        f.add(eis);
-        f.setLocation(600, 300);
-        f.pack();
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        f.setVisible(true);
+//    public static void main(String[] a) {
+//        JFrame f = new JFrame();
+//        VisNow.initLogging(true);
+//        final EnhancedIntSlider eis = new EnhancedIntSlider();
+//        eis.addChangeListener(new ChangeListener() {
+//            @Override
+//            public void stateChanged(ChangeEvent e) {
+////                LOGGER.debug("" + eis.getVal());
+//            }
+//        });
+//        f.add(eis);
+//        f.setLocation(600, 300);
+//        f.pack();
+//        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//        f.setVisible(true);
+//    }
+    
+    private boolean enabled = true;
+    
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        slider.setEnabled(enabled);
+        maxField.setEnabled(enabled);
+        minField.setEnabled(enabled);
+        valField.setEnabled(enabled);
+        showFieldsBox.setEnabled(enabled);        
+        this.enabled = enabled;
+    }
+    
+    public boolean isEnabled() {
+        return enabled;
     }
 }

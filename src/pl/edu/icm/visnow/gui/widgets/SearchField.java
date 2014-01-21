@@ -39,7 +39,10 @@ package pl.edu.icm.visnow.gui.widgets;
 
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -78,6 +81,7 @@ public class SearchField extends javax.swing.JPanel
 
         searchTF = new javax.swing.JTextField();
         searchLabel = new javax.swing.JLabel();
+        clearButton = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -98,7 +102,14 @@ public class SearchField extends javax.swing.JPanel
                 searchTFFocusLost(evt);
             }
         });
+        searchTF.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                searchTFKeyReleased(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -114,6 +125,23 @@ public class SearchField extends javax.swing.JPanel
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.weighty = 1.0;
         add(searchLabel, gridBagConstraints);
+
+        clearButton.setBackground(new java.awt.Color(255, 255, 255));
+        clearButton.setForeground(new java.awt.Color(102, 102, 102));
+        clearButton.setText("x");
+        clearButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
+        clearButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        clearButton.setName("clearButton"); // NOI18N
+        clearButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        clearButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        add(clearButton, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void searchTFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchTFActionPerformed
@@ -140,7 +168,24 @@ public class SearchField extends javax.swing.JPanel
           searchTF.setText("");
        }
     }//GEN-LAST:event_searchTFFocusGained
+
+    private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
+        this.setText(null);
+        searchTFChanged();
+        fireStateChanged();       
+    }//GEN-LAST:event_clearButtonActionPerformed
+
+    private void searchTFKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTFKeyReleased
+        int mods = evt.getModifiers();
+        if((mods & InputEvent.CTRL_DOWN_MASK) == InputEvent.CTRL_DOWN_MASK)
+            return;
+        
+        searchTFChanged();
+        fireStateChanged();       
+    }//GEN-LAST:event_searchTFKeyReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton clearButton;
     private javax.swing.JLabel searchLabel;
     private javax.swing.JTextField searchTF;
     // End of variables declaration//GEN-END:variables

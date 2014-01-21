@@ -14,9 +14,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -56,16 +56,17 @@ public class GlyphsParams extends Parameters
    {
       new ParameterEgg<Integer>("component",          ParameterType.dependent, 0),
       new ParameterEgg<Integer>("thrComponent",       ParameterType.dependent, -1),
-      new ParameterEgg<int[]>("down",                 ParameterType.dependent, new int[] { 5, 5, 5}),
+      new ParameterEgg<int[]>("down",                 ParameterType.dependent, null),
       new ParameterEgg<Integer>("downsize",           ParameterType.dependent, 10),
-      new ParameterEgg<int[]>("lowCrop",              ParameterType.dependent, new int[] {0, 0, 0}),
-      new ParameterEgg<int[]>("upCrop",               ParameterType.dependent, new int[] {1, 1, 1}),
+      new ParameterEgg<int[]>("lowCrop",              ParameterType.dependent, null),
+      new ParameterEgg<int[]>("upCrop",               ParameterType.dependent, null),
       new ParameterEgg<Integer>("type",               ParameterType.independent, 0),
       new ParameterEgg<Boolean>("constant diam",      ParameterType.dependent, false),
       new ParameterEgg<Boolean>("constant thickness", ParameterType.dependent, false),
       new ParameterEgg<Float>("scale",                ParameterType.dependent, .1f),
       new ParameterEgg<Float>("thickness",            ParameterType.dependent, .1f),
       new ParameterEgg<Float>("line thickness",       ParameterType.dependent, .1f),
+      new ParameterEgg<Float>("transparency",         ParameterType.dependent, 0f),
       new ParameterEgg<Float>("smax",                 ParameterType.dependent, .1f),
       new ParameterEgg<Float>("thr",                  ParameterType.dependent, .1f),
       new ParameterEgg<Integer>("lod",                ParameterType.independent, 1),
@@ -77,6 +78,9 @@ public class GlyphsParams extends Parameters
    public GlyphsParams()
    {
       super(eggs);
+      setValue("down",new int[] { 5, 5, 5});
+      setValue("lowCrop", new int[] {0, 0, 0});
+      setValue("upCrop", new int[] {1, 1, 1});
    }
 
    public int getComponent()
@@ -207,6 +211,18 @@ public int getLod()
       fireStateChanged();
    }
 
+    public float getTransparency()
+   {
+      return (Float)getValue("transparency");
+   }
+
+   public void setTransparency(float transparency)
+   {
+      setValue("transparency", transparency);
+      change = Math.max(change, COORDS_CHANGED);
+      fireStateChanged();
+   }
+
    public float getSmax()
    {
       return (Float)getValue("smax");
@@ -300,7 +316,7 @@ public int getLod()
    {
       this.change = change;
    }
-   
+
    @Override
    public void fireStateChanged()
    {
@@ -308,8 +324,8 @@ public int getLod()
          return;
       ChangeEvent e = new ChangeEvent(this);
       for (int i = 0; i < changeListenerList.size(); i++) {
-          changeListenerList.get(i).stateChanged(e);          
+          changeListenerList.get(i).stateChanged(e);
        }
    }
-   
+
 }

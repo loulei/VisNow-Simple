@@ -24,8 +24,11 @@
         <output name="streamlinesField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
             <description value="Output of streamlines field"/>
         </output>
-        <output name="flowField" type="pl.edu.icm.visnow.lib.types.VNField">
-            <description value="Output of flow field"/>
+        <output name="regularFlowField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <description value="Output of regular flow field"/>
+        </output>
+        <output name="irregularFlowField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <description value="Output of irregular flow field"/>
         </output>
         <geometryOutput>
             <description value="Output of geometry object for 3D streamlines"/>

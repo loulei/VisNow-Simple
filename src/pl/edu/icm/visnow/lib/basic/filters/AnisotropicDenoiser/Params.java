@@ -78,13 +78,13 @@ public class Params extends Parameters
    private static ParameterEgg[] eggs = new ParameterEgg[]
    {
       new ParameterEgg<Integer>(METHOD, ParameterType.dependent, AVERAGE),
-      new ParameterEgg<int[][]>(COMPONENTS, ParameterType.dependent, new int[][] {{0, 0}}),
+      new ParameterEgg<int[][]>(COMPONENTS, ParameterType.dependent, new int[][]{{0}}),
       new ParameterEgg<Integer>(RADIUS, ParameterType.dependent, 2),
       new ParameterEgg<Float>(SLOPE, ParameterType.dependent, 2.f),
       new ParameterEgg<Float>(SLOPE1, ParameterType.dependent, 4.f),
       new ParameterEgg<Boolean>(NATIVE, ParameterType.independent, false),
       new ParameterEgg<CoreType>(CORE, ParameterType.independent, CoreType.CPU),
-      new ParameterEgg<Integer>(NTHREADS, ParameterType.independent, Runtime.getRuntime().availableProcessors()),
+      new ParameterEgg<Integer>(NTHREADS, ParameterType.independent,null ),
       new ParameterEgg<Integer>(ITERATIONS, ParameterType.dependent, 1),
       new ParameterEgg<Integer>(PRESMOOTH_RADIUS, ParameterType.dependent, 5),
       new ParameterEgg<Boolean>(COMPUTE_SIGMA, ParameterType.independent, false),
@@ -98,6 +98,8 @@ public class Params extends Parameters
    public Params()
    {
       super(eggs);
+      setValue(COMPONENTS, new Integer[][] {{0, 0}});
+      setValue(NTHREADS,pl.edu.icm.visnow.system.main.VisNow.availableProcessors());
    }
 
    /**

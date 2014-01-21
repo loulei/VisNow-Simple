@@ -41,7 +41,7 @@ import pl.edu.icm.visnow.gui.events.BooleanChangeListener;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public interface VariablePresentation
 {

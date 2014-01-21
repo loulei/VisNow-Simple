@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,9 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
+
 
 package pl.edu.icm.visnow.geometries.objects;
 
@@ -53,7 +57,7 @@ import pl.edu.icm.visnow.lib.utils.Range;
  * @author Krzysztof S. Nowinski (know@icm.edu.pl) Warsaw University,
  * Interdisciplinary Centre for Mathematical and Computational Modelling
  */
-public class ColormapLegend implements Geometry2D {
+public class ColormapLegend extends Geometry2D {
 
     public static final int NONE = 0;
     public static final int NORTH = 1;
@@ -79,6 +83,12 @@ public class ColormapLegend implements Geometry2D {
      */
     protected float[] thrTable;
     protected FontMetrics fm;
+
+   public ColormapLegend()
+   {
+      super();
+      name = "legend";
+   }
 
     public void setParams(ColormapLegendParameters params) {
         this.params = params;
@@ -169,7 +179,7 @@ public class ColormapLegend implements Geometry2D {
             ticks.lineTo(x + w - 1, y + l - 1);
             ticks.lineTo(x + w - 1, y);
             ticks.lineTo(x, y);
-            
+
             for (float t = range.getLow(); t <= up; t += range.getStep()) {   //here is: t <= up (and not range.getUp() - is that a mistake?
                 int i = y + l - (int) (l * (t - low) / (up - low));
                 ticks.moveTo(x, i);
@@ -204,6 +214,9 @@ public class ColormapLegend implements Geometry2D {
         if (params.getUnit() != null && !params.getUnit().isEmpty())
             title = params.getName() + " (" + params.getUnit() + ")";
         colormap = ColorMapManager.getInstance().getColorMap1D(params.getColormap());
+        
+//        System.out.println("drawing legend with params "+params+" "+params.getColormap());
+        
         gr = (Graphics2D) g;
         if (colormap == null || params.getPosition() == NONE)
             return;
@@ -240,8 +253,8 @@ public class ColormapLegend implements Geometry2D {
                 w = (int) (windowWidth * params.getW());
                 break;
         }
-        range = new Range(low, up, (int) (20 * l / (float) params.getFontSize()));
-        int k = (int) (-Math.log(1. * range.getStep()) / Math.log(10.)) + 1; //TODO know: what "1. " is for?? and why not to use log10()??
+        range = new Range((int) (l / (float) params.getFontSize() / 3), low, up);
+        int k = (int) (-Math.log10(range.getStep())) + 1; //TODO know: what "1. " is for?? and why not to use log10()??
         fontSize = params.getFontSize();
         titleFontSize = (int) (1.25 * fontSize);
         font = new java.awt.Font("Dialog", 0, fontSize);
@@ -263,7 +276,7 @@ public class ColormapLegend implements Geometry2D {
         if (fm == null)
             return;
 
-        // title 
+        // title
         fm = new JLabel().getFontMetrics(titleFont);
         switch (params.getPosition()) {
             case SOUTH:
@@ -301,4 +314,9 @@ public class ColormapLegend implements Geometry2D {
             }
         }
     }
+
+   public ColormapLegendParameters getParams()
+   {
+      return params;
+   }
 }

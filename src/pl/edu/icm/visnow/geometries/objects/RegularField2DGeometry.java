@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,15 +35,20 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.geometries.objects;
 
 import java.awt.Color;
 import javax.media.j3d.*;
 import javax.vecmath.Color3f;
+import org.apache.log4j.Logger;
 import pl.edu.icm.visnow.datasets.Field;
 import pl.edu.icm.visnow.datasets.RegularField;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
+import pl.edu.icm.visnow.geometries.events.ColorEvent;
+import pl.edu.icm.visnow.geometries.events.ColorListener;
 import pl.edu.icm.visnow.geometries.objects.generics.OpenBranchGroup;
 import pl.edu.icm.visnow.geometries.objects.generics.OpenShape3D;
 import pl.edu.icm.visnow.geometries.parameters.AbstractRenderingParams;
@@ -62,16 +68,18 @@ import pl.edu.icm.visnow.lib.utils.geometry2D.*;
  */
 public class RegularField2DGeometry extends RegularFieldGeometry
 {
-
+   private static final Logger LOGGER = Logger.getLogger(RegularField2DGeometry.class);
    protected OpenShape3D surfaceShape = new OpenShape3D();
    protected OpenShape3D lineShape = new OpenShape3D();
    protected OpenShape3D pointShape = new OpenShape3D();
+   protected OpenShape3D frameShape = new OpenShape3D();
    protected boolean lastSurfaceOrientation = true;
    protected boolean surfaceOrientation = true;
    protected boolean[] lastMask = null;
    protected int[] timeRange = null;
    protected float currentT = 0;
-   
+   protected Color3f bgrColor = new Color3f(0, 0, 0);
+
    public RegularField2DGeometry(String name)
    {
       super(name);
@@ -79,10 +87,14 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       geometries.addChild(surfaceShape);
       geometries.addChild(lineShape);
       geometries.addChild(pointShape);
+      geometries.addChild(frameShape);
       renderEventListener = new RenderEventListener()
       {
+         @Override
          public void renderExtentChanged(RenderEvent e)
          {
+            if (ignoreUpdate)
+               return;
             int extent = e.getUpdateExtent();
             int cMode = dataMappingParams.getColorMode();
             if (renderingParams.getDisplayMode() == AbstractRenderingParams.BACKGROUND)
@@ -113,9 +125,11 @@ public class RegularField2DGeometry extends RegularFieldGeometry
          }
       };
     }
-   
+
    private void setStandardCapabilities(GeometryArray arr)
    {
+      arr.setCapability(GeometryArray.ALLOW_REF_DATA_READ);
+      arr.setCapability(GeometryArray.ALLOW_REF_DATA_WRITE);
       arr.setCapability(GeometryArray.ALLOW_COORDINATE_READ);
       arr.setCapability(GeometryArray.ALLOW_COORDINATE_WRITE);
       arr.setCapability(GeometryArray.ALLOW_COLOR_READ);
@@ -125,11 +139,22 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       arr.setCapability(GeometryArray.ALLOW_TEXCOORD_READ);
       arr.setCapability(GeometryArray.ALLOW_TEXCOORD_WRITE);
    }
-   
+
+   private void setIndexingCapabilities(IndexedGeometryArray arr)
+   {
+      setStandardCapabilities(arr);
+      arr.setCapability(IndexedGeometryArray.ALLOW_COLOR_INDEX_READ);
+      arr.setCapability(IndexedGeometryArray.ALLOW_COLOR_INDEX_WRITE);
+      arr.setCapability(IndexedGeometryArray.ALLOW_COORDINATE_INDEX_READ);
+      arr.setCapability(IndexedGeometryArray.ALLOW_COORDINATE_INDEX_WRITE);
+      arr.setCapability(IndexedGeometryArray.ALLOW_NORMAL_INDEX_READ);
+      arr.setCapability(IndexedGeometryArray.ALLOW_NORMAL_INDEX_WRITE);
+   }
+
    /**
     * Set the value of field
     *
-    * @param field new value of field
+    * @param inField new value of field
     */
    @Override
    public boolean setField(RegularField inField)
@@ -154,8 +179,8 @@ public class RegularField2DGeometry extends RegularFieldGeometry
    {
       this.surfaceOrientation = surfaceOrientation;
    }
-   
-   private void generateTriangleIndices()
+
+    private void generateTriangleIndices()
    {
       if (field.getMask() == null || renderingParams.ignoreMask())
       {
@@ -185,113 +210,63 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       else
       {
          int[] ind = new int[2 * dims[0] * dims[1]];
+         int[] stripInd = new int[2 * dims[0]];
          int cl = 0;
          nTriangleStrips = nTriangleIndices = 0;
          boolean[] mask = field.getMask();
-         if (renderingParams.getSurfaceOrientation() == surfaceOrientation)
-            for (int i = 0; i < dims[1] - 1; i++)
-            {
+         
+         for (int i = 0; i < dims[1] - 1; i++)
+         {
+            if (renderingParams.getSurfaceOrientation() == surfaceOrientation)
                for (int j = 0; j < dims[0]; j++)
                {
-                  int l = i * dims[0] + j;
-                  if (mask[l])
-                  {
-                     ind[nTriangleIndices + cl] = l;
-                     cl += 1;
-                  }
-                  else
-                  {
-                     if (cl < 3) 
-                        cl = 0;
-                     else
-                     {
-                        nTriangleStrips += 1;
-                        ind[ind.length - nTriangleStrips] = cl;
-                        nTriangleIndices += cl;
-                        cl = 0;
-                     }
-                  }
-                  l = (i + 1) * dims[0] + j;
-                  if (mask[l])
-                  {
-                     ind[nTriangleIndices + cl] = l;
-                     cl += 1;
-                  }
-                  else
-                  {
-                     if (cl < 3) 
-                        cl = 0;
-                     else
-                     {
-                        nTriangleStrips += 1;
-                        ind[ind.length - nTriangleStrips] = cl;
-                        nTriangleIndices += cl;
-                        cl = 0;
-                     }
-                  }
+                  stripInd[2 * j] = i * dims[0] + j;
+                  stripInd[2 * j + 1] = (i + 1) * dims[0] + j;
                }
-               if (cl < 3) 
-                  cl = 0;
+            else
+               for (int j = 0; j < dims[0]; j++)
+               {
+                  stripInd[2 * j] = (i + 1) * dims[0] + j;
+                  stripInd[2 * j + 1] = i * dims[0] + j;
+               }
+            
+            boolean fakeFirstTriangle = false;
+            for (int j = 0; j < stripInd.length; j++)
+            {
+               int l = stripInd[j];
+               if (mask[l])
+               {
+                  if (cl == 0 && j % 2 == 1)
+                  {
+                     ind[nTriangleIndices + cl] = l;
+                     cl += 1;
+                     fakeFirstTriangle = true;
+                  }
+                  ind[nTriangleIndices + cl] = l;
+                  cl += 1;
+               }
                else
                {
-                  nTriangleStrips += 1;
-                  ind[ind.length - nTriangleStrips] = cl;
-                  nTriangleIndices += cl;
-                  cl = 0;
+                  if (cl < 3 || cl == 3 && fakeFirstTriangle)
+                     cl = 0;
+                  else
+                  {
+                     nTriangleStrips += 1;
+                     ind[ind.length - nTriangleStrips] = cl;
+                     nTriangleIndices += cl;
+                     cl = 0;
+                  }
+                  fakeFirstTriangle = false;
                }
             }
-         else
-         {
-            for (int i = 0; i < dims[1] - 1; i++)
+            if (cl < 3 || cl == 3 && fakeFirstTriangle)
+               cl = 0;
+            else
             {
-               for (int j = 0; j < dims[0]; j++)
-               {
-                  int l =  (i + 1) * dims[0] + j;
-                  if (mask[l])
-                  {
-                     ind[nTriangleIndices + cl] = l;
-                     cl += 1;
-                  }
-                  else
-                  {
-                     if (cl < 3) 
-                        cl = 0;
-                     else
-                     {
-                        nTriangleStrips += 1;
-                        ind[ind.length - nTriangleStrips] = cl;
-                        nTriangleIndices += cl;
-                        cl = 0;
-                     }
-                  }
-                  l = i * dims[0] + j;
-                  if (mask[l])
-                  {
-                     ind[nTriangleIndices + cl] = l;
-                     cl += 1;
-                  }
-                  else
-                  {
-                     if (cl < 3) 
-                        cl = 0;
-                     else
-                     {
-                        nTriangleStrips += 1;
-                        ind[ind.length - nTriangleStrips] = cl;
-                        nTriangleIndices += cl;
-                        cl = 0;
-                     }
-                  }
-               }
-               if (cl < 3) 
-                  cl = 0;
-               else
-               {
-                  nTriangleStrips += 1;
-                  ind[ind.length - nTriangleStrips] = cl;
-                  nTriangleIndices += cl;
-                  cl = 0;
-               }
+               nTriangleStrips += 1;
+               ind[ind.length - nTriangleStrips] = cl;
+               nTriangleIndices += cl;
+               cl = 0;
             }
          }
          if (nTriangleStrips == 0)
@@ -309,17 +284,22 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       if (dims.length != 2)
          return;
       boolean detach = geometry.postdetach();
-      
+
       generateTriangleIndices();
       if (nTriangleStrips == 0)
          return;
       if (renderingParams.getDisplayMode() == RenderingParams.BACKGROUND || renderingParams.getDisplayMode() == RenderingParams.UNSHADED)
          triangleArr = new IndexedTriangleStripArray(nNodes,
-              GeometryArray.COORDINATES | GeometryArray.USE_COORD_INDEX_ONLY,
+              GeometryArray.COORDINATES |
+                 GeometryArray.USE_COORD_INDEX_ONLY |
+                 GeometryArray.BY_REFERENCE,
               nTriangleIndices, triangleStripCounts);
       else
          triangleArr = new IndexedTriangleStripArray(nNodes,
-                 GeometryArray.COORDINATES | GeometryArray.NORMALS | GeometryArray.USE_COORD_INDEX_ONLY,
+                 GeometryArray.COORDINATES |
+                 GeometryArray.NORMALS |
+                 GeometryArray.USE_COORD_INDEX_ONLY |
+                 GeometryArray.BY_REFERENCE,
                  nTriangleIndices, triangleStripCounts);
       setStandardCapabilities(triangleArr);
       triangleArr.setCoordinateIndices(0, coordIndices);
@@ -335,7 +315,11 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       if (nTriangleStrips == 0)
          return;
       triangleArr = new IndexedTriangleStripArray(nNodes,
-              GeometryArray.COORDINATES | GeometryArray.NORMALS | GeometryArray.COLOR_4 | GeometryArray.USE_COORD_INDEX_ONLY,
+              GeometryArray.COORDINATES |
+              GeometryArray.NORMALS |
+              GeometryArray.COLOR_4 |
+              GeometryArray.USE_COORD_INDEX_ONLY |
+              GeometryArray.BY_REFERENCE,
               nTriangleIndices, triangleStripCounts);
       setStandardCapabilities(triangleArr);
       triangleArr.setCoordinateIndices(0, coordIndices);
@@ -351,14 +335,17 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       if (nTriangleStrips == 0)
          return;
       triangleArr = new IndexedTriangleStripArray(nNodes,
-              GeometryArray.COORDINATES | GeometryArray.NORMALS
-              | GeometryArray.TEXTURE_COORDINATE_2 | GeometryArray.USE_COORD_INDEX_ONLY,
+              GeometryArray.COORDINATES |
+              GeometryArray.NORMALS |
+              GeometryArray.TEXTURE_COORDINATE_2 |
+              GeometryArray.USE_COORD_INDEX_ONLY |
+              GeometryArray.BY_REFERENCE,
               nTriangleIndices, triangleStripCounts);
       setStandardCapabilities(triangleArr);
       triangleArr.setCoordinateIndices(0, coordIndices);
       if(detach) geometry.postattach();
    }
-   
+
    private void generateEdgeIndices()
    {
       if (field.getMask() == null)
@@ -377,7 +364,7 @@ public class RegularField2DGeometry extends RegularFieldGeometry
                coordIndices[k] = i * dims[0] + j;
          for (int i = 0; i < dims[0]; i++)
             for (int j = 0; j < dims[1]; j++, k++)
-               coordIndices[k] = j * dims[0] + i;  
+               coordIndices[k] = j * dims[0] + i;
       }
       else
       {
@@ -397,7 +384,7 @@ public class RegularField2DGeometry extends RegularFieldGeometry
                   }
                   else
                   {
-                     if (cl < 2) 
+                     if (cl < 2)
                         cl = 0;
                      else
                      {
@@ -430,7 +417,7 @@ public class RegularField2DGeometry extends RegularFieldGeometry
                   }
                   else
                   {
-                     if (cl < 2) 
+                     if (cl < 2)
                         cl = 0;
                      else
                      {
@@ -460,7 +447,7 @@ public class RegularField2DGeometry extends RegularFieldGeometry
          System.arraycopy(ind, 0, coordIndices, 0, nLineIndices);
       }
    }
-   
+
    public void generateEdges()
    {
       if (dims.length != 2)
@@ -470,7 +457,9 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       if (nLineStrips == 0)
          return;
       edgeArr = new IndexedLineStripArray(nNodes,
-              GeometryArray.COORDINATES | GeometryArray.USE_COORD_INDEX_ONLY,
+              GeometryArray.COORDINATES |
+              GeometryArray.USE_COORD_INDEX_ONLY |
+              GeometryArray.BY_REFERENCE,
               nLineIndices, lineStripCounts);
       setStandardCapabilities(edgeArr);
       edgeArr.setCoordinateIndices(0, coordIndices);
@@ -487,11 +476,18 @@ public class RegularField2DGeometry extends RegularFieldGeometry
          return;
       if (renderingParams.isLineLighting())
          edgeArr = new IndexedLineStripArray(nNodes,
-                 GeometryArray.COORDINATES | GeometryArray.NORMALS | GeometryArray.COLOR_4 | GeometryArray.USE_COORD_INDEX_ONLY,
+                 GeometryArray.COORDINATES |
+                 GeometryArray.NORMALS |
+                 GeometryArray.COLOR_4 |
+                 GeometryArray.USE_COORD_INDEX_ONLY |
+                 GeometryArray.BY_REFERENCE,
                  nLineIndices, lineStripCounts);
       else
          edgeArr = new IndexedLineStripArray(nNodes,
-                 GeometryArray.COORDINATES | GeometryArray.COLOR_4 | GeometryArray.USE_COORD_INDEX_ONLY,
+                 GeometryArray.COORDINATES |
+                 GeometryArray.COLOR_4 |
+                 GeometryArray.USE_COORD_INDEX_ONLY |
+                 GeometryArray.BY_REFERENCE,
                  nLineIndices, lineStripCounts);
       setStandardCapabilities(edgeArr);
       edgeArr.setCoordinateIndices(0, coordIndices);
@@ -526,8 +522,8 @@ public class RegularField2DGeometry extends RegularFieldGeometry
                    coordIndices[m++] = i * dims[0] + j;
       }
    }
-   
-   
+
+
    public void generateColoredNodes()
    {
       if (dims.length != 2)
@@ -537,7 +533,10 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       if (nNodePoints == 0)
          return;
       nodeArr = new IndexedPointArray(nNodes,
-              GeometryArray.COORDINATES | GeometryArray.COLOR_4 | GeometryArray.USE_COORD_INDEX_ONLY,
+              GeometryArray.COORDINATES |
+              GeometryArray.COLOR_4 |
+              GeometryArray.USE_COORD_INDEX_ONLY |
+                 GeometryArray.BY_REFERENCE,
               nNodePoints);
       setStandardCapabilities(nodeArr);
       nodeArr.setCoordinateIndices(0, coordIndices);
@@ -553,23 +552,25 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       if (nNodePoints == 0)
          return;
       nodeArr = new IndexedPointArray(nNodes,
-              GeometryArray.COORDINATES | GeometryArray.USE_COORD_INDEX_ONLY,
+              GeometryArray.COORDINATES |
+              GeometryArray.USE_COORD_INDEX_ONLY |
+                 GeometryArray.BY_REFERENCE,
               nNodePoints);
       setStandardCapabilities(nodeArr);
       nodeArr.setCoordinateIndices(0, coordIndices);
       if(detach) geometry.postattach();
    }
-   
+
    @Override
    public void updateCoords()
    {
-      updateCoords(true);
+      updateCoords(!ignoreUpdate);
    }
 
    @Override
    public void updateCoords(boolean force)
    {
-      if (field == null)
+      if (!force || field == null)
          return;
       boolean detach = geometry.postdetach();
       coords = field.getCoords();
@@ -582,14 +583,14 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       lastSurfaceOrientation = renderingParams.getSurfaceOrientation();
       if (triangleArr != null)
       {
-         triangleArr.setCoordinates(0, coords);
+         triangleArr.setCoordRefFloat(coords);
          if ((triangleArr.getVertexFormat() & GeometryArray.NORMALS) != 0)
-         triangleArr.setNormals(0, normals);
+            triangleArr.setNormalRefFloat(normals);
       }
       if (edgeArr != null)
-         edgeArr.setCoordinates(0, coords);
+         edgeArr.setCoordRefFloat(coords);
       if (nodeArr != null)
-         nodeArr.setCoordinates(0, coords);
+         nodeArr.setCoordRefFloat(coords);
       if(detach) geometry.postattach();
    }
 
@@ -604,23 +605,20 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       boolean detach = geometry.postdetach();
       coords = newCoords;
       if (normals == null)
-      {
-//         field.computeNormals();
          normals = field.getNormals();
-      }
       if (renderingParams.getSurfaceOrientation() != lastSurfaceOrientation)
          for (int i = 0; i < normals.length; i++)
             normals[i] = -normals[i];
       lastSurfaceOrientation = renderingParams.getSurfaceOrientation();
       if (triangleArr != null)
       {
-         triangleArr.setCoordinates(0, coords);
-         triangleArr.setNormals(0, normals);
+         triangleArr.setCoordRefFloat(coords);
+         triangleArr.setNormalRefFloat(normals);
       }
       if (edgeArr != null)
-         edgeArr.setCoordinates(0, coords);
+         edgeArr.setCoordRefFloat(coords);
       if (nodeArr != null)
-         nodeArr.setCoordinates(0, coords);
+         nodeArr.setCoordRefFloat(coords);
       if(detach) geometry.postattach();
    }
 
@@ -635,7 +633,7 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       {
          if (tParams[i].getDataComponent() >= 0)
             uvData = TextureMapper.map(field.getData(tParams[i].getDataComponent()),
-                                       tParams[i], uvData, i);      
+                                       tParams[i], uvData, i);
          else if (tParams[i].getDataComponent() == DataMappingParams.COORDX ||
                   tParams[i].getDataComponent() == DataMappingParams.COORDY ||
                   tParams[i].getDataComponent() == DataMappingParams.COORDZ)
@@ -650,11 +648,11 @@ public class RegularField2DGeometry extends RegularFieldGeometry
             uvData = TextureMapper.map(dims, tParams[i], uvData, i, .01f);
       }
       if (triangleArr != null)
-         triangleArr.setTextureCoordinates(0, 0, uvData);
+         triangleArr.setTexCoordRefFloat(0, uvData);
       appearance.setTexture(dataMappingParams.getTexture());
       if(detach) geometry.postattach();
    }
-   
+
    private class MapColors implements Runnable
    {
       int nThreads      = 1;
@@ -669,10 +667,12 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       @Override
       public void run()
       {
-         int dk = nNds / nThreads;
          int kstart = nNds * iThread / nThreads;
          int kend = nNds * (iThread+1) / nThreads;
          //map from kstart to kend (excluding kend)
+         if(iThread == 0) {
+             int a = 1;
+         }
          ColorMapper.map(field, dataMappingParams, kstart, kend, kstart, renderingParams.getDiffuseColor(), colors);
          ColorMapper.mapTransparency(field, dataMappingParams.getTransparencyParams(), kstart, kend, colors);
          if (timeRange != null)
@@ -687,15 +687,15 @@ public class RegularField2DGeometry extends RegularFieldGeometry
          colors = new byte[4 * field.getNNodes()];
       timeRange = null;
       for (DataArray da : field.getData())
-         if (da.getUserData() != null && 
+         if (da.getUserData() != null &&
              da.getUserData().length == 1 &&
              "valid time range".equalsIgnoreCase(da.getUserData()[0]))
          {
             timeRange = da.getIData();
             currentT  = field.getCurrentTime();
          }
-      int nThreads = Runtime.getRuntime().availableProcessors();
-      Thread[] workThreads = new Thread[nThreads];      
+      int nThreads = pl.edu.icm.visnow.system.main.VisNow.availableProcessors();
+      Thread[] workThreads = new Thread[nThreads];
       for (int iThread = 0; iThread < nThreads; iThread++)
       {
          workThreads[iThread] = new Thread(new MapColors(nThreads, iThread));
@@ -707,16 +707,16 @@ public class RegularField2DGeometry extends RegularFieldGeometry
              workThreads[i].join();
          } catch (Exception e)
          {
-         
-         }      
-      colors = ColorMapper.map(field, dataMappingParams, field.getNNodes(), renderingParams.getAmbientColor(), colors);  
+
+         }
+      //colors = ColorMapper.map(field, dataMappingParams, field.getNNodes(), renderingParams.getAmbientColor(), colors);
       if (triangleArr != null && (triangleArr.getVertexFormat() & GeometryArray.COLOR_4) != 0)
-         triangleArr.setColors(0, colors);
+         triangleArr.setColorRefByte(colors);
       if (edgeArr != null)
-         edgeArr.setColors(0, colors);
+         edgeArr.setColorRefByte(colors);
       if(nodeArr != null)
-          nodeArr.setColors(0, colors);
-      
+          nodeArr.setColorRefByte(colors);
+
       if(image2D != null) {
           image2D.setColors(colors);
       }
@@ -728,11 +728,12 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       }
       if(detach) geometry.postattach();
    }
-   
+
+   @Override
    public void updateDataMap()
    {
       boolean detach = geometry.postdetach();
-      if (dataMappingParams.getColorMode() == DataMappingParams.COLORMAPPED || 
+      if (dataMappingParams.getColorMode() == DataMappingParams.COLORMAPPED ||
           dataMappingParams.getColorMode() == DataMappingParams.COLORMAPPED2D ||
           dataMappingParams.getColorMode() == DataMappingParams.COLORED)
          updateColors();
@@ -749,8 +750,12 @@ public class RegularField2DGeometry extends RegularFieldGeometry
                      (renderingParams.getDisplayMode() & RenderingParams.IMAGE) != 0,
                      (renderingParams.getDisplayMode() & RenderingParams.OUTLINE_BOX) != 0
               );
+      if(geometries.getParent() == null)
+            transformedGeometries.addChild(geometries);
+      if(transformedGeometries.getParent() == null)
+            geometry.addChild(transformedGeometries);
    }
-   
+
    public void updateData()
    {
       boolean restructure = false;
@@ -770,38 +775,49 @@ public class RegularField2DGeometry extends RegularFieldGeometry
                   break;
                }
          }
+      updateExtents();
       if (restructure)
          updateShapes();
       else
       {
          updateColors();
          updateCoords();
-      }
+      }      
    }
 
-   public void updateGeometry(RegularField inField, boolean showSurface, boolean showEdges, boolean showNodes, boolean showImage, boolean showBox)
+   public void updateGeometry(RegularField inField, 
+                              boolean showSurface, boolean showEdges, boolean showNodes, 
+                              boolean showImage, boolean showBox)
    {
       if (field != inField && !setField(inField))
          return;
       updateGeometry(showSurface, showEdges, showNodes, showImage, showBox);
    }
 
-   public void updateGeometry(boolean showSurface, boolean showEdges, boolean showNodes, boolean showImage, boolean showBox)
+   public void updateGeometry(boolean showSurface, boolean showEdges, boolean showNodes, 
+                              boolean showImage, boolean showBox)
    {
       boolean detach = geometry.postdetach();
-      surfaceShape.removeAllGeometries();
-      lineShape.removeAllGeometries();
-      pointShape.removeAllGeometries();
+      if (surfaceShape != null)
+         surfaceShape.removeAllGeometries();
+      if (lineShape != null)
+         lineShape.removeAllGeometries();
+      if (pointShape != null)
+         pointShape.removeAllGeometries();
+      if (frameShape != null)
+         frameShape.removeAllGeometries();
       triangleArr = null;
       edgeArr = null;
       nodeArr = null;
-      
+      boxArr = null;
+
       outObj2DStruct.removeAllChildren();
       outObj2DStruct.setName("regular field 2d geometry");
-      image2D = null;
+      //cannot be set to null because render event listener has to be removed first!
+//      image2D = null;
       edges2D = null;
       points2D = null;
-      
+
       if (showSurface)
       {
          int cMode = dataMappingParams.getColorMode();
@@ -854,20 +870,48 @@ public class RegularField2DGeometry extends RegularFieldGeometry
             break;
          }
          pointShape.addGeometry(nodeArr);
-      }      
+      }
+      if(showBox) {
+        //updateExtents();
+        float[][] ext = field.getExtents();
+        float[] boxVerts = new float[24];
+        boxArr = new IndexedLineStripArray(8, GeometryArray.COORDINATES, 24, new int[]
+                {
+                   2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+                });
+        boxArr.setCoordinateIndices(0, new int[]
+                {
+                   0, 1, 2, 3, 4, 5, 6, 7, 0, 2, 1, 3, 4, 6, 5, 7, 0, 4, 1, 5, 2, 6, 3, 7
+                });
+        for (int i = 0; i < 2; i++)
+           for (int j = 0; j < 2; j++)
+              for (int k = 0; k < 2; k++)
+              {
+                 int m = 3 * (4 * i + 2 * j + k);
+                 boxVerts[m] = ext[k][0];
+                 boxVerts[m + 1] = ext[j][1];
+                 boxVerts[m + 2] = ext[i][2];
+              }
+        
+        
+         boxArr.setCapability(GeometryArray.ALLOW_COORDINATE_WRITE);
+         boxArr.setCoordinates(0, boxVerts);
+         frameShape.addGeometry(boxArr);          
+      }
+      
       structureChanged = false;
       updateCoords();
       switch (dataMappingParams.getColorMode())
       {
-      case DataMappingParams.COLORMAPPED:
-      case DataMappingParams.RGB:
-         updateColors();
-         break;
-      case DataMappingParams.UVTEXTURED:
-         updateTextureCoords();
-         break;
-      case DataMappingParams.UNCOLORED:
-         break;
+            case DataMappingParams.COLORMAPPED:
+            case DataMappingParams.RGB:
+               updateColors();
+               break;
+            case DataMappingParams.UVTEXTURED:
+               updateTextureCoords();
+               break;
+            case DataMappingParams.UNCOLORED:
+               break;
       }
       appearance = renderingParams.getAppearance();
       appearance.setUserData(this);
@@ -880,39 +924,35 @@ public class RegularField2DGeometry extends RegularFieldGeometry
          appearance.getMaterial().setSpecularColor(renderingParams.getSpecularColor());
       }
       if(showImage) {
-          updateImage2D();
+          createImage2D();
           GeometryObject2DStruct imgStruct = new GeometryObject2DStruct(image2D);
-          imgStruct.setName("regular field 2D image");          
-          outObj2DStruct.addChild(imgStruct);        
-      }                    
-//      if(showSurface) {
-//          updateSurface2D();          
-//      }                    
+          imgStruct.setName("regular field 2D image");
+          outObj2DStruct.addChild(imgStruct);
+      }
       if(showEdges) {
           updateEdges2D();
           GeometryObject2DStruct edgStruct = new GeometryObject2DStruct(edges2D);
-          edgStruct.setName("regular field 2D edges");          
-          outObj2DStruct.addChild(edgStruct);                  
-      }                    
+          edgStruct.setName("regular field 2D edges");
+          outObj2DStruct.addChild(edgStruct);
+      }
       if(showNodes) {
           updatePoints2D();
           GeometryObject2DStruct ptsStruct = new GeometryObject2DStruct(points2D);
-          ptsStruct.setName("regular field 2D nodes");          
-          outObj2DStruct.addChild(ptsStruct);        
-      }                         
+          ptsStruct.setName("regular field 2D nodes");
+          outObj2DStruct.addChild(ptsStruct);
+      }
       if(showBox) {
           updateBox2D();
           GeometryObject2DStruct boxStruct = new GeometryObject2DStruct(box2D);
-          boxStruct.setName("regular field 2D box");          
-          outObj2DStruct.addChild(boxStruct);        
+          boxStruct.setName("regular field 2D box");
+          outObj2DStruct.addChild(boxStruct);
       }
-      
-      Color bgrColor = renderingParams.getBackgroundColor();
-      float[] bgrColorComps = new float[3];
-      bgrColor.getColorComponents(bgrColorComps);
+
+      bgrColor = new Color3f(renderingParams.getBackgroundColor());
       if (renderingParams.getShadingMode() == renderingParams.BACKGROUND)
       {
-         appearance.getColoringAttributes().setColor(new Color3f(bgrColorComps[0], bgrColorComps[1], bgrColorComps[2]));
+         appearance.getColoringAttributes().setColor(bgrColor);
+         appearance.getMaterial().setDiffuseColor(bgrColor);
       }
       else
          appearance.getColoringAttributes().setColor(renderingParams.getDiffuseColor());
@@ -924,10 +964,11 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       if (texture != null && dataMappingParams.getColorMode() == DataMappingParams.UVTEXTURED)
          appearance.setTexture(texture);
       pointShape.setAppearance(lineAppearance);
-      lineShape.setAppearance(lineAppearance);      
+      lineShape.setAppearance(lineAppearance);
       surfaceShape.setAppearance(appearance);
+      frameShape.setAppearance(lineAppearance);
       if(detach) geometry.postattach();
-      
+
    }
 
    public OpenBranchGroup getGeometry(RegularField inField)
@@ -939,7 +980,7 @@ public class RegularField2DGeometry extends RegularFieldGeometry
    public OpenBranchGroup getGeometry(boolean showSurface, boolean showEdges) {
        return getGeometry(showSurface, showEdges, false, false, false);
    }
-   
+
    public OpenBranchGroup getGeometry(boolean showSurface, boolean showEdges, boolean showNodes, boolean showImage, boolean showBox)
    {
       if (field == null)
@@ -948,6 +989,7 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       return geometry;
    }
 
+   @Override
    public OpenBranchGroup getGeometry(Field inField)
    {
       if (!(inField instanceof RegularField))
@@ -970,13 +1012,14 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       updateShapes();
    }
 
+   @Override
    public void updateGeometry(Field inField)
    {
       if (inField instanceof RegularField)
          updateGeometry((RegularField) inField);
    }
 
-   
+
    private boolean textureComponentValid(int c)
    {
       if (field.getData(c) != null)
@@ -984,11 +1027,11 @@ public class RegularField2DGeometry extends RegularFieldGeometry
       if (c == DataMappingParams.COORDX || c == DataMappingParams.NORMALX ||
           c == DataMappingParams.COORDY || c == DataMappingParams.NORMALY ||
           c == DataMappingParams.COORDZ || c == DataMappingParams.NORMALZ ||
-          c == DataMappingParams.INDEXI || c == DataMappingParams.INDEXJ) 
+          c == DataMappingParams.INDEXI || c == DataMappingParams.INDEXJ)
          return true;
       return false;
    }
-   
+
    private void validateColorMode()
    {
       colorMode = dataMappingParams.getColorMode();
@@ -1017,14 +1060,10 @@ public class RegularField2DGeometry extends RegularFieldGeometry
     @Override
    public void updateGeometry()
    {
+      if (ignoreUpdate)
+         return;
       dataMappingParams.setParentObjectSize(nNodes);
       updateShapes();
-   }
-   
-   @Override
-   public Field getField()
-   {
-      return field;
    }
 
     private ImageArray2D image2D = null;
@@ -1032,21 +1071,22 @@ public class RegularField2DGeometry extends RegularFieldGeometry
     private PointArray2D points2D = null;
     private BoxArray2D box2D = null;
 
-    private void updateImage2D() {
-        if(image2D == null) {
-            image2D = new ImageArray2D();
-            image2D.setRenderingParams(renderingParams);
-        }
-        image2D.setField(field);                
-        //System.out.println("geometry "+this.getName()+" updated 2D image object");    
+    private void createImage2D() {
+        if (image2D!=null)
+            image2D.clearParamListeners();
+
+        image2D = new ImageArray2D();
+        image2D.setRenderingParams(renderingParams);
+        
+        image2D.setField(field);
     }
-    
+
     private void updateEdges2D() {
         if(edges2D == null) {
             edges2D = new LineArray2D();
             edges2D.setRenderingParams(renderingParams);
         }
-        edges2D.setField(field);                
+        edges2D.setField(field);
         //System.out.println("geometry "+this.getName()+" updated 2D edges object");
     }
 
@@ -1055,7 +1095,7 @@ public class RegularField2DGeometry extends RegularFieldGeometry
             points2D = new PointArray2D();
             points2D.setRenderingParams(renderingParams);
         }
-        points2D.setField(field);                
+        points2D.setField(field);
         //System.out.println("geometry "+this.getName()+" updated 2D points object");
     }
 
@@ -1064,8 +1104,39 @@ public class RegularField2DGeometry extends RegularFieldGeometry
            box2D = new BoxArray2D();
            box2D.setRenderingParams(renderingParams);
         }
-        box2D.setField(field);                
+        box2D.setField(field);
         //System.out.println("geometry "+this.getName()+" updated 2D points object");
     }
     
+   ColorListener bgrColorListener = new ColorListener()
+   {
+      @Override
+      public void colorChoosen(ColorEvent e)
+      {
+         bgrColor = new Color3f(e.getSelectedColor());
+         if (renderingParams.getShadingMode() == RenderingParams.BACKGROUND)
+         {
+            renderingParams.setDiffuseColor(bgrColor);
+            if (appearance != null)
+            {
+               if (appearance.getColoringAttributes() != null)
+                  appearance.getColoringAttributes().setColor(bgrColor);
+               appearance.getMaterial().setAmbientColor(bgrColor);
+               appearance.getMaterial().setDiffuseColor(bgrColor);
+               appearance.getMaterial().setEmissiveColor(bgrColor);
+               appearance.getMaterial().setSpecularColor(0,0,0);
+            }
+            ignoreUpdate = false;
+            updateGeometry();
+         }
+      }
+   };
+    
+   @Override
+   public ColorListener getBackgroundColorListener()
+   {
+      return bgrColorListener;
+   }
+
+
 }

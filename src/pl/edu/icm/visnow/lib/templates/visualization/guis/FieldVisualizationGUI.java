@@ -38,11 +38,20 @@ exception statement from your version. */
 package pl.edu.icm.visnow.lib.templates.visualization.guis;
 
 import java.awt.CardLayout;
+import java.awt.GridBagConstraints;
+import static java.awt.GridBagConstraints.NORTH;
+import static java.awt.GridBagConstraints.BOTH;
+import java.awt.Insets;
 import java.util.ArrayList;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import pl.edu.icm.visnow.datasets.Field;
 import pl.edu.icm.visnow.datasets.IrregularField;
 import pl.edu.icm.visnow.datasets.RegularField;
+import pl.edu.icm.visnow.geometries.gui.IrregularFieldMapperGUI;
+import pl.edu.icm.visnow.geometries.gui.RegularFieldPresentationGUI;
 import pl.edu.icm.visnow.geometries.parameters.AbstractDataMappingParams;
 import pl.edu.icm.visnow.geometries.parameters.IrregularFieldDisplayParams;
 import pl.edu.icm.visnow.geometries.parameters.RegularFieldDisplayParams;
@@ -75,6 +84,7 @@ public class FieldVisualizationGUI extends javax.swing.JPanel
       field1DGUI.setPresentation(simpleGUI);
       guiPresentationButton.setState(VisNow.guiLevel);
       guiPresentationButton.setVisible(VisNow.allowGUISwitch);      
+      cL.show(presentationPanel, "irregular");
    }
 
    /**
@@ -84,7 +94,11 @@ public class FieldVisualizationGUI extends javax.swing.JPanel
    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
+        computeScrollPane = new javax.swing.JScrollPane();
+        computePanel = new javax.swing.JPanel();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         mainPane = new javax.swing.JTabbedPane();
         presentationPanel = new javax.swing.JPanel();
         regularGUI = new pl.edu.icm.visnow.geometries.gui.RegularFieldPresentationGUI();
@@ -92,20 +106,30 @@ public class FieldVisualizationGUI extends javax.swing.JPanel
         field1DGUI = new pl.edu.icm.visnow.geometries.gui.Presentation1DPanel();
         guiPresentationButton = new MultistateButton(new String[]{"show simple GUI","show expert GUI"}, null);
 
-        setMinimumSize(new java.awt.Dimension(205, 900));
-        setPreferredSize(new java.awt.Dimension(240, 900));
+        computeScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        computeScrollPane.setName("computeScrollPane"); // NOI18N
+
+        computePanel.setName("computePanel"); // NOI18N
+        computePanel.setLayout(new java.awt.GridBagLayout());
+
+        filler1.setName("filler1"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.weighty = 1.0;
+        computePanel.add(filler1, gridBagConstraints);
+
+        computeScrollPane.setViewportView(computePanel);
+
         setLayout(new java.awt.BorderLayout());
 
+        mainPane.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
         mainPane.setName("mainPane"); // NOI18N
-        mainPane.setPreferredSize(new java.awt.Dimension(240, 827));
 
         presentationPanel.setName("presentationPanel"); // NOI18N
-        presentationPanel.setPreferredSize(new java.awt.Dimension(235, 800));
         presentationPanel.setLayout(new java.awt.CardLayout());
 
-        regularGUI.setMinimumSize(new java.awt.Dimension(180, 596));
         regularGUI.setName("regularGUI"); // NOI18N
-        regularGUI.setPreferredSize(new java.awt.Dimension(200, 600));
         presentationPanel.add(regularGUI, "regular");
 
         irregularGUI.setName("irregularGUI"); // NOI18N
@@ -175,15 +199,15 @@ public class FieldVisualizationGUI extends javax.swing.JPanel
       return mappingParams;
    }
 
-   public void addComputeGUI(JPanel gui)
-   {
-      mainPane.insertTab("computation", null, gui, "", 0);
-      mainPane.setSelectedIndex(0);
-      if (gui instanceof VariablePresentation)
-         addChangeListener(((VariablePresentation) gui).getPresentationListener());
-      guiPresentationButton.setState(VisNow.guiLevel);
-      guiPresentationButton.setVisible(VisNow.allowGUISwitch);
-   }
+   public void addComputeGUI(JPanel gui) {
+        computePanel.add(gui, new GridBagConstraints(0, 0, 1, 1, 1, 0, NORTH, BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        mainPane.insertTab("computation", null, computeScrollPane, "", 0);
+        mainPane.setSelectedIndex(0);
+        if (gui instanceof VariablePresentation)
+            addChangeListener(((VariablePresentation) gui).getPresentationListener());
+        guiPresentationButton.setState(VisNow.guiLevel);
+        guiPresentationButton.setVisible(VisNow.allowGUISwitch);
+    }
    /**
     * Utility field holding list of ChangeListeners.
     */
@@ -220,12 +244,36 @@ public class FieldVisualizationGUI extends javax.swing.JPanel
       for (BooleanChangeListener listener : changeListenerList)
          listener.booleanChanged(e);
    }
+   
+    public RegularFieldPresentationGUI getRegularFieldPresentationPanel() {
+        return regularGUI;
+    }
+
+    public IrregularFieldMapperGUI getIrregularFieldPresentationPanel() {
+        return irregularGUI;
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    protected javax.swing.JPanel computePanel;
+    protected javax.swing.JScrollPane computeScrollPane;
     protected pl.edu.icm.visnow.geometries.gui.Presentation1DPanel field1DGUI;
+    protected javax.swing.Box.Filler filler1;
     protected pl.edu.icm.visnow.gui.widgets.MultistateButton guiPresentationButton;
     protected pl.edu.icm.visnow.geometries.gui.IrregularFieldMapperGUI irregularGUI;
     protected javax.swing.JTabbedPane mainPane;
     protected javax.swing.JPanel presentationPanel;
     protected pl.edu.icm.visnow.geometries.gui.RegularFieldPresentationGUI regularGUI;
     // End of variables declaration//GEN-END:variables
+
+    public static void main(String[] args) {
+        UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(4,0,0,0));
+        
+        JFrame f = new JFrame();
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        final FieldVisualizationGUI p = new FieldVisualizationGUI();
+        f.add(p);
+        f.pack();
+        f.setVisible(true);
+    }
+
 }

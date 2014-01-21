@@ -106,7 +106,7 @@ public class SteppedComboBox extends JComboBox implements ComponentListener
    private void updatePopupWidth()
    {
 
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          public void run()
          {

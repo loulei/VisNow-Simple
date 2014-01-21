@@ -1,5 +1,6 @@
+ //<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+Copyright (C) 2006-2013 University of Warsaw, ICM
 
 This file is part of GNU Classpath.
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -33,7 +34,9 @@ module.  An independent module is a module which is not derived from
 or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+exception statement from your version.
+*/
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.utils.io;
 
@@ -44,187 +47,189 @@ import javax.imageio.stream.FileImageOutputStream;
 import pl.edu.icm.visnow.datasets.RegularField;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
 import pl.edu.icm.visnow.lib.basic.writers.FieldWriter.Params;
+import static pl.edu.icm.visnow.lib.utils.io.FieldWriterCore.LOGGER;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public class AVSRegularFieldWriterCore extends FieldWriterCore
 {
-   
-   public AVSRegularFieldWriterCore(RegularField inField, Params params)
+   RegularField regularInField;
+
+   public AVSRegularFieldWriterCore(RegularField regularInField, Params params)
    {
-      super(inField, params);
+      super(regularInField, params);
+      this.regularInField = regularInField;
    }
-   
+
    private void printASCIIColumns(String genFileName)
    {
-      printASCIIColumns(genFileName, inField);
+      printASCIIColumns(genFileName, regularInField);
    }
-  
-   private static void printASCIIColumns(String genFileName, RegularField inField)
+
+   private static void printASCIIColumns(String genFileName, RegularField regularInField)
    {
       try
       {
-      PrintWriter outA = new PrintWriter(new FileOutputStream(genFileName + ".data"));
-      for (int i = 0; i < inField.getNNodes(); i++)
+      PrintWriter contentWriter = new PrintWriter(new FileOutputStream(genFileName + ".data"));
+      for (int i = 0; i < regularInField.getNNodes(); i++)
       {
-         for (int j = 0; j < inField.getNData(); j++)
+         for (int j = 0; j < regularInField.getNData(); j++)
          {
-            DataArray da = inField.getData(j);
+            DataArray da = regularInField.getData(j);
             int vl = da.getVeclen();
             switch (da.getType())
             {
                case DataArray.FIELD_DATA_BYTE:
                   for (int k = 0; k < vl; k++)
-                     outA.printf("%3d ", da.getBData()[i * vl + k] & 0xff);
+                     contentWriter.printf("%3d ", da.getBData()[i * vl + k] & 0xff);
                   break;
                case DataArray.FIELD_DATA_SHORT:
                   for (int k = 0; k < vl; k++)
-                     outA.printf("%3d ", da.getSData()[i * vl + k]);
+                     contentWriter.printf("%3d ", da.getSData()[i * vl + k]);
                   break;
                case DataArray.FIELD_DATA_INT:
                   for (int k = 0; k < vl; k++)
-                     outA.printf("%6d ", da.getIData()[i * vl + k]);
+                     contentWriter.printf("%6d ", da.getIData()[i * vl + k]);
                   break;
                case DataArray.FIELD_DATA_FLOAT:
                   for (int k = 0; k < vl; k++)
-                     outA.printf("%9f ", da.getFData()[i * vl + k]);
+                     contentWriter.printf("%9f ", da.getFData()[i * vl + k]);
                   break;
                case DataArray.FIELD_DATA_DOUBLE:
                   for (int k = 0; k < vl; k++)
-                     outA.printf("%12f ", da.getDData()[i * vl + k]);
+                     contentWriter.printf("%12f ", da.getDData()[i * vl + k]);
                   break;
             }
          }
-         outA.println();
+         contentWriter.println();
       }
-      outA.close();
+      contentWriter.close();
       } catch (Exception e)
       {
          System.out.println("could not write file " + genFileName + ".data");
       }
    }
-   
-   private static void printAVSLabelsUnits(PrintWriter header, RegularField inField)
+
+   private static void printAVSLabelsUnits(PrintWriter headerWriter, RegularField regularInField)
    {
       int scalars = 0;
-      header.print("label = ");
-      for (int i = 0; i < inField.getNData(); i++)
+      headerWriter.print("label = ");
+      for (int i = 0; i < regularInField.getNData(); i++)
       {
-         int vn = inField.getData(i).getVeclen();
+         int vn = regularInField.getData(i).getVeclen();
          scalars += vn;
          if (vn == 1)
-            header.print(inField.getData(i).getName().replace(' ', '_') + " ");
+            headerWriter.print(regularInField.getData(i).getName().replace(' ', '_') + " ");
          else
             for (int j = 0; j < vn; j++)
-               header.print(inField.getData(i).getName().replace(' ', '_') + j + " ");
+               headerWriter.print(regularInField.getData(i).getName().replace(' ', '_') + j + " ");
       }
-      header.println();
-      header.print("unit = ");
-      for (int i = 0; i < inField.getNData(); i++)
+      headerWriter.println();
+      headerWriter.print("unit = ");
+      for (int i = 0; i < regularInField.getNData(); i++)
       {
-         if (inField.getData(i).getVeclen() == 1)
-            header.print(inField.getData(i).getUnit().replace(' ', '_') + "_ ");
+         if (regularInField.getData(i).getVeclen() == 1)
+            headerWriter.print(regularInField.getData(i).getUnit().replace(' ', '_') + "_ ");
          else
-            for (int j = 0; j < inField.getData(i).getVeclen(); j++)
-               header.print(inField.getData(i).getUnit().replace(' ', '_') + "_ ");
+            for (int j = 0; j < regularInField.getData(i).getVeclen(); j++)
+               headerWriter.print(regularInField.getData(i).getUnit().replace(' ', '_') + "_ ");
       }
-      header.println();
+      headerWriter.println();
    }
-     
-      
-   public void writeField()
+
+
+   public boolean writeField()
    {
-      writeField(inField, params.getFileName(), params.isAscii(), params.isSingleFile());
+      return writeField(regularInField, params.getFileName(), params.isAscii(), params.isSingleFile());
    }
-   
-   public static void writeField(RegularField inField, String fileName, boolean ascii, boolean singleFile)
+
+   public boolean writeField(RegularField regularInField, String fileName, boolean ascii, boolean singleFile)
    {
       String outFileName = fileName;
-      String genFileName = fileName;
       boolean allByte = false;
       DataArray da;
       byte[] bData;
       float[] fData;
       int scalars = 0;
       FileImageOutputStream out;
-      PrintWriter outA;
+      PrintWriter contentWriter;
 
       if (outFileName.endsWith(".fld"))
          genFileName = outFileName.substring(0, outFileName.lastIndexOf(".fld"));
       else
          outFileName = genFileName + ".fld";
-      
+
       try
       {
-         PrintWriter header = new PrintWriter(new FileOutputStream(outFileName));
-         header.println("# AVS field file");
-         header.println("ndim = " + inField.getDims().length);
-         for (int i = 0; i < inField.getDims().length; i++)
+         PrintWriter headerWriter = new PrintWriter(new FileOutputStream(outFileName));
+         headerWriter.println("# AVS field file");
+         headerWriter.println("ndim = " + regularInField.getDims().length);
+         for (int i = 0; i < regularInField.getDims().length; i++)
          {
-            header.println("dim" + (i + 1) + " = " + inField.getDims()[i]);
+            headerWriter.println("dim" + (i + 1) + " = " + regularInField.getDims()[i]);
          }
-         header.println("nspace = " + inField.getNSpace());
+         headerWriter.println("nspace = " + regularInField.getNSpace());
          allByte = true;
          scalars = 0;
-         for (int i = 0; i < inField.getNData(); i++)
+         for (int i = 0; i < regularInField.getNData(); i++)
          {
-            scalars += inField.getData(i).getVeclen();
-            if (inField.getData(i).getType() != DataArray.FIELD_DATA_BYTE)
+            scalars += regularInField.getData(i).getVeclen();
+            if (regularInField.getData(i).getType() != DataArray.FIELD_DATA_BYTE)
                allByte = false;
          }
-         header.println("veclen = " + scalars);
+         headerWriter.println("veclen = " + scalars);
          if (allByte)
-            header.println("data = byte");
+            headerWriter.println("data = byte");
          else
-            header.println("data = xdr_float");
-         if (inField.getCoords() == null)
+            headerWriter.println("data = xdr_float");
+         if (regularInField.getCoords() == null)
          {
-            header.println("field = uniform");
-            header.print("min_ext = ");
-            for (int i = 0; i < inField.getNSpace(); i++)
-               header.print("" + inField.getExtents()[0][i] + " ");
-            header.println();
-            header.print("max_ext = ");
-            for (int i = 0; i < inField.getNSpace(); i++)
-               header.print("" + inField.getExtents()[1][i] + " ");
-            header.println();
-            printAVSLabelsUnits(header, inField);
+            headerWriter.println("field = uniform");
+            headerWriter.print("min_ext = ");
+            for (int i = 0; i < regularInField.getNSpace(); i++)
+               headerWriter.print("" + regularInField.getExtents()[0][i] + " ");
+            headerWriter.println();
+            headerWriter.print("max_ext = ");
+            for (int i = 0; i < regularInField.getNSpace(); i++)
+               headerWriter.print("" + regularInField.getExtents()[1][i] + " ");
+            headerWriter.println();
+            printAVSLabelsUnits(headerWriter, regularInField);
          } else
          {
-            header.println("field = irregular");
-            printAVSLabelsUnits(header, inField);
+            headerWriter.println("field = irregular");
+            printAVSLabelsUnits(headerWriter, regularInField);
             if (ascii)
             {
-               for (int i = 0; i < inField.getNSpace(); i++)
+               for (int i = 0; i < regularInField.getNSpace(); i++)
                {
-                  header.print("coord " + (i + 1) + " file=" + genFileName + ".coord filetype=ASCII ");
-                  header.print("stride=" + inField.getNSpace());
+                  headerWriter.print("coord " + (i + 1) + " file=" + genFileName + ".coord filetype=ASCII ");
+                  headerWriter.print("stride=" + regularInField.getNSpace());
                   if (i > 0)
-                     header.print(" offset=" + i);
-                  header.println();
+                     headerWriter.print(" offset=" + i);
+                  headerWriter.println();
                }
-               outA = new PrintWriter(new FileOutputStream(genFileName + ".coord"));
-               float[] coord = inField.getCoords();
-               for (int i = 0; i < coord.length; i += inField.getNSpace())
+               contentWriter = new PrintWriter(new FileOutputStream(genFileName + ".coord"));
+               float[] coord = regularInField.getCoords();
+               for (int i = 0; i < coord.length; i += regularInField.getNSpace())
                {
-                  for (int j = 0; j < inField.getNSpace(); j++)
-                     outA.printf("%7f ", coord[i + j]);
-                  outA.println();
+                  for (int j = 0; j < regularInField.getNSpace(); j++)
+                     contentWriter.printf("%7f ", coord[i + j]);
+                  contentWriter.println();
                }
-               outA.close();
+               contentWriter.close();
             } else
             {
-               for (int i = 0; i < inField.getNSpace(); i++)
+               for (int i = 0; i < regularInField.getNSpace(); i++)
                {
-                  header.print("coord " + (i + 1) + " file=" + genFileName + ".coord filetype=binary ");
-                  header.print("stride=" + inField.getNSpace());
+                  headerWriter.print("coord " + (i + 1) + " file=" + genFileName + ".coord filetype=binary ");
+                  headerWriter.print("stride=" + regularInField.getNSpace());
                   if (i > 0)
-                     header.print(" skip=" + (4 * i));
-                  header.println();
+                     headerWriter.print(" skip=" + (4 * i));
+                  headerWriter.println();
                }
-               float[] coord = inField.getCoords();
+               float[] coord = regularInField.getCoords();
                out = new FileImageOutputStream(new File(genFileName + ".coord"));
                out.writeFloats(coord, 0, coord.length);
                out.close();
@@ -232,18 +237,18 @@ public class AVSRegularFieldWriterCore extends FieldWriterCore
          }
          if (ascii)
          {
-            for (int i = 0, k = 0; i < inField.getNData(); i++)
+            for (int i = 0, k = 0; i < regularInField.getNData(); i++)
             {
-               da = inField.getData(i);
+               da = regularInField.getData(i);
                for (int j = 0; j < da.getVeclen(); j++, k++)
                {
                   if (k > 0)
-                     header.println("variable " + (k + 1) + " file=" + genFileName + ".data filetype=ASCII stride=" + scalars + " offset=" + k);
+                     headerWriter.println("variable " + (k + 1) + " file=" + genFileName + ".data filetype=ASCII stride=" + scalars + " offset=" + k);
                   else
-                     header.println("variable " + (k + 1) + " file=" + genFileName + ".data filetype=ASCII stride=" + scalars);
+                     headerWriter.println("variable " + (k + 1) + " file=" + genFileName + ".data filetype=ASCII stride=" + scalars);
                }
             }
-            printASCIIColumns(genFileName, inField);
+            printASCIIColumns(genFileName, regularInField);
          } else
          {
             int dSize = 4;
@@ -252,11 +257,11 @@ public class AVSRegularFieldWriterCore extends FieldWriterCore
             if (singleFile)
             {
                out = new FileImageOutputStream(new File(genFileName + ".data"));
-               for (int i = 0, k = 0; i < inField.getNData(); i++)
+               for (int i = 0, k = 0; i < regularInField.getNData(); i++)
                {
-                  da = inField.getData(i);
+                  da = regularInField.getData(i);
                   for (int j = 0; j < da.getVeclen(); j++, k++)
-                     header.println("variable " + (k + 1)
+                     headerWriter.println("variable " + (k + 1)
                              + " file=" + genFileName + ".data filetype=binary skip ="
                              + (out.getStreamPosition() + (j * dSize)) + " stride=" + da.getVeclen());
                   if (allByte)
@@ -272,21 +277,21 @@ public class AVSRegularFieldWriterCore extends FieldWriterCore
                out.close();
             } else
             {
-               for (int i = 0, k = 0; i < inField.getNData(); i++)
+               for (int i = 0, k = 0; i < regularInField.getNData(); i++)
                {
-                  da = inField.getData(i);
+                  da = regularInField.getData(i);
                   String outFname = genFileName + "_" + da.getName().replace(' ', '_') + ".dat";
                   for (int j = 0; j < da.getVeclen(); j++, k++)
                   {
-                     header.print("variable " + (k + 1) + " file=" + outFname + " filetype=binary");
+                     headerWriter.print("variable " + (k + 1) + " file=" + outFname + " filetype=binary");
                      if (da.getVeclen() > 1)
                      {
                         if (k == 0)
-                           header.println(" stride=" + da.getVeclen());
+                           headerWriter.println(" stride=" + da.getVeclen());
                         else
-                           header.println(" skip=" + (j * dSize) + " stride=" + da.getVeclen());
+                           headerWriter.println(" skip=" + (j * dSize) + " stride=" + da.getVeclen());
                      } else
-                        header.println();
+                        headerWriter.println();
                   }
                   out = new FileImageOutputStream(new File(outFname));
                   if (allByte)
@@ -302,11 +307,12 @@ public class AVSRegularFieldWriterCore extends FieldWriterCore
                }
             }
          }
-         header.close();
-         return;
+         headerWriter.close();
+         return true;
       } catch (Exception e)
       {
+          LOGGER.error("Error writing field", e);
+          return false;
       }
    }
-   
 }

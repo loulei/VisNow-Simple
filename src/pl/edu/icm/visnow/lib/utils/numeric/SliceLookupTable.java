@@ -41,7 +41,7 @@ import pl.edu.icm.visnow.datasets.cells.Cell;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public class SliceLookupTable
 {

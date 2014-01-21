@@ -731,7 +731,7 @@ public class BasicViewPanel extends ViewPanel implements ComponentListener, Mous
 
     private void firePointsConnectionsCalculablesAdded(int[][] points, int[][] connections, CalculableParameter calculable) {
         for (ViewPanelListener listener : viewPanelListeners) {
-            listener.onViewPanelEvent(new PointsConnectionsCalculablesAddedOrthoPanelEvent(this, points, connections, calculable));
+            listener.onViewPanelEvent(new PCCAddedOrthoPanelEvent(this, points, connections, calculable));
         }
     }
 

@@ -1,5 +1,6 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+Copyright (C) 2006-2013 University of Warsaw, ICM
 
 This file is part of GNU Classpath.
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -33,7 +34,10 @@ module.  An independent module is a module which is not derived from
 or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+exception statement from your version.
+*/
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.lib.basic.mappers.Streamlines;
 
@@ -58,7 +62,10 @@ public class ComputeRegularFieldStreamlines extends ComputeStreamlines
    private float[] fldCoords = null;
    private float[] pullVects = null;
 
-   /** Creates a new instance of TextureVolRender */
+   /** Creates a new instance of TextureVolRender
+    * @param inField field containing a vector component to be mapped with streamlines
+    * @param params streamlines module parameters
+    */
    public ComputeRegularFieldStreamlines(RegularField inField, Params params)
    {
       super(inField, params);
@@ -140,7 +147,7 @@ public class ComputeRegularFieldStreamlines extends ComputeStreamlines
       eps0 = 0.f;
       for (int i = 0; i < nSpace; i++)
          eps0 += (xt[1][i] - xt[0][i]);
-      nThreads = Runtime.getRuntime().availableProcessors();
+      nThreads = pl.edu.icm.visnow.system.main.VisNow.availableProcessors();
       Thread[] workThreads = new Thread[nThreads];
       threadProgress = new int[nThreads];
       for (int i = 0; i < nThreads; i++)
@@ -380,8 +387,7 @@ public class ComputeRegularFieldStreamlines extends ComputeStreamlines
       boolean[] edgeOrientations = new boolean[lines.length/2];
       for (int i = 0; i < edgeOrientations.length; i++)
          edgeOrientations[i] = true;
-      outField = new IrregularField();
-      outField.setNNodes(nvert);
+      outField = new IrregularField(nvert);
       outField.setNSpace(3);
       outField.setCoords(coords);
       DataArray da = DataArray.create(indices, 1, "steps");

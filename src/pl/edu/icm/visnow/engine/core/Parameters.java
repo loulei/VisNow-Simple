@@ -1,40 +1,39 @@
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+ Copyright (C) 2006-2013 University of Warsaw, ICM
 
-This file is part of GNU Classpath.
+ This file is part of GNU Classpath.
 
-GNU Classpath is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+ GNU Classpath is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
 
-GNU Classpath is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
+ GNU Classpath is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+ You should have received a copy of the GNU General Public License
+ along with GNU Classpath; see the file COPYING.  If not, write to the 
+ University of Warsaw, Interdisciplinary Centre for Mathematical and 
+ Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
 
-Linking this library statically or dynamically with other modules is
-making a combined work based on this library.  Thus, the terms and
-conditions of the GNU General Public License cover the whole
-combination.
+ Linking this library statically or dynamically with other modules is
+ making a combined work based on this library.  Thus, the terms and
+ conditions of the GNU General Public License cover the whole
+ combination.
 
-As a special exception, the copyright holders of this library give you
-permission to link this library with independent modules to produce an
-executable, regardless of the license terms of these independent
-modules, and to copy and distribute the resulting executable under
-terms of your choice, provided that you also meet, for each linked
-independent module, the terms and conditions of the license of that
-module.  An independent module is a module which is not derived from
-or based on this library.  If you modify this library, you may extend
-this exception to your version of the library, but you are not
-obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
-
+ As a special exception, the copyright holders of this library give you
+ permission to link this library with independent modules to produce an
+ executable, regardless of the license terms of these independent
+ modules, and to copy and distribute the resulting executable under
+ terms of your choice, provided that you also meet, for each linked
+ independent module, the terms and conditions of the license of that
+ module.  An independent module is a module which is not derived from
+ or based on this library.  If you modify this library, you may extend
+ this exception to your version of the library, but you are not
+ obligated to do so.  If you do not wish to do so, delete this
+ exception statement from your version. */
 package pl.edu.icm.visnow.engine.core;
 
 import com.thoughtworks.xstream.XStream;
@@ -55,293 +54,308 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import pl.edu.icm.visnow.engine.exception.VNRuntimeException;
+import pl.edu.icm.visnow.geometries.viewer3d.eventslisteners.pick.Pick3DListener;
 
 /**
  *
  * @author Hubert Orlik-Grzesik, University of Warsaw, ICM
  */
-public class Parameters implements Iterable<Parameter>
-{
-   private static final boolean debug = false;// true;
-   protected HashMap<String, Parameter> parameters;
+public class Parameters implements Iterable<Parameter> {
 
-   public HashMap<String, Parameter> getParameters()
-   {
-      return parameters;
-   }
+    private static final boolean debug = false;// true;
+    protected HashMap<String, Parameter> parameters;
 
-   public Parameter getParameter(String name)
-   {
-      return parameters.get(name);
-   }
+    public HashMap<String, Parameter> getParameters() {
+        return parameters;
+    }
 
-   public Object getValue(String name)
-   {
-      return parameters.get(name).getValue();
-   }
+    public Parameter getParameter(String name) {
+        return parameters.get(name);
+    }
 
-   //TODO: unchecked?
-   @SuppressWarnings("unchecked")
-   public void setValue(String name, Object value)
-   {
-      try
-      {
-         parameters.get(name).setValue(value);
-         fireParameterChanged(name);
-      } catch (NullPointerException e)
-      {
-         //TODO: przechwycić?
-         throw new VNRuntimeException(
-                 200906171529L,
-                 "NoSuchParameter: " + name,
-                 null,
-                 this,
-                 Thread.currentThread());
-      }
-   }
+    public Object getValue(String name) {
+        return parameters.get(name).getValue();
+    }
 
-   public Parameters(ParameterEgg[] parameterEggs)
-   {
-      parameters = new HashMap<String, Parameter>();
-      if (parameterEggs != null)
-         for (ParameterEgg egg : parameterEggs)
-            parameters.put(egg.getName(), egg.hatch());
-   }
+    //TODO: unchecked?
+    @SuppressWarnings("unchecked")
+    public void setValue(String name, Object value) {
+        try {
+            parameters.get(name).setValue(value);
+        } catch (NullPointerException e) {
+            //TODO: przechwycić?
+            throw new VNRuntimeException(
+                    200906171529L,
+                    "NoSuchParameter: " + name,
+                    null,
+                    this,
+                    Thread.currentThread());
+        }
+        fireParameterChanged(name);
+    }
 
-   //<editor-fold defaultstate="collapsed" desc=" Write XML ">
-   public String writeXML()
-   {
-      String ret = "";
-      XStream xstream = new XStream();
-      for (Parameter parameter : this)
-      {
-         ret += "<parameter name=\"" + parameter.getName() + "\">\n";
-         ret += encode(xstream.toXML(parameter.getValue()));
-         ret += "</parameter>\n";
-      }
-      return ret;
-   }
-
-   public boolean readXML(String str)
-   {
-      try
-      {
-         tryReadXML(str);
-         return true;
-      } catch (ParserConfigurationException ex)
-      {
-         System.out.println("parser exception"); //TODO: handling
-      } catch (SAXException ex)
-      {
-         System.out.println("sax exception");
-      } catch (IOException ex)
-      {
-         System.out.println("io exception");
-      }
-      return false;
-   }
-
-   public void tryReadXML(String str) throws ParserConfigurationException, SAXException, IOException
-   {
-      System.out.println("\nREADING!!!");
-      XStream xstream = new XStream(new DomDriver());
-      String xml = "<?xml version=\'1.0\' encoding=\'utf-8\'?>\n<everything>" + str + "</everything>";
-
-      Node main = DocumentBuilderFactory.newInstance().
-              newDocumentBuilder().
-              parse(new InputSource(new StringReader(xml))).
-              getDocumentElement();
-
-      Vector<Node> paramNodes = new Vector<Node>();
-      NodeList nl = main.getChildNodes();
-
-      System.out.println("");
-      for (int i = 0; i < nl.getLength(); ++i)
-      {
-         System.out.println("testing node - [" + nl.item(i).getNodeName() + "]");
-         if (nl.item(i).getNodeName().equalsIgnoreCase("parameter"))
-            paramNodes.add(nl.item(i));
-      }
-
-      System.out.println("");
-      for (Node pn : paramNodes)
-      {
-         System.out.println("getting node - [" + pn.getAttributes().getNamedItem("name").getNodeValue() + "]");
-         String par = pn.getAttributes().getNamedItem("name").getNodeValue();
-         String val = decode(pn.getTextContent());
-         Object value = xstream.fromXML(val);
-         System.out.println("  val=[" + val + "]");
-         if (value != null)
-         {
-            System.out.println("  val=[" + value.toString() + "]");
-            this.setValue(par, value);
-         }
-      }
-
-      System.out.println("");
-      System.out.println("READ DONE!!!");
-      System.out.println("");
-   }
-
-   private static String decode(String in)
-   {
-      String ret = "";
-      StringTokenizer tokenizer = new StringTokenizer(in, "[]|", true);
-      while (tokenizer.hasMoreTokens())
-      {
-         String next = tokenizer.nextToken();
-         if (next.equals("["))
-         {
-            ret += "<";
-            continue;
-         }
-         if (next.equals("]"))
-         {
-            ret += ">";
-            continue;
-         }
-         if (next.equals("|"))
-         {
-            next = tokenizer.nextToken();
-            switch (next.charAt(0))
-            {
-               case '{':
-                  ret += "[";
-                  break;
-               case '}':
-                  ret += "]";
-                  break;
-               case '+':
-                  ret += "|";
-                  break;
+    public Parameters(ParameterEgg[] parameterEggs) {
+        parameters = new HashMap<String, Parameter>();
+        if (parameterEggs != null)
+            for (ParameterEgg egg : parameterEggs) {
+                parameters.put(egg.getName(), egg.hatch());
             }
-            ret += next.substring(1);
-            continue;
-         }
-         ret += next;
-      }
-      return ret;
-   }
+    }
 
-   private static String encode(String in)
-   {
-      String ret = "";
-      StringTokenizer tokenizer = new StringTokenizer(in, "<>[]|", true);
-      while (tokenizer.hasMoreTokens())
-      {
-         String next = tokenizer.nextToken();
-         if (next.equals("|"))
-         {
-            ret += "|+";
-            continue;
-         }
-         if (next.equals("<"))
-         {
-            ret += "[";
-            continue;
-         }
-         if (next.equals(">"))
-         {
-            ret += "]";
-            continue;
-         }
-         if (next.equals("["))
-         {
-            ret += "|{";
-            continue;
-         }
-         if (next.equals("]"))
-         {
-            ret += "|}";
-            continue;
-         }
-         ret += next;
-      }
-      return ret;
-   }
-   //</editor-fold>
-   //<editor-fold defaultstate="collapsed" desc=" Active ">
-   protected boolean active = true;
+    //<editor-fold defaultstate="collapsed" desc=" Write XML ">
+    public String writeXML() {
+        String ret = "";
+        XStream xstream = new XStream();
+        for (Parameter parameter : this) {
+            ret += "<parameter name=\"" + parameter.getName() + "\">\n";
+            ret += encode(xstream.toXML(parameter.getValue()));
+            ret += "</parameter>\n";
+        }
+        return ret;
+    }
 
-   public boolean isActive()
-   {
-      return active;
-   }
+    public boolean readXML(String str) {
+        try {
+            tryReadXML(str);
+            return true;
+        } catch (ParserConfigurationException ex) {
+            System.out.println("parser exception"); //TODO: handling
+        } catch (SAXException ex) {
+            System.out.println("sax exception");
+        } catch (IOException ex) {
+            System.out.println("io exception");
+        }
+        return false;
+    }
 
-   public void setActive(boolean active)
-   {
-      this.active = active;
-      fireStateChanged();
-   }
+    public void tryReadXML(String str) throws ParserConfigurationException, SAXException, IOException {
+        System.out.println("\nREADING!!!");
+        XStream xstream = new XStream(new DomDriver());
+        String xml = "<?xml version=\'1.0\' encoding=\'utf-8\'?>\n<everything>" + str + "</everything>";
 
-   public void setActiveValue(boolean active)
-   {
-      this.active = active;
-   }
-   //</editor-fold>
+        Node main = DocumentBuilderFactory.newInstance().
+                newDocumentBuilder().
+                parse(new InputSource(new StringReader(xml))).
+                getDocumentElement();
 
-   //<editor-fold defaultstate="collapsed" desc=" Iterator ">
-   public Iterator<Parameter> iterator()
-   {
-      return parameters.values().iterator();
-   }
-   //</editor-fold>
-   //<editor-fold defaultstate="collapsed" desc=" Parameter change listeners ">
-   private Vector<ParameterChangeListener> listeners = new Vector<ParameterChangeListener>();
+        Vector<Node> paramNodes = new Vector<Node>();
+        NodeList nl = main.getChildNodes();
 
-   public synchronized void addParameterChangelistener(ParameterChangeListener listener)
-   {
-      listeners.add(listener);
-   }
+        System.out.println("");
+        for (int i = 0; i < nl.getLength(); ++i) {
+            System.out.println("testing node - [" + nl.item(i).getNodeName() + "]");
+            if (nl.item(i).getNodeName().equalsIgnoreCase("parameter"))
+                paramNodes.add(nl.item(i));
+        }
 
-   public synchronized void removeParameterChangeListener(ParameterChangeListener listener)
-   {
-      listeners.remove(listener);
-   }
+        System.out.println("");
+        for (Node pn : paramNodes) {
+            System.out.println("getting node - [" + pn.getAttributes().getNamedItem("name").getNodeValue() + "]");
+            String par = pn.getAttributes().getNamedItem("name").getNodeValue();
+            String val = decode(pn.getTextContent());
+            Object value = xstream.fromXML(val);
+            System.out.println("  val=[" + val + "]");
+            if (value != null) {
+                System.out.println("  val=[" + value.toString() + "]");
+                this.setValue(par, value);
+            }
+        }
 
-   public void fireParameterChanged(String parameter)
-   {
-      for (ParameterChangeListener listener : listeners)
-         listener.parameterChanged(parameter);
-   }
-   //</editor-fold>
-   //<editor-fold defaultstate="collapsed" desc=" Know Change listeners ">
-   /**
-    * Utility field holding list of ChangeListeners.
-    */
-   protected transient ArrayList<ChangeListener> changeListenerList = new ArrayList<ChangeListener>();
+        System.out.println("");
+        System.out.println("READ DONE!!!");
+        System.out.println("");
+    }
 
-   /**
-    * Registers ChangeListener to receive events.
-    * @param listener The listener to register.
-    */
-   public synchronized void addChangeListener(ChangeListener listener)
-   {
-      changeListenerList.add(listener);
-   }
+    private static String decode(String in) {
+        String ret = "";
+        StringTokenizer tokenizer = new StringTokenizer(in, "[]|", true);
+        while (tokenizer.hasMoreTokens()) {
+            String next = tokenizer.nextToken();
+            if (next.equals("[")) {
+                ret += "<";
+                continue;
+            }
+            if (next.equals("]")) {
+                ret += ">";
+                continue;
+            }
+            if (next.equals("|")) {
+                next = tokenizer.nextToken();
+                switch (next.charAt(0)) {
+                    case '{':
+                        ret += "[";
+                        break;
+                    case '}':
+                        ret += "]";
+                        break;
+                    case '+':
+                        ret += "|";
+                        break;
+                }
+                ret += next.substring(1);
+                continue;
+            }
+            ret += next;
+        }
+        return ret;
+    }
 
-   /**
-    * Removes ChangeListener from the list of listeners.
-    * @param listener The listener to remove.
-    */
-   public synchronized void removeChangeListener(ChangeListener listener)
-   {
-      changeListenerList.remove(listener);
-   }
+    private static String encode(String in) {
+        String ret = "";
+        StringTokenizer tokenizer = new StringTokenizer(in, "<>[]|", true);
+        while (tokenizer.hasMoreTokens()) {
+            String next = tokenizer.nextToken();
+            if (next.equals("|")) {
+                ret += "|+";
+                continue;
+            }
+            if (next.equals("<")) {
+                ret += "[";
+                continue;
+            }
+            if (next.equals(">")) {
+                ret += "]";
+                continue;
+            }
+            if (next.equals("[")) {
+                ret += "|{";
+                continue;
+            }
+            if (next.equals("]")) {
+                ret += "|}";
+                continue;
+            }
+            ret += next;
+        }
+        return ret;
+    }
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc=" Active ">
+    
+    /**
+     * A flag indicating if state change will be forwarded to listeners.
+     */
+    protected boolean active = true;
 
-   /**
-    * Notifies all registered listeners about the event.
-    *
-    * @param object Parameter #1 of the <CODE>ChangeEvent<CODE> constructor.
-    */
-   public void fireStateChanged()
-   {
-      if (!active)
-         return;
-      ChangeEvent e = new ChangeEvent(this);
-      for (int i = 0; i < changeListenerList.size(); i++) {
-          changeListenerList.get(i).stateChanged(e);          
-       }
-   }
-   //</editor-fold>
+    /**
+     * Returns whether state change will be forwarded to listeners.
+     * @return 
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    /**
+     * Set value of
+     * <code>active</code> and fire fireStateChanged().
+     * <p/>
+     * @param active
+     */
+    public void setActive(boolean active) {
+        this.active = active;
+        fireStateChanged();
+    }
+
+    public void setActiveValue(boolean active) {
+        this.active = active;
+    }
+
+    /**
+     * A flag indicating if parameter change will be forwarded to listeners.
+     */
+    protected boolean parameterActive = true;
+
+    /**
+     * Returns whether parameter change will be forwarded to listeners.
+     * @return 
+     */
+    public boolean isParameterActive() {
+        return parameterActive;
+    }
+
+    /**
+     * Set value of
+     * <code>active</code>.
+     * <p/>
+     * @param active
+     */
+    public void setParamaeterActive(boolean active) {
+        this.parameterActive = active;
+    }
+    //</editor-fold>
+    
+    
+    //<editor-fold defaultstate="collapsed" desc=" Iterator ">
+    @Override
+    public Iterator<Parameter> iterator() {
+        return parameters.values().iterator();
+    }
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc=" Parameter change listeners ">
+    private Vector<ParameterChangeListener> listeners = new Vector<ParameterChangeListener>();
+
+    public synchronized void addParameterChangelistener(ParameterChangeListener listener) {
+        listeners.add(listener);
+    }
+
+    public synchronized void removeParameterChangeListener(ParameterChangeListener listener) {
+        listeners.remove(listener);
+    }
+
+    public void fireParameterChanged(String parameter) {
+        if(!parameterActive)
+            return;
+        for (ParameterChangeListener listener : listeners) {
+            listener.parameterChanged(parameter);
+        }
+    }
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc=" Know Change listeners ">
+    /**
+     * Utility field holding list of ChangeListeners.
+     */
+    protected transient ArrayList<ChangeListener> changeListenerList = new ArrayList<ChangeListener>();
+
+    /**
+     * Registers ChangeListener to receive events.
+     * <p/>
+     * @param listener The listener to register.
+     */
+    public synchronized void addChangeListener(ChangeListener listener) {
+        changeListenerList.add(listener);
+    }
+
+    /**
+     * Removes ChangeListener from the list of listeners.
+     * <p/>
+     * @param listener The listener to remove.
+     */
+    public synchronized void removeChangeListener(ChangeListener listener) {
+        changeListenerList.remove(listener);
+    }
+
+    /**
+     * Notifies all registered listeners about the event (calls
+     * <code>stateChanged()</code> on each listener in
+     * <code>changeListenerList</code>).
+     */
+    public void fireStateChanged() {
+        if (!active)
+            return;
+        ChangeEvent e = new ChangeEvent(this);
+        for (int i = 0; i < changeListenerList.size(); i++) {
+            changeListenerList.get(i).stateChanged(e);
+        }
+    }
+    //</editor-fold>
+
+    /**
+     * To be overriden by Params in each module that want to handle pick 3D.
+     * 
+     * @return null - no Pick3DListener
+     * @see pl.edu.icm.visnow.lib.basic.mappers.FieldSlicePlane.FieldSlicePlane#pick3DListener FieldSlicePlane.pick3DListener - how to use it
+     */
+    public Pick3DListener getPick3DListener() {
+        return null;
+    }
 }

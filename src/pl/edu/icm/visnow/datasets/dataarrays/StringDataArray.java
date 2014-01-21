@@ -38,6 +38,7 @@ exception statement from your version. */
 package pl.edu.icm.visnow.datasets.dataarrays;
 
 
+import java.util.ArrayList;
 import pl.edu.icm.visnow.datasets.TimeData;
 import static pl.edu.icm.visnow.lib.utils.ArrayUtils.*;
 
@@ -126,57 +127,155 @@ public class StringDataArray extends DataArray
       return 1;
    }
 
-   public StringDataArray(TimeData<String[]> data, int veclen, String name, String units, String[] userData)
+   public StringDataArray(TimeData<String[]> tData, int veclen, String name, String units, String[] userData)
    {
-      super(FIELD_DATA_DOUBLE,data.get(0).length/veclen, veclen,name, units, userData);
-      timeData = data;
-      abstractTimeData = timeData;
-      recomputeMinMax();
+        super(FIELD_DATA_STRING, (tData == null || tData.get(0) == null) ? -1 : tData.get(0).length / veclen, veclen, name, units, userData);
+        abstractTimeData = timeData = tData;
+        setCurrentTime(currentTime);
+        recomputeMinMax();
    }
    
     @Override
    public final void recomputeMinMax()
    {
-      if(data == null)
-           return;
-       
-      float maxv = 0;
       float minv = Float.MAX_VALUE;
-      for (int i = 0; i < data.length; i++)
+      float maxv = -Float.MAX_VALUE;
+      int len;
+      for (int step = 0; step < timeData.size(); step ++)
       {
-         if (data[i].length() > maxv)
-            maxv = data[i].length();
-         if (data[i].length() < minv)
-            minv = data[i].length();
+         String[] dta = timeData.get(step);         
+         int vlen = getVeclen();
+         if (vlen == 1)
+         {
+            for (int i = 0; i < dta.length; i++)
+            {
+               len = dta[i].length();
+               if (len < minv)
+                  minv = len;
+               if (len > maxv)
+                  maxv = len;
+            }
+         } else
+         {
+            for (int i = 0; i < dta.length; i += vlen)
+            {
+               float v = 0;
+               for (int j = 0; j < vlen; j++) {
+                  len = dta[i + j].length();
+                  v += len * len;
+               }
+               v = (float) Math.sqrt(v);
+               if (v > maxv) {
+                  maxv = v;
+               }
+               if (v < minv) {
+                  minv = v;
+               }
+            }
+         }
       }
-      schema.setMinv(minv);
-      schema.setMaxv(maxv);
-      schema.setPhysMin(minv);
-      schema.setPhysMax(maxv);
+      recomputePhysMinMax(minv, maxv);
+      setMinv(minv);
+      setMaxv(maxv);        
    }
 
     @Override
    public final void recomputeMinMax(boolean[] mask)
    {
-      if(data == null)
-           return;
-       
-      float maxv = 0;
       float minv = Float.MAX_VALUE;
-      for (int i = 0; i < data.length; i++)
+      float maxv = -Float.MAX_VALUE;
+      int len;
+      for (int step = 0; step < timeData.size(); step ++)
       {
-         if (!mask[i])
-            continue;
-         if (data[i].length() > maxv)
-            maxv = data[i].length();
-         if (data[i].length() < minv)
-            minv = data[i].length();
+         String[] dta = timeData.get(step);         
+         int vlen = getVeclen();
+         if (vlen == 1)
+         {
+            for (int i = 0; i < dta.length; i++)
+            {
+               if (!mask[i])
+                  continue;
+               len = dta[i].length();
+               if (len < minv)
+                  minv = len;
+               if (len > maxv)
+                  maxv = len;
+            }
+         } else
+         {
+            for (int i = 0, m = 0; i < dta.length; i += vlen, m++)
+            {
+               if (!mask[m])
+                  continue;
+               float v = 0;
+               for (int j = 0; j < vlen; j++) {
+                  len = dta[i + j].length();
+                  v += len * len;
+               }
+               v = (float) Math.sqrt(v);
+               if (v > maxv) {
+                  maxv = v;
+               }
+               if (v < minv) {
+                  minv = v;
+               }
+            }
+         }
       }
-      schema.setMinv(minv);
-      schema.setMaxv(maxv);
-      schema.setPhysMin(minv);
-      schema.setPhysMax(maxv);
+      recomputePhysMinMax(minv, maxv);
+      setMinv(minv);
+      setMaxv(maxv);        
    }
+   
+    @Override
+    public void recomputeMinMax(TimeData<boolean[]> timeMask) {
+      float minv = Float.MAX_VALUE;
+      float maxv = -Float.MAX_VALUE;
+      ArrayList<Float> timeline = timeData.getTimeSeries();
+      int len;
+      for (int step = 0; step < timeline.size(); step ++)
+      {
+         String[] dta = timeData.get(step);         
+         boolean[] mask = timeMask.getData(timeline.get(step));
+         int vlen = getVeclen();
+         if (vlen == 1)
+         {
+            for (int i = 0; i < dta.length; i++)
+            {
+               if (!mask[i])
+                  continue;
+               len = dta[i].length();
+               if (len < minv)
+                  minv = len;
+               if (len > maxv)
+                  maxv = len;
+            }
+         } else
+         {
+            for (int i = 0, m = 0; i < dta.length; i += vlen, m++)
+            {
+               if (!mask[m])
+                  continue;
+               float v = 0;
+               for (int j = 0; j < vlen; j++) {
+                  len = dta[i + j].length();
+                  v += len * len;
+               }
+               v = (float) Math.sqrt(v);
+               if (v > maxv) {
+                  maxv = v;
+               }
+               if (v < minv) {
+                  minv = v;
+               }
+            }
+         }
+      }
+      recomputePhysMinMax(minv, maxv);
+      setMinv(minv);
+      setMaxv(maxv);        
+    }
+   
    
     @Override
    public StringDataArray clone(String newName)
@@ -187,7 +286,10 @@ public class StringDataArray extends DataArray
     @Override
    public StringDataArray cloneDeep(String newName)
    {
-        return new StringDataArray(data.clone(), schema.getVeclen(), new String(newName), new String(schema.getUnit()), schema.getUserData().clone());
+        if(schema.getUserData() != null)
+            return new StringDataArray(data.clone(), schema.getVeclen(), new String(newName), new String(schema.getUnit()), schema.getUserData().clone());
+        else
+            return new StringDataArray(data.clone(), schema.getVeclen(), new String(newName), new String(schema.getUnit()), null);
    }
 
    @Override
@@ -265,7 +367,7 @@ public class StringDataArray extends DataArray
    @Override
    public void resetData()
    {
-      data = timeData.get(currentFrame);
+      data = timeData.getData(currentTime);
       timeData.clear();
       timeData.add(data);
    }
@@ -279,22 +381,12 @@ public class StringDataArray extends DataArray
          currentTime = time;
          timeData.setCurrentTime(time);
          data = timeData.getData();
+         recomputeMinMax();
       }
    }
-   
+      
    @Override
-   public void setCurrentFrame(int currentFrame)
-   {
-      //currentFrame = Math.max(0, Math.min(currentFrame, timeData.size()) - 1);
-      currentFrame = Math.max(0, Math.min(currentFrame, timeData.size()));
-      //data = timeData.get(currentFrame);
-      data = timeData.getData(timeData.getTime(currentFrame));
-      this.currentFrame = currentFrame;
-   }
-   
-   
-   @Override
-   public void setCurrentTime(float currentTime)
+   public final void setCurrentTime(float currentTime)
    {
       if (currentTime == timeData.getCurrentTime() && data != null)
          return;
@@ -350,6 +442,8 @@ public class StringDataArray extends DataArray
       if (!(tData.get(0) instanceof String[]) || ((String[])(tData.get(0))).length != ndata * getVeclen())
          return;
       abstractTimeData = timeData = tData;
+      setCurrentTime(currentTime);
+      recomputeMinMax();
    }
 
     @Override
@@ -363,8 +457,5 @@ public class StringDataArray extends DataArray
         return getStringData();
     }
 
-    @Override
-    public void recomputeMinMax(TimeData<boolean[]> timeMask) {
-    }
 }
 

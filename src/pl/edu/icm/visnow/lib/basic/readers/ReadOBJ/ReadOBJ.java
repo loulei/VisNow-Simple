@@ -88,7 +88,7 @@ public class ReadOBJ extends IrregularOutFieldVisualizationModule
             startAction();
          }
       });
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
 
          public void run()
@@ -143,10 +143,9 @@ public class ReadOBJ extends IrregularOutFieldVisualizationModule
 //      ita.setCapability(IndexedTriangleArray.ALLOW_COORDINATE_INDEX_READ);
 //      ita.setCapability(IndexedTriangleArray.ALLOW_COORDINATE_READ);
       
-      outField = new IrregularField();
-      outField.setNSpace(3);
       int n = ita.getVertexCount();
-      outField.setNNodes(n);
+      outField = new IrregularField(n);
+      outField.setNSpace(3);
       int count = ita.getIndexCount();
       int[] cells = new int[count];
       float[] coord = new float[n * 3];
@@ -177,6 +176,11 @@ public class ReadOBJ extends IrregularOutFieldVisualizationModule
    public void onInitFinishedLocal() {
        if(isForceFlag()) 
            computeUI.activateOpenDialog();
+   }
+   
+   @Override
+   public boolean isGenerator() {
+      return true;
    }
    
 }

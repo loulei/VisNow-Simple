@@ -39,7 +39,9 @@ package pl.edu.icm.visnow.application.area;
 
 import java.awt.Component;
 import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import org.apache.log4j.Logger;
 import pl.edu.icm.visnow.application.area.widgets.DataPanel;
 import pl.edu.icm.visnow.application.area.widgets.LinkConnectingPanel;
 import pl.edu.icm.visnow.application.area.widgets.ModulePanel;
@@ -53,7 +55,8 @@ import pl.edu.icm.visnow.engine.main.Port;
  * @author Hubert Orlik-Grzesik, University of Warsaw, ICM
  */
 public class AreaPanelInternalManager {
-
+    private static final Logger LOGGER = Logger.getLogger(AreaPanelInternalManager.class);
+    
     private AreaPanel areaPanel;
     public AreaPanel getAreaPanel() {return areaPanel;}
 
@@ -90,21 +93,29 @@ public class AreaPanelInternalManager {
     void mouseDragged(int x, int y) {
         //if(! (dragging || probablyDragging)) return;
         if(probablyDragging) {
+//            LOGGER.debug("probably dragging");
             probablyDragging = false;
             dragging = true;
             areaPanel.moveToDragLayer(dragPanel, true);
         }
-        if(dragging) {
+        if (dragging) {
+//            LOGGER.debug("dragging");
             Point p = dragPanel.getLocation();
-            dragPanel.setLocation(dragOriginX + x, dragOriginY + y);
+            //dragging module within bounds (work area)
+            dragPanel.setLocation(Math.min(areaPanel.getBgPanel().getWidth() - dragPanel.getWidth(), 
+                                    Math.max(0, dragOriginX + x)), 
+                                    Math.min(areaPanel.getBgPanel().getHeight() - dragPanel.getHeight(), 
+                                    Math.max(0, dragOriginY + y)));
         }
         if(probablyConnecting) {
+//            LOGGER.debug("probably connecting");
             probablyConnecting = false;
             connecting = true;
             connectingPanel = new LinkConnectingPanel(connectingPort, new Point(x,y));
             areaPanel.showConnectingPanel(connectingPanel, true);
         }
         if(connecting) {
+//            LOGGER.debug("connecting");
             connectingPanel.setPoint(new Point(x,y));
             Component c = areaPanel.getAreaComponentAt(new Point(x,y));
             if(c instanceof PortPanel) {
@@ -170,13 +181,15 @@ public class AreaPanelInternalManager {
     private boolean connectionEstablishing = false;
 
     void portPressed(PortPanel panel, Point point) {
-        probablyConnecting = true;
-        connecting = false;
-        connectingPort = panel;
+        //Quick fix: testing if in connecting state (flow is not documented so this update may be possibly risky)
+        //This is to avoid zombie arrows (refs #491)
+        if (!connecting) {
+            probablyConnecting = true;
+            connectingPort = panel;
+        }
     }
 
     void mouseReleased(boolean ctrlDown) {
-        
         if(dragging) {
             dragging = false;
             areaPanel.moveToDragLayer(dragPanel, false);
@@ -209,4 +222,8 @@ public class AreaPanelInternalManager {
 //    void mouseConnectionMoved(Point point) {
 //
 //    }
+
+    public boolean isConnecting() {
+        return connecting;
+    }
 }

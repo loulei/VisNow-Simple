@@ -70,7 +70,7 @@ public class ViewsStorage {
     public ViewsStorage(GlobalParams params) {
         this.params = params;
 
-        SwingInstancer.swingRun(new Runnable() {
+        SwingInstancer.swingRunAndWait(new Runnable() {
             public void run() {
                 display3DView = new Display3DViewPanel();
                 basicView = new BasicViewPanel();

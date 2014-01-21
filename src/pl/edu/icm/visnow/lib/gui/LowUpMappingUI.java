@@ -131,8 +131,6 @@ public class LowUpMappingUI extends javax.swing.JPanel {
         mappingPanel.add(windowWidthLabel, gridBagConstraints);
 
         rangeSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
-        rangeSlider.setMinimumSize(new java.awt.Dimension(200, 60));
-        rangeSlider.setPreferredSize(new java.awt.Dimension(200, 60));
         rangeSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 rangeSliderStateChanged(evt);

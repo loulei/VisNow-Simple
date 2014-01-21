@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,8 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.lib.basic.testdata.TestPoints;
 
@@ -45,9 +48,7 @@ import pl.edu.icm.visnow.datasets.IrregularField;
 import pl.edu.icm.visnow.datasets.cells.Cell;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
 import pl.edu.icm.visnow.engine.core.OutputEgg;
-import pl.edu.icm.visnow.geometries.objects.IrregularFieldGeometry;
-import pl.edu.icm.visnow.lib.templates.visualization.modules.IrregularOutFieldVisualizationModule;
-import pl.edu.icm.visnow.lib.types.VNGeometryObject;
+import pl.edu.icm.visnow.lib.templates.visualization.modules.OutFieldVisualizationModule;
 import pl.edu.icm.visnow.lib.types.VNIrregularField;
 import pl.edu.icm.visnow.lib.utils.SwingInstancer;
 
@@ -55,7 +56,7 @@ import pl.edu.icm.visnow.lib.utils.SwingInstancer;
  * @author Bartosz Borucki (babor@icm.edu.pl) University of Warsaw,
  * Interdisciplinary Centre for Mathematical and Computational Modelling
  */
-public class TestPoints extends IrregularOutFieldVisualizationModule
+public class TestPoints extends OutFieldVisualizationModule
 {
 
    protected GUI computeUI = null;
@@ -77,44 +78,36 @@ public class TestPoints extends IrregularOutFieldVisualizationModule
             startAction();
          }
       });
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
-
-            @Override
+         @Override
          public void run()
          {
             computeUI = new GUI();
+            ui.addComputeGUI(computeUI);
+            setPanel(ui);
+            computeUI.setParams(params);
          }
       });
-      ui.addComputeGUI(computeUI);
-      setPanel(ui);
-      computeUI.setParams(params);
    }
 
-   public static boolean isGenerator()
-   {
+   @Override
+   public boolean isGenerator() {
       return true;
    }
 
    @Override
-   public void onInitFinished()
+   public void onInitFinishedLocal()
    {
-      visInitFinished();
-      irregularFieldGeometry = new IrregularFieldGeometry();
-      outObj.addBgrColorListener(irregularFieldGeometry.getBackgroundColorListener());
-      outObj.getGeometryObj().setUserData(getName());
-      setOutputValue("outObj", new VNGeometryObject(outObj));      
-      prepareOutputGeometry();
       onActive();
-	   fieldDisplayParams.getCellSetDisplayParameters(0).getRenderingParams().setLineThickness(5.0f);
    }
 
    public void createTestPoints()
    {
       int nPoints = params.getNPoints();
-      outField = new IrregularField();
-      outField.setNNodes(nPoints);
-      outField.setNSpace(3);
+      outField = new IrregularField(nPoints);
+      outIrregularField = (IrregularField) outField;
+      outIrregularField.setNSpace(3);
       float[] coords = new float[nPoints * 3];
       int[] data = new int[nPoints];
       float[] vData = new float[nPoints * 3];
@@ -139,12 +132,11 @@ public class TestPoints extends IrregularOutFieldVisualizationModule
       CellArray ca = new CellArray(Cell.POINT, cells, orient, null);
       CellSet cs = new CellSet();
       cs.setCellArray(ca);
-      outField.addCellSet(cs);
-      outField.setCoords(coords);
-      outField.addData(DataArray.create(data, 1, "points"));
-      outField.addData(DataArray.create(texts, 1, "texts"));
-      outField.addData(DataArray.create(vData, 3, "vectors"));
-      ui.getMapperGUI().setInFieldDisplayData(outField, fieldDisplayParams);
+      outIrregularField.addCellSet(cs);
+      outIrregularField.setCoords(coords);
+      outIrregularField.addData(DataArray.create(data, 1, "points"));
+      outIrregularField.addData(DataArray.create(texts, 1, "texts"));
+      outIrregularField.addData(DataArray.create(vData, 3, "vectors"));
    }
 
 
@@ -154,6 +146,6 @@ public class TestPoints extends IrregularOutFieldVisualizationModule
       createTestPoints();
       prepareOutputGeometry();
       show();
-      setOutputValue("outField", new VNIrregularField(outField));
+      setOutputValue("outField", new VNIrregularField(outIrregularField));
    }
 }

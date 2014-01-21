@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,7 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.datamaps;
 
@@ -105,7 +107,7 @@ public class ColorMapManager {
         }
         // hot
         {
-            Color[] colors =                 
+            Color[] colors =
             {   new Color(0.42f, 0.00f, 0.00f),
                 new Color(1.00f, 0.40f, 0.11f),
                 new Color(0.98f, 0.92f, 0.50f),
@@ -212,7 +214,7 @@ public class ColorMapManager {
                 new Color(0.59f, 0.59f, 0.59f),
                 new Color(1.00f, 1.00f, 1.00f),
 
-            };            
+            };
             float[] pos = {0.00f, 0.17f, 0.31f, 0.44f, 0.53f, 0.62f, 0.77f, 1.00f};
 
             RGBChannelColorMap1D cm = new RGBChannelColorMap1D("Geographical - land", true, pos, colors);
@@ -221,7 +223,7 @@ public class ColorMapManager {
         // geographical full
         {
             Color[] colors = {
-                new Color(50, 100, 200), new Color(50, 150, 255), new Color(50, 255, 255), new Color(255, 255, 255), 
+                new Color(50, 100, 200), new Color(50, 150, 255), new Color(50, 255, 255), new Color(255, 255, 255),
                 new Color(85, 140, 66), new Color(113, 205, 0), new Color(180,255,93),
                 new Color(255, 255, 0), new Color(232, 198, 0), new Color(244,195,110),
                 new Color(151, 151, 151), new Color(255, 255, 255),
@@ -295,6 +297,16 @@ public class ColorMapManager {
                 0.f, 1.f
             };
             RGBChannelColorMap1D cm = new RGBChannelColorMap1D("Black-green", true, pos, colors);
+            colorMaps1D.addElement(cm);
+        }
+        {
+            Color[] colors = {
+                new Color(0, 0, 0), new Color(0, 0, 255)
+            };
+            float[] pos = {
+                0.f, 1.f
+            };
+            RGBChannelColorMap1D cm = new RGBChannelColorMap1D("Black-blue", true, pos, colors);
             colorMaps1D.addElement(cm);
         }
         {

@@ -63,15 +63,9 @@ public class VNRegularField extends VNField
     /**
      * Creates a new instance of VNRegularField
      */
-    public VNRegularField()
-    {
-    }
-
     public VNRegularField(RegularField inField)
     {
-       field = inField;
-       if (field != null)
-          field.checkPureDim();
+        super(inField);
     }
 
     @Override
@@ -88,6 +82,7 @@ public class VNRegularField extends VNField
     {
         if (field == null || field.getNData() < 1 || computed)
             return;
+        
         avgVal = new float[field.getNData()];
         minVal = new float[field.getNData()];
         maxVal = new float[field.getNData()];
@@ -100,6 +95,8 @@ public class VNRegularField extends VNField
         int[] count = new int[256];
         for (int n = 0; n < field.getNData(); n++)
         {
+            if(field.getData(n).isNumericConvertible()){
+                
             float max = maxVal[n] = field.getData(n).getMaxv();
             float min = minVal[n] = field.getData(n).getMinv();
             float a = 0, a2 = 0;
@@ -215,6 +212,9 @@ public class VNRegularField extends VNField
                     float[] v1 = field.getData(n).get1DSlice((j + 1) * s1, dims[0], 1);
                     for (int i = 0; i < dims[0] - 1; i++)
                     {
+                        if(v0==null){
+                            System.out.println("hej");
+                        }
                         a += v0[i];
                         a2 += v0[i] * v0[i];
                         h0 = (int) ((v0[i] - min) * d);
@@ -318,6 +318,7 @@ public class VNRegularField extends VNField
             m *= 2;
             avgGrad[n] = da / m;
             stdDevGrad[n] = (float) (Math.sqrt(da2 / m - avgGrad[n] * avgGrad[n]));
+            }
         }
         computed = true;
     }

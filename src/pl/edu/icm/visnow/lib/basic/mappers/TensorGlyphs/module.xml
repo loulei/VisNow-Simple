@@ -11,7 +11,17 @@
             </acceptor>
             <acceptor>
                 <param name="IRREGULAR" value="true"/>
+                <param name="NSPACE" value="2"/>
+                <param name="DATA_VECLEN" value="2"/>
+            </acceptor>
+           <acceptor>
+                <param name="REGULAR" value="true"/>
                 <param name="NSPACE" value="3"/>
+                <param name="DATA_VECLEN" value="6"/>
+            </acceptor>
+            <acceptor>
+                <param name="IRREGULAR" value="true"/>
+                <param name="NSPACE" value="2"/>
                 <param name="DATA_VECLEN" value="3"/>
             </acceptor>
         </input>

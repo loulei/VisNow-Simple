@@ -37,6 +37,7 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.lib.basic.filters.MulticomponentHistogram;
 
+import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArraySchema;
@@ -58,7 +59,7 @@ public class OperationsTableModel extends DefaultTableModel {
         super();
         this.field = field;
         
-        Vector<DataArraySchema> tmp = field.getSchema().getComponentSchemas();
+        ArrayList<DataArraySchema> tmp = field.getSchema().getComponentSchemas();
         components = new int[tmp.size()];
         componentsVeclen = new int[tmp.size()];
         for (int i = 0; i < tmp.size(); i++) {
@@ -78,7 +79,7 @@ public class OperationsTableModel extends DefaultTableModel {
         super();
         this.field = field;
         
-        Vector<DataArraySchema> tmp = field.getSchema().getComponentSchemas();
+        ArrayList<DataArraySchema> tmp = field.getSchema().getComponentSchemas();
         components = new int[tmp.size()];
         componentsVeclen = new int[tmp.size()];
         for (int i = 0; i < tmp.size(); i++) {

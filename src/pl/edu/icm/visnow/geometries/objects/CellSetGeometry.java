@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,7 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.geometries.objects;
 
@@ -59,7 +61,7 @@ import pl.edu.icm.visnow.lib.utils.geometry2D.GeometryObject2DStruct;
  *
  * @author Krzysztof S. Nowinski <p> University of Warsaw, ICM
  * @author  Bartosz Borucki, University of Warsaw, ICM
- * 
+ *
  */
 public class CellSetGeometry extends OpenBranchGroup
 {
@@ -152,18 +154,17 @@ public class CellSetGeometry extends OpenBranchGroup
    protected Color3f bgrColor = new Color3f(0, 0, 0);
    protected int[] timeRange = null;
    protected float currentT = 0;
-   private static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(CellSetGeometry.class);
-   
-   
-   protected GeometryObject2DStruct outObj2DStruct    = new GeometryObject2DStruct();
-
-   
+   private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(CellSetGeometry.class);
+   protected GeometryObject2DStruct outObj2DStruct = new GeometryObject2DStruct();
    
    protected RenderEventListener renderEventListener = new RenderEventListener()
    {
       @Override
       public void renderExtentChanged(RenderEvent e)
       {
+         if (ignoreUpdate)
+            return;
+         
          int extent = e.getUpdateExtent();
          if (currentColorMode < 0)
          {
@@ -174,16 +175,15 @@ public class CellSetGeometry extends OpenBranchGroup
          validateColorMode();
          if ((extent & (RenderEvent.COLORS | RenderEvent.TRANSPARENCY | RenderEvent.TEXTURE)) != 0)
          {
-//            System.out.println("render event" + extent);
             if (resetGeometry[currentColorMode][colorMode])
                updateGeometry();
             else if (colorMode == DataMappingParams.UVTEXTURED)
                updateTexture();
             else if (colorMode != DataMappingParams.UNCOLORED)
                updateColors();
-            
+
             currentColorMode = colorMode;
-            
+
             return;
          }
          if (extent == RenderEvent.COORDS)
@@ -211,7 +211,7 @@ public class CellSetGeometry extends OpenBranchGroup
       transparencyAttributes.setTransparency(.5f);
       outObj2DStruct.setName(name);
    }
-   
+
    private void setStandardCapabilities(GeometryArray arr)
    {
       arr.setCapability(GeometryArray.ALLOW_REF_DATA_READ);
@@ -225,9 +225,9 @@ public class CellSetGeometry extends OpenBranchGroup
       arr.setCapability(GeometryArray.ALLOW_TEXCOORD_READ);
       arr.setCapability(GeometryArray.ALLOW_TEXCOORD_WRITE);
    }
-   
-    private void setIndexingCapabilities(IndexedGeometryArray arr)
-   {  
+
+   private void setIndexingCapabilities(IndexedGeometryArray arr)
+   {
       arr.setCapability(IndexedGeometryArray.ALLOW_COLOR_INDEX_READ);
       arr.setCapability(IndexedGeometryArray.ALLOW_COLOR_INDEX_WRITE);
       arr.setCapability(IndexedGeometryArray.ALLOW_COORDINATE_INDEX_READ);
@@ -251,7 +251,7 @@ public class CellSetGeometry extends OpenBranchGroup
          if (ar == null || ar.getDim() != 2 || ar.getNCells() < 1)
             continue;
          cellNormals = new float[3 * ar.getNCells()];
-         if (ar == null || (ar.getType() != Cell.TRIANGLE && ar.getType() != Cell.QUAD))
+         if (ar.getType() != Cell.TRIANGLE && ar.getType() != Cell.QUAD)
             continue;
          int n = Cell.nv[ar.getType()];
          float[] v0 = new float[3];
@@ -259,8 +259,8 @@ public class CellSetGeometry extends OpenBranchGroup
          int[] nodes = ar.getNodes();
          boolean[] orientation = ar.getOrientations();
          int i;
-         
-         
+
+
          for (i = 0; i < ar.getNCells(); i++)
          {
             for (int j = 0; j < 3; j++)
@@ -444,7 +444,7 @@ public class CellSetGeometry extends OpenBranchGroup
     * nTriangles, nSegments, nPoints and n*Indices are updated.
     */
 
-  
+
    protected void checkSelection()
    {
       cellSelectionActive = activeParams.isSelectionActive();
@@ -483,7 +483,7 @@ public class CellSetGeometry extends OpenBranchGroup
          if (pointCellArray != null) {
              shownPoints = new boolean[pointCellArray.getNCells()];
              for (int i = 0; i < shownPoints.length; i++) {
-                 shownPoints[i] = true;                 
+                 shownPoints[i] = true;
              }
              nPoints = pointCellArray.getNCells();
          }
@@ -571,8 +571,7 @@ public class CellSetGeometry extends OpenBranchGroup
                k += 3;
             } catch (Exception e)
             {
-                //FIXME: change println to Logger
-               System.out.println("" + k + "<" + coordIndices.length + "  " + (3 * i) + "<" + nodes.length);
+               log.error("" + k + "<" + coordIndices.length + "  " + (3 * i) + "<" + nodes.length);
             }
          }
       }
@@ -610,12 +609,12 @@ public class CellSetGeometry extends OpenBranchGroup
       colorIndices = new int[nIndices];
       int[] cindices;
       int k = 0;
-	  
+
       if (triangleCellArray != null)
       {
 	  if(triangleCellArray.getDataIndices() == null )
 		  throw new RuntimeException("data indices are missing, perphaps you've added dataArray without indices?");
-          
+
          cindices = triangleCellArray.getDataIndices();
          for (int i = 0; i < triangleCellArray.getNCells(); i++)
             if (!cellSelectionActive || shownTriangles[i])
@@ -774,7 +773,9 @@ public class CellSetGeometry extends OpenBranchGroup
       if (nSegments == 0)
          return;
       edgeArr = new IndexedLineArray(nNodes,
-              GeometryArray.COORDINATES | GeometryArray.USE_COORD_INDEX_ONLY | GeometryArray.BY_REFERENCE,
+              GeometryArray.COORDINATES |
+              GeometryArray.USE_COORD_INDEX_ONLY |
+              GeometryArray.BY_REFERENCE,
               2 * nSegments);
       setStandardCapabilities(edgeArr);
       ((IndexedLineArray) edgeArr).setCoordinateIndices(0, coordEdgeIndices);
@@ -787,12 +788,18 @@ public class CellSetGeometry extends OpenBranchGroup
          return;
       if (renderingParams.isLineLighting())
          edgeArr = new IndexedLineArray(nNodes,
-                 GeometryArray.COORDINATES | GeometryArray.NORMALS
-                 | GeometryArray.COLOR_4 | GeometryArray.USE_COORD_INDEX_ONLY | GeometryArray.BY_REFERENCE,
+                 GeometryArray.COORDINATES |
+                 GeometryArray.NORMALS |
+                 GeometryArray.COLOR_4 |
+                 GeometryArray.USE_COORD_INDEX_ONLY |
+                 GeometryArray.BY_REFERENCE,
                  2 * nSegments);
       else
          edgeArr = new IndexedLineArray(nNodes,
-                 GeometryArray.COORDINATES | GeometryArray.COLOR_4 | GeometryArray.USE_COORD_INDEX_ONLY | GeometryArray.BY_REFERENCE,
+                 GeometryArray.COORDINATES |
+                 GeometryArray.COLOR_4 |
+                 GeometryArray.USE_COORD_INDEX_ONLY |
+                 GeometryArray.BY_REFERENCE,
                  2 * nSegments);
       setStandardCapabilities(edgeArr);
       for (int i = 0; i < coordEdgeIndices.length; i++)
@@ -809,7 +816,9 @@ public class CellSetGeometry extends OpenBranchGroup
       nSegments = segmentArray.getNCells();
       nCellEdgeNodes = 2 * nSegments;
       coordEdgeIndices = segmentArray.getNodes();
-      edgeArr = new IndexedLineArray(nNodes, GeometryArray.COORDINATES | GeometryArray.COLOR_4 | GeometryArray.BY_REFERENCE, nCellEdgeNodes);
+      edgeArr = new IndexedLineArray(nNodes, GeometryArray.COORDINATES |
+                                             GeometryArray.COLOR_4 |
+                                             GeometryArray.BY_REFERENCE, nCellEdgeNodes);
       setStandardCapabilities(edgeArr);
       setIndexingCapabilities((IndexedLineArray)edgeArr);
       colorEdgeIndices = new int[nCellEdgeNodes];
@@ -837,9 +846,20 @@ public class CellSetGeometry extends OpenBranchGroup
                k++;
             }
 
-         pointArr = new IndexedPointArray(nNodes,
-                 GeometryArray.COORDINATES | GeometryArray.COLOR_4 | GeometryArray.USE_COORD_INDEX_ONLY | GeometryArray.BY_REFERENCE,
-                 nPoints);
+         if(colorMode == DataMappingParams.UNCOLORED ||  dataMappingParams.isCellDataMapped())
+                pointArr = new IndexedPointArray(nNodes,
+                        GeometryArray.COORDINATES |
+                        GeometryArray.USE_COORD_INDEX_ONLY |
+                        GeometryArray.BY_REFERENCE,
+                        nPoints);
+         else
+                pointArr = new IndexedPointArray(nNodes,
+                        GeometryArray.COORDINATES |
+                        GeometryArray.COLOR_4 |
+                        GeometryArray.USE_COORD_INDEX_ONLY |
+                        GeometryArray.BY_REFERENCE,
+                        nPoints);
+             
          setStandardCapabilities(pointArr);
          pointArr.setCoordinateIndices(0, pointIndices);
 
@@ -921,13 +941,13 @@ public class CellSetGeometry extends OpenBranchGroup
 
    protected void updateTextureCoords()
    {
-      if (triangleArr == null && 
+      if (triangleArr == null ||
          (triangleArr.getVertexFormat() & (GeometryArray.ALLOW_TEXCOORD_WRITE |
                                            GeometryArray.TEXTURE_COORDINATE_2 |
                                            GeometryArray.TEXTURE_COORDINATE_3 |
                                            GeometryArray.TEXTURE_COORDINATE_4)) == 0)
          return;
-      boolean detach = this.postdetach(); 
+      boolean detach = this.postdetach();
       int nSpace = inField.getNSpace();
 
       uvData = new float[2 * nNodes];
@@ -952,7 +972,7 @@ public class CellSetGeometry extends OpenBranchGroup
       triangleArr.setTexCoordRefFloat(0, uvData);
       if(detach) this.postattach();
    }
-   
+
    private class MapColors implements Runnable
    {
       int nThreads      = 1;
@@ -967,10 +987,8 @@ public class CellSetGeometry extends OpenBranchGroup
       @Override
       public void run()
       {
-         int dk = nNds / nThreads;
-         int kstart = nNds * iThread / nThreads;
-         int kend = nNds * (iThread+1) / nThreads;
-         //map from kstart to kend (excluding kend)
+         int kstart = (nNds * iThread) / nThreads;
+         int kend = (nNds * (iThread+1)) / nThreads;
          ColorMapper.map(dataContainer, dataMappingParams, kstart, kend, kstart, renderingParams.getDiffuseColor(), colors);
          ColorMapper.mapTransparency(dataContainer, dataMappingParams.getTransparencyParams(), kstart, kend, colors);
          if (timeRange != null)
@@ -979,13 +997,13 @@ public class CellSetGeometry extends OpenBranchGroup
    }
 
    private DataContainer dataContainer = null;
-   
+
    /**
     * Is responsible for drawing data.
     */
    public void updateColors()
    {
-      boolean detach = this.postdetach(); 
+      boolean detach = this.postdetach();
       timeRange = null;
       if (dataMappingParams.isCellDataMapped())
          dataContainer = cellSet;
@@ -998,31 +1016,31 @@ public class CellSetGeometry extends OpenBranchGroup
       material.setSpecularColor(renderingParams.getSpecularColor());
       appearance.getColoringAttributes().setColor(renderingParams.getDiffuseColor());
       // colors array will be filled in threads started below
-      
+
       for (DataArray da : dataContainer.getData())
-         if (da.getUserData() != null && 
+         if (da.getUserData() != null &&
              da.getUserData().length == 1 &&
              "valid time range".equalsIgnoreCase(da.getUserData()[0]))
          {
             timeRange = da.getIData();
             currentT  = dataContainer.getCurrentTime();
          }
-      int nThreads = Runtime.getRuntime().availableProcessors();
-      Thread[] workThreads = new Thread[nThreads];      
+      int nThreads = pl.edu.icm.visnow.system.main.VisNow.availableProcessors();
+      Thread[] workThreads = new Thread[nThreads];
       for (int iThread = 0; iThread < nThreads; iThread++)
       {
          workThreads[iThread] = new Thread(new MapColors(nThreads, iThread));
          workThreads[iThread].start();
       }
-      for (int i = 0; i < workThreads.length; i++)
+      for (Thread workThread : workThreads)
          try
          {
-             workThreads[i].join();
-         } catch (Exception e)
+            workThread.join();
+         }catch (InterruptedException e)
          {
-         
+
          }
-      
+
       if (triangleArr != null
               && renderingParams.getShadingMode() != RenderingParams.BACKGROUND
               && (colorMode == DataMappingParams.COLORMAPPED
@@ -1030,11 +1048,11 @@ public class CellSetGeometry extends OpenBranchGroup
       {
          if ((triangleArr.getVertexFormat() & (GeometryArray.COLOR_3 | GeometryArray.COLOR_4)) == 0)
             generateTriangles();
-         
+
          // color elements
          triangleArr.setColorRefByte(colors);
       }
-      if (edgeArr != null 
+      if (edgeArr != null
               && (colorMode == DataMappingParams.COLORMAPPED
               || colorMode == DataMappingParams.RGB))
       {
@@ -1046,18 +1064,18 @@ public class CellSetGeometry extends OpenBranchGroup
             else
                generateNodeColoredEdges();
          }
-         
+
          // color elements
          edgeArr.setColorRefByte(colors);
       }
       if (pointArr != null
               && (colorMode == DataMappingParams.COLORMAPPED
-              || colorMode == DataMappingParams.RGB))
+              || colorMode == DataMappingParams.RGB) && !dataMappingParams.isCellDataMapped())
          // color elements
          pointArr.setColorRefByte(colors);
       if(detach) this.postattach();
    }
-   
+
    public void updateAppearance()
    {
       appearance.getLineAttributes().setLineWidth(renderingParams.getLineThickness());
@@ -1079,11 +1097,11 @@ public class CellSetGeometry extends OpenBranchGroup
       updateTextureCoords();
       if(detach) this.postattach();
    }
-   
+
    public void updataDataMap()
    {
-      boolean detach = this.postdetach(); 
-      if (dataMappingParams.getColorMode() == DataMappingParams.COLORMAPPED || 
+      boolean detach = this.postdetach();
+      if (dataMappingParams.getColorMode() == DataMappingParams.COLORMAPPED ||
           dataMappingParams.getColorMode() == DataMappingParams.COLORMAPPED2D ||
           dataMappingParams.getColorMode() == DataMappingParams.COLORED )
          updateColors();
@@ -1091,22 +1109,20 @@ public class CellSetGeometry extends OpenBranchGroup
          updateTexture();
       if(detach) this.postattach();
    }
-   
+
    private boolean textureComponentValid(int c)
    {
       if (inField.getData(c) != null)
          return true;
-      if (c == DataMappingParams.COORDX || c == DataMappingParams.NORMALX
+      return c == DataMappingParams.COORDX || c == DataMappingParams.NORMALX
               || c == DataMappingParams.COORDY || c == DataMappingParams.NORMALY
-              || c == DataMappingParams.COORDZ || c == DataMappingParams.NORMALZ)
-         return true;
-      return false;
+              || c == DataMappingParams.COORDZ || c == DataMappingParams.NORMALZ;
    }
 
    private void validateColorMode()
    {
       colorMode = dataMappingParams.getColorMode();
-      DataContainer dataContainer = inField;
+      dataContainer = inField;
       if (dataMappingParams.isCellDataMapped())
          dataContainer = cellSet;
 // check if color mode and selected components combination is valid; fall back to UNCOLORED otherwise
@@ -1142,20 +1158,21 @@ public class CellSetGeometry extends OpenBranchGroup
          mode |= AbstractRenderingParams.EDGES;
       if (isPicked && activeParams.getPickIndicator() == CellSetDisplayParams.SRF_PICK_INDICATOR)
          mode |= AbstractRenderingParams.SURFACE;
+         
       pointCellArray = cellSet.getCellArray(Cell.POINT);
       if ((mode & RenderingParams.NODES) != 0)
          pointCellArray = cellSet.getBoundaryCellArray(Cell.POINT);
       segCellArray = cellSet.getBoundaryCellArray(Cell.SEGMENT);
       triangleCellArray = cellSet.getBoundaryCellArray(Cell.TRIANGLE);
       quadCellArray = cellSet.getBoundaryCellArray(Cell.QUAD);
-      
+
       if( segCellArray == null && triangleCellArray == null && quadCellArray == null && pointCellArray == null )
           throw new RuntimeException("[CellSetGeometry.updateGeometry()]: boundary cell arrays are empty, nothing to visualize (tip: try calling generateExternFaces() on your cell set)");
-      
+
       outObj2DStruct.removeAllChildren();
       outObj2DStruct.setName("irregular geometry");
-      
-      
+
+
       checkSelection();
       if (nIndices + nEdgeIndices + nPointIndices == 0) {
          if(detach) this.postattach();
@@ -1184,9 +1201,9 @@ public class CellSetGeometry extends OpenBranchGroup
       if (dataMappingParams.getColorModeChanged() > 0)
          validateColorMode();
       coords = inField.getCoords();
-      if (structureChanged
-              || dataMappingParams.getModeChanged() > 0
-              || dataMappingParams.getColorModeChanged() > 1)
+      if (structureChanged || 
+          dataMappingParams.getModeChanged() > 0 || 
+          dataMappingParams.getColorModeChanged() > 1)
       {
          if (surfaceShape.numGeometries() > 0)
             surfaceShape.removeAllGeometries();
@@ -1203,9 +1220,12 @@ public class CellSetGeometry extends OpenBranchGroup
          material.setAmbientColor(renderingParams.getAmbientColor());
          material.setDiffuseColor(renderingParams.getDiffuseColor());
          material.setSpecularColor(renderingParams.getSpecularColor());
+         
+         lineAppearance.getColoringAttributes().setColor(renderingParams.getDiffuseColor());
+         
          if (renderingParams.getShadingMode() == RenderingParams.BACKGROUND)
          {
-            appearance.getColoringAttributes().setColor(new Color3f(bgrColor));
+            appearance.getColoringAttributes().setColor(bgrColor);
             material.setDiffuseColor(bgrColor);
          } else
             appearance.getColoringAttributes().setColor(renderingParams.getDiffuseColor());
@@ -1214,6 +1234,7 @@ public class CellSetGeometry extends OpenBranchGroup
             appearance.setTexture(texture);
          else
             appearance.setTexture(null);
+         
          lineShape.setAppearance(lineAppearance);
          frameShape.setAppearance(lineAppearance);
          pointShape.setAppearance(lineAppearance);
@@ -1272,8 +1293,8 @@ public class CellSetGeometry extends OpenBranchGroup
          structureChanged = false;
       }
       updateCoords();
-      if (isPicked && 
-          activeParams.getPickIndicator() == CellSetDisplayParams.BOX_PICK_INDICATOR || 
+      if (isPicked &&
+          activeParams.getPickIndicator() == CellSetDisplayParams.BOX_PICK_INDICATOR ||
          (activeParams.getRenderingParams().getDisplayMode() & AbstractRenderingParams.OUTLINE_BOX) != 0)
       {
          updateExtents();
@@ -1333,6 +1354,7 @@ public class CellSetGeometry extends OpenBranchGroup
       transformParams.addChangeListener(new ChangeListener()
       {
 
+         @Override
          public void stateChanged(ChangeEvent evt)
          {
             transformGroup.setTransform(transformParams.getTransform());
@@ -1447,26 +1469,29 @@ public class CellSetGeometry extends OpenBranchGroup
    {
       return cellSet;
    }
+   
    ColorListener bgrColorListener = new ColorListener()
    {
-
       @Override
       public void colorChoosen(ColorEvent e)
       {
-         bgrColor = new Color3f(e.getSelectedColor().getColorComponents(null));
-         if (renderingParams.getDisplayMode() == RenderingParams.BACKGROUND)
+         bgrColor = new Color3f(e.getSelectedColor());
+         if (renderingParams.getShadingMode() == RenderingParams.BACKGROUND)
          {
-            boolean detach = CellSetGeometry.this.postdetach(); 
+            boolean detach = CellSetGeometry.this.postdetach();
             renderingParams.setDiffuseColor(bgrColor);
             if (appearance != null && appearance.getColoringAttributes() != null)
                appearance.getColoringAttributes().setColor(bgrColor);
+            material.setAmbientColor(bgrColor);
             material.setDiffuseColor(bgrColor);
+            material.setEmissiveColor(bgrColor);
+            ignoreUpdate = false;
             updateGeometry();
             if(detach) CellSetGeometry.this.postattach();
          }
       }
    };
-   
+
    public void setOwnParams()
    {
       if (ownParams == null)
@@ -1477,14 +1502,14 @@ public class CellSetGeometry extends OpenBranchGroup
       transformParams   = activeParams.getTransformParams();
       updateGeometry();
    }
-   
+
    public void setParentParams(CellSetDisplayParams parentParams)
    {
       if (parentParams == null)
          return;
       this.parentParams = parentParams;
    }
-   
+
    public void inheritParams()
    {
       if (parentParams == null)
@@ -1500,10 +1525,10 @@ public class CellSetGeometry extends OpenBranchGroup
    {
       return bgrColorListener;
    }
-   
+
    public GeometryObject2DStruct getGeometryObj2DStruct()
    {
       return outObj2DStruct;
    }
-   
+
 }

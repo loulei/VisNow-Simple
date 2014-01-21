@@ -38,10 +38,11 @@ exception statement from your version. */
 package pl.edu.icm.visnow.datasets;
 
 import java.io.Serializable;
-import java.util.Vector;
+import java.util.ArrayList;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
 import static pl.edu.icm.visnow.lib.utils.ArrayUtils.*;
 import static pl.edu.icm.visnow.lib.utils.CropDown.*;
+import pl.edu.icm.visnow.lib.utils.numeric.FloatingPointUtils;
 
 /**
  * 
@@ -55,8 +56,8 @@ public class TimeData<T> implements Cloneable, Serializable
    
    public static enum Position {BEFORE, IN, AFTER, EMPTY};
    private int type;
-   private Vector<Float> timeSeries = new Vector<Float>();
-   private Vector<T>     dataSeries = new Vector<T>();
+   private ArrayList<Float> timeSeries = new ArrayList<Float>();
+   private ArrayList<T>     dataSeries = new ArrayList<T>();
    private float currentTime = 0;
    private T data;
    
@@ -64,14 +65,14 @@ public class TimeData<T> implements Cloneable, Serializable
    {
    }
    
-   public TimeData(Vector<Float> timeSeries, Vector<T> dataSeries, float currentTime)
+   public TimeData(ArrayList<Float> timeSeries, ArrayList<T> dataSeries, float currentTime)
    {
       this.timeSeries  = timeSeries;
       this.dataSeries  = dataSeries;
       this.currentTime = currentTime;
       if (dataSeries != null && !dataSeries.isEmpty())
       {
-         T d0 = dataSeries.firstElement();
+         T d0 = dataSeries.get(0);
          if (d0 instanceof double[])
             type = DataArray.FIELD_DATA_DOUBLE;
          else if (d0 instanceof float[])
@@ -101,7 +102,7 @@ public class TimeData<T> implements Cloneable, Serializable
    {
       if (t == null)
          return false;
-      Vector<Float> sMoments = t.getTimeSeries();
+      ArrayList<Float> sMoments = t.getTimeSeries();
       if (sMoments.size() != timeSeries.size())
          return false;
       for (int i = 0; i < timeSeries.size(); i++)
@@ -113,7 +114,7 @@ public class TimeData<T> implements Cloneable, Serializable
    /**
     * Set the value of data
     * Sets a new (data, time moment) pair.
-    * @param data new data
+    * @param d0 new data
     * @param t new moment
     */
    public void setData(T d0, float t)
@@ -121,11 +122,23 @@ public class TimeData<T> implements Cloneable, Serializable
       int k = -1;
       if (dataSeries.isEmpty())
       {
-         if (d0 instanceof double[])
-            type = DataArray.FIELD_DATA_DOUBLE;
-         else if (d0 instanceof float[])
+         if (d0 instanceof float[])
+         {
             type = DataArray.FIELD_DATA_FLOAT;
-         else if (d0 instanceof int[])
+            if (!FloatingPointUtils.isFinite((float[])d0))
+            {
+               
+            }
+         }
+         if (d0 instanceof double[])
+         {
+            type = DataArray.FIELD_DATA_DOUBLE;
+            if (!FloatingPointUtils.isFinite((double[])d0))
+            {
+               
+            }
+         }
+         if (d0 instanceof int[])
             type = DataArray.FIELD_DATA_INT;
          else if (d0 instanceof short[])
             type = DataArray.FIELD_DATA_SHORT;
@@ -140,16 +153,17 @@ public class TimeData<T> implements Cloneable, Serializable
             k = i;
             break;
          }
+ 
       if (k == -1)
       {
          timeSeries.add(t);
          dataSeries.add(d0);
       }
       else if (timeSeries.get(k) == t)
-         dataSeries.setElementAt(d0, k);
+         dataSeries.set(k, d0);
       else {
-         timeSeries.insertElementAt(t, k);
-         dataSeries.insertElementAt(d0, k);         
+         timeSeries.add(k, t);
+         dataSeries.add(k, d0);         
       }
       if (dataSeries.size() == 1 || t == currentTime)
          data = d0;
@@ -387,7 +401,7 @@ public class TimeData<T> implements Cloneable, Serializable
       return outData;
    }
    
-   public Vector<T> getAllData()
+   public ArrayList<T> getAllData()
    {
       return dataSeries;
    }
@@ -445,9 +459,18 @@ public class TimeData<T> implements Cloneable, Serializable
       data = null;
    }
 
-   public Vector<Float> getTimeSeries()
+   public ArrayList<Float> getTimeSeries()
    {
       return timeSeries;
+   }
+
+   
+   public float[] getTimeline() {
+       float[] out = new float[timeSeries.size()];
+       for (int i = 0; i < out.length; i++) {
+           out[i] = timeSeries.get(i);
+       }
+       return out;      
    }
    
    public TimeData cropDown(int veclen, int[] dims, int[] low, int[] up, int[] down)
@@ -604,7 +627,7 @@ public class TimeData<T> implements Cloneable, Serializable
       return td;
    }
    
-   public TimeData<T> concatenate(Vector<TimeData<T>> concatenatedData)
+   public TimeData<T> concatenate(ArrayList<TimeData<T>> concatenatedData)
    {
       TimeData<T> out = new TimeData<T>();
       int n = getLenth();

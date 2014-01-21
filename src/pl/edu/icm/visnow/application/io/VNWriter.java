@@ -153,16 +153,16 @@ public class VNWriter {
         }
         writeln(0, writer, "@params");
 
-        String params = module.getParameters().writeXML();
-
-        if(params != null) {//TODO: trzeba uniknąć komend w parametrach
-            //params = encode(params);
-            params = params + "\n";
-            StringTokenizer tokenizer = new StringTokenizer(params, "\n");
-            while(tokenizer.hasMoreElements()) {
-                writeln(3, writer, tokenizer.nextToken());
-            }
-        }
+//        String params = module.getParameters().writeXML();
+//
+//        if(params != null) {//TODO: trzeba uniknąć komend w parametrach
+//            //params = encode(params);
+//            params = params + "\n";
+//            StringTokenizer tokenizer = new StringTokenizer(params, "\n");
+//            while(tokenizer.hasMoreElements()) {
+//                writeln(3, writer, tokenizer.nextToken());
+//            }
+//        }
 
         writeln(0, writer, "@end");
 

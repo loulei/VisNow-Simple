@@ -66,7 +66,7 @@ public class FieldViewer1D extends ModuleCore
     */
    public FieldViewer1D()
    {
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          public void run()
          {
@@ -127,5 +127,11 @@ public class FieldViewer1D extends ModuleCore
       window.setDataArrays(dataArrays, currentSchema == null || !currentSchema.isDataCompatibleWith(inFld.getSchema()), inFld.getSchema());
       currentSchema = inFld.getSchema();
    }
+   
+    @Override
+    public boolean isViewer() {
+        return true;
+    }
+   
 }
 

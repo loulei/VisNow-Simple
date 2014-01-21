@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,17 +35,19 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.utils.geometry2D;
 import java.awt.*;
 import javax.media.j3d.*;
+import pl.edu.icm.visnow.geometries.parameters.FontParams;
 
 /**
  *
  * @author  Krzysztof S. Nowinski, University of Warsaw, ICM
  */
 public class CXYString
-{ 
+{
    protected String s;
    protected Color c = null;
    protected int fontSize = 12;
@@ -52,49 +55,48 @@ public class CXYString
    protected float[] ccomps = new float[3];
    protected int[] sCoords = new int[2];
    protected float depth=1.f;
-   
+   protected float relativeHeight = .01f;
+
    /** Creates a new instance of CXYString */
-   
-   public CXYString(String s, Color c, Font font)
+
+   public CXYString(String s, Color c, Font font, float relativeHeight)
    {
       this.font = font;
+      this.relativeHeight = relativeHeight;
       this.s = s;
       this.c = c;
       ccomps = c.getRGBColorComponents(ccomps);
    }
-   
-   public CXYString(String s, Color c, int fontSize)
+
+   public CXYString(String s, FontParams params)
    {
-      font = new Font("Dialog",Font.PLAIN, fontSize);
       this.s = s;
-      this.c = c;
+      c = params.getColor();
+      font = params.getFont2D();
+      relativeHeight = params.getSize();
       ccomps = c.getRGBColorComponents(ccomps);
    }
-   
+
    public CXYString(String s, Color c)
    {
       this.s = s;
       this.c = c;
       ccomps = c.getRGBColorComponents(ccomps);
    }
-   
-   public CXYString(String s)
-   {
-      this.s = s;
-      ccomps = c.getRGBColorComponents(ccomps);
-   }
-   
+
+
    @Override
    public String toString()
    {
       return s+" at("+sCoords[0]+","+sCoords[1]+")";
    }
-   
-   public Color getColor()
+
+   public String getString()
    {
-      return c;
+      return s;
    }
-   
+
+
    public void setColor(Color c)
    {
       if (c==null)
@@ -102,28 +104,30 @@ public class CXYString
       this.c = c;
       ccomps = c.getRGBColorComponents(ccomps);
    }
-   
+
    /**
-    * 
-    * @param vGraphics 
+    *
+    * @param vGraphics
     */
-   public void draw(J3DGraphics2D vGraphics)
+   public void draw(J3DGraphics2D vGraphics, int w, int h)
    {
       if (s==null || s.length()<1)
          return;
       Font f = vGraphics.getFont();
-      vGraphics.setFont(font);
+      Font ft = new Font(font.getFontName(), font.getStyle(), (int)(h * relativeHeight));
+      vGraphics.setFont(ft);
       vGraphics.setColor(new Color(depth*ccomps[0],depth*ccomps[1],depth*ccomps[2]));
       vGraphics.drawString(s,sCoords[0],sCoords[1]);
       vGraphics.setFont(f);
    }
-   
-   public void draw(J3DGraphics2D vGraphics, int xpos, int ypos)
+
+   public void draw(J3DGraphics2D vGraphics, int xpos, int ypos, int w, int h)
    {
       if (s==null || s.length()<1)
          return;
       Font f = vGraphics.getFont();
-      vGraphics.setFont(font);
+      Font ft = new Font(font.getFontName(), font.getStyle(), (int)(h * relativeHeight));
+      vGraphics.setFont(ft);
       vGraphics.setColor(new Color(depth*ccomps[0],depth*ccomps[1],depth*ccomps[2]));
       vGraphics.drawString(s,xpos,ypos);
       vGraphics.setFont(f);

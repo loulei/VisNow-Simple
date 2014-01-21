@@ -14,9 +14,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -83,7 +83,6 @@ public class GUI extends javax.swing.JPanel
         asciiButton = new javax.swing.JRadioButton();
         binaryButton = new javax.swing.JRadioButton();
         avsBox = new javax.swing.JCheckBox();
-        singleFileBox = new javax.swing.JCheckBox();
         writeButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
 
@@ -141,19 +140,17 @@ public class GUI extends javax.swing.JPanel
         add(binaryButton, gridBagConstraints);
 
         avsBox.setText(bundle.getString("GUI.avsBox.text")); // NOI18N
+        avsBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                avsBoxActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         add(avsBox, gridBagConstraints);
-
-        singleFileBox.setText(bundle.getString("GUI.singleFileBox.text")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(singleFileBox, gridBagConstraints);
 
         writeButton.setText(bundle.getString("GUI.writeButton.text")); // NOI18N
         writeButton.addActionListener(new java.awt.event.ActionListener() {
@@ -177,7 +174,7 @@ public class GUI extends javax.swing.JPanel
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 248, Short.MAX_VALUE)
+            .addGap(0, 252, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -193,7 +190,6 @@ public class GUI extends javax.swing.JPanel
     {//GEN-HEADEREND:event_tfFileNameActionPerformed
        path = tfFileName.getText();
        params.setAVS(avsBox.isSelected());
-       params.setSingleFile(singleFileBox.isSelected());
        params.setAscii(asciiButton.isSelected());
        params.setFileName(path);
        params.fireStateChanged();
@@ -204,7 +200,6 @@ public class GUI extends javax.swing.JPanel
        if (path != null && path.length() > 4 && VNFileChooser.checkForOverwrite( path ) )
        {
           params.setAVS(avsBox.isSelected());
-          params.setSingleFile(singleFileBox.isSelected());
           params.setAscii(asciiButton.isSelected());
           params.setFileName(path);
           params.fireStateChanged();
@@ -214,24 +209,30 @@ public class GUI extends javax.swing.JPanel
     private void selectButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_selectButtonActionPerformed
     {//GEN-HEADEREND:event_selectButtonActionPerformed
        if (lastPath == null)
-          fileChooser.setCurrentDirectory(new File(VisNow.get().getMainConfig().getDataWriterPath()));
+          fileChooser.setCurrentDirectory(new File(VisNow.get().getMainConfig().getUsableDataPath(FieldWriter.class)));
        else
           fileChooser.setCurrentDirectory(new File(lastPath));
-		FileNameExtensionFilter fieldFilter = new FileNameExtensionFilter("Field files", "vnf", "fld", "FLD", "VNF");
-       fileChooser.setFileFilter( fieldFilter );
+       FileNameExtensionFilter fieldFilter = new FileNameExtensionFilter("Field files", "vnf", "fld", "FLD", "VNF");
+       fileChooser.setFileFilter(fieldFilter);
 
-       int returnVal = fileChooser.showDialog(this,"Select");
+       int returnVal = fileChooser.showDialog(this, "Select");
        if (returnVal == JFileChooser.APPROVE_OPTION)
        {
-          if( avsBox.isSelected())
-			path = VNFileChooser.filenameWithExtenstionAddedIfNecessary( fileChooser.getSelectedFile(), new FileNameExtensionFilter("", "fld", "FLD") );
-		  else
-			path = VNFileChooser.filenameWithExtenstionAddedIfNecessary( fileChooser.getSelectedFile(), new FileNameExtensionFilter("", "vnf", "VNF") );
+          if (avsBox.isSelected())
+             path = VNFileChooser.filenameWithExtenstionAddedIfNecessary(fileChooser.getSelectedFile(), new FileNameExtensionFilter("", "fld", "FLD"));
+          else
+             path = VNFileChooser.filenameWithExtenstionAddedIfNecessary(fileChooser.getSelectedFile(), new FileNameExtensionFilter("", "vnf", "VNF"));
           tfFileName.setText(path);
           lastPath = path.substring(0, path.lastIndexOf(File.separator));
+          VisNow.get().getMainConfig().setLastDataPath(lastPath, FieldWriter.class);
           params.setFileName(path);
        }
 }//GEN-LAST:event_selectButtonActionPerformed
+
+   private void avsBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_avsBoxActionPerformed
+   {//GEN-HEADEREND:event_avsBoxActionPerformed
+      
+   }//GEN-LAST:event_avsBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton asciiButton;
@@ -241,7 +242,6 @@ public class GUI extends javax.swing.JPanel
     private javax.swing.ButtonGroup formatGroup;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton selectButton;
-    private javax.swing.JCheckBox singleFileBox;
     private javax.swing.JTextField tfFileName;
     private javax.swing.JButton writeButton;
     // End of variables declaration//GEN-END:variables

@@ -57,23 +57,30 @@ import pl.edu.icm.visnow.lib.types.VNDataSchemaComparator;
  */
 public class ModuleXMLReader {
     
-    public static InputEgg[] getInputEggsFromModuleXML(String packageName) throws URISyntaxException, ParserConfigurationException, SAXException, IOException, ClassNotFoundException {
+    public static InputEgg[] getInputEggsFromModuleXML(String packageName, ClassLoader loader) throws URISyntaxException, ParserConfigurationException, SAXException, IOException, ClassNotFoundException {
         if (packageName == null) {
             return null;
         }
 
-        InputStream is = ModuleXMLReader.class.getResourceAsStream("/" + packageName.replace(".", "/") + "/module.xml");
+        InputStream is = null;
+        if(loader != null) {
+            is = loader.getResourceAsStream(packageName.replace(".", "/") + "/module.xml");
+        }
+        
+        if(is == null)        
+            is = ModuleXMLReader.class.getResourceAsStream("/" + packageName.replace(".", "/") + "/module.xml");
+        
         if (is == null) {
             return null;
         }
 
-        InputEgg[] out = getInputEggsFromStream(packageName, is);
+        InputEgg[] out = getInputEggsFromStream(packageName, is, loader);
         is.close();
         
         return out;
     }
     
-    public static InputEgg[] getInputEggsFromStream(String packageName, InputStream is) throws URISyntaxException, ParserConfigurationException, SAXException, IOException, ClassNotFoundException {
+    public static InputEgg[] getInputEggsFromStream(String packageName, InputStream is, ClassLoader loader) throws URISyntaxException, ParserConfigurationException, SAXException, IOException, ClassNotFoundException {
         if (packageName == null || is == null) {
             return null;
         }
@@ -121,7 +128,12 @@ public class ModuleXMLReader {
                         }
 
                         if (inputName != null && inputType != null) {
-                            Class typeClass = ModuleXMLReader.class.getClassLoader().loadClass(inputType);
+                            Class typeClass = null;
+                            if(loader != null)
+                                typeClass = loader.loadClass(inputType);
+                            if(typeClass == null)
+                                typeClass = ModuleXMLReader.class.getClassLoader().loadClass(inputType);
+                            
                             int modifiers = InputEgg.NORMAL;
                             if(inputModifiers != null) {
                                 String[] mods = inputModifiers.split(":");
@@ -241,23 +253,29 @@ public class ModuleXMLReader {
         return inputEggs;
     }
 
-    public static OutputEgg[] getOutputEggsFromModuleXML(String packageName) throws URISyntaxException, ParserConfigurationException, SAXException, IOException, ClassNotFoundException {
+    public static OutputEgg[] getOutputEggsFromModuleXML(String packageName, ClassLoader loader) throws URISyntaxException, ParserConfigurationException, SAXException, IOException, ClassNotFoundException {
         if (packageName == null) {
             return null;
         }
 
-        InputStream is = ModuleXMLReader.class.getResourceAsStream("/" + packageName.replace(".", "/") + "/module.xml");
+        InputStream is = null;
+        if(loader != null) {
+            is = loader.getResourceAsStream(packageName.replace(".", "/") + "/module.xml");
+        }
+        if(is == null) {
+            is = ModuleXMLReader.class.getResourceAsStream("/" + packageName.replace(".", "/") + "/module.xml");
+        }
         if (is == null) {
             return null;
         }
         
-        OutputEgg[] out = getOutputEggsFromStream(packageName, is);
+        OutputEgg[] out = getOutputEggsFromStream(packageName, is, loader);
         is.close();
         
         return out;
     }
-        
-    public static OutputEgg[] getOutputEggsFromStream(String packageName, InputStream is) throws URISyntaxException, ParserConfigurationException, SAXException, IOException, ClassNotFoundException {
+    
+    public static OutputEgg[] getOutputEggsFromStream(String packageName, InputStream is, ClassLoader loader) throws URISyntaxException, ParserConfigurationException, SAXException, IOException, ClassNotFoundException {
         if (packageName == null || is == null) {
             return null;
         }
@@ -372,8 +390,11 @@ public class ModuleXMLReader {
 
 
                             if (outputName != null && outputType != null) {
-                                //Class typeClass = Class.forName(outputType).getClass();
-                                Class typeClass = ModuleXMLReader.class.getClassLoader().loadClass(outputType);
+                                Class typeClass = null;
+                                if(loader != null)
+                                    typeClass = loader.loadClass(outputType);
+                                if(typeClass == null)
+                                    typeClass = ModuleXMLReader.class.getClassLoader().loadClass(outputType);
                                 outputEggList.add(new OutputEgg(outputName, typeClass, maxC, outputDescription, schemas));
                             } else {
                                 System.err.println("illegal output entry in package: " + packageName);
@@ -396,7 +417,11 @@ public class ModuleXMLReader {
 
                             Class mc = null;
                             try {
-                                mc = ModuleXMLReader.class.getClassLoader().loadClass(packageName + "." + moduleClass);
+                                if(loader != null)
+                                    mc = loader.loadClass(packageName + "." + moduleClass);
+                                if(mc == null)
+                                    mc = ModuleXMLReader.class.getClassLoader().loadClass(packageName + "." + moduleClass);
+                                
                                 if (mc.getField("geometryOutput") != null) {
                                     OutputEgg goe = (OutputEgg) mc.getField("geometryOutput").get(null);
                                     if(goDesc != null) goe.setDescription(goDesc);
@@ -405,10 +430,15 @@ public class ModuleXMLReader {
                                     }
                                 }
                             } catch (ClassNotFoundException ex) {
+                                System.err.println("ERROR creating geometry output in "+packageName + "." + moduleClass+": class not found: "+ex.getMessage());
                             } catch (NoSuchFieldException ex) {
+                                System.err.println("ERROR creating geometry output in "+packageName + "." + moduleClass+": no such field: "+ex.getMessage());
                             } catch (IllegalAccessException ex) {
+                                System.err.println("ERROR creating geometry output in "+packageName + "." + moduleClass+": illegal access: "+ex.getMessage());
                             } catch (IllegalArgumentException ex) {
+                                System.err.println("ERROR creating geometry output in "+packageName + "." + moduleClass+": illegal argument: "+ex.getMessage());
                             } catch (SecurityException ex) {
+                                System.err.println("ERROR creating geometry output in "+packageName + "." + moduleClass+": security exception: "+ex.getMessage());
                             }
                         }
                     }
@@ -423,23 +453,31 @@ public class ModuleXMLReader {
         return outputEggs;
     }
 
-    public static String[] getModuleInfo(String packageName) throws URISyntaxException, ParserConfigurationException, SAXException, IOException {
+    public static String[] getModuleInfo(String packageName, ClassLoader loader) throws URISyntaxException, ParserConfigurationException, SAXException, IOException {
         if (packageName == null) {
             return null;
         }
 
-        InputStream is = ModuleXMLReader.class.getResourceAsStream("/" + packageName.replace(".", "/") + "/module.xml");
+        InputStream is = null;
+        if(loader != null) {
+            is = loader.getResourceAsStream(packageName.replace(".", "/") + "/module.xml");
+        }
+        
+        if(is == null)
+            is = ModuleXMLReader.class.getResourceAsStream("/" + packageName.replace(".", "/") + "/module.xml");
+        
         if (is == null) {
             return null;
         }
         
-        String[] out = getModuleInfoFromStream(packageName, is);
+        String[] out = getModuleInfoFromStream(packageName, is, loader);
         is.close();
         
         return out;
     }
     
-    public static String[] getModuleInfoFromStream(String packageName, InputStream is) throws URISyntaxException, ParserConfigurationException, SAXException, IOException {
+    
+    public static String[] getModuleInfoFromStream(String packageName, InputStream is, ClassLoader loader) throws URISyntaxException, ParserConfigurationException, SAXException, IOException {
         if (packageName == null || is == null) {
             return null;
         }

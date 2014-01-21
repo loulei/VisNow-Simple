@@ -61,7 +61,6 @@ public class PolylineTool extends GeometryTool {
     private Vector<Metadata> pointMetadata = new Vector<Metadata>();
     private Point currentPoint = null;
 
-    private boolean holding = false;
     private boolean firstClick = true;
 
 

@@ -68,11 +68,11 @@ public class VNDataAcceptor {
 
     @Override
     public String toString() {
-        return VNDataSchemaComparator.getDescription(vndsi, vndsc, "; ");
+        return VNDataSchemaComparator.getDescription(vndsi, vndsc, "; ", "");
     }
 
     public String toHtmlString() {
-        return VNDataSchemaComparator.getDescription(vndsi, vndsc, "<br>");
+        return VNDataSchemaComparator.getDescription(vndsi, vndsc, "<br>", "");
     }
 
 }

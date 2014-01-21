@@ -57,6 +57,7 @@ public class Params extends Parameters {
         new ParameterEgg<Integer>("nDims", ParameterType.independent, 3),
         new ParameterEgg<Integer>("binning", ParameterType.independent, BINNING_BY_COMPONENTS),
         new ParameterEgg<int[]>("dims", ParameterType.independent, null),
+        new ParameterEgg<Boolean>("roundByteDimsTo32", ParameterType.independent, false),
         new ParameterEgg<int[]>("selectedComponents", ParameterType.dependent, null),        
         new ParameterEgg<int[]>("selectedCoords", ParameterType.dependent, null),
         new ParameterEgg<Boolean>("countLogScale", ParameterType.independent, true),
@@ -250,6 +251,14 @@ public class Params extends Parameters {
 
     public void setOutGeometryToData(boolean value) {
         setValue("outGeometryToData", value);
+    }
+
+    public boolean isRoundByteDimsTo32() {
+        return (Boolean) getValue("roundByteDimsTo32");
+    }
+
+    public void setRoundByteDimsTo32(boolean value) {
+        setValue("roundByteDimsTo32", value);
     }
     
 }

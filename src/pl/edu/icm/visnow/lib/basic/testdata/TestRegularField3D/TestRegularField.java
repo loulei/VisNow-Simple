@@ -1,5 +1,6 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+Copyright (C) 2006-2013 University of Warsaw, ICM
 
 This file is part of GNU Classpath.
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -33,16 +34,21 @@ module.  An independent module is a module which is not derived from
 or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+exception statement from your version.
+*/
+//</editor-fold>
+
+
 
 package pl.edu.icm.visnow.lib.basic.testdata.TestRegularField3D;
 
+import java.util.Arrays;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import pl.edu.icm.visnow.datasets.RegularField;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
 import pl.edu.icm.visnow.engine.core.OutputEgg;
-import pl.edu.icm.visnow.lib.templates.visualization.modules.RegularOutFieldVisualizationModule;
+import pl.edu.icm.visnow.lib.templates.visualization.modules.OutFieldVisualizationModule;
 import pl.edu.icm.visnow.lib.types.VNGeometryObject;
 import pl.edu.icm.visnow.lib.types.VNRegularField;
 import pl.edu.icm.visnow.lib.utils.SwingInstancer;
@@ -52,11 +58,11 @@ import pl.edu.icm.visnow.lib.utils.SwingInstancer;
  * Warsaw University, Interdisciplinary Centre
  * for Mathematical and Computational Modelling
  */
-public class TestRegularField extends RegularOutFieldVisualizationModule
+public class TestRegularField extends OutFieldVisualizationModule
 {
    public static OutputEgg[] outputEggs = null;
    private byte[] data0;
-   private float[] data1, data2, data3, data5, data61, data62, data64, data68;
+   private float[] data1, data2, data3, data4, data5, data61, data62, data64, data68, data7;
 
    /**
     * Creates a new instance of TestGeometryObject
@@ -65,8 +71,9 @@ public class TestRegularField extends RegularOutFieldVisualizationModule
 
    public TestRegularField()
    {
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
+         @Override
          public void run()
          {
             computeUI = new GUI();
@@ -74,6 +81,7 @@ public class TestRegularField extends RegularOutFieldVisualizationModule
       });
       computeUI.addChangeListener(new ChangeListener()
       {
+         @Override
          public void stateChanged(ChangeEvent evt)
          {
             startAction();
@@ -83,11 +91,10 @@ public class TestRegularField extends RegularOutFieldVisualizationModule
       setPanel(ui);
    }
 
-   public static boolean isGenerator()
-   {
+   @Override
+   public boolean isGenerator() {
       return true;
    }
-
 
    class Compute implements Runnable
    {
@@ -104,6 +111,7 @@ public class TestRegularField extends RegularOutFieldVisualizationModule
          this.n = size;
       }
 
+      @Override
       public void run()
       {
          for (int k = iThread; k < n; k += nThreads)
@@ -111,6 +119,7 @@ public class TestRegularField extends RegularOutFieldVisualizationModule
             if (iThread == 0)
                setProgress((float) k / n);
             int l = k * n * n;
+            
             for (int j = 0; j < n; j++)
                for (int i = 0; i < n; i++, l++)
                {
@@ -139,7 +148,7 @@ public class TestRegularField extends RegularOutFieldVisualizationModule
                   double r101 = Math.sqrt((u + r0) * (u + r0) + (v - r0) * (v - r0) + (w + r0) * (w + r0));
                   double r110 = Math.sqrt((u + r0) * (u + r0) + (v + r0) * (v + r0) + (w - r0) * (w - r0));
                   double r111 = Math.sqrt((u + r0) * (u + r0) + (v + r0) * (v + r0) + (w + r0) * (w + r0));
-                  data61[l] = (float) (1 / (.5 + r000));
+                  data61[l] = (float) (1 / (.5 + u * u + v * v + w * w));
                   data62[l] = (float) (1 / (.5 + r000) - 1 / (.5 + r001));
                   data64[l] = (float) (1 / (.5 + r000) - 1 / (.5 + r001) - 1 / (.5 + r010) + 1 / (.5 + r011));
                   data68[l] = (float) (1 / (.5 + r000) - 1 / (.5 + r001) - 1 / (.5 + r010) + 1 / (.5 + r011) -
@@ -150,6 +159,8 @@ public class TestRegularField extends RegularOutFieldVisualizationModule
                   data3[3 * l] = -x2 - x1 * x3;
                   data3[3 * l + 1] = x1 - x2 * x3;
                   data3[3 * l + 2] = .5f * (x1 * x1 + x2 * x2 - x3 * x3 - 1);
+                  data4[3 * l] = 1;
+                  data7[l] = (float)(u * u + 2 * v * v + 3 * w * w);
                }
          }
       }
@@ -158,75 +169,72 @@ public class TestRegularField extends RegularOutFieldVisualizationModule
    private void createTestRegularField(int n, int nThreads)
    {
 
-      outField = new RegularField();
       int[] dims = new int[]
       {
          n, n, n
       };
-      outField.setDims(dims);
-      outField.setNSpace(3);
+      outField = new RegularField(dims);
+      outRegularField = (RegularField) outField;
+      outRegularField.setNSpace(3);
       float[][] points =
-      {
-         {
-            -.5f, -.5f, -.5f
-         },
-         {
-            .5f, .5f, .5f
-         }
-      };
-      outField.setPts(points);
+      {{-.5f, -.5f, -.5f},
+         {.5f, .5f, .5f} };
+      outRegularField.setExtents(points);
       data0 = new byte[n * n * n];
       data1 = new float[n * n * n];
       data2 = new float[n * n * n];
       data3 = new float[3 * n * n * n];
+      data4 = new float[3 * n * n * n];
       data5 = new float[3 * n * n * n];
       data61 = new float[n * n * n];
       data62 = new float[n * n * n];
       data64 = new float[n * n * n];
       data68 = new float[n * n * n];
-
+      data7 = new float[n * n * n];
+      Arrays.fill(data4, 0);
       Thread[] workThreads = new Thread[nThreads];
       for (int i = 0; i < workThreads.length; i++)
       {
          workThreads[i] = new Thread(new Compute(nThreads, n, i));
          workThreads[i].start();
       }
-      for (int i = 0; i < workThreads.length; i++)
+      for (Thread workThread : workThreads)
          try
          {
-            workThreads[i].join();
-         } catch (Exception e)
+            workThread.join();
+         }catch (Exception e)
          {
          }
       setProgress(1);
-      outField.addData(DataArray.create(data1, 1, "trig function"));
+      outRegularField.addData(DataArray.create(data1, 1, "trig_function"));
       DataArray da = DataArray.create(data0, 1, "gaussians");
       da.setPhysMax(4);
       da.setPhysMin(-3);
-      outField.addData(da);
-      da = DataArray.create(data61, 1, "multipole");
-      da.addData(data62, 1);
-      da.addData(data64, 2);
-      da.addData(data68, 3);
-      outField.addData(da);
-      outField.addData(DataArray.create(data2, 1, "semielipsoid"));
-      outField.addData(DataArray.create(data5, 3, "vortex"));
-      outField.addData(DataArray.create(data3, 3, "Hopf"));
-      da = DataArray.create(data3, 3, "time vector field");
+      outRegularField.addData(da);
+      da = DataArray.create(data68, 1, "multipole");
+      da.addData(data64, 1);
+      da.addData(data62, 2);
+      da.addData(data61, 3);
+      outRegularField.addData(da);
+      outRegularField.addData(DataArray.create(data2, 1, "semielipsoid"));
+      outRegularField.addData(DataArray.create(data5, 3, "vortex"));
+      outRegularField.addData(DataArray.create(data3, 3, "Hopf"));
+      da = DataArray.create(data3, 3, "time_vector_field");
       da.addData(data5, 1);
-      outField.addData(da);
-      outField.setCurrentTime(0);
+      outRegularField.addData(DataArray.create(data7, 1, "pipe"));
+      outRegularField.addData(da);
+      outRegularField.setCurrentTime(0);
+      outRegularField.addData(DataArray.create(data4, 3, "Const"));
    }
 
    @Override
-   public void onInitFinished()
+   public void onInitFinishedLocal()
    {
-      outObj.getGeometryObj().setUserData(getName());
       setOutputValue("outObj", new VNGeometryObject(outObj));
       createTestRegularField(computeUI.getResolution(), computeUI.getNThreads());
       prepareOutputGeometry();
       show();
-      setOutputValue("outField", new VNRegularField(outField));
+      setOutputValue("outField", new VNRegularField(outRegularField));
    }
 
    @Override
@@ -235,7 +243,7 @@ public class TestRegularField extends RegularOutFieldVisualizationModule
         createTestRegularField(computeUI.getResolution(), computeUI.getNThreads());
         prepareOutputGeometry();
         show();
-        setOutputValue("outField", new VNRegularField(outField));
+        setOutputValue("outField", new VNRegularField(outRegularField));
    }
 }
 

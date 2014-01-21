@@ -32,7 +32,5 @@
         </output>
         <geometryOutput/>
     </outputs>
-    <parameters>
-    </parameters>
     <description value="Maps volumetric data creating surface of constant data values."/>
 </module>

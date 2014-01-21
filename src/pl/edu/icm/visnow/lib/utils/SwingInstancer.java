@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,14 +35,13 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.utils;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
-import pl.edu.icm.visnow.lib.basic.readers.ReadUCD.ReadUCD;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -50,7 +50,12 @@ import pl.edu.icm.visnow.lib.basic.readers.ReadUCD.ReadUCD;
  */
 public class SwingInstancer 
 {
-   public static void swingRun (Runnable r)
+    private static final Logger LOGGER = Logger.getLogger(SwingInstancer.class);
+    /**
+     * Synchronously runs <code>r</code> in Swing dispatch thread.
+     * @param r Runnable to be called
+     */
+   public static void swingRunAndWait(Runnable r)
    {
       if(SwingUtilities.isEventDispatchThread())
       {
@@ -63,10 +68,10 @@ public class SwingInstancer
             SwingUtilities.invokeAndWait(r);
          } catch (InterruptedException ex)
          {
-            Logger.getLogger(ReadUCD.class.getName()).log(Level.SEVERE, null, ex);
+             LOGGER.warn("", ex);
          } catch (InvocationTargetException ex)
          {
-            Logger.getLogger(ReadUCD.class.getName()).log(Level.SEVERE, null, ex);
+             LOGGER.warn("", ex);
          }
       }
    }

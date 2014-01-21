@@ -37,6 +37,7 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.lib.basic.filters.MulticomponentHistogram;
 
+import java.util.ArrayList;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
 import pl.edu.icm.visnow.datasets.Field;
 import pl.edu.icm.visnow.datasets.RegularField;
@@ -89,11 +90,10 @@ public class Core {
         
         
         //long t0 = System.currentTimeMillis();
-        
-        outField = new RegularField(histDims);
         float[][] affine = null;
         float[][] ext = null;
-        
+        ArrayList<DataArray> outData = new ArrayList<DataArray>();
+        boolean roundByteDimsTo32 = params.isRoundByteDimsTo32();
         
         switch(params.getBinning()) {
             case Params.BINNING_BY_COMPONENTS:
@@ -107,20 +107,24 @@ public class Core {
                     float[] hist = null;
 
                     if(ops[i].getComponent() == null || ops[i].getComponent().getVeclen() == 1) {
-                        hist = HistogramBuilder.buildDataHistogram(histDims, data, ops[i], params.getFilterConditions(), params.getFilterConditionsLogic());                    
+                        hist = HistogramBuilder.buildDataHistogram(histDims, roundByteDimsTo32, data, ops[i], params.getFilterConditions(), params.getFilterConditionsLogic());                    
                         if(hist != null) {
-                            outField.addData(DataArray.create(hist, 1, ops[i].toString()));                
+                            outData.add(DataArray.create(hist, 1, ops[i].toString()));                
                         }
                     } else {
-                        hist = HistogramBuilder.buildVectorDataHistogram(histDims, data, ops[i], params.getFilterConditions(), params.getFilterConditionsLogic());                    
+                        hist = HistogramBuilder.buildVectorDataHistogram(histDims, roundByteDimsTo32, data, ops[i], params.getFilterConditions(), params.getFilterConditionsLogic());                    
                         if(hist != null) {
-                            outField.addData(DataArray.create(hist, ops[i].getComponent().getVeclen(), ops[i].toString()));                
+                            outData.add(DataArray.create(hist, ops[i].getComponent().getVeclen(), ops[i].toString()));                
                         }
                     }
                     
                     fireStatusChanged((float)(i+1)/(float)ops.length);
                 }                
                 
+                outField = new RegularField(histDims);
+                for (int i = 0; i < outData.size(); i++) {
+                    outField.addData(outData.get(i));                    
+                }
                 //calculate outField geometry
                 affine = new float[4][3];
                 ext = new float[2][3];
@@ -130,8 +134,13 @@ public class Core {
                     }                    
                 }
                 for (int i = 0; i < histDims.length; i++) {
-                    ext[0][i] = data[i].getMinv();
-                    ext[1][i] = data[i].getMaxv();                    
+                    if(roundByteDimsTo32 && data[i].getType() == DataArray.FIELD_DATA_BYTE) {
+                        ext[0][i] = 0;
+                        ext[1][i] = 255;                    
+                    } else {
+                        ext[0][i] = data[i].getMinv();
+                        ext[1][i] = data[i].getMaxv();                    
+                    }
                 }                
                 outField.setPhysExts(ext);
                 
@@ -166,7 +175,7 @@ public class Core {
                     if(ops[i].getComponent() == null || ops[i].getComponent().getVeclen() == 1) {
                         hist = HistogramBuilder.buildCoordsHistogram(histDims, histCoords, inField, ops[i], params.getFilterConditions(), params.getFilterConditionsLogic());                    
                         if(hist != null) {
-                            outField.addData(DataArray.create(hist, 1, ops[i].toString()));                
+                            outData.add(DataArray.create(hist, 1, ops[i].toString()));                
                         }
                     } else {
                         hist = HistogramBuilder.buildVectorCoordsHistogram(histDims, histCoords, inField, ops[i], params.getFilterConditions(), params.getFilterConditionsLogic());                    
@@ -182,15 +191,20 @@ public class Core {
                                             tmpHist[m*veclen + l] = hist[m*veclen*veclen + l*veclen + v];
                                         }                                        
                                     }                                    
-                                    outField.addData(DataArray.create(tmpHist, veclen, ops[i].toString()+"_"+v));
+                                    outData.add(DataArray.create(tmpHist, veclen, ops[i].toString()+"_"+v));
                                 }                                
                             } else {
-                                outField.addData(DataArray.create(hist, ops[i].getComponent().getVeclen(), ops[i].toString()));                
+                                outData.add(DataArray.create(hist, ops[i].getComponent().getVeclen(), ops[i].toString()));                
                             }
                         }
                     }
                     
                     fireStatusChanged((float)(i+1)/(float)ops.length);
+                }
+                
+                outField = new RegularField(histDims);                
+                for (int i = 0; i < outData.size(); i++) {
+                    outField.addData(outData.get(i));                    
                 }
                 
                 //calculate outField geometry

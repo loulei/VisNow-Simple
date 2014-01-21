@@ -69,9 +69,9 @@ public class GUI extends JPanel
    public GUI()
    {
       initComponents();
-      componentTable.getColumnModel().getColumn(0).setPreferredWidth(140);
-      componentTable.getColumnModel().getColumn(1).setPreferredWidth(60);
-      componentTable.getColumnModel().getColumn(2).setPreferredWidth(30);
+//      componentTable.getColumnModel().getColumn(0).setPreferredWidth(140);
+//      componentTable.getColumnModel().getColumn(1).setPreferredWidth(60);
+//      componentTable.getColumnModel().getColumn(2).setPreferredWidth(30);
       componentModel = (DefaultTableModel)componentTable.getModel();
       componentModel.addTableModelListener(new TableModelListener()
       {
@@ -106,14 +106,10 @@ public class GUI extends JPanel
         java.awt.GridBagConstraints gridBagConstraints;
 
         minSizeSlider = new javax.swing.JSlider();
-        outButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        componentTable = new javax.swing.JTable();
-        jPanel1 = new javax.swing.JPanel();
         maxComponentsSlider = new pl.edu.icm.visnow.gui.widgets.EnhancedIntSlider();
+        componentTable = new javax.swing.JTable();
+        outButton = new javax.swing.JButton();
 
-        setMinimumSize(new java.awt.Dimension(180, 400));
-        setPreferredSize(new java.awt.Dimension(200, 600));
         setVerifyInputWhenFocusTarget(false);
         setLayout(new java.awt.GridBagLayout());
 
@@ -131,23 +127,24 @@ public class GUI extends JPanel
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
         add(minSizeSlider, gridBagConstraints);
 
-        outButton.setText("output selected sets");
-        outButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                outButtonActionPerformed(evt);
+        maxComponentsSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "max shown components", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+        maxComponentsSlider.setVal(20);
+        maxComponentsSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                maxComponentsSliderStateChanged(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 2, 0, 2);
-        add(outButton, gridBagConstraints);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        add(maxComponentsSlider, gridBagConstraints);
 
+        componentTable.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         componentTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
@@ -174,40 +171,26 @@ public class GUI extends JPanel
                 return canEdit [columnIndex];
             }
         });
-        componentTable.setMinimumSize(new java.awt.Dimension(230, 160));
         componentTable.setOpaque(false);
-        componentTable.setPreferredSize(new java.awt.Dimension(240, 1000));
-        jScrollPane1.setViewportView(componentTable);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 2, 0, 2);
-        add(jScrollPane1, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1.0;
-        add(jPanel1, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        add(componentTable, gridBagConstraints);
 
-        maxComponentsSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "max shown components", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-        maxComponentsSlider.setMinimumSize(new java.awt.Dimension(90, 64));
-        maxComponentsSlider.setPreferredSize(new java.awt.Dimension(200, 67));
-        maxComponentsSlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                maxComponentsSliderStateChanged(evt);
+        outButton.setText("output selected sets");
+        outButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                outButtonActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        add(maxComponentsSlider, gridBagConstraints);
+        add(outButton, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
    private void minSizeSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_minSizeSliderStateChanged
@@ -266,15 +249,15 @@ public class GUI extends JPanel
          tableContent[i][1] = "" + fld.getCellSet(i).getnActiveNodes();
          tableContent[i][2] = fld.getCellSet(i).isSelected();
       }
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          @Override
          public void run()
          {
             componentModel.setDataVector(tableContent, tableHeader);
-            componentTable.getColumnModel().getColumn(0).setPreferredWidth(140);
-            componentTable.getColumnModel().getColumn(1).setPreferredWidth(60);
-            componentTable.getColumnModel().getColumn(2).setPreferredWidth(30);
+//            componentTable.getColumnModel().getColumn(0).setPreferredWidth(140);
+//            componentTable.getColumnModel().getColumn(1).setPreferredWidth(60);
+//            componentTable.getColumnModel().getColumn(2).setPreferredWidth(30);
             componentTable.repaint();
          }
       });
@@ -296,8 +279,6 @@ public class GUI extends JPanel
       
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable componentTable;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private pl.edu.icm.visnow.gui.widgets.EnhancedIntSlider maxComponentsSlider;
     private javax.swing.JSlider minSizeSlider;
     private javax.swing.JButton outButton;

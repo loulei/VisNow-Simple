@@ -129,7 +129,7 @@ public class TubeGlyphs extends VisualizationModule
             updateColors();
          }
       });
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          @Override
          public void run()
@@ -344,20 +344,24 @@ public class TubeGlyphs extends VisualizationModule
    @Override
    public void onActive()
    {
+      Field inFld = ((VNField) getInputFirstValue("inField")).getField();
+      if (inField != inFld)
+      {
+          fromUI = false;
+          fromIn = true;
+      }
       if (!fromUI)
       {
          fromIn = true;
          if (getInputFirstValue("inField") == null)
             return;
-         Field inFld = ((VNField) getInputFirstValue("inField")).getField();
          if (inFld == null || !(inFld instanceof IrregularField))
             return;
-         if (inField != inFld)
-         {
-            inField = (IrregularField)inFld;
-            createTubeGlyphs();
-            ui.setInData(inField);
-         }
+         
+         inField = (IrregularField)inFld;
+         createTubeGlyphs();
+         ui.setInData(inField);
+
          params.setChange(Params.COUNT_CHANGED);
          fromIn = false;
       }

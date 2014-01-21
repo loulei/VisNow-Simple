@@ -995,6 +995,7 @@ public class OrthosliceViewPanel extends ViewPanel implements ComponentListener,
                     holdingWindowRange = true;
                     lastPoint[0] = x;
                     lastPoint[1] = y;
+                    this.setCursor(Cursor.getDefaultCursor());
                 } else if(e.getButton() == MouseEvent.BUTTON3) {
                     if(geomTool != null) {
                         geomTool.mousePressed(e);
@@ -1346,6 +1347,9 @@ public class OrthosliceViewPanel extends ViewPanel implements ComponentListener,
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
+        if(geomTool != null && geomTool.isMouseWheelBlocking())
+            return;
+        
         if ((e.getModifiersEx() & wheelOnmaskShift) == wheelOnmaskShift) {
             int x, y, imgX, imgY;
             x = e.getX()-imagePosX;
@@ -1368,8 +1372,7 @@ public class OrthosliceViewPanel extends ViewPanel implements ComponentListener,
             
             update();
         } else {
-            if(geomTool == null || !geomTool.isMouseWheelBlocking())
-                fireOrthosliceNumberChanged(axis, sliceNumber-e.getWheelRotation());
+            fireOrthosliceNumberChanged(axis, sliceNumber-e.getWheelRotation());
         }
         mouseMoved(e);
     }
@@ -1465,7 +1468,7 @@ public class OrthosliceViewPanel extends ViewPanel implements ComponentListener,
 
     private void firePointsConnectionsCalculablesAdded(int[][] points, int[][] connections, CalculableParameter calculable) {
         for (ViewPanelListener listener : viewPanelListeners) {
-            listener.onViewPanelEvent(new PointsConnectionsCalculablesAddedOrthoPanelEvent(this, points, connections, calculable));
+            listener.onViewPanelEvent(new PCCAddedOrthoPanelEvent(this, points, connections, calculable));
         }
     }
 

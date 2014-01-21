@@ -3,12 +3,12 @@
 <module name="convolution" class="Convolution">
 
     <inputs>
-        <input name="inField1" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
+        <input name="inFieldData" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
             <acceptor>
                 <param name="VECLEN" value="1"/>
             </acceptor>
         </input>
-        <input name="inField2" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
+        <input name="inFieldKernel" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
             <acceptor>
                 <param name="VECLEN" value="1"/>
             </acceptor>
@@ -21,6 +21,7 @@
                 <param name="VECLEN" value="1"/>
             </schema>
         </output>
+        <geometryOutput/>
     </outputs>
     
     <parameters>

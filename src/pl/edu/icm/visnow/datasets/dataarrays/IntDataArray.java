@@ -37,7 +37,7 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.datasets.dataarrays;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import pl.edu.icm.visnow.datasets.TimeData;
 import static pl.edu.icm.visnow.lib.utils.ArrayUtils.*;
 import pl.edu.icm.visnow.lib.utils.RabinHashFunction;
@@ -103,12 +103,12 @@ public class IntDataArray extends DataArray
       recomputeMinMax();
    }
 
-   public IntDataArray(TimeData<int[]> data, int veclen, String name, String units, String[] userData)
+   public IntDataArray(TimeData<int[]> tData, int veclen, String name, String units, String[] userData)
    {
-      super(FIELD_DATA_INT,data.get(0).length/veclen, veclen,name, units, userData);
-      timeData = data;
-      abstractTimeData = timeData;
-      recomputeMinMax();
+        super(FIELD_DATA_INT, (tData == null || tData.get(0) == null) ? -1 : tData.get(0).length / veclen, veclen, name, units, userData);
+        abstractTimeData = timeData = tData;
+        setCurrentTime(currentTime);
+        recomputeMinMax();
    }
    
    public IntDataArray(int ndata, int veclen, String name)
@@ -137,7 +137,7 @@ public class IntDataArray extends DataArray
     @Override
    public void resetData()
    {
-      data = timeData.get(currentFrame);
+      data = timeData.getData(currentTime);
       timeData.clear();
       timeData.add(data);
    }
@@ -149,9 +149,9 @@ public class IntDataArray extends DataArray
       {
          timeData.setData((int[])d, time);
          currentTime = time;
-         recomputeMinMax();
          timeData.setCurrentTime(time);
          data = timeData.getData();
+         recomputeMinMax();
       }
    }
 
@@ -168,17 +168,7 @@ public class IntDataArray extends DataArray
    }
       
    @Override
-   public void setCurrentFrame(int currentFrame)
-   {
-      //currentFrame = Math.max(0, Math.min(currentFrame, timeData.size()) - 1);
-      currentFrame = Math.max(0, Math.min(currentFrame, timeData.size()));
-      //data = timeData.get(currentFrame);
-      data = timeData.getData(timeData.getTime(currentFrame));
-      this.currentFrame = currentFrame;
-   }
-   
-   @Override
-   public void setCurrentTime(float currentTime)
+   public final void setCurrentTime(float currentTime)
    {
       if (currentTime == timeData.getCurrentTime() && data != null)
          return;
@@ -205,10 +195,6 @@ public class IntDataArray extends DataArray
                if (dta[i] > maxv)
                   maxv = dta[i];
             }
-            setMinv(minv);
-            setMaxv(maxv);
-            setPhysMin(minv);
-            setPhysMax(maxv);
          } else
          {
             for (int i = 0; i < dta.length; i += vlen)
@@ -216,17 +202,20 @@ public class IntDataArray extends DataArray
                float v = 0;
                for (int j = 0; j < vlen; j++)
                   v += dta[i + j] * dta[i + j];
-               if (v > maxv)
+               v = (float) Math.sqrt(v);
+               if (v > maxv) {
                   maxv = v;
+               }
+               if (v < minv) {
+                  minv = v;
+               }
             }
-            maxv = (float) Math.sqrt(maxv);
-            setMinv(0);
-            setMaxv(maxv);
-            setPhysMin(0);
-            setPhysMax(maxv);
          }
-         hash = RabinHashFunction.hash(dta);
       }
+      recomputePhysMinMax(minv, maxv);
+      setMinv(minv);
+      setMaxv(maxv);        
+      hash = RabinHashFunction.hash(data);
    }
 
     @Override
@@ -249,10 +238,6 @@ public class IntDataArray extends DataArray
                if (dta[i] > maxv)
                   maxv = dta[i];
             }
-            setMinv(minv);
-            setMaxv(maxv);
-            setPhysMin(minv);
-            setPhysMax(maxv);
          } else
          {
             for (int i = 0, m = 0; i < dta.length; i += vlen, m++)
@@ -262,18 +247,66 @@ public class IntDataArray extends DataArray
                float v = 0;
                for (int j = 0; j < vlen; j++)
                   v += dta[i + j] * dta[i + j];
-               if (v > maxv)
+               v = (float) Math.sqrt(v);
+               if (v > maxv) {
                   maxv = v;
+               }
+               if (v < minv) {
+                  minv = v;
+               }
             }
-            maxv = (float) Math.sqrt(maxv);
-            setMinv(0);
-            setMaxv(maxv);
-            setPhysMin(0);
-            setPhysMax(maxv);
          }
-         hash = RabinHashFunction.hash(dta);
       }
+      recomputePhysMinMax(minv, maxv);
+      setMinv(minv);
+      setMaxv(maxv);        
+      hash = RabinHashFunction.hash(data);
    }
+   
+    @Override
+    public void recomputeMinMax(TimeData<boolean[]> timeMask) {
+      float minv = Float.MAX_VALUE;
+      float maxv = -Float.MAX_VALUE;
+      ArrayList<Float> timeline = timeData.getTimeSeries();
+      for (int step = 0; step < timeline.size(); step++) {
+         int[] dta = timeData.getData(timeline.get(step));
+         boolean[] mask = timeMask.getData(timeline.get(step));
+         int vlen = getVeclen();
+         if (vlen == 1)
+         {
+            for (int i = 0; i < dta.length; i++)
+            {
+               if (!mask[i])
+                  continue;
+               if (dta[i] < minv)
+                  minv = dta[i];
+               if (dta[i] > maxv)
+                  maxv = dta[i];
+            }
+         } else
+         {
+            for (int i = 0, m = 0; i < dta.length; i += vlen, m++)
+            {
+               if (!mask[m])
+                  continue;
+               float v = 0;
+               for (int j = 0; j < vlen; j++)
+                  v += dta[i + j] * dta[i + j];
+               v = (float) Math.sqrt(v);
+               if (v > maxv) {
+                  maxv = v;
+               }
+               if (v < minv) {
+                  minv = v;
+               }
+            }
+         }
+      }
+      recomputePhysMinMax(minv, maxv);
+      setMinv(minv);
+      setMaxv(maxv);        
+      hash = RabinHashFunction.hash(data);
+    }
    
     @Override
    public IntDataArray clone(String newName)
@@ -480,8 +513,8 @@ public class IntDataArray extends DataArray
       if (!(tData.get(0) instanceof int[]) || ((int[])(tData.get(0))).length != ndata * getVeclen())
          return;
       abstractTimeData = timeData = tData;
-      recomputeMinMax();
       setCurrentTime(currentTime);
+      recomputeMinMax();
    }
 
     @Override
@@ -493,52 +526,6 @@ public class IntDataArray extends DataArray
     @Override
     public Object getData() {
         return getIData();
-    }
-
-    @Override
-    public void recomputeMinMax(TimeData<boolean[]> timeMask) {
-      float minv = Float.MAX_VALUE;
-      float maxv = -Float.MAX_VALUE;
-      Vector<Float> timeline = timeData.getTimeSeries();
-      for (int step = 0; step < timeline.size(); step++) {
-         int[] dta = timeData.getData(timeline.get(step));
-         boolean[] mask = timeMask.getData(timeline.get(step));
-         int vlen = getVeclen();
-         if (vlen == 1)
-         {
-            for (int i = 0; i < dta.length; i++)
-            {
-               if (!mask[i])
-                  continue;
-               if (dta[i] < minv)
-                  minv = dta[i];
-               if (dta[i] > maxv)
-                  maxv = dta[i];
-            }
-            setMinv(minv);
-            setMaxv(maxv);
-            setPhysMin(minv);
-            setPhysMax(maxv);
-         } else
-         {
-            for (int i = 0, m = 0; i < dta.length; i += vlen, m++)
-            {
-               if (!mask[m])
-                  continue;
-               float v = 0;
-               for (int j = 0; j < vlen; j++)
-                  v += dta[i + j] * dta[i + j];
-               if (v > maxv)
-                  maxv = v;
-            }
-            maxv = (float) Math.sqrt(maxv);
-            setMinv(0);
-            setMaxv(maxv);
-            setPhysMin(0);
-            setPhysMax(maxv);
-         }
-         hash = RabinHashFunction.hash(dta);
-      }
     }
    
 }

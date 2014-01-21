@@ -61,9 +61,6 @@ public class LineTool extends GeometryTool {
     private Metadata startPointMetadata = null;
     private Metadata endPointMetadata = null;
 
-    private boolean holding = false;
-
-
     @Override
     public void paint(Graphics g) {
         if(holding && startPoint != null && currentPoint != null) {
@@ -73,9 +70,11 @@ public class LineTool extends GeometryTool {
         }
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
     }
 
+    @Override
     public void mouseMoved(MouseEvent e) {
         if(holding) {
             currentPoint = e.getPoint();
@@ -83,6 +82,7 @@ public class LineTool extends GeometryTool {
         }
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
         if(holding) {
             holding = false;
@@ -102,16 +102,20 @@ public class LineTool extends GeometryTool {
         }
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
 
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
 
     }

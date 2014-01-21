@@ -58,9 +58,6 @@ public class DiameterTool extends GeometryTool {
     private Point currentPoint = null;
     private Point endPoint = null;
 
-    private boolean holding = false;
-
-
     @Override
     public void paint(Graphics g) {
         if(holding && startPoint != null && currentPoint != null) {
@@ -87,6 +84,7 @@ public class DiameterTool extends GeometryTool {
         }
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
         if(holding) {
             currentPoint = e.getPoint();
@@ -94,14 +92,17 @@ public class DiameterTool extends GeometryTool {
         }
     }
 
+    @Override
     public void mouseMoved(MouseEvent e) {
 
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
 
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
         holding = true;
         this.startPoint = e.getPoint();
@@ -109,6 +110,7 @@ public class DiameterTool extends GeometryTool {
         fireGeometryToolRepaintNeeded();
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
         holding = false;
         this.endPoint = e.getPoint();
@@ -117,10 +119,12 @@ public class DiameterTool extends GeometryTool {
         fireGeometryToolStateChanged();
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
 
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
 
     }
@@ -134,7 +138,7 @@ public class DiameterTool extends GeometryTool {
     public boolean isMouseWheelBlocking() {
         return holding;
     }
-
+    
     @Override
     public int[][] getPoints() {
         if(startPoint == null || endPoint == null)

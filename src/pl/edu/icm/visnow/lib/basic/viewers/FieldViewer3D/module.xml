@@ -1,37 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <module name="field viewer 3D" class="FieldViewer3D">
-
+    <description value="Viewer for 2D and 3D regular fields"/>
     <inputs>
         <input name="inField" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
+            <description value="Input for 3D regular field to view"/>
             <acceptor>
                 <param name="NSPACE" value="3"/>
                 <param name="NDIMS" value="3"/>
                 <param name="AFFINE" value="true"/>
             </acceptor>
         </input>
-        <input name="inPointsGeometryField" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="TRIGGERING:HIDDEN">
+        <input name="inPointsGeometryField" type="pl.edu.icm.visnow.lib.types.VNIrregularField" modifiers="TRIGGERING">
+            <description value="Input for points field"/>
             <acceptor>
                 <param name="NSPACE" value="3"/>
-                <param name="NDIMS" value="1"/>
-                <param name="COORDS" value="true"/>
+                <param name="CELLS_POINT" value="true"/>
             </acceptor>
         </input>
         <input name="inObject" type="pl.edu.icm.visnow.lib.types.VNGeometryObject" modifiers="NORMAL" maxConnections="-1"/>
     </inputs>
 
     <outputs>
-        <output name="outPointsGeometryField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+        <output name="outPointsGeometryField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <description value="Output for selected points and connections"/>
             <schema>
                 <param name="NSPACE" value="3"/>
-                <param name="NDIMS" value="1"/>
-                <param name="COORDS" value="true"/>
+                <param name="CELLS_POINT" value="true"/>
             </schema>
         </output>
-        <geometryOutput/>
     </outputs>
-    
-    <parameters>
-
-    </parameters>
 </module>

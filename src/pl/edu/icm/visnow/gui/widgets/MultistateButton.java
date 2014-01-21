@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,7 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.gui.widgets;
 
@@ -122,7 +124,7 @@ public class MultistateButton extends AbstractButton
    /**
     * Creates a toggle button with the specified texts and initial state.
     *
-    * @param text the strings displayed on the toggle button (its length will be
+    * @param texts the strings displayed on the toggle button (its length will be
     * used as the number of states)
     * @param state initial state of the button
     */
@@ -135,8 +137,8 @@ public class MultistateButton extends AbstractButton
     * Creates a toggle button that has the specified texts and images, and 0 as
     * selected state.
     *
-    * @param text the strings displayed on the button
-    * @param icon the image that the button should display (lengths of texts and
+    * @param texts the strings displayed on the button
+    * @param icons the image that the button should display (lengths of texts and
     * icons should be equal)
     */
    public MultistateButton(String[] texts, Icon[] icons)
@@ -872,16 +874,15 @@ public class MultistateButton extends AbstractButton
 
    @Override
    protected void processMouseEvent(MouseEvent e)
-   {
-      //System.out.println("huhu1");
-      if (e.getID() != MouseEvent.MOUSE_CLICKED)
-         return;
-      if (e.getButton() == MouseEvent.BUTTON1)
-         model.stateUp();
-      if (e.getButton() == MouseEvent.BUTTON3)
-         model.stateDown();
-      repaint();
-      fireStateChanged();
+    {
+        if (super.isEnabled()) {
+            if (e.getID() != MouseEvent.MOUSE_CLICKED)
+                return;
+            if (e.getButton() == MouseEvent.BUTTON1) model.stateUp();
+            else if (e.getButton() == MouseEvent.BUTTON3) model.stateDown();
+            else fireStateChanged();
+            repaint();            
+        }
    }
 
    public int getState()

@@ -4,7 +4,6 @@
     <inputs>
         <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
             <acceptor>
-                <param name="NSPACE" value="3"/>
                 <param name="REGULAR" value="true"/>
                 <param name="NDIMS" value="3"/>
                 <param name="COORDS" value="true"/>

@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,9 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
+
 
 package pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider;
 /*
@@ -82,17 +86,17 @@ implements MouseListener, MouseMotionListener
    protected float startTopVal;
    protected float scale;
    protected int decimalScale = 0;
-   
+
    /** Creates a new instance of BasicFloatSubRangeSliderUI */
    public BasicFloatSubRangeSliderUI()
    {
    }
-   
+
    public static ComponentUI createUI(JComponent c)
    {
       return new BasicFloatSubRangeSliderUI();
    }
-   
+
    @Override
    public void installUI(JComponent c)
    {
@@ -100,7 +104,7 @@ implements MouseListener, MouseMotionListener
       mSlider.addMouseListener(this);
       mSlider.addMouseMotionListener(this);
    }
-   
+
    @Override
    public void uninstallUI(JComponent c)
    {
@@ -108,7 +112,7 @@ implements MouseListener, MouseMotionListener
       mSlider.removeMouseListener(this);
       mSlider.removeMouseMotionListener(this);
    }
-   
+
    @Override
    public void paint(Graphics graphic, JComponent c)
    {
@@ -123,7 +127,7 @@ implements MouseListener, MouseMotionListener
       g.setColor(c.getBackground());
       g.fillRect(0, 0, c.getWidth(), c.getHeight());
       g.translate(d.left, d.top);
-      
+
       bottomValue = ((FloatSubRangeSlider)c).getBottomValue();
       topValue    = ((FloatSubRangeSlider)c).getTopValue();
       min         = ((FloatSubRangeSlider)c).getMinimum();
@@ -141,8 +145,8 @@ implements MouseListener, MouseMotionListener
       int iScale = 1;
       for (int i=0; i<Math.abs(decimalScale); i++)
          iScale*=10;
-      Range range = new Range(min, max, width, false);
-      
+      Range range = new Range((int)(1000.f / Math.max(width, 200)), min, max, false);
+
       if (((FloatSubRangeSlider)c).isPaintTicks())
       {
          int nSteps = range.getNsteps();
@@ -225,7 +229,7 @@ implements MouseListener, MouseMotionListener
          drawDisabledIndex(topPos + 1, 1, ((FloatSubRangeSlider) c).isEnabled());
       }
    }
-   
+
    private void drawIndex(int pos, int orientation, boolean enabled)
    {
       if (orientation == 1)
@@ -233,7 +237,7 @@ implements MouseListener, MouseMotionListener
       else
          g.drawImage(IconsContainer.getIndexL(), pos - 8, hPos+h-16, null);
    }
-   
+
    private void drawDisabledIndex(int pos, int orientation, boolean enabled)
    {
       if (orientation == 1)
@@ -241,11 +245,11 @@ implements MouseListener, MouseMotionListener
       else
          g.drawImage(IconsContainer.getIndexLDisabled(), pos - 8, hPos+h-16, null);
    }
-   
+
    public void mouseClicked(MouseEvent e)
    {
    }
-   
+
    public void mouseDragged(MouseEvent e)
    {
       FloatSubRangeSlider theSlider = (FloatSubRangeSlider)e.getComponent();
@@ -263,19 +267,19 @@ implements MouseListener, MouseMotionListener
          theSlider.setBottomValue(startBottomVal+val,false);
       }
    }
-   
+
    public void mouseEntered(MouseEvent e)
    {
    }
-   
+
    public void mouseExited(MouseEvent e)
    {
    }
-   
+
    public void mouseMoved(MouseEvent e)
    {
    }
-   
+
    public void mousePressed(MouseEvent e)
    {
       FloatSubRangeSlider theSlider = (FloatSubRangeSlider)e.getComponent();
@@ -303,7 +307,7 @@ implements MouseListener, MouseMotionListener
       startTopVal = theSlider.getTopValue();
       startBottomVal = theSlider.getBottomValue();
    }
-   
+
    public void mouseReleased(MouseEvent e)
    {
       FloatSubRangeSlider theSlider = (FloatSubRangeSlider)e.getComponent();

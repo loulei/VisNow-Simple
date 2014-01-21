@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,19 +35,23 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.geometries.gui;
 
 import com.sun.j3d.utils.image.TextureLoader;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.media.j3d.Texture2D;
 import javax.swing.JFileChooser;
-import javax.swing.JPanel;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.apache.log4j.Logger;
 import pl.edu.icm.visnow.datasets.CellSet;
 import pl.edu.icm.visnow.datasets.DataSchema;
 import pl.edu.icm.visnow.datasets.Field;
@@ -67,6 +72,7 @@ import pl.edu.icm.visnow.system.main.VisNow;
  */
 public class DataMappingGUI extends javax.swing.JPanel
 {
+    private static final Logger LOGGER = Logger.getLogger(DataMappingGUI.class);
    private boolean debug = VisNow.isDebug();
    protected Field inField = null;
    protected CellSet inCellSet = null;
@@ -83,7 +89,7 @@ public class DataMappingGUI extends javax.swing.JPanel
    protected boolean transparencyStartNull = false;
    protected boolean simple = !VisNow.allowGUISwitch;
    protected BufferedImage image = null;
-   
+
    protected boolean showNodeCellPanel = true;
    private static final String TEXTURE_FILE_PROPERTY = "visnow.paths.data.last.pl.edu.icm.visnow.geometries.gui.DataMappingGUI";
 
@@ -112,9 +118,9 @@ public class DataMappingGUI extends javax.swing.JPanel
       textureFileChooser.addChoosableFileFilter(jpegImagesFilter);
       textureFileChooser.addChoosableFileFilter(gifImagesFilter);
       textureFileChooser.addChoosableFileFilter(pngImagesFilter);
-      textureFileChooser.addChoosableFileFilter(allImagesFilter);  
+      textureFileChooser.addChoosableFileFilter(allImagesFilter);
    }
-   
+
    public DataMappingGUI(boolean showNodeCellPanel)
    {
       this();
@@ -143,14 +149,14 @@ public class DataMappingGUI extends javax.swing.JPanel
       this.showNodeCellPanel = showNodeCellPanel;
       nodeCellPanel.setVisible(showNodeCellPanel);
    }
-   
+
    private void setTextureDir()
    {
       String fileName = VisNow.get().getMainConfig().getProperty(TEXTURE_FILE_PROPERTY);
       if (fileName != null)
          textureFileChooser.setSelectedFile(new File(fileName));
       else
-         textureFileChooser.setCurrentDirectory(new File(VisNow.get().getMainConfig().getDefaultDataPath()));    
+         textureFileChooser.setCurrentDirectory(new File(VisNow.get().getMainConfig().getDefaultDataPath()));
    }
 
    public void setParams(AbstractDataMappingParams params)
@@ -212,20 +218,20 @@ public class DataMappingGUI extends javax.swing.JPanel
       setInData(inField, params);
    }
 
-   public final void setInData(Field inField, AbstractDataMappingParams params)   
+   public final void setInData(Field inField, AbstractDataMappingParams params)
    {
       if (params != null)
          setParams(params);
       if (params == null || inField == null)
          return;
-      if (lastFieldDataSchema != null && inField.getSchema().isDataCompatibleWith(lastFieldDataSchema, true))
+      if (lastFieldDataSchema != null && inField.getSchema().isDataCompatibleWith(lastFieldDataSchema, true, true))
          return;
       lastFieldDataSchema = inField.getSchema();
       this.inField = inField;
       params.setCellDataMapped(false);
       updateComponentSelectors();
-      
-      SwingInstancer.swingRun(new Runnable()
+
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          @Override
          public void run()
@@ -318,32 +324,29 @@ public class DataMappingGUI extends javax.swing.JPanel
       vComponentPanel.setData(inField.getSchema());
       active = true;
    }
-   
+
    public final void setPresentation(boolean simple)
    {
       this.simple = simple;
-      Dimension simpleDim = new Dimension(200, 310);
-      Dimension expertDim = new Dimension(200, 590);
       colorMappedComponentPanel.setPresentation(simple);
-      
+
       if (simple)
       {
+         redComponentPanel.setPresentation(simple);
+         greenComponentPanel.setPresentation(simple);
+         blueComponentPanel.setPresentation(simple);
          mapPane.remove(texturePanel);
-         mapPane.remove(rgbPanel);
          if (transparencyStartNull)
             mapPane.remove(transparencyPanel);
-         setMinimumSize(simpleDim);
-         setPreferredSize(simpleDim);
-         setMaximumSize(simpleDim);
+
       } else
       {
-         setMinimumSize(expertDim);
-         setPreferredSize(expertDim);
-         setMaximumSize(expertDim);
+         redComponentPanel.setPresentation(simple);
+         greenComponentPanel.setPresentation(simple);
+         blueComponentPanel.setPresentation(simple);
          if (!transparencyStartNull)
             mapPane.remove(transparencyPanel);
          mapPane.addTab("texture", texturePanel);
-         mapPane.addTab("rgb", rgbPanel);
          mapPane.addTab("transp", transparencyPanel);
       }
       datamapPanelChanged();
@@ -367,7 +370,14 @@ public class DataMappingGUI extends javax.swing.JPanel
         nodeDataButton = new javax.swing.JRadioButton();
         cellDataButton = new javax.swing.JRadioButton();
         mapPane = new javax.swing.JTabbedPane();
+        cmap = new javax.swing.JPanel();
         colorMappedComponentPanel = new pl.edu.icm.visnow.geometries.gui.ColorMappedComponentPanel();
+        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+        rgbPanel = new javax.swing.JPanel();
+        redComponentPanel = new pl.edu.icm.visnow.geometries.gui.ColorComponentPanel();
+        greenComponentPanel = new pl.edu.icm.visnow.geometries.gui.ColorComponentPanel();
+        blueComponentPanel = new pl.edu.icm.visnow.geometries.gui.ColorComponentPanel();
+        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         texturePanel = new javax.swing.JPanel();
         uComponentPanel = new pl.edu.icm.visnow.geometries.gui.TextureComponentPanel();
         vComponentPanel = new pl.edu.icm.visnow.geometries.gui.TextureComponentPanel();
@@ -378,25 +388,21 @@ public class DataMappingGUI extends javax.swing.JPanel
         textureImageFlipYCB = new javax.swing.JCheckBox();
         textureImagePanel = new javax.swing.JPanel();
         imagePanel = new pl.edu.icm.visnow.gui.widgets.ImagePanel();
-        rgbPanel = new javax.swing.JPanel();
-        redComponentPanel = new pl.edu.icm.visnow.geometries.gui.ColorComponentPanel();
-        greenComponentPanel = new pl.edu.icm.visnow.geometries.gui.ColorComponentPanel();
-        blueComponentPanel = new pl.edu.icm.visnow.geometries.gui.ColorComponentPanel();
-        jPanel1 = new javax.swing.JPanel();
         transparencyPanel = new javax.swing.JPanel();
         transparencyEditor = new pl.edu.icm.visnow.geometries.gui.TransparencyEditor.TransparencyEditor();
-        jPanel3 = new javax.swing.JPanel();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
         textureFileChooser.setName("textureFileChooser"); // NOI18N
 
-        setMinimumSize(new java.awt.Dimension(200, 590));
-        setPreferredSize(new java.awt.Dimension(235, 590));
         setRequestFocusEnabled(false);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
+            }
+        });
         setLayout(new java.awt.GridBagLayout());
 
-        nodeCellPanel.setMinimumSize(new java.awt.Dimension(180, 20));
         nodeCellPanel.setName("nodeCellPanel"); // NOI18N
-        nodeCellPanel.setPreferredSize(new java.awt.Dimension(220, 20));
         nodeCellPanel.setLayout(new java.awt.GridLayout(1, 0));
 
         nodeCellGroup.add(nodeDataButton);
@@ -428,6 +434,7 @@ public class DataMappingGUI extends javax.swing.JPanel
         gridBagConstraints.weightx = 1.0;
         add(nodeCellPanel, gridBagConstraints);
 
+        mapPane.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
         mapPane.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         mapPane.setName("mapPane"); // NOI18N
         mapPane.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -436,21 +443,70 @@ public class DataMappingGUI extends javax.swing.JPanel
             }
         });
 
-        colorMappedComponentPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        cmap.setName("cmap"); // NOI18N
+        cmap.setLayout(new java.awt.GridBagLayout());
+
         colorMappedComponentPanel.setName("colorMappedComponentPanel"); // NOI18N
-        colorMappedComponentPanel.setPreferredSize(new java.awt.Dimension(220, 530));
-        mapPane.addTab("cmap", colorMappedComponentPanel);
+        colorMappedComponentPanel.setPresentation(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        cmap.add(colorMappedComponentPanel, gridBagConstraints);
+
+        filler3.setName("filler3"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.weighty = 1.0;
+        cmap.add(filler3, gridBagConstraints);
+
+        mapPane.addTab("cmap", cmap);
+
+        rgbPanel.setName("rgbPanel"); // NOI18N
+        rgbPanel.setLayout(new java.awt.GridBagLayout());
+
+        redComponentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "red", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10), new java.awt.Color(204, 0, 51))); // NOI18N
+        redComponentPanel.setName("redComponentPanel"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        rgbPanel.add(redComponentPanel, gridBagConstraints);
+
+        greenComponentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "green", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10), new java.awt.Color(0, 155, 0))); // NOI18N
+        greenComponentPanel.setName("greenComponentPanel"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        rgbPanel.add(greenComponentPanel, gridBagConstraints);
+
+        blueComponentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "blue", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10), new java.awt.Color(0, 64, 255))); // NOI18N
+        blueComponentPanel.setName("blueComponentPanel"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        rgbPanel.add(blueComponentPanel, gridBagConstraints);
+
+        filler2.setName("filler2"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.weighty = 1.0;
+        rgbPanel.add(filler2, gridBagConstraints);
+
+        mapPane.addTab("rgb", rgbPanel);
 
         texturePanel.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-        texturePanel.setMinimumSize(new java.awt.Dimension(180, 530));
         texturePanel.setName("texturePanel"); // NOI18N
-        texturePanel.setPreferredSize(new java.awt.Dimension(220, 530));
         texturePanel.setLayout(new java.awt.GridBagLayout());
 
         uComponentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "u component", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-        uComponentPanel.setMinimumSize(new java.awt.Dimension(200, 130));
         uComponentPanel.setName("uComponentPanel"); // NOI18N
-        uComponentPanel.setPreferredSize(new java.awt.Dimension(230, 130));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
@@ -458,9 +514,7 @@ public class DataMappingGUI extends javax.swing.JPanel
         texturePanel.add(uComponentPanel, gridBagConstraints);
 
         vComponentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "v component", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-        vComponentPanel.setMinimumSize(new java.awt.Dimension(200, 130));
         vComponentPanel.setName("vComponentPanel"); // NOI18N
-        vComponentPanel.setPreferredSize(new java.awt.Dimension(230, 130));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -470,9 +524,7 @@ public class DataMappingGUI extends javax.swing.JPanel
         texturePanel.add(vComponentPanel, gridBagConstraints);
 
         textureFilePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "texture image/colormap", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-        textureFilePanel.setMinimumSize(new java.awt.Dimension(200, 60));
         textureFilePanel.setName("textureFilePanel"); // NOI18N
-        textureFilePanel.setPreferredSize(new java.awt.Dimension(230, 60));
         textureFilePanel.setLayout(new java.awt.GridBagLayout());
 
         readTextureButton.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
@@ -551,11 +603,11 @@ public class DataMappingGUI extends javax.swing.JPanel
         imagePanel.setLayout(imagePanelLayout);
         imagePanelLayout.setHorizontalGroup(
             imagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 238, Short.MAX_VALUE)
+            .addGap(0, 250, Short.MAX_VALUE)
         );
         imagePanelLayout.setVerticalGroup(
             imagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 224, Short.MAX_VALUE)
+            .addGap(0, 615, Short.MAX_VALUE)
         );
 
         textureImagePanel.add(imagePanel, java.awt.BorderLayout.CENTER);
@@ -571,101 +623,22 @@ public class DataMappingGUI extends javax.swing.JPanel
 
         mapPane.addTab("texture", texturePanel);
 
-        rgbPanel.setMinimumSize(new java.awt.Dimension(180, 530));
-        rgbPanel.setName("rgbPanel"); // NOI18N
-        rgbPanel.setPreferredSize(new java.awt.Dimension(220, 530));
-        rgbPanel.setLayout(new java.awt.GridBagLayout());
-
-        redComponentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "red", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10), new java.awt.Color(204, 0, 51))); // NOI18N
-        redComponentPanel.setMinimumSize(new java.awt.Dimension(200, 130));
-        redComponentPanel.setName("redComponentPanel"); // NOI18N
-        redComponentPanel.setPreferredSize(new java.awt.Dimension(230, 130));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        rgbPanel.add(redComponentPanel, gridBagConstraints);
-
-        greenComponentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "green", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10), new java.awt.Color(0, 155, 0))); // NOI18N
-        greenComponentPanel.setMinimumSize(new java.awt.Dimension(200, 130));
-        greenComponentPanel.setName("greenComponentPanel"); // NOI18N
-        greenComponentPanel.setPreferredSize(new java.awt.Dimension(230, 130));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        rgbPanel.add(greenComponentPanel, gridBagConstraints);
-
-        blueComponentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "blue", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10), new java.awt.Color(0, 64, 255))); // NOI18N
-        blueComponentPanel.setMinimumSize(new java.awt.Dimension(200, 130));
-        blueComponentPanel.setName("blueComponentPanel"); // NOI18N
-        blueComponentPanel.setPreferredSize(new java.awt.Dimension(230, 130));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        rgbPanel.add(blueComponentPanel, gridBagConstraints);
-
-        jPanel1.setName("jPanel1"); // NOI18N
-        jPanel1.setPreferredSize(new java.awt.Dimension(233, 50));
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 238, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 154, Short.MAX_VALUE)
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        rgbPanel.add(jPanel1, gridBagConstraints);
-
-        mapPane.addTab("rgb", rgbPanel);
-
-        transparencyPanel.setMinimumSize(new java.awt.Dimension(180, 530));
         transparencyPanel.setName("transparencyPanel"); // NOI18N
-        transparencyPanel.setPreferredSize(new java.awt.Dimension(220, 530));
         transparencyPanel.setLayout(new java.awt.GridBagLayout());
 
         transparencyEditor.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "transparency component", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
-        transparencyEditor.setMinimumSize(new java.awt.Dimension(150, 400));
         transparencyEditor.setName("transparencyEditor"); // NOI18N
-        transparencyEditor.setPreferredSize(new java.awt.Dimension(250, 400));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
         gridBagConstraints.weightx = 1.0;
         transparencyPanel.add(transparencyEditor, gridBagConstraints);
 
-        jPanel3.setMinimumSize(new java.awt.Dimension(100, 100));
-        jPanel3.setName("jPanel3"); // NOI18N
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 238, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 144, Short.MAX_VALUE)
-        );
-
+        filler1.setName("filler1"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weighty = 1.0;
-        transparencyPanel.add(jPanel3, gridBagConstraints);
+        transparencyPanel.add(filler1, gridBagConstraints);
 
         mapPane.addTab("transp", transparencyPanel);
 
@@ -674,7 +647,7 @@ public class DataMappingGUI extends javax.swing.JPanel
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.2;
+        gridBagConstraints.weighty = 1.0;
         add(mapPane, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -682,15 +655,15 @@ public class DataMappingGUI extends javax.swing.JPanel
    {//GEN-HEADEREND:event_readTextureButtonActionPerformed
       if(lastTexturePath != null)
            textureFileChooser.setCurrentDirectory(new File(lastTexturePath));
-      else              
+      else
            textureFileChooser.setCurrentDirectory(new File(VisNow.get().getMainConfig().getUsableDataPath(DataMappingGUI.class)));
-      
+
       if (textureFileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
       {
          String path = textureFileChooser.getSelectedFile().getAbsolutePath();
          lastTexturePath = path.substring(0, path.lastIndexOf(File.separator));
          VisNow.get().getMainConfig().setLastDataPath(lastTexturePath, DataMappingGUI.class);
-         image = ImageUtilities.makeBufferedImage(ImageUtilities.blockingLoad(path));         
+         image = ImageUtilities.loadImage(path);
          imagePathField.setText(path);
          processTextureImage();
       }
@@ -706,11 +679,11 @@ public class DataMappingGUI extends javax.swing.JPanel
             textureImageFlipYCB.setEnabled(false);
             return;
         }
-        
-        textureImageFlipXCB.setEnabled(true);        
-        textureImageFlipYCB.setEnabled(true);        
-        
-        BufferedImage processedImage = image;            
+
+        textureImageFlipXCB.setEnabled(true);
+        textureImageFlipYCB.setEnabled(true);
+
+        BufferedImage processedImage = image;
         if (textureImageFlipXCB.isSelected() || textureImageFlipYCB.isSelected()) {
             if (textureImageFlipXCB.isSelected()) {
                 processedImage = ImageUtilities.flipImageHorizontal(processedImage);
@@ -729,7 +702,7 @@ public class DataMappingGUI extends javax.swing.JPanel
         }
 
     }
-   
+
    private void cellDataButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cellDataButtonActionPerformed
    {//GEN-HEADEREND:event_cellDataButtonActionPerformed
       if (params == null)
@@ -759,29 +732,54 @@ public class DataMappingGUI extends javax.swing.JPanel
         processTextureImage();
     }//GEN-LAST:event_textureImageFlipYCBActionPerformed
 
-  private void datamapPanelChanged()                                         
-   {                                             
-      if (params == null)
-         return;
-      if (simple)
-         params.setColorMode(DataMappingParams.COLORMAPPED);
-      else
+    private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+        LOGGER.debug(getPreferredSize());
+    }//GEN-LAST:event_formComponentResized
+
+    
+  private void datamapPanelChanged()
+   {
+
+      if (params != null)
+         if (simple)
          switch (mapPane.getSelectedIndex())
          {
             case 0:
-               params.setColorMode(DataMappingParams.COLORMAPPED);
+               if(params.getColorMode()!=DataMappingParams.COLORMAPPED){
+                    params.setColorMode(DataMappingParams.COLORMAPPED);
+               }
                break;
             case 1:
-               params.setColorMode(DataMappingParams.UVTEXTURED);
-               break;
-            case 2:
-               params.setColorMode(DataMappingParams.RGB);
+               if(params.getColorMode()!=DataMappingParams.RGB){
+                    params.setColorMode(DataMappingParams.RGB);
+               }
                break;
             default:
                break;
          }
-   }             
-    
+      else
+         switch (mapPane.getSelectedIndex())
+         {
+            case 0:
+                if(params.getColorMode()!=DataMappingParams.COLORMAPPED){
+                    params.setColorMode(DataMappingParams.COLORMAPPED);
+                }
+               break;
+            case 1:
+                if(params.getColorMode()!=DataMappingParams.RGB){
+                    params.setColorMode(DataMappingParams.RGB);
+                }
+               break;
+            case 2:
+                if(params.getColorMode()!=DataMappingParams.UVTEXTURED){
+                    params.setColorMode(DataMappingParams.UVTEXTURED);
+                }
+               break;
+            default:
+               break;
+         }
+   }
+
    public ColorListener getBackgroundColorListener()
    {
       return transparencyEditor.getColorListener();
@@ -805,17 +803,30 @@ public class DataMappingGUI extends javax.swing.JPanel
       active = false;
       active = true;
    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled); //To change body of generated methods, choose Tools | Templates.
+        nodeCellPanel.setEnabled(enabled);
+        nodeDataButton.setEnabled(enabled);
+        cellDataButton.setEnabled(enabled);
+        mapPane.setEnabled(enabled);
+        colorMappedComponentPanel.setEnabled(enabled);
+    }
+   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected pl.edu.icm.visnow.geometries.gui.ColorComponentPanel blueComponentPanel;
     protected javax.swing.ButtonGroup buttonGroup1;
     protected javax.swing.JRadioButton cellDataButton;
+    protected javax.swing.JPanel cmap;
     protected pl.edu.icm.visnow.geometries.gui.ColorMappedComponentPanel colorMappedComponentPanel;
     protected javax.swing.ButtonGroup colormapTextureGroup;
+    protected javax.swing.Box.Filler filler1;
+    protected javax.swing.Box.Filler filler2;
+    protected javax.swing.Box.Filler filler3;
     protected pl.edu.icm.visnow.geometries.gui.ColorComponentPanel greenComponentPanel;
     protected pl.edu.icm.visnow.gui.widgets.ImagePanel imagePanel;
     protected javax.swing.JTextField imagePathField;
-    protected javax.swing.JPanel jPanel1;
-    protected javax.swing.JPanel jPanel3;
     protected javax.swing.JTabbedPane mapPane;
     protected javax.swing.ButtonGroup nodeCellGroup;
     protected javax.swing.JPanel nodeCellPanel;
@@ -834,4 +845,29 @@ public class DataMappingGUI extends javax.swing.JPanel
     protected pl.edu.icm.visnow.geometries.gui.TextureComponentPanel uComponentPanel;
     protected pl.edu.icm.visnow.geometries.gui.TextureComponentPanel vComponentPanel;
     // End of variables declaration//GEN-END:variables
+
+    public static void main(String[] args) {
+        VisNow.initLogging(true);
+        
+        JFrame f = new JFrame();
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        final DataMappingGUI c = new DataMappingGUI();
+        f.add(c);
+        f.pack();
+        Dimension d = f.getSize();
+        d.width = 245;
+        f.setSize(d);
+        f.addMouseListener(new MouseAdapter() {
+            private boolean toggleSimple = true;
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                c.setPresentation(toggleSimple);
+                toggleSimple = !toggleSimple;
+                c.revalidate();
+            }
+            
+        });
+        f.setVisible(true);        
+        f.setVisible(true);
+    }    
 }

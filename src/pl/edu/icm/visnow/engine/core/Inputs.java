@@ -82,6 +82,7 @@ public class Inputs implements Iterable<Input> {
             input.setModuleBox(module);
     }
 
+    @Override
     public Iterator<Input> iterator() {
         return inputs.values().iterator();
     }

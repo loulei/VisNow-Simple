@@ -67,6 +67,7 @@ public class ReadDICOM extends RegularOutFieldVisualizationModule
       parameters = params = new Params();
       params.addChangeListener(new ChangeListener()
       {
+         @Override
          public void stateChanged(ChangeEvent e)
          {
             startAction();
@@ -77,14 +78,16 @@ public class ReadDICOM extends RegularOutFieldVisualizationModule
       core.addFloatValueModificationListener(new FloatValueModificationListener()
       {
 
+         @Override
          public void floatValueChanged(FloatValueModificationEvent e)
          {
             setProgress(e.getVal());
          }
       });
        
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
+         @Override
          public void run()
          {
             computeUI = new GUI();
@@ -122,6 +125,11 @@ public class ReadDICOM extends RegularOutFieldVisualizationModule
    public void onInitFinishedLocal() {
        if(isForceFlag()) 
            computeUI.activateOpenDialog();
+   }
+   
+   @Override
+   public boolean isGenerator() {
+      return true;
    }
    
 }

@@ -40,6 +40,8 @@ package pl.edu.icm.visnow.engine.error;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.Calendar;
 import javax.swing.JPanel;
 import pl.edu.icm.visnow.engine.exception.VNException;
@@ -108,7 +110,7 @@ public class Displayer
       long catchercode;
       Exception ex;
       Object catcher;
-      String msg;
+      String msg;      
 
       public OpenErrorFrame(long catchercode, Exception ex, Object catcher, String msg)
       {
@@ -121,7 +123,7 @@ public class Displayer
       public void run()
       {
 
-         DisplayPanel dp = new DisplayPanel();
+         ErrorDisplayPanel dp = new ErrorDisplayPanel();
          dp.getTabs().add("catcher", new CatcherPanel(catchercode, catcher, msg));
          dp.getTabs().add("exception", getPanel(ex));
          Throwable h = ex.getCause();
@@ -134,7 +136,9 @@ public class Displayer
             ++i;
          }
          JComponentViewer frame = new JComponentViewer(dp, "Exception", 450, 450, true, false);
-         dp.addActionListener(new CloseFrameActionListener(frame, catcher));
+         CloseFrameActionListener al = new CloseFrameActionListener(frame, catcher);
+         dp.addActionListener(al);
+         frame.addWindowListener(al);
          frame.setVisible(true);
       }
    }
@@ -142,7 +146,8 @@ public class Displayer
    private static void normalDisplay(long catchercode, Exception ex, Object catcher, String msg)
    {
       OpenErrorFrame openErFr = new OpenErrorFrame(catchercode, ex, catcher, msg);
-      SwingInstancer.swingRun(openErFr);
+      
+      SwingInstancer.swingRunAndWait(openErFr);
    }
 
    private static JPanel getPanel(Throwable ex)
@@ -209,7 +214,7 @@ public class Displayer
    }
 }
 
-class CloseFrameActionListener implements ActionListener
+class CloseFrameActionListener implements ActionListener, WindowListener
 {
 
    private Frame frame;
@@ -220,14 +225,46 @@ class CloseFrameActionListener implements ActionListener
       this.frame = frame;
       this.catcher = catcher;
    }
+   
+   private void action() {
+      frame.setVisible(false);
+      if(catcher instanceof ModuleElement) {
+          ((ModuleElement)catcher).getModuleBox().getEngine().getApplication().doTheMainReset();
+      }       
+   }
 
     @Override
    public void actionPerformed(ActionEvent e)
    {
-      frame.setVisible(false);
-      if(catcher instanceof ModuleElement) {
-          ((ModuleElement)catcher).getModuleBox().getEngine().getApplication().doTheMainReset();
-      }
-      
+      action();
    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+        action();
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+    }
 }

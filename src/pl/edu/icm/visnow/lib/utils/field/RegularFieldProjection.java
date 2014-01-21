@@ -375,7 +375,7 @@ public class RegularFieldProjection
                         {
                            short f = -10000;
                            for (int k = 0, kk = i * dims[0] * dims[1] + j; k < dims[1]; k++, kk += dims[0])
-                              if (f < insData[k])
+                              if (f < insData[kk])
                                  f = insData[kk];
                            outsData[ii] = f;
                         }
@@ -742,7 +742,7 @@ public class RegularFieldProjection
           axis < 0 || axis >= 3 ||
           function < RegularField3dParams.AVG || function > RegularField3dParams.STDDEV)
          return null;
-      int nThreads = Runtime.getRuntime().availableProcessors();
+      int nThreads = pl.edu.icm.visnow.system.main.VisNow.availableProcessors();
       if (nThreads > 3) nThreads -= 1;
       int[] dims = inField.getDims();
       int nInData = dims[0] * dims[1] * dims[2];

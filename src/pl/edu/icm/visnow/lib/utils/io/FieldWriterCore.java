@@ -1,5 +1,6 @@
+ //<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+Copyright (C) 2006-2013 University of Warsaw, ICM
 
 This file is part of GNU Classpath.
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -33,32 +34,49 @@ module.  An independent module is a module which is not derived from
 or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+exception statement from your version.
+*/
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.utils.io;
 
-import pl.edu.icm.visnow.datasets.RegularField;
+import java.io.PrintWriter;
+import javax.imageio.stream.FileImageOutputStream;
+import org.apache.log4j.Logger;
+import pl.edu.icm.visnow.datasets.Field;
 import pl.edu.icm.visnow.lib.basic.writers.FieldWriter.Params;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public abstract class FieldWriterCore
 {
+   public static final String dataTypes[] =
+      {
+         "boolean", "byte", "short", "integer", "float", "double"
+      };
    protected Params params = new Params();
-   protected RegularField inField = null;
+   protected Field inField = null;
+   protected String fileName;
+   protected String genFileName;
+   protected String outFileName;
+   protected static final Logger LOGGER = Logger.getLogger(FieldWriterCore.class);
+   protected PrintWriter headerWriter;
+   protected PrintWriter contentWriter;
+   protected FileImageOutputStream contentOutput;
 
    public FieldWriterCore()
    {
    }
 
-   public FieldWriterCore(RegularField inField, Params params)
+   public FieldWriterCore(Field inField, Params params)
    {
       this.inField = inField;
       this.params  = params;
+      fileName = params.getFileName();
    }
 
-   public abstract void writeField();
+   public abstract boolean writeField();
    
 }

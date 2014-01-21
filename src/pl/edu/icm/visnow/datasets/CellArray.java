@@ -1,3 +1,4 @@
+///<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,10 +35,11 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.datasets;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import pl.edu.icm.visnow.datasets.cells.Cell;
 import pl.edu.icm.visnow.datasets.cells.Hex;
 import pl.edu.icm.visnow.datasets.cells.Pyramid;
@@ -480,9 +482,9 @@ public class CellArray
 
    /**
     * generates a vector of arrays containg all faces of the cells 
-    * @return vector of cell arrays containing all faces of all cells of the array
+    * @return list of cell arrays containing all faces of all cells of the array
     */
-   public Vector<CellArray> generateFaces()
+   public ArrayList<CellArray> generateFaces()
    {
       Cell[] stdCells = new Cell[Cell.TYPES];
       for (int i = 0; i < stdCells.length; i++)
@@ -538,7 +540,7 @@ public class CellArray
             ci[k] += 1;
          }
       }
-      Vector<CellArray> faces = new Vector<CellArray>();
+      ArrayList<CellArray> faces = new ArrayList<CellArray>();
       for (int i = 0; i < fcs.length; i++)
          if (fcs[i] != null)
          {
@@ -609,6 +611,15 @@ public class CellArray
       }
       edges.setFaceIndices(fcsOf);
       return edges;
+   }
+   
+   public int[] getCellVerts(int i)
+   {
+      if (i < 0 || i >= nCells)
+         return null;
+      int[] cellVerts = new int[cellNodes];
+      System.arraycopy(nodes, i * cellNodes, cellVerts, 0, cellNodes);
+      return cellVerts;
    }
    
    public Cell getCell(int i)
@@ -819,7 +830,7 @@ public class CellArray
    
    public void cleanUpOrientations(float[] coords)
    {
-      int nThreads = Runtime.getRuntime().availableProcessors();
+      int nThreads = pl.edu.icm.visnow.system.main.VisNow.availableProcessors();
       if (orientations == null)
          orientations = new boolean[nCells];
       Thread[] workThreads = new Thread[nThreads];

@@ -38,7 +38,7 @@ exception statement from your version. */
 package pl.edu.icm.visnow.lib.basic.filters.FFT;
 
 import pl.edu.icm.visnow.datasets.RegularField;
-import pl.edu.icm.visnow.datasets.dataarrays.ComplexDataArray;
+import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
 import pl.edu.icm.visnow.lib.utils.fft.FftCore;
 
 /**
@@ -68,8 +68,7 @@ public class Core {
             return;
         }
 
-        outField = new RegularField();
-        outField.setDims(inField.getDims());
+        outField = new RegularField(inField.getDims());
         if (inField.getCoords() == null) {
             outField.setAffine(inField.getAffine());
         } else {
@@ -85,21 +84,15 @@ public class Core {
             
             if(params.getDirection() == Params.DIRECTION_FORWARD) {
                 fourier.calculateFFT(params.getOrigin() == Params.ORIGIN_CENTER);
-                outField.addData(
-                    new ComplexDataArray(
-                    fourier.getRealOutput(),
-                    fourier.getImagOutput(),
-                    1,
-                    "FT_" + inField.getData(i).getName()));
+                DataArray fft = fourier.getOutput();
+                fft.setName("FT_" + inField.getData(i).getName());
+                outField.addData(fft);
             }
             else {
                 fourier.calculateIFFT(params.getOrigin() == Params.ORIGIN_CENTER);
-                outField.addData(
-                    new ComplexDataArray(
-                    fourier.getRealOutput(),
-                    fourier.getImagOutput(),
-                    1,
-                    "IFT_" + inField.getData(i).getName()));               
+                DataArray ifft = fourier.getOutput();
+                ifft.setName("IFT_" + inField.getData(i).getName());
+                outField.addData(ifft);               
             }
             
         }

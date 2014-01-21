@@ -1,46 +1,4 @@
-/* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
-
-This file is part of GNU Classpath.
-
-GNU Classpath is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-GNU Classpath is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
-
-Linking this library statically or dynamically with other modules is
-making a combined work based on this library.  Thus, the terms and
-conditions of the GNU General Public License cover the whole
-combination.
-
-As a special exception, the copyright holders of this library give you
-permission to link this library with independent modules to produce an
-executable, regardless of the license terms of these independent
-modules, and to copy and distribute the resulting executable under
-terms of your choice, provided that you also meet, for each linked
-independent module, the terms and conditions of the license of that
-module.  An independent module is a module which is not derived from
-or based on this library.  If you modify this library, you may extend
-this exception to your version of the library, but you are not
-obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
-
-package pl.edu.icm.visnow.geometries.utils.transform;
-/*
- * LocalToWindow.java
- *
- * Created on May 15, 2004, 10:51 PM
- */
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /*
  *      @(#)LocalToWindow.java 1.2 99/02/08 15:39:12
  *
@@ -70,13 +28,28 @@ package pl.edu.icm.visnow.geometries.utils.transform;
  * facility. Licensee represents and warrants that it will not use or
  * redistribute the Software for such purposes.
  */
+//</editor-fold>
+
+package pl.edu.icm.visnow.geometries.utils.transform;
+/*
+ * LocalToWindow.java
+ *
+ * Created on May 15, 2004, 10:51 PM
+ */
+
+
+import java.awt.Dimension;
+import java.awt.Point;
+import javax.media.j3d.*;
+import javax.vecmath.*;
 
 /**
  * Utility class for doing local->window transformations for case where
  * Canvas3D is a simple display such as a monitor. This won't work for the
  * more complex cases (i.e. a multiple canvases, head tracking, etc).
- *
+ * <p/>
  * Usage:
+ * <pre>
  *    // after the canvas and node are created
  *    LocalToWindow locToWindow = LocalToWindow(node, canvas);
  *    ...
@@ -84,17 +57,13 @@ package pl.edu.icm.visnow.geometries.utils.transform;
  *    // changed)
  *    locToWindow.update(); // make sure transforms are up to date
  *
- *    Point3d[] localPts = <some local coords to transform >
- *    Point[] windowPts = <the area to put the tranformed pts >
- *    for (int i = 0; i < localPts.length; i++) {
+ *    Point3d[] localPts = &lt; some local coords to transform >
+ *    Point[] windowPts = &lt; the area to put the tranformed pts >
+ *    for (int i = 0; i &lt; localPts.length; i++) {
  *       locToWindow.transformPt(localPts[i], windowPts[i]);
  *    }
+ * </pre>
  */
-import java.awt.Dimension;
-import java.awt.Point;
-import javax.media.j3d.*;
-import javax.vecmath.*;
-
 public class LocalToWindow
 {
    Canvas3D canvas = null;
@@ -141,7 +110,7 @@ public class LocalToWindow
     * you are transforming several points, you only need to call this method
     * once.
     */
-   public void update()
+   public final void update()
    {
       if ((this.canvas != null) && (this.node != null))
       {
@@ -358,4 +327,8 @@ public class LocalToWindow
       return d;
    }
 
+   public Transform3D getLocalToVworld()
+   {
+      return localToVworld;
+   }
 }

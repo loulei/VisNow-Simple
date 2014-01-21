@@ -64,6 +64,7 @@ public class Display3DFrame extends JFrame
    public Display3DFrame()
    {
  	   chooser.setCurrentDirectory(new File(VisNow.get().getMainConfig().getWorkeffectPath()));
+           chooser.setAcceptAllFileFilterUsed(false);
       JPopupMenu.setDefaultLightWeightPopupEnabled(false);
       log.debug("init frame");
       initComponents();
@@ -85,8 +86,7 @@ public class Display3DFrame extends JFrame
 
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jpegItem = new javax.swing.JMenuItem();
-        pngItem = new javax.swing.JMenuItem();
+        saveAsItem = new javax.swing.JMenuItem();
         ctrlsItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         resetItem = new javax.swing.JMenuItem();
@@ -106,21 +106,14 @@ public class Display3DFrame extends JFrame
 
         jMenu1.setText("File");
 
-        jpegItem.setText("save as jpeg");
-        jpegItem.addActionListener(new java.awt.event.ActionListener() {
+        saveAsItem.setText("save as...");
+        saveAsItem.setToolTipText("");
+        saveAsItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jpegItemActionPerformed(evt);
+                saveAsItemActionPerformed(evt);
             }
         });
-        jMenu1.add(jpegItem);
-
-        pngItem.setText("save as png");
-        pngItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pngItemActionPerformed(evt);
-            }
-        });
-        jMenu1.add(pngItem);
+        jMenu1.add(saveAsItem);
 
         ctrlsItem.setText("open controls");
         ctrlsItem.addActionListener(new java.awt.event.ActionListener() {
@@ -217,29 +210,36 @@ private void ctrlsItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
    displayPanel.displayControls();
 }//GEN-LAST:event_ctrlsItemActionPerformed
 
-private void pngItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pngItemActionPerformed
+private void saveAsItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsItemActionPerformed
 //   JFileChooser chooser = new JFileChooser();
-   FileNameExtensionFilter pngFilter =
-           new FileNameExtensionFilter("PNG image file", "png", "PNG", "jpeg", "JPEG");
-   chooser.setFileFilter(pngFilter);
-   displayPanel.newOffScreen();
-//   chooser.setCurrentDirectory(new File(VisNow.get().getMainConfig().getLastApplicationsPath()));
-   int returnVal = chooser.showSaveDialog(null);
-   if (returnVal == JFileChooser.APPROVE_OPTION)
-      displayPanel.writePNG( VNFileChooser.filenameWithExtenstionAddedIfNecessary( chooser.getSelectedFile(), pngFilter ) );
-}//GEN-LAST:event_pngItemActionPerformed
+    
+//    FileNameExtensionFilter allImagesFilter =
+//            new FileNameExtensionFilter("All image files", "jpg", "jpeg", "gif", "png", "bmp", "pcx", "tif", "tiff", "JPG", "JPEG", "GIF", "PNG", "BMP", "TIF", "TIFF", "PCX");
+    FileNameExtensionFilter jpegImagesFilter = new FileNameExtensionFilter("JPEG images (*.jpg, *.jpeg)", "jpg", "jpeg", "JPG", "JPEG");
+    FileNameExtensionFilter gifImagesFilter =
+            new FileNameExtensionFilter("GIF images (*.gif)", "gif", "GIF");
+    FileNameExtensionFilter pngImagesFilter =
+            new FileNameExtensionFilter("PNG images (*.png)", "png", "PNG");
+    FileNameExtensionFilter tiffImagesFilter =
+           new FileNameExtensionFilter("TIFF images (*.tif, *.tiff)", "tif", "TIF", "tiff", "TIFF");
+    FileNameExtensionFilter bmpImagesFilter =
+           new FileNameExtensionFilter("BMP images (*.bmp)", "bmp", "BMP");
+    FileNameExtensionFilter pcxImagesFilter =
+           new FileNameExtensionFilter("PCX images (*.pcx)", "pcx", "PCX");
 
-private void jpegItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jpegItemActionPerformed
-//   JFileChooser chooser = new JFileChooser();
-   FileNameExtensionFilter jpegFilter =
-           new FileNameExtensionFilter("JPEG image file", "jpg", "JPG", "jpeg", "JPEG");
-   chooser.setFileFilter(jpegFilter);
-   displayPanel.newOffScreen();
+    chooser.addChoosableFileFilter(jpegImagesFilter);
+    chooser.addChoosableFileFilter(gifImagesFilter);
+    chooser.addChoosableFileFilter(pngImagesFilter);
+    chooser.addChoosableFileFilter(tiffImagesFilter);
+    chooser.addChoosableFileFilter(bmpImagesFilter);
+    chooser.addChoosableFileFilter(pcxImagesFilter);
+    displayPanel.newOffScreen();
 //   chooser.setCurrentDirectory(new File(VisNow.get().getMainConfig().getLastApplicationsPath()));
    int returnVal = chooser.showSaveDialog(null);
-   if (returnVal == JFileChooser.APPROVE_OPTION)
-      displayPanel.writeJpeg( VNFileChooser.filenameWithExtenstionAddedIfNecessary(chooser.getSelectedFile(), jpegFilter) );
-}//GEN-LAST:event_jpegItemActionPerformed
+   if (returnVal == JFileChooser.APPROVE_OPTION) {
+       displayPanel.writeImage(VNFileChooser.fileWithExtensionAddedIfNecessary(chooser.getSelectedFile(), (FileNameExtensionFilter)chooser.getFileFilter()));
+   }
+}//GEN-LAST:event_saveAsItemActionPerformed
 
     private void lockMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lockMenuItemActionPerformed
         locked = true;
@@ -284,12 +284,11 @@ private void jpegItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jpegItem;
     private javax.swing.JMenuItem lightItem;
     private javax.swing.JMenuItem lockMenuItem;
     private javax.swing.JMenuItem objItem;
-    private javax.swing.JMenuItem pngItem;
     private javax.swing.JMenuItem resetItem;
+    private javax.swing.JMenuItem saveAsItem;
     private javax.swing.JCheckBoxMenuItem stereoItem;
     private javax.swing.JMenu transformMenu;
     private javax.swing.JMenuItem unlockMenuItem;

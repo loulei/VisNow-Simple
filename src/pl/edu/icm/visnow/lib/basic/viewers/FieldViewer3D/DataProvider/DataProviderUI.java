@@ -44,6 +44,8 @@ import pl.edu.icm.visnow.datasets.RegularField;
 import pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D.ViewPanels.OrthosliceNumberChangedEvent;
 import pl.edu.icm.visnow.lib.utils.SwingInstancer;
 import pl.edu.icm.visnow.system.main.VisNow;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 /**
  *
@@ -142,7 +144,7 @@ public class DataProviderUI extends javax.swing.JPanel implements DataProviderPa
     }
 
     public void updateGUI() {
-        SwingInstancer.swingRun(new Runnable() {
+        SwingInstancer.swingRunAndWait(new Runnable() {
 
             @Override
             public void run() {
@@ -253,6 +255,9 @@ public class DataProviderUI extends javax.swing.JPanel implements DataProviderPa
                 overlayRange.setLowUp(dataProviderParams.getSimpleOverlayLow(), dataProviderParams.getSimpleOverlayUp());
 
                 overlaySlider.setValue((int) (overlaySlider.getMaximum() * dataProviderParams.getOverlayOpacity()));
+                
+                componentColormappingPanel1.updateGUI();
+                
                 silent = false;
 
             }
@@ -260,7 +265,7 @@ public class DataProviderUI extends javax.swing.JPanel implements DataProviderPa
     }
 
     public void setInfield(final RegularField inField) {
-        SwingInstancer.swingRun(new Runnable() {
+        SwingInstancer.swingRunAndWait(new Runnable() {
 
             @Override
             public void run() {
@@ -400,13 +405,11 @@ public class DataProviderUI extends javax.swing.JPanel implements DataProviderPa
         zField = new javax.swing.JTextField();
 
         setMinimumSize(new java.awt.Dimension(200, 700));
-        setPreferredSize(new java.awt.Dimension(200, 700));
+        setPreferredSize(new java.awt.Dimension(200, 800));
         setLayout(new java.awt.GridBagLayout());
 
         topPanel.setLayout(new java.awt.BorderLayout());
 
-        dataPane.setMinimumSize(new java.awt.Dimension(200, 260));
-        dataPane.setPreferredSize(new java.awt.Dimension(200, 250));
         dataPane.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 dataPaneStateChanged(evt);
@@ -530,8 +533,6 @@ public class DataProviderUI extends javax.swing.JPanel implements DataProviderPa
         add(topPanel, gridBagConstraints);
 
         overlayPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        overlayPanel.setMinimumSize(new java.awt.Dimension(150, 270));
-        overlayPanel.setPreferredSize(new java.awt.Dimension(200, 270));
         overlayPanel.setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
@@ -556,14 +557,10 @@ public class DataProviderUI extends javax.swing.JPanel implements DataProviderPa
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
         overlayPanel.add(overlaySlider, gridBagConstraints);
 
-        jPanel2.setMinimumSize(new java.awt.Dimension(200, 220));
-        jPanel2.setPreferredSize(new java.awt.Dimension(200, 220));
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
         dataOverlayCB.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         dataOverlayCB.setText("data threshold overlay");
-        dataOverlayCB.setMinimumSize(new java.awt.Dimension(98, 24));
-        dataOverlayCB.setPreferredSize(new java.awt.Dimension(98, 24));
         dataOverlayCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dataOverlayCBActionPerformed(evt);
@@ -578,7 +575,6 @@ public class DataProviderUI extends javax.swing.JPanel implements DataProviderPa
 
         overlayComponentSelector.setEnabled(false);
         overlayComponentSelector.setMinimumSize(new java.awt.Dimension(150, 45));
-        overlayComponentSelector.setPreferredSize(new java.awt.Dimension(200, 45));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -1029,5 +1025,14 @@ private void dataPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
     public void setSimpleGUI(boolean simpleGUI) {
         this.simple = simpleGUI;
         updateGUI();
+    }
+    
+        public static void main(String[] args) {
+        JFrame f = new JFrame();
+        f.add(new DataProviderUI());
+        f.pack();
+        f.setVisible(true);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        
     }
 }

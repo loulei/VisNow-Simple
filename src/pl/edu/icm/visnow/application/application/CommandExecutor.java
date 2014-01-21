@@ -162,7 +162,16 @@ public class CommandExecutor
 
    protected void deleteLibrary(LibraryDeleteCommand command)
    {
-      throw new UnsupportedOperationException("Hubert");
+      try
+      {
+         application.getAccess("Add Library (ACE-0)");
+      } catch (InterruptedException ex)
+      {
+         return;
+      }
+      application.getLibraries().deleteLibrary(command.getName());
+      application.getFrames().getExecutor().refreshLibraries();
+      application.releaseAccess();
    }
    //</editor-fold>
 
@@ -356,15 +365,13 @@ public class CommandExecutor
       {
          return;
       }
-      //System.out.println("ADDING LINK TO ENGINE");
-      application.getEngine().getExecutor().addLink(command.getName(), command.isActive());
-      //System.out.println("ADDING LINK WIDGET");
-      application.getArea().getInput().addLinkWidget(command.getName());
-      if (command.isActive())
-      {
-         application.getEngine().getModule(command.getName().getInputModule()).startAction();
+      if(application.getEngine().getExecutor().addLink(command.getName(), command.isActive())) {
+            application.getArea().getInput().addLinkWidget(command.getName());
+            if (command.isActive())
+            {
+               application.getEngine().getModule(command.getName().getInputModule()).startAction();
+            }          
       }
-      //System.out.println("ADDED!!\n\n");
       application.releaseAccess();
    }
 
@@ -379,6 +386,7 @@ public class CommandExecutor
       }
       application.getEngine().getExecutor().deleteLink(command.getName());
       application.getArea().getInput().deleteLinkWidget(command.getName());
+      application.getArea().selectNull();      
       application.releaseAccess();
    }
    //</editor-fold>

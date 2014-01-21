@@ -41,6 +41,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Vector;
 import java.util.concurrent.Semaphore;
 import pl.edu.icm.visnow.application.application.Application;
@@ -56,6 +57,7 @@ import pl.edu.icm.visnow.engine.logging.VNLogger;
 import pl.edu.icm.visnow.engine.core.Input;
 import pl.edu.icm.visnow.engine.main.ModuleBox;
 import pl.edu.icm.visnow.engine.main.ModuleElement;
+import pl.edu.icm.visnow.engine.main.ModuleSaturation;
 import pl.edu.icm.visnow.engine.messages.Message;
 
 
@@ -314,6 +316,8 @@ public class Engine extends Element implements ElementKiller {
         lockup.release();
         VNLogger.debugEngineLock("RELEASE");
         // TODO: finish action
+        
+        engineSaturationCheck();
     }
 
     private void onFinishActionMessage(Message message) {
@@ -400,6 +404,31 @@ public class Engine extends Element implements ElementKiller {
 
     public void correctModuleCount(int c) {
         if(moduleNumber<=c) moduleNumber = c+1;
+    }
+
+    public void engineSaturationCheck() {
+        Iterator<Entry<String,ModuleBox>> it = modules.entrySet().iterator();
+        boolean wrongData = false;
+        boolean noData = false;
+        while(it.hasNext()) {
+            Entry<String,ModuleBox> entry = it.next();
+            ModuleSaturation sat = entry.getValue().getElement().getSaturation();
+            if(!wrongData && sat == ModuleSaturation.wrongData) {
+                wrongData = true;
+            }            
+            if(!noData && sat == ModuleSaturation.noData) {
+                noData = true;
+            }            
+        }
+        
+        if(!wrongData && !noData) {
+            application.setStatus(Application.ApplicationStatus.OK);
+        } else if(wrongData) {
+            application.setStatus(Application.ApplicationStatus.ERROR);
+        } else if(noData) {
+            application.setStatus(Application.ApplicationStatus.WARNING);
+        }
+        
     }
 
 

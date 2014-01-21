@@ -1,5 +1,6 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+Copyright (C) 2006-2013 University of Warsaw, ICM
 
 This file is part of GNU Classpath.
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -33,7 +34,10 @@ module.  An independent module is a module which is not derived from
 or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+exception statement from your version.
+*/
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.gui.widgets;
 
@@ -46,13 +50,13 @@ import java.util.Hashtable;
 import java.util.Locale;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
+//import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.log4j.Logger;
-import pl.edu.icm.visnow.lib.utils.SwingInstancer;
-import pl.edu.icm.visnow.system.main.VisNow;
+//import org.apache.log4j.Logger;
+//import pl.edu.icm.visnow.lib.utils.SwingInstancer;
+//import pl.edu.icm.visnow.system.main.VisNow;
 
 /**
  * This is extended version of standard Slider with following features:
@@ -76,7 +80,7 @@ import pl.edu.icm.visnow.system.main.VisNow;
  */
 public class FloatSlider extends javax.swing.JPanel implements Serializable, MouseListener {
 
-    private static final Logger LOGGER = Logger.getLogger(FloatSlider.class);
+//    private static final Logger LOGGER = Logger.getLogger(FloatSlider.class);
     protected float min = 0f;
     protected float max = 1f;
     protected float val = 0.5f;
@@ -146,8 +150,7 @@ public class FloatSlider extends javax.swing.JPanel implements Serializable, Mou
         slider.setPaintLabels(true);
         slider.setPaintTicks(true);
         slider.setMinimumSize(new java.awt.Dimension(40, 42));
-        slider.setPreferredSize(new java.awt.Dimension(127, 42));
-        slider.setRequestFocusEnabled(false);
+        slider.setPreferredSize(new java.awt.Dimension(60, 42));
         slider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 sliderStateChanged(evt);
@@ -281,7 +284,7 @@ private void showFieldsBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     }
 
 private void minFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minFieldActionPerformed
-    LOGGER.trace("active: " + active);
+    //LOGGER.debug("active: " + active);
     if (!active) return; //return if passive 
 
     //1. get value
@@ -291,7 +294,7 @@ private void minFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     }//GEN-LAST:event_minFieldActionPerformed
 
 private void maxFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxFieldActionPerformed
-    LOGGER.trace("active: " + active);
+    //LOGGER.debug("active: " + active);
     if (!active) return; //return if passive 
 
     //1. get value      
@@ -301,7 +304,7 @@ private void maxFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_maxFieldActionPerformed
 
 private void valFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_valFieldActionPerformed
-    LOGGER.trace("active: " + active);
+    //LOGGER.debug("active: " + active);
     if (!active) return; //return if passive 
 
     //1. get value
@@ -311,7 +314,7 @@ private void valFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_valFieldActionPerformed
 
 private void sliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderStateChanged
-    LOGGER.trace("active: " + active);
+    //LOGGER.debug("active: " + active);
     if (!active) return; //return if passive 
 
     //1. get value
@@ -320,7 +323,7 @@ private void sliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:
     else if (slider.getValue() == slider.getMaximum()) valNew = max;
     else valNew = rMin + slider.getValue() * delta;
 
-    LOGGER.trace("slider min/max/new: " + slider.getMinimum() + " " + slider.getMaximum() + " " + slider.getValue() + " min/max/cur/new: " + min + " " + max + " " + val + " :" + valNew);
+    //LOGGER.debug("slider min/max/new: " + slider.getMinimum() + " " + slider.getMaximum() + " " + slider.getValue() + " min/max/cur/new: " + min + " " + max + " " + val + " :" + valNew);
 
     //2. call active setter (validate values, update controls, call listeners) 
     setVal(valNew, true, false);
@@ -334,15 +337,15 @@ private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRS
     slider.setValue((int) ((val - rMin) / delta));
     active = true;
 
-    LOGGER.trace(this.getWidth() + "x" + this.getHeight() + " slider:" + this.slider.getWidth());
-    LOGGER.trace("preferredSize: " + this.getPreferredSize() + " minimumSize: " + this.getMinimumSize());
+    //LOGGER.debug(this.getWidth() + "x" + this.getHeight() + " slider:" + this.slider.getWidth());
+    //LOGGER.debug("preferredSize: " + this.getPreferredSize() + " minimumSize: " + this.getMinimumSize());
 }//GEN-LAST:event_formComponentResized
 
     /**
      * Sets slider for current value of val.
      */
     private void sliderUpdateThumb() {
-        LOGGER.trace("rmin/rmax/delta/value " + rMin + " " + rMax + " " + delta + " " + val);
+        //LOGGER.debug("rmin/rmax/delta/value " + rMin + " " + rMax + " " + delta + " " + val);
         int sliderPos;
         if (val == max) sliderPos = slider.getMaximum();
         else if (val == min) sliderPos = slider.getMinimum();
@@ -360,13 +363,13 @@ private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRS
      * This method updates slider which results in sliderStateChanged.
      */
     private void sliderUpdateRange() {
-        SwingInstancer.swingRun(new Runnable() {
-            public void run() {
+//        SwingInstancer.swingRunAndWait(new Runnable() {
+//            public void run() {
                 double r = max - min;
                 if (r <= 0)
                     r = 1;
                 double logr = Math.log10(r);
-                int iLogr = (int) (logr + 100) - 100;
+                int iLogr = (int) (logr + 100) - 100; //(int) Math.floor(logr);
                 double mr = r / Math.pow(10., 1. * iLogr);
                 int space = (slider.getWidth() - 30) / 20;
                 if (space < 5)
@@ -407,7 +410,7 @@ private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRS
                 u = (int) Math.round((rMax - rMin) / delta);
                 ddec = 101 - (int) (Math.log10(delta) + 100);
                 logr = Math.log10(Math.max(Math.abs(sMin), Math.abs(sMax)));
-                iLogr = (int) (logr + 100) - 100;
+                iLogr = (int) (logr + 100) - 100; 
                 if (ddec < 0)
                     ddec = 0;
                 if (iLogr > 0)
@@ -433,8 +436,8 @@ private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRS
                 slider.setMaximum(u);
                 slider.setLabelTable(labels);
                 slider.repaint();
-            }
-        });
+//            }
+//        });
     }
 
     /**
@@ -636,7 +639,7 @@ private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRS
      * @param onChangeEvent if true then fireStateChange is called on change.
      */
     private void setVal(float valNew, boolean onChangeEvent, boolean userAction) {
-        LOGGER.trace("valNew/onChange: " + valNew + " " + onChangeEvent + " isEventDispatchThread: " + SwingUtilities.isEventDispatchThread());
+        //LOGGER.debug("valNew/onChange: " + valNew + " " + onChangeEvent + " isEventDispatchThread: " + SwingUtilities.isEventDispatchThread());
         //1. switch to passive
         boolean prevActive = active;
         active = false; //passive update
@@ -764,7 +767,7 @@ private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRS
      * @param object Parameter #1 of the <CODE>ChangeEvent<CODE> constructor.
      */
     private void fireStateChanged() {
-        LOGGER.trace("Active: " + (!((slider.getValueIsAdjusting() && !adjusting) || !active)) + " value: " + val);
+        //LOGGER.debug("Active: " + (!((slider.getValueIsAdjusting() && !adjusting) || !active)) + " value: " + val);
         if ((slider.getValueIsAdjusting() && !adjusting) || !active)
             return;
         java.util.ArrayList list;
@@ -829,51 +832,63 @@ private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRS
             listener.mouseExited(e);
     }
 
-    public static void main(String[] a) {
-        VisNow.initLogging(true);
-        Locale.setDefault(VisNow.LOCALE);
-//       
-//               /* Set the Nimbus look and feel */
-//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-//         */
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(TestFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(TestFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(TestFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(TestFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//        //</editor-fold>
-//
-//       
-        final JFrame f = new JFrame();
-        final FloatSlider fs = new FloatSlider();
-        fs.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-            }
-        });
-
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                f.add(fs);
-                f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                f.setLocation(600, 300);
-                f.pack();
-                f.setVisible(true);
-            }
-        });
+    @Override
+    public void setEnabled(boolean enabled) {
+        slider.setEnabled(enabled);
+        valField.setEnabled(enabled);
+        maxField.setEnabled(enabled);
+        minField.setEnabled(enabled);
+        showFieldsBox.setEnabled(enabled);
     }
+
+//    
+//    
+//    public static void main(String[] a) {
+//        VisNow.initLogging(true);
+//        Locale.setDefault(VisNow.LOCALE);
+////       
+////               /* Set the Nimbus look and feel */
+////        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+////        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+////         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+////         */
+////        try {
+////            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+////                if ("Nimbus".equals(info.getName())) {
+////                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+////                    break;
+////                }
+////            }
+////        } catch (ClassNotFoundException ex) {
+////            java.util.logging.Logger.getLogger(TestFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+////        } catch (InstantiationException ex) {
+////            java.util.logging.Logger.getLogger(TestFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+////        } catch (IllegalAccessException ex) {
+////            java.util.logging.Logger.getLogger(TestFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+////        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+////            java.util.logging.Logger.getLogger(TestFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+////        }
+////        //</editor-fold>
+////
+////       
+//        final JFrame f = new JFrame();
+//        final FloatSlider fs = new FloatSlider();
+//        fs.addChangeListener(new ChangeListener() {
+//            @Override
+//            public void stateChanged(ChangeEvent e) {
+//            }
+//        });
+//
+//        SwingUtilities.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                f.add(fs);
+//                f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//                f.setLocation(600, 300);
+//                f.pack();
+//                f.setVisible(true);
+//            }
+//        });
+//    }
+
 }

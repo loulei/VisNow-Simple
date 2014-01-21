@@ -46,12 +46,19 @@ import pl.edu.icm.visnow.lib.utils.Range;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public class CustomizableColorMap implements ColorMap
 
 {
    public static final int CONTINUOUS = 50;
+
+    /**
+     * @return the active
+     */
+    public Active getActive() {
+        return active;
+    }
    
    protected static enum mapType {STANDARD, TWOCOLOR, THREECOLOR};
    
@@ -73,7 +80,7 @@ public class CustomizableColorMap implements ColorMap
    protected boolean adjusting = false;
    
    public static enum Active{SLEEP, ONETIME, CONTINUOUS};
-   public Active active = Active.CONTINUOUS;
+   private Active active = Active.CONTINUOUS;
    
    public CustomizableColorMap()
    {
@@ -294,6 +301,11 @@ public class CustomizableColorMap implements ColorMap
          fireStateChanged(Active.ONETIME, RenderEvent.COLORS);
    }
 
+   public void setActiveValue(Active active)
+   {
+      this.active = active;
+   }
+   
   /**
     * Utility field holding list of RenderEventListeners.
     */

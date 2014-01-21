@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,8 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.lib.basic.filters.LocalOperations;
 
@@ -97,44 +100,38 @@ public class LocalOps3D implements LocalOps
                byte[] inBData = dataArr.getBData();
                outBData = new byte[nData];
                tmpBData = new byte[nData];
-               for (int i = 0; i < nData; i++)
-                  outBData[i] = inBData[i];
+               System.arraycopy(inBData, 0, outBData, 0, nData);
                break;
             case DataArray.FIELD_DATA_SHORT:
                short[] inSData = dataArr.getSData();
                outSData = new short[nData];
                tmpSData = new short[nData];
-               for (int i = 0; i < nData; i++)
-                  outSData[i] = inSData[i];
+               System.arraycopy(inSData, 0, outSData, 0, nData);
                break;
             case DataArray.FIELD_DATA_INT:
                int[] inIData = dataArr.getIData();
                outIData = new int[nData];
                tmpIData = new int[nData];
-               for (int i = 0; i < nData; i++)
-                  outIData[i] = inIData[i];
+               System.arraycopy(inIData, 0, outIData, 0, nData);
                break;
             case DataArray.FIELD_DATA_FLOAT:
                float[] inFData = dataArr.getFData();
                outFData = new float[nData];
                tmpFData = new float[nData];
-               for (int i = 0; i < nData; i++)
-                  outFData[i] = inFData[i];
+               System.arraycopy(inFData, 0, outFData, 0, nData);
                break;
             case DataArray.FIELD_DATA_DOUBLE:
                double[] inDData = dataArr.getDData();
                outDData = new double[nData];
                tmpDData = new double[nData];
-               for (int i = 0; i < nData; i++)
-                  outDData[i] = inDData[i];
+               System.arraycopy(inDData, 0, outDData, 0, nData);
                break;
          }
          for (int s = 0; s < sequence.length(); s++)
             switch (dataArr.getType())
             {
                case DataArray.FIELD_DATA_BYTE:
-                  for (int i = 0; i < outBData.length; i++)
-                     tmpBData[i] = outBData[i];
+                  System.arraycopy(outBData, 0, tmpBData, 0, outBData.length);
                   for (int i = 0; i < workThreads.length; i++)
                   {
                      workThreads[i] = new Thread(new FilterByteArray(nThreads, i, outBData, tmpBData,
@@ -150,8 +147,7 @@ public class LocalOps3D implements LocalOps
                      }
                   break;
                case DataArray.FIELD_DATA_SHORT:
-                  for (int i = 0; i < outSData.length; i++)
-                     tmpSData[i] = outSData[i];
+                  System.arraycopy(outSData, 0, tmpSData, 0, outSData.length);
                   for (int i = 0; i < workThreads.length; i++)
                   {
                      workThreads[i] = new Thread(new FilterShortArray(nThreads, i, outSData, tmpSData,
@@ -167,8 +163,7 @@ public class LocalOps3D implements LocalOps
                      }
                   break;
                case DataArray.FIELD_DATA_INT:
-                  for (int i = 0; i < outIData.length; i++)
-                     tmpIData[i] = outIData[i];
+                  System.arraycopy(outIData, 0, tmpIData, 0, outIData.length);
                   for (int i = 0; i < workThreads.length; i++)
                   {
                      workThreads[i] = new Thread(new FilterIntArray(nThreads, i, outIData, tmpIData,
@@ -184,8 +179,7 @@ public class LocalOps3D implements LocalOps
                      }
                   break;
                case DataArray.FIELD_DATA_FLOAT:
-                  for (int i = 0; i < outFData.length; i++)
-                     tmpFData[i] = outFData[i];
+                  System.arraycopy(outFData, 0, tmpFData, 0, outFData.length);
                   for (int i = 0; i < workThreads.length; i++)
                   {
                      workThreads[i] = new Thread(new FilterFloatArray(nThreads, i, outFData, tmpFData,
@@ -201,8 +195,7 @@ public class LocalOps3D implements LocalOps
                      }
                   break;
                case DataArray.FIELD_DATA_DOUBLE:
-                  for (int i = 0; i < outDData.length; i++)
-                     tmpDData[i] = outDData[i];
+                  System.arraycopy(outDData, 0, tmpDData, 0, outDData.length);
                   for (int i = 0; i < workThreads.length; i++)
                   {
                      workThreads[i] = new Thread(new FilterDoubleArray(nThreads, i, outDData, tmpDData,

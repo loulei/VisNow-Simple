@@ -84,7 +84,7 @@ public class SurfaceComponents extends IrregularOutFieldVisualizationModule
                startAction();
          }
       });
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          @Override
          public void run()

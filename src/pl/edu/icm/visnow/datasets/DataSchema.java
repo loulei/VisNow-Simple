@@ -40,6 +40,7 @@ package pl.edu.icm.visnow.datasets;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArraySchema;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -49,9 +50,9 @@ import java.util.Vector;
 public class DataSchema implements Serializable
 {
    /**
-    * a vector holding schemas of all data components in the field
+    * a list holding schemas of all data components in the field
     */
-   protected Vector<DataArraySchema> componentSchemas = new Vector<DataArraySchema>();
+   protected ArrayList<DataArraySchema> componentSchemas = new ArrayList<DataArraySchema>();
    
    /**
     * adds new schema to componentSchemas
@@ -71,7 +72,7 @@ public class DataSchema implements Serializable
     * 
     * @param	data	The data.
     */
-   public void getSchemasFromData(Vector<DataArray> data)
+   public void getSchemasFromData(ArrayList<DataArray> data)
    {
       componentSchemas.clear(); 
       for (int i = 0; i < data.size(); i++)
@@ -90,22 +91,23 @@ public class DataSchema implements Serializable
     * 
     * @return	<code>>componentSchemas</code> vector.
     */
-   public Vector<DataArraySchema> getComponentSchemas() {
+   public ArrayList<DataArraySchema> getComponentSchemas() {
       return componentSchemas;
    }
 
    /**
     * setter for the componentSchemas property
-    * @param	componentSchemas - a <code>Vector<lt>DataArraySchema<gt></code>	
+    * @param	componentSchemas - a <code>ArrayList<lt>DataArraySchema<gt></code>	
     * vector holding new value for componentSchemas.
     */
-   public void setComponentSchemas(Vector<DataArraySchema> componentSchemas) {
+   public void setComponentSchemas(ArrayList<DataArraySchema> componentSchemas) {
       this.componentSchemas = componentSchemas;
    }
 
    /**
     * @param	s compared <code>DataSchema</code>
     * @param	checkComponentNames - flag to include components name checking
+     * @param checkComponentRanges
     * @return	<code>true</code> if dataComponents are item by item compatible with s,  <code>false</code> otherwise.
     */
    public boolean isDataCompatibleWith(DataSchema s, boolean checkComponentNames, boolean checkComponentRanges)

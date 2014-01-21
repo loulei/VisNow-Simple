@@ -39,7 +39,9 @@ package pl.edu.icm.visnow.lib.utils.geometry2D;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import pl.edu.icm.visnow.datasets.RegularField;
 import pl.edu.icm.visnow.geometries.parameters.AbstractRenderingParams;
 import pl.edu.icm.visnow.geometries.parameters.RenderingParams;
@@ -74,15 +76,7 @@ public abstract class Array2D extends GeometryObject2D implements Cloneable {
 
     public Array2D(RegularField field, String name) {
         this.name = name;
-        if (field == null || field.getDims().length != 2) {
-            this.field = null;
-            this.width = 0;
-            this.height = 0;
-        } else {
-            this.field = field;
-            this.width = field.getDims()[0];
-            this.height = field.getDims()[1];
-        }
+        updateFieldParams(field);
         this.renderingParams.addRenderEventListener(listener);                
     }
     
@@ -109,16 +103,17 @@ public abstract class Array2D extends GeometryObject2D implements Cloneable {
         this.renderingParams = renderingParams;
     }
     
+
+    /**
+     * Clears render event listeners; this has to be done to remove all references to this object.
+     */
+    public void clearParamListeners() {
+        if(this.renderingParams != null)
+            this.renderingParams.removeRenderEventListener(listener);
+    }    
+    
     public void setField(RegularField field) {
-        if (field == null || field.getDims().length != 2) {
-            this.field = null;
-            this.width = 0;
-            this.height = 0;
-        } else {
-            this.field = field;
-            this.width = field.getDims()[0];
-            this.height = field.getDims()[1];
-        }
+        updateFieldParams(field);
         fireStateChanged();
     }
 
@@ -138,4 +133,52 @@ public abstract class Array2D extends GeometryObject2D implements Cloneable {
         return out;
     }
 
+    private void updateFieldParams(RegularField field) {
+        if (field == null || field.getDims().length != 2) {
+            this.field = null;
+            this.width = 0;
+            this.height = 0;
+            internalTransform = new AffineTransform();
+        } else {
+            this.field = field;
+            this.width = field.getDims()[0];
+            this.height = field.getDims()[1];
+            if(field.getCoords() != null) {
+                internalTransform = new AffineTransform();
+                //TODO someday
+            } else {
+                float[][] affine = field.getAffine();
+                double[] affineNorms = field.getAffineNorm();
+                float[] flatmatrix = new float[] {1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
+                float[] v = new float[2];
+                if(affineNorms[0] == 0) {                    
+                    flatmatrix[3] = (float) (affineNorms[2]/affineNorms[1]);
+                } else if(affineNorms[1] == 0) {
+                    flatmatrix[3] = (float) (affineNorms[2]/affineNorms[0]);
+                } else if(affineNorms[2] == 0) {
+                    flatmatrix[3] = (float) (affineNorms[1]/affineNorms[0]);
+                }
+                internalTransform = new AffineTransform(flatmatrix);
+            }
+            
+            
+            
+            
+        }        
+        
+        
+    }
+
+    private double vectorsAngle(float[] v1, float[] v2) {
+        double len;
+        double angle;
+        len = Math.sqrt(v1[0]*v1[0] + v1[1]*v1[1] + v1[2]*v1[2])*Math.sqrt(v2[0]*v2[0] + v2[1]*v2[1] + v2[2]*v2[2]);
+        if(len == 0) {
+            angle = 0;
+        } else {
+            angle = Math.acos((v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2])/len);
+        }
+        return angle;        
+    }
+    
 }

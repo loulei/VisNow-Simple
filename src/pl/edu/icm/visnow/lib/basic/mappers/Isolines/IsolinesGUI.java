@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,8 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.lib.basic.mappers.Isolines;
 
@@ -67,8 +70,8 @@ public class IsolinesGUI extends JPanel implements VariablePresentation
    private float vMin = 0, vMax = 255;
    private float physMin = 0, physMax = 255;
    private boolean syncing = false;
-   private BooleanChangeListener presentationListener = new BooleanChangeListener()  
-   {        
+   private BooleanChangeListener presentationListener = new BooleanChangeListener()
+   {
       @Override
       public void booleanChanged(BooleanEvent e)
       {
@@ -102,52 +105,12 @@ public class IsolinesGUI extends JPanel implements VariablePresentation
 
    public void setPresentation(boolean simple)
    {
-      GridBagConstraints gridBagConstraints;
-      Dimension simpleDim = new Dimension(200, 128);
-      Dimension expertDim = new Dimension(220, 668);
-      if (simple)
-      {
-         jPanel2.remove(cellSetScrollPane);
-         jPanel2.remove(dataComponentList);
-         jPanel2.remove(jLabel1);
-         thresholdsEditor.setPresentation(simple);
-         jPanel2.setMinimumSize(simpleDim);
-         jPanel2.setPreferredSize(simpleDim);
-         jPanel2.setMaximumSize(simpleDim);
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 0;
-         gridBagConstraints.gridy = 0;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-         gridBagConstraints.weightx = 1.0;
-      } else
-      {
-         jPanel2.setMinimumSize(expertDim);
-         jPanel2.setPreferredSize(expertDim);
-         jPanel2.setMaximumSize(expertDim);
-         thresholdsEditor.setPresentation(simple);
+       cellSetScrollPane.setVisible(!simple);
+       dataComponentList.setVisible(!simple);
+       jLabel1.setVisible(!simple);
+       thresholdsEditor.setPresentation(simple);
 
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 0;
-         gridBagConstraints.gridy = 1;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-         gridBagConstraints.weightx = 1.0;
-         jPanel2.add(cellSetScrollPane, gridBagConstraints);
-
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 0;
-         gridBagConstraints.gridy = 3;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-         gridBagConstraints.insets = new java.awt.Insets(6, 0, 3, 0);
-         jPanel2.add(jLabel1, gridBagConstraints);
-
-         gridBagConstraints = new java.awt.GridBagConstraints();
-         gridBagConstraints.gridx = 0;
-         gridBagConstraints.gridy = 4;
-         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-         gridBagConstraints.insets = new java.awt.Insets(6, 0, 3, 0);
-         jPanel2.add(dataComponentList, gridBagConstraints);
-      }
-      validate();
+       validate();
    }
 
    /**
@@ -159,48 +122,30 @@ public class IsolinesGUI extends JPanel implements VariablePresentation
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jPanel4 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
         isoComponentSelector = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
         cellSetScrollPane = new javax.swing.JScrollPane();
         cellSetList = new javax.swing.JList();
         thresholdsEditor = new pl.edu.icm.visnow.lib.gui.FloatArrayEditor();
-        dataComponentList = new pl.edu.icm.visnow.lib.gui.DataComponentList();
         jLabel1 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        dataComponentList = new pl.edu.icm.visnow.lib.gui.DataComponentList();
 
-        setMinimumSize(new java.awt.Dimension(180, 600));
-        setPreferredSize(new java.awt.Dimension(230, 650));
         setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        add(jPanel4, gridBagConstraints);
-
-        jPanel2.setMinimumSize(new java.awt.Dimension(190, 635));
-        jPanel2.setPreferredSize(new java.awt.Dimension(210, 636));
-        jPanel2.setLayout(new java.awt.GridBagLayout());
 
         isoComponentSelector.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        isoComponentSelector.setMinimumSize(new java.awt.Dimension(100, 36));
-        isoComponentSelector.setOpaque(true);
-        isoComponentSelector.setPreferredSize(new java.awt.Dimension(200, 36));
         isoComponentSelector.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 isoComponentSelectorStateChanged(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        jPanel2.add(isoComponentSelector, gridBagConstraints);
+        add(isoComponentSelector, gridBagConstraints);
 
-        cellSetScrollPane.setMinimumSize(new java.awt.Dimension(160, 60));
-        cellSetScrollPane.setPreferredSize(new java.awt.Dimension(200, 100));
-        cellSetScrollPane.setRequestFocusEnabled(false);
+        cellSetScrollPane.setMinimumSize(new java.awt.Dimension(50, 60));
+        cellSetScrollPane.setPreferredSize(new java.awt.Dimension(50, 100));
 
         cellSetList.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         cellSetList.setEnabled(false);
@@ -213,45 +158,39 @@ public class IsolinesGUI extends JPanel implements VariablePresentation
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        jPanel2.add(cellSetScrollPane, gridBagConstraints);
+        add(cellSetScrollPane, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        jPanel2.add(thresholdsEditor, gridBagConstraints);
-
-        dataComponentList.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
-        dataComponentList.setMinimumSize(new java.awt.Dimension(100, 150));
-        dataComponentList.setPreferredSize(new java.awt.Dimension(200, 150));
-        dataComponentList.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                dataComponentListStateChanged(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1.0;
-        jPanel2.add(dataComponentList, gridBagConstraints);
+        add(thresholdsEditor, gridBagConstraints);
 
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jLabel1.setText("interpolate components to isolines");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 3, 0);
-        jPanel2.add(jLabel1, gridBagConstraints);
+        add(jLabel1, gridBagConstraints);
+
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
+        dataComponentList.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
+        dataComponentList.setPreferredSize(new java.awt.Dimension(10, 100));
+        dataComponentList.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                dataComponentListStateChanged(evt);
+            }
+        });
+        jPanel1.add(dataComponentList, java.awt.BorderLayout.CENTER);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        add(jPanel2, gridBagConstraints);
+        gridBagConstraints.weighty = 1.0;
+        add(jPanel1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
    private void cellSetListValueChanged(javax.swing.event.ListSelectionEvent evt)//GEN-FIRST:event_cellSetListValueChanged
@@ -341,18 +280,18 @@ private void isoComponentSelectorStateChanged(javax.swing.event.ChangeEvent evt)
       this.params = params;
    }
 
+   @Override
    public BooleanChangeListener getPresentationListener()
    {
       return presentationListener;
-   }   
+   }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JList cellSetList;
     public javax.swing.JScrollPane cellSetScrollPane;
     public pl.edu.icm.visnow.lib.gui.DataComponentList dataComponentList;
     public pl.edu.icm.visnow.lib.gui.DataComponentSelector isoComponentSelector;
     public javax.swing.JLabel jLabel1;
-    public javax.swing.JPanel jPanel2;
-    public javax.swing.JPanel jPanel4;
+    public javax.swing.JPanel jPanel1;
     public pl.edu.icm.visnow.lib.gui.FloatArrayEditor thresholdsEditor;
     // End of variables declaration//GEN-END:variables
 }

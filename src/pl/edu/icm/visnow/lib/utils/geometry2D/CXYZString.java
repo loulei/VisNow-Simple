@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,10 +35,12 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.utils.geometry2D;
 import javax.vecmath.*;
 import java.awt.*;
+import pl.edu.icm.visnow.geometries.parameters.FontParams;
 
 /**
  *
@@ -48,59 +51,39 @@ public class CXYZString extends CXYString
    private float x = 0;
    private float y = 0;
    private float z = 0;
-   
+
    /** Creates a new instance of CXYZString */
-   public CXYZString(String s, Color c, float x, float y, float z, Font font)
+   public CXYZString(String s, Color c, float x, float y, float z, Font font, float relativeHeight)
    {
-      super(s, c, font);
+      super(s, c, font, relativeHeight);
       this.x = x;
       this.y = y;
       this.z = z;
    }
-   
-   public CXYZString(String s, Color c, float x, float y, float z, int fontSize)
+
+   public CXYZString(String s, float x, float y, float z, FontParams params)
    {
-      super(s, c, fontSize);
-      this.x = x;
-      this.y = y;
-      this.z = z;
+      this(s, params.getColor(), x, y, z, params.getFont2D(), params.getSize());
    }
-   
-   public CXYZString(String s, Color c, float x, float y, float z)
-   {
-      super(s,c);
-      this.x = x;
-      this.y = y;
-      this.z = z;
-   }
-   
+
    public CXYZString(String s, Color c)
    {
       super(s,c);
    }
-   
+
    public CXYZString(String s)
    {
       this(s,Color.WHITE);
    }
-   
-   public CXYZString()
-   {
-      this("");
-   }
-   
+
    public void setCoords(float x, float y, float z)
    {
       this.x = x;
       this.y = y;
       this.z = z;
    }
-   
-   public void setString(String s)
-   {
-      this.s = s;
-   }
-   
+
+
    public void update(pl.edu.icm.visnow.geometries.utils.transform.LocalToWindow ltw)
    {
       if (ltw==null) return;

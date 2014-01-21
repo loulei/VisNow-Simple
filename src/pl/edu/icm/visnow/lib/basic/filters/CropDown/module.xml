@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <module name="crop/downsize regular field" class="CropDown">
+   <inputs>
+      <input name="inField" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
+      </input>
+   </inputs>
 
-    <inputs>
-       <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
-            <acceptor>
-                <param name="REGULAR" value="true"/>
-            </acceptor>
-       </input>
-    </inputs>
-
-    <outputs>
-        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
-        </output>
+   <outputs>
+      <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+      </output>
+   <geometryOutput/>
    </outputs>
-    <parameters>
-    </parameters>
-    <description value="crops to smaller box, downsizes indices and clamps component values"/>
+   <description value="crops to smaller box, downsizes indices and clamps component values"/>
 </module>

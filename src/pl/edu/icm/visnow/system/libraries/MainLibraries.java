@@ -72,6 +72,18 @@ public class MainLibraries {
         return true;
     }
 
+    public boolean deleteLibrary(LibraryRoot library) {
+        if(library==null) return false;
+        libraries.remove(library);
+        return true;
+    }
+    
+    public void clearLibraries() {
+        libraries.clear();
+        libraries.add(internalLibrary);
+    }
+    
+    
     public MainLibraries() {
         this.libraries = new Vector<LibraryRoot>();
         
@@ -162,6 +174,9 @@ public class MainLibraries {
     }
 
     private MutableTreeNode createNameFilteredNodeFromCore(LibraryCore core, String name) {
+        if(core == null || name == null) {
+            return null;
+        }
         if(core.getName().toLowerCase().contains(name.toLowerCase()))
             return new DefaultMutableTreeNode(core);
         else

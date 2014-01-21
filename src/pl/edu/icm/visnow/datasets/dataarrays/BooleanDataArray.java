@@ -118,36 +118,18 @@ public class BooleanDataArray extends DataArray
       recomputeMinMax();
    }
 
-   public BooleanDataArray(TimeData<boolean[]> data, int veclen, String name, String units, String[] userData)
+   public BooleanDataArray(TimeData<boolean[]> tData, int veclen, String name, String units, String[] userData)
    {
-      super(FIELD_DATA_BOOLEAN, data.get(0).length / veclen, veclen, name, units, userData);
-      timeData = data;
-      abstractTimeData = timeData;
-      recomputeMinMax();
-   }
-
-    @Override
-   public final void recomputeMinMax()
-   {
-      setMinv(0);
-      setMaxv(1);
-      setPhysMin(0);
-      setPhysMax(1);
-   }
-
-    @Override
-   public final void recomputeMinMax(boolean[] mask)
-   {
-      setMinv(0);
-      setMaxv(1);
-      setPhysMin(0);
-      setPhysMax(1);
+        super(FIELD_DATA_BOOLEAN, (tData == null || tData.get(0) == null) ? -1 : tData.get(0).length / veclen, veclen, name, units, userData);
+        abstractTimeData = timeData = tData;
+        setCurrentTime(currentTime);
+        recomputeMinMax();
    }
 
     @Override
    public void resetData()
    {
-      data = timeData.get(currentFrame);
+      data = timeData.getData(currentTime);
       timeData.clear();
       timeData.setData(data, 0);
    }
@@ -159,24 +141,14 @@ public class BooleanDataArray extends DataArray
       {
          timeData.setData((boolean[]) d, time);
          currentTime = time;
-         recomputeMinMax();
          timeData.setCurrentTime(time);
          data = timeData.getData();
+         recomputeMinMax();
       }
    }
 
    @Override
-   public void setCurrentFrame(int currentFrame)
-   {
-      //currentFrame = Math.max(0, Math.min(currentFrame, timeData.size()) - 1);
-      currentFrame = Math.max(0, Math.min(currentFrame, timeData.size()));
-      //data = timeData.get(currentFrame);
-      data = timeData.getData(timeData.getTime(currentFrame));
-      this.currentFrame = currentFrame;
-   }
-
-   @Override
-   public void setCurrentTime(float currentTime)
+   public final void setCurrentTime(float currentTime)
    {
       if (currentTime == timeData.getCurrentTime() && data != null)
          return;
@@ -397,8 +369,8 @@ public class BooleanDataArray extends DataArray
       if (!(tData.get(0) instanceof boolean[]) || ((boolean[])(tData.get(0))).length != ndata * getVeclen())
          return;
       abstractTimeData = timeData = tData;
-      recomputeMinMax();
       setCurrentTime(currentTime);
+      recomputeMinMax();
    }
       
     @Override
@@ -413,10 +385,25 @@ public class BooleanDataArray extends DataArray
     }
 
     @Override
-    public void recomputeMinMax(TimeData<boolean[]> timeMask) {
+   public final void recomputeMinMax()
+   {
       setMinv(0);
       setMaxv(1);
       setPhysMin(0);
       setPhysMax(1);
+   }
+
+    @Override
+   public final void recomputeMinMax(boolean[] mask)
+   {
+       recomputeMinMax();
+   }
+
+    @Override
+    public void recomputeMinMax(TimeData<boolean[]> timeMask) 
+    {
+        recomputeMinMax();
     }
+    
+   
 }

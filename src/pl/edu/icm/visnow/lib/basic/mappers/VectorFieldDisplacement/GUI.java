@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,7 +35,7 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
-
+//</editor-fold>
 package pl.edu.icm.visnow.lib.basic.mappers.VectorFieldDisplacement;
 
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
@@ -57,12 +58,14 @@ public class GUI extends javax.swing.JPanel
       vectorComponentSelector.setTitle("vector component");
       vectorComponentSelector.setVectorComponentsOnly(true);
       animationPanel.setNFrames(200);
+      animationPanel.setLabels("scale range", "scale");
       animationPanel.addListener(new FrameModificationListener()
       {
+         @Override
          public void frameChanged(FrameModificationEvent e)
          {
             params.setAdjusting(animationPanel.isAdjusting());
-            params.setScale(low + (float)e.getFrame()/animationPanel.getLastFrame() * (up - low));
+            params.setScale(animationPanel.getCurrentVal());
          }
       });
    }
@@ -74,18 +77,20 @@ public class GUI extends javax.swing.JPanel
     */
    @SuppressWarnings("unchecked")
    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-   private void initComponents() {
+   private void initComponents()
+   {
       java.awt.GridBagConstraints gridBagConstraints;
 
       vectorComponentSelector = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
       jPanel1 = new javax.swing.JPanel();
       animationPanel = new pl.edu.icm.visnow.lib.gui.AnimationPanel();
-      rangeSlider = new pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider();
 
       setLayout(new java.awt.GridBagLayout());
 
-      vectorComponentSelector.addChangeListener(new javax.swing.event.ChangeListener() {
-         public void stateChanged(javax.swing.event.ChangeEvent evt) {
+      vectorComponentSelector.addChangeListener(new javax.swing.event.ChangeListener()
+      {
+         public void stateChanged(javax.swing.event.ChangeEvent evt)
+         {
             vectorComponentSelectorStateChanged(evt);
          }
       });
@@ -107,19 +112,6 @@ public class GUI extends javax.swing.JPanel
       gridBagConstraints.gridy = 2;
       gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
       add(animationPanel, gridBagConstraints);
-
-      rangeSlider.setMax(1.0F);
-      rangeSlider.setMin(-1.0F);
-      rangeSlider.addChangeListener(new javax.swing.event.ChangeListener() {
-         public void stateChanged(javax.swing.event.ChangeEvent evt) {
-            rangeSliderStateChanged(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      add(rangeSlider, gridBagConstraints);
    }// </editor-fold>//GEN-END:initComponents
 
    private void vectorComponentSelectorStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_vectorComponentSelectorStateChanged
@@ -131,19 +123,9 @@ public class GUI extends javax.swing.JPanel
       }
    }//GEN-LAST:event_vectorComponentSelectorStateChanged
 
-   private void rangeSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_rangeSliderStateChanged
-   {//GEN-HEADEREND:event_rangeSliderStateChanged
-      if (rangeSlider.isAdjusting())
-         return;
-      low  = rangeSlider.getLow();
-      up =   rangeSlider.getUp();
-      params.setScale(low + (float)animationPanel.getCurrentFrame()/animationPanel.getLastFrame() * (up - low));
-   }//GEN-LAST:event_rangeSliderStateChanged
-
    // Variables declaration - do not modify//GEN-BEGIN:variables
    private pl.edu.icm.visnow.lib.gui.AnimationPanel animationPanel;
    private javax.swing.JPanel jPanel1;
-   private pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider rangeSlider;
    private pl.edu.icm.visnow.lib.gui.DataComponentSelector vectorComponentSelector;
    // End of variables declaration//GEN-END:variables
 
@@ -167,14 +149,9 @@ public class GUI extends javax.swing.JPanel
       if (vr == 0) vr = .1e-6;
       int n = (int)(999.9+Math.log10(r/vr))-1000;
       float maxv = (float)Math.pow(10, n);
-      rangeSlider.setMax(maxv);
-      rangeSlider.setMin(-maxv);
-      rangeSlider.setLow(0);
-      rangeSlider.setUp(maxv);
-      low = 0;
-      up = maxv;
-      animationPanel.setFrame(0);
-      params.setScale(low );
+      animationPanel.setTimeRange(-maxv, maxv);
+      animationPanel.setTime(0);
+      params.setScale(0);
    }
    public void setParams(Params params)
    {

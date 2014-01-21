@@ -56,15 +56,18 @@ public class IsolinesParams extends Parameters
    private static ParameterEgg[] eggs = new ParameterEgg[]
    {
        new ParameterEgg<Integer>(COMPONENT, ParameterType.dependent, 0),
-       new ParameterEgg<float[]>(THRESHOLDS, ParameterType.dependent, new float[]{127}),
-       new ParameterEgg<boolean[]>(CELL_SETS, ParameterType.dependent, new boolean[]{true}),
-       new ParameterEgg<boolean[]>(MAPPED_COMPS, ParameterType.dependent, new boolean[]{false}),
+       new ParameterEgg<float[]>(THRESHOLDS, ParameterType.dependent, null),
+       new ParameterEgg<boolean[]>(CELL_SETS, ParameterType.dependent, null),
+       new ParameterEgg<boolean[]>(MAPPED_COMPS, ParameterType.dependent, null),
    };
 
 
    public IsolinesParams()
    {
       super(eggs);
+      setValue(THRESHOLDS, new float[]{127});
+      setValue(CELL_SETS,new boolean[]{true});
+      setValue(MAPPED_COMPS,  new boolean[]{false});
    }
 
    public int getComponent()

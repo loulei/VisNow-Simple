@@ -38,6 +38,7 @@ exception statement from your version. */
 package pl.edu.icm.visnow.lib.basic.filters.AnisotropicDenoiser;
 
 import java.awt.BorderLayout;
+import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
@@ -48,6 +49,7 @@ import javax.swing.table.TableColumn;
 import pl.edu.icm.visnow.datasets.RegularFieldSchema;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArraySchema;
 import pl.edu.icm.visnow.lib.basic.filters.AnisotropicDenoiser.Params.CoreType;
+import pl.edu.icm.visnow.system.main.VisNow;
 
 /**
  *
@@ -84,17 +86,15 @@ public class GUI extends JPanel
 
         radiusSlider = new javax.swing.JSlider();
         methodSelector = new javax.swing.JComboBox();
-        slopeSlider = new pl.edu.icm.visnow.gui.widgets.LogarithmicSlider();
-        gradientSlopeSlider = new pl.edu.icm.visnow.gui.widgets.LogarithmicSlider();
+        slopeSlider = new pl.edu.icm.visnow.gui.widgets.ExtendedSlider();
+        gradientSlopeSlider = new pl.edu.icm.visnow.gui.widgets.ExtendedSlider();
         weightsButton = new javax.swing.JButton();
         runButton = new javax.swing.JButton();
         componentPanel = new javax.swing.JPanel();
         componentTable = new javax.swing.JTable();
-        jLabel2 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
         iterationsField = new javax.swing.JTextField();
-        threadSpinner = new javax.swing.JSpinner();
         presmoothDiameterSpinner = new javax.swing.JSpinner();
         jPanel1 = new javax.swing.JPanel();
         computeSigmaBox = new javax.swing.JCheckBox();
@@ -140,6 +140,7 @@ public class GUI extends JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
         add(methodSelector, gridBagConstraints);
 
+        slopeSlider.setScaleType(pl.edu.icm.visnow.gui.widgets.ExtendedSlider.ScaleType.LOGARITHMIC);
         slopeSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "width", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 9))); // NOI18N
         slopeSlider.setMin(1.0F);
         slopeSlider.setMinimumSize(new java.awt.Dimension(90, 60));
@@ -152,6 +153,7 @@ public class GUI extends JPanel
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(slopeSlider, gridBagConstraints);
 
+        gradientSlopeSlider.setScaleType(pl.edu.icm.visnow.gui.widgets.ExtendedSlider.ScaleType.LOGARITHMIC);
         gradientSlopeSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "gradient direction width", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 9))); // NOI18N
         gradientSlopeSlider.setMin(0.1F);
         gradientSlopeSlider.setMinimumSize(new java.awt.Dimension(90, 60));
@@ -186,7 +188,7 @@ public class GUI extends JPanel
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridy = 11;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
@@ -232,19 +234,6 @@ public class GUI extends JPanel
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 4, 0);
         add(componentPanel, gridBagConstraints);
 
-        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        jLabel2.setText("threads");
-        jLabel2.setMaximumSize(new java.awt.Dimension(45, 15));
-        jLabel2.setMinimumSize(new java.awt.Dimension(45, 15));
-        jLabel2.setPreferredSize(new java.awt.Dimension(45, 15));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 10;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
-        add(jLabel2, gridBagConstraints);
-
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "CPU", "GPU" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -275,15 +264,6 @@ public class GUI extends JPanel
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         add(iterationsField, gridBagConstraints);
 
-        threadSpinner.setModel(new javax.swing.SpinnerNumberModel(Runtime.getRuntime().availableProcessors(), 1, Runtime.getRuntime().availableProcessors(), 1));
-        threadSpinner.setValue(Runtime.getRuntime().availableProcessors());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 10;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        add(threadSpinner, gridBagConstraints);
-
         presmoothDiameterSpinner.setModel(new javax.swing.SpinnerNumberModel(5, 1, 50, 1));
         presmoothDiameterSpinner.setValue(5);
         presmoothDiameterSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -311,7 +291,7 @@ public class GUI extends JPanel
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 11;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jPanel1, gridBagConstraints);
@@ -400,7 +380,7 @@ private void presmoothButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN
       JComboBox anComboBox = new JComboBox();
       s = sch;
       as = asch;
-      Vector<DataArraySchema> components = s.getComponentSchemas();
+      ArrayList<DataArraySchema> components = s.getComponentSchemas();
       nComps = components.size();
       for (int i = 0; i < components.size(); i++)
       {
@@ -414,7 +394,7 @@ private void presmoothButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN
       componentTable.setValueAt("null",0,1);
       if (as!=null)
       {
-         Vector<DataArraySchema> anisoComponents = as.getComponentSchemas();
+         ArrayList<DataArraySchema> anisoComponents = as.getComponentSchemas();
          anisoCompIndices = new int[anisoComponents.size()+1];
          for (int i = 0; i < anisoComponents.size(); i++)
          {
@@ -482,7 +462,7 @@ private void presmoothButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN
       }
       params.setSlope(slopeSlider.getVal());
       params.setSlope1(gradientSlopeSlider.getVal());
-      params.setNThreads((Integer) threadSpinner.getValue());
+      params.setNThreads(VisNow.availableProcessors());
       params.setComputeSigma(computeSigmaBox.isSelected());
       params.setNormalizeSigma(normalizeSigmaBox.isSelected());
    }
@@ -492,11 +472,10 @@ private void presmoothButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN
     private javax.swing.JPanel componentPanel;
     private javax.swing.JTable componentTable;
     private javax.swing.JCheckBox computeSigmaBox;
-    private pl.edu.icm.visnow.gui.widgets.LogarithmicSlider gradientSlopeSlider;
+    private pl.edu.icm.visnow.gui.widgets.ExtendedSlider gradientSlopeSlider;
     private javax.swing.JTextField iterationsField;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JComboBox methodSelector;
@@ -505,8 +484,7 @@ private void presmoothButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN
     private javax.swing.JSpinner presmoothDiameterSpinner;
     private javax.swing.JSlider radiusSlider;
     private javax.swing.JButton runButton;
-    private pl.edu.icm.visnow.gui.widgets.LogarithmicSlider slopeSlider;
-    private javax.swing.JSpinner threadSpinner;
+    private pl.edu.icm.visnow.gui.widgets.ExtendedSlider slopeSlider;
     private javax.swing.JButton weightsButton;
     // End of variables declaration//GEN-END:variables
    

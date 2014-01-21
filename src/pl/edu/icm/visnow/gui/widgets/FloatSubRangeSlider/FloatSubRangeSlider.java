@@ -46,11 +46,14 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Locale;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import pl.edu.icm.visnow.lib.utils.VisNowCallTrace;
+//import pl.edu.icm.visnow.system.main.VisNow;
 
 /**
  *
@@ -477,5 +480,16 @@ public class FloatSubRangeSlider extends JComponent implements ChangeListener, S
    public boolean isEnabled() {
        return this.enabled;
    }
+
    
+//    public static void main(String[] args) {
+//        VisNow.initLogging(true);
+//        Locale.setDefault(VisNow.LOCALE);
+//        JFrame f = new JFrame();
+//        f.add(new FloatSubRangeSlider());
+//        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//        f.setLocation(600, 300);
+//        f.pack();
+//        f.setVisible(true);
+//    }   
 }

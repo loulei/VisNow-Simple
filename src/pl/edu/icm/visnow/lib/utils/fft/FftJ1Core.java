@@ -60,7 +60,7 @@ public class FftJ1Core extends FftCore{
     
     
     @Override
-    protected void fft_r2c(float[] real, float[] imag) {
+    public void fft_r2c(float[] real, float[] imag) {
         int length = real.length;
         float[] a = new float[2*length];
         System.arraycopy(real, 0, a, 0, length);
@@ -74,7 +74,7 @@ public class FftJ1Core extends FftCore{
     }
     
     @Override
-    protected void fft_c2c(float[] real, float[] imag) {
+    public void fft_c2c(float[] real, float[] imag) {
         int length = real.length;
         float[] a = new float[2*length];
         for(int i = 0; i < length; i++) {
@@ -91,7 +91,7 @@ public class FftJ1Core extends FftCore{
     }    
     
     @Override
-    protected void ifft(float[] real, float[] imag) {
+    public void ifft(float[] real, float[] imag) {
         int length = real.length;
         float[] a = new float[2*length];
         for(int i = 0; i < length; i++) {
@@ -108,7 +108,7 @@ public class FftJ1Core extends FftCore{
     }    
 
     @Override
-    protected void fft2_r2c(float[] real, float[] imag, int nx, int ny) {
+    public void fft2_r2c(float[] real, float[] imag, int nx, int ny) {
         int length = nx*ny;
         float[] a = new float[2*length];
         System.arraycopy(real, 0, a, 0, length);
@@ -123,7 +123,7 @@ public class FftJ1Core extends FftCore{
     }
     
     @Override
-    protected void fft2_c2c(float[] real, float[] imag, int nx, int ny) {
+    public void fft2_c2c(float[] real, float[] imag, int nx, int ny) {
         int length = nx*ny;
         float[] a = new float[2*length];
         for(int i = 0; i < length; i++) {
@@ -140,7 +140,7 @@ public class FftJ1Core extends FftCore{
     }    
     
     @Override
-    protected void ifft2(float[] real, float[] imag, int nx, int ny) {
+    public void ifft2(float[] real, float[] imag, int nx, int ny) {
         int length = nx*ny;
         float[] a = new float[2*length];
         for(int i = 0; i < length; i++) {
@@ -157,7 +157,7 @@ public class FftJ1Core extends FftCore{
     }       
   
     @Override
-    protected void fft3_r2c(float[] real, float[] imag, int nx, int ny, int nz) {
+    public void fft3_r2c(float[] real, float[] imag, int nx, int ny, int nz) {
         int length = nx*ny*nz;
         float[] a = new float[2*length];
         System.arraycopy(real, 0, a, 0, length);
@@ -172,7 +172,7 @@ public class FftJ1Core extends FftCore{
     }
       
     @Override
-    protected void fft3_c2c(float[] real, float[] imag, int nx, int ny, int nz) {
+    public void fft3_c2c(float[] real, float[] imag, int nx, int ny, int nz) {
         int length = nx*ny*nz;
         float[] a = new float[2*length];
         for(int i = 0; i < length; i++) {
@@ -189,7 +189,7 @@ public class FftJ1Core extends FftCore{
     }
 
     @Override
-    protected void ifft3(float[] real, float[] imag, int nx, int ny, int nz) {
+    public void ifft3(float[] real, float[] imag, int nx, int ny, int nz) {
         int length = nx*ny*nz;
         float[] a = new float[2*length];
         for(int i = 0; i < length; i++) {

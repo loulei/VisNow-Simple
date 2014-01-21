@@ -37,7 +37,10 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.engine.core;
 
+import java.util.ArrayList;
 import java.util.Vector;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import pl.edu.icm.visnow.engine.element.ElementState;
 import pl.edu.icm.visnow.engine.error.Displayer;
 import pl.edu.icm.visnow.engine.exception.VNSystemEngineException;
@@ -116,8 +119,27 @@ public class Output extends Port {
 
     public boolean setValue(Object o) {
         //System.out.println("OUT SET VAL");
-        return this.getData().setValue(o);
+        boolean out = this.getData().setValue(o);
+        if(out)
+            fireStateChanged();
+        return out;
     }
+    
+    protected transient ChangeListener valueChangeListener = null;
+
+    public synchronized void setValueChangeListener(ChangeListener listener) {
+        valueChangeListener = listener;
+    }
+
+    public void fireStateChanged() {
+        if (valueChangeListener == null)
+            return;
+        ChangeEvent e = new ChangeEvent(this);
+        valueChangeListener.stateChanged(e);
+    }
+    
+    
+    
 
     public Output(OutputEgg egg) {//, ModuleBox module) {
         super(egg.getName());//, module);

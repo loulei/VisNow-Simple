@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,7 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.basic.filters.RadialCoordinates;
 
@@ -59,6 +61,8 @@ public class Params extends Parameters
       new ParameterEgg<Integer>("rCoord", ParameterType.dependent, 0),
       new ParameterEgg<Float>("rMin", ParameterType.dependent, 0.f),
       new ParameterEgg<Float>("rMax", ParameterType.dependent, 1.f),
+      new ParameterEgg<Float>("zMin", ParameterType.dependent, 0.f),
+      new ParameterEgg<Float>("zMax", ParameterType.dependent, 1.f),
       new ParameterEgg<Integer>("phiCoord", ParameterType.dependent, 1),
       new ParameterEgg<Float>("phiMin", ParameterType.dependent, 0.f),
       new ParameterEgg<Float>("phiMax", ParameterType.dependent, 90.f),
@@ -77,6 +81,8 @@ public class Params extends Parameters
       setValue("psiCoord",2);
       setValue("rMin",0.f);
       setValue("rMax",1.f);
+      setValue("zMin",0.f);
+      setValue("zMax",1.f);
       setValue("phiMin",0.f);
       setValue("phiMax",90.f);
       setValue("psiMin",0.f);
@@ -107,7 +113,6 @@ public class Params extends Parameters
    {
       return (Float)getValue("rMin");
    }
-
    public void setRMin(float rMin)
    {
       setValue("rMin",rMin);
@@ -123,6 +128,26 @@ public class Params extends Parameters
       setValue("rMax",rMax);
    }
 
+   public float getZMin()
+   {
+      return (Float)getValue("zMin");
+   }
+
+   public void setZMin(float zMin)
+   {
+      setValue("zMin",zMin);
+   }
+
+   public float getZMax()
+   {
+      return(Float) getValue("zMax");
+   }
+
+   public void setZMax(float zMax)
+   {
+      setValue("zMax",zMax);
+   }
+
    public int getPhiCoord()
    {
       return (Integer)getValue("phiCoord");
@@ -135,10 +160,7 @@ public class Params extends Parameters
 
    public float getPhiMin()
    {
-      if ((Integer)getValue("mapType") == SPHERICAL)
-         return s*(Float)getValue("phiMin");
-      else
-         return (Float)getValue("phiMin")/10;
+      return s*(Float)getValue("phiMin");
    }
 
    public void setPhiMin(float phiMin)
@@ -148,10 +170,7 @@ public class Params extends Parameters
 
    public float getPhiMax()
    {
-      if ((Integer)getValue("mapType") == SPHERICAL)
-         return s*(Float)getValue("phiMax");
-      else
-         return (Float)getValue("phiMax")/10;
+      return s*(Float)getValue("phiMax");
    }
 
    public void setPhiMax(float phiMax)

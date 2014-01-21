@@ -43,7 +43,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Locale;
 import javax.swing.JTextField;
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
 /**
  * This text field is for testing if user typed input string in proper format; You have to extend this class 
@@ -64,7 +64,7 @@ import org.apache.log4j.Logger;
  * @author szpak
  */
 public abstract class FormattedTextField extends JTextField {
-    private static final Logger LOGGER = Logger.getLogger(FormattedTextField.class);
+//    private static final Logger LOGGER = Logger.getLogger(FormattedTextField.class);
 
     private String lastValidValue;
 

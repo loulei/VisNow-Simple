@@ -80,6 +80,7 @@ public class ModuleBox implements Iterable<Link>, ModuleBoxFace {
     //private Parameters parameters;
 
 
+    @Override
     public String getName() {return name;}
 
     /**
@@ -208,6 +209,9 @@ public class ModuleBox implements Iterable<Link>, ModuleBoxFace {
 
     public void startAction() {
         try {
+            if(getEngine() == null)
+                return;
+            
             getEngine().putToQueue(new Message(this.getElement(), Message.START_ACTION));
             //this.getElement().getQueue().put(new Message(null, Message.START_ACTION));
         } catch (InterruptedException ex) {

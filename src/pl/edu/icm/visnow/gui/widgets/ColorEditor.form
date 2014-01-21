@@ -14,8 +14,8 @@
           <Color id="Default Cursor"/>
         </Property>
         <Property name="name" type="java.lang.String" value="colorDialog" noResource="true"/>
-        <Property name="resizable" type="boolean" value="false"/>
         <Property name="undecorated" type="boolean" value="true"/>
+        <Property name="resizable" type="boolean" value="false"/>
       </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
@@ -68,10 +68,10 @@
   <Properties>
     <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;drag left MB to change brightness&lt;p&gt;drag right MB to change hue and saturation&lt;p&gt;click to open color chooser" noResource="true"/>
     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[60, 21]"/>
+      <Dimension value="[50, 21]"/>
     </Property>
     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[100, 21]"/>
+      <Dimension value="[50, 21]"/>
     </Property>
   </Properties>
   <Events>

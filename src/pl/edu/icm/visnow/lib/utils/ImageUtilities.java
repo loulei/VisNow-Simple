@@ -44,108 +44,77 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageOutputStream;
+import org.apache.commons.imaging.ImageFormat;
+import org.apache.commons.imaging.ImageFormats;
 import pl.edu.icm.visnow.datamaps.colormap1d.DefaultColorMap1D;
 import pl.edu.icm.visnow.datasets.RegularField;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
 
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.ImageWriteException;
+import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.ImagingConstants;
+import org.apache.commons.imaging.formats.tiff.constants.TiffConstants;
+
 public class ImageUtilities {
 
-    private static final Component sComponent = new Component() {
-    };
-    private static final MediaTracker sTracker = new MediaTracker(sComponent);
-    private static int sID = 0;
+    private static BufferedImage imageRead(final File file) throws ImageReadException, IOException {
+        return Imaging.getBufferedImage(file, null);
+    }
 
-    public static boolean waitForImage(Image image) {
-        int id;
-        synchronized (sComponent) {
-            id = sID++;
-        }
-        sTracker.addImage(image, id);
+    private static BufferedImage imageRead(final InputStream is) throws ImageReadException, IOException {
+        return Imaging.getBufferedImage(is, null);
+    }    
+    
+    public static BufferedImage loadImage(String path) {
+        
+        BufferedImage image;
         try {
-            sTracker.waitForID(id);
-        } catch (InterruptedException ie) {
-            return false;
-        }
-        if (sTracker.isErrorID(id)) {
-            return false;
-        }
-        return true;
-    }
-
-    public static Image blockingLoad(String path) {
-        Image image = Toolkit.getDefaultToolkit().getImage(path);
-        if (waitForImage(image) == false) {
+            image = imageRead(new File(path));
+        } catch (ImageReadException ex) {
+            try {
+                image = ImageIO.read(new File(path));
+            } catch (IOException ex1) {
+                return null;
+            }
+        } catch (IOException ex) {
             return null;
         }
         return image;
     }
 
-    public static Image blockingLoad(URL url) {
-        Image image = Toolkit.getDefaultToolkit().getImage(url);
-        if (waitForImage(image) == false) {
+    public static BufferedImage loadImage(URL url) {
+        final InputStream is;
+        try {
+            is = url.openStream();
+        } catch (IOException ex) {
             return null;
         }
+         BufferedImage image;
+        try {
+            image = imageRead(is);
+        } catch (ImageReadException ex) {
+            try {
+                image = ImageIO.read(url);
+            } catch (IOException ex1) {
+                return null;
+            }
+        } catch (IOException ex) {
+            return null;
+        }
+        
         return image;
-    }
-
-    public static BufferedImage makeBufferedImage(Image image) {
-        BufferedImage bufferedImage = makeBufferedImage(image, BufferedImage.TYPE_INT_ARGB);
-        if(bufferedImage == null)
-            return null;
-        WritableRaster raster = bufferedImage.getRaster();
-        for (int j = 0; j < bufferedImage.getHeight(); j++) {
-            for (int i = 0; i < bufferedImage.getWidth(); i++) {
-                if (raster.getSample(i, j, 3) != 255) {
-                    return bufferedImage;
-                }
-            }
-        }
-
-        bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
-        if (waitForImage(image) == false) {
-            return null;
-        }
-        Graphics2D g2 = bufferedImage.createGraphics();
-        g2.drawImage(image, null, null);
-        raster = bufferedImage.getRaster();
-        for (int j = 0; j < bufferedImage.getHeight(); j++) {
-            for (int i = 0; i < bufferedImage.getWidth(); i++) {
-                if (raster.getSample(i, j, 0) != raster.getSample(i, j, 1) || raster.getSample(i, j, 0) != raster.getSample(i, j, 2)) {
-                    return bufferedImage;
-                }
-            }
-        }
-
-        bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_BYTE_GRAY);
-        if (waitForImage(image) == false) {
-            return null;
-        }
-        g2 = bufferedImage.createGraphics();
-        g2.drawImage(image, null, null);
-        return bufferedImage;
-    }
-
-    public static BufferedImage makeBufferedImage(Image image, int imageType) {
-        if (image == null) {
-            return null;
-        }
-
-        if (waitForImage(image) == false) {
-            return null;
-        }
-        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), imageType);
-        Graphics2D g2 = bufferedImage.createGraphics();
-        g2.drawImage(image, null, null);
-        return bufferedImage;
     }
 
     public static Frame getNonClearingFrame(String name, Component c) {
@@ -617,6 +586,27 @@ public class ImageUtilities {
         return out;
     }
 
+    public static BufferedImage translateImage(BufferedImage img, double dx, double dy, int type, Color fillBgColor) {
+        if (img == null) {
+            return null;
+        }
+
+        int w = img.getWidth();
+        int h = img.getHeight();
+
+        BufferedImage out = null;
+        AffineTransform tr = new AffineTransform();
+        tr.translate(dx, dy);
+        BufferedImageOp op = new AffineTransformOp(tr, type);
+        out = new BufferedImage(w, h, img.getType());
+        Graphics2D g2d = (Graphics2D) out.getGraphics();
+        Rectangle clear = new Rectangle(0, 0, out.getWidth(), out.getHeight());
+        g2d.setPaint(fillBgColor);
+        g2d.fill(clear);
+        op.filter(img, out);
+        return out;
+    }
+    
     public static BufferedImage stitchImages(BufferedImage[] images, int[] relX) {
         if (images == null || images.length < 2) {
             return null;
@@ -814,65 +804,7 @@ public class ImageUtilities {
         return tat;
     }
 
-//    public static BufferedImage combineRGB(BufferedImage inRed, BufferedImage inGreen, BufferedImage inBlue) {
-//        BufferedImage[] imgs = new BufferedImage[3];
-//        imgs[0] = inRed;
-//        imgs[1] = inGreen;
-//        imgs[2] = inBlue;
-//        return combineRGB(imgs);
-//    }
-//    
-//    
-//    public static BufferedImage combineRGB(BufferedImage[] inImgs) {
-//        BufferedImage out = null;
-//        int width = 0;
-//        int height = 0;
-//        if(inImgs == null)
-//            return null;
-//        
-//        if(inImgs.length != 3) 
-//            return null;
-//        
-//        for (int i = 0; i < inImgs.length; i++) {
-//            if(inImgs[i] == null)
-//                return null;
-//        }
-//        
-//        //check if all images are the same size
-//        width = inImgs[0].getWidth();
-//        height = inImgs[0].getHeight();
-//        for (int i = 1; i < inImgs.length; i++) {
-//            if(inImgs[i].getWidth() != width || inImgs[i].getHeight() != height)
-//                return null;
-//        }
-//        
-//        //create output image
-//        out = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
-//        
-//        //set pixels
-//        WritableRaster outRaster = out.getRaster();
-//        WritableRaster[] inRasters = new WritableRaster[3];
-//        for (int i = 0; i < 3; i++) {
-//            inRasters[i] = inImgs[i].getRaster();
-//        }
-//        
-//        for (int x = 0; x < width; x++) {
-//            for (int y = 0; y < height; y++) {
-//                for (int i = 0; i < 3; i++) {
-//                    outRaster.setSample(x,y,i,inRasters[i].getSample(x,y,0));
-//                }
-//            }
-//        }
-//        return out;
-//    }
-//    public static BufferedImage combineARGB(BufferedImage inRed, BufferedImage inGreen, BufferedImage inBlue, BufferedImage inAlpha) {
-//        BufferedImage[] imgs = new BufferedImage[4];
-//        imgs[0] = inRed;
-//        imgs[1] = inGreen;
-//        imgs[2] = inBlue;
-//        imgs[3] = inAlpha;
-//        return combineARGB(imgs);
-//    }
+
     public static BufferedImage combineRGB(BufferedImage[] inImgs) {
         if (inImgs.length == 3) {
             return combineRGBA(inImgs);
@@ -958,11 +890,11 @@ public class ImageUtilities {
         dims[0] = inImage.getWidth();
         dims[1] = inImage.getHeight();
 
-        RegularField field = new RegularField();
-        field.setDims(dims);
+        RegularField field = new RegularField(dims);
 
         WritableRaster raster = inImage.getRaster();
         byte[][] samples = null;
+        int[][] samples32 = null;
         int i = 0;
         switch (inImage.getType()) {
             case BufferedImage.TYPE_BYTE_GRAY:
@@ -982,6 +914,24 @@ public class ImageUtilities {
                     }
                 }
                 field.addData(DataArray.create(samples[0], 1, "grayscaleData"));
+                break;
+            case BufferedImage.TYPE_USHORT_GRAY:
+                samples32 = new int[1][];
+                samples32[0] = new int[dims[0] * dims[1]];
+                if (vFlip) {
+                    for (int y = 0; y < dims[1]; y++) {
+                        for (int x = 0; x < dims[0]; x++) {
+                            samples32[0][i++] = (int) raster.getSample(x, dims[1] - y - 1, 0);
+                        }
+                    }
+                } else {
+                    for (int y = 0; y < dims[1]; y++) {
+                        for (int x = 0; x < dims[0]; x++) {
+                            samples32[0][i++] = (int) raster.getSample(x, y, 0);
+                        }
+                    }
+                }
+                field.addData(DataArray.create(samples32[0], 1, "grayscaleData"));
                 break;
             case BufferedImage.TYPE_INT_RGB:
                 samples = new byte[3][];
@@ -1011,6 +961,35 @@ public class ImageUtilities {
                 field.addData(DataArray.create(samples[1], 1, "greenData"));
                 field.addData(DataArray.create(samples[2], 1, "blueData"));
                 break;
+            case BufferedImage.TYPE_3BYTE_BGR:
+            case BufferedImage.TYPE_INT_BGR:
+                samples = new byte[3][];
+                samples[0] = new byte[dims[0] * dims[1]];
+                samples[1] = new byte[dims[0] * dims[1]];
+                samples[2] = new byte[dims[0] * dims[1]];
+                if (vFlip) {
+                    for (int y = 0; y < dims[1]; y++) {
+                        for (int x = 0; x < dims[0]; x++) {
+                            samples[0][i] = (byte) raster.getSample(x, dims[1] - y - 1, 0);
+                            samples[1][i] = (byte) raster.getSample(x, dims[1] - y - 1, 1);
+                            samples[2][i] = (byte) raster.getSample(x, dims[1] - y - 1, 2);
+                            i++;
+                        }
+                    }
+                } else {
+                    for (int y = 0; y < dims[1]; y++) {
+                        for (int x = 0; x < dims[0]; x++) {
+                            samples[0][i] = (byte) raster.getSample(x, y, 0);
+                            samples[1][i] = (byte) raster.getSample(x, y, 1);
+                            samples[2][i] = (byte) raster.getSample(x, y, 2);
+                            i++;
+                        }
+                    }
+                }
+                field.addData(DataArray.create(samples[0], 1, "blueData"));
+                field.addData(DataArray.create(samples[1], 1, "greenData"));
+                field.addData(DataArray.create(samples[2], 1, "redData"));
+                break;
             case BufferedImage.TYPE_INT_ARGB:
                 samples = new byte[4][];
                 samples[0] = new byte[dims[0] * dims[1]];
@@ -1031,6 +1010,58 @@ public class ImageUtilities {
                 field.addData(DataArray.create(samples[2], 1, "blueData"));
                 field.addData(DataArray.create(samples[3], 1, "alphaData"));
                 break;
+            case BufferedImage.TYPE_4BYTE_ABGR:
+                samples = new byte[4][];
+                samples[0] = new byte[dims[0] * dims[1]];
+                samples[1] = new byte[dims[0] * dims[1]];
+                samples[2] = new byte[dims[0] * dims[1]];
+                samples[3] = new byte[dims[0] * dims[1]];
+                for (int y = 0; y < dims[1]; y++) {
+                    for (int x = 0; x < dims[0]; x++) {
+                        samples[0][i] = (byte) raster.getSample(x, dims[1] - y - 1, 0);
+                        samples[1][i] = (byte) raster.getSample(x, dims[1] - y - 1, 1);
+                        samples[2][i] = (byte) raster.getSample(x, dims[1] - y - 1, 2);
+                        samples[3][i] = (byte) raster.getSample(x, dims[1] - y - 1, 3);
+                        i++;
+                    }
+                }
+                field.addData(DataArray.create(samples[0], 1, "alphaData"));
+                field.addData(DataArray.create(samples[1], 1, "redData"));
+                field.addData(DataArray.create(samples[2], 1, "greenData"));
+                field.addData(DataArray.create(samples[3], 1, "blueData"));
+                break;
+            default:
+                BufferedImage newImg = new BufferedImage(inImage.getWidth(), inImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+                Graphics2D g2d = newImg.createGraphics();
+                g2d.drawImage(inImage, null, 0, 0);
+                g2d.dispose();
+                raster = newImg.getRaster();
+                samples = new byte[3][];
+                samples[0] = new byte[dims[0] * dims[1]];
+                samples[1] = new byte[dims[0] * dims[1]];
+                samples[2] = new byte[dims[0] * dims[1]];
+                if (vFlip) {
+                    for (int y = 0; y < dims[1]; y++) {
+                        for (int x = 0; x < dims[0]; x++) {
+                            samples[0][i] = (byte) raster.getSample(x, dims[1] - y - 1, 0);
+                            samples[1][i] = (byte) raster.getSample(x, dims[1] - y - 1, 1);
+                            samples[2][i] = (byte) raster.getSample(x, dims[1] - y - 1, 2);
+                            i++;
+                        }
+                    }
+                } else {
+                    for (int y = 0; y < dims[1]; y++) {
+                        for (int x = 0; x < dims[0]; x++) {
+                            samples[0][i] = (byte) raster.getSample(x, y, 0);
+                            samples[1][i] = (byte) raster.getSample(x, y, 1);
+                            samples[2][i] = (byte) raster.getSample(x, y, 2);
+                            i++;
+                        }
+                    }
+                }
+                field.addData(DataArray.create(samples[0], 1, "redData"));
+                field.addData(DataArray.create(samples[1], 1, "greenData"));
+                field.addData(DataArray.create(samples[2], 1, "blueData"));
         }
         
         float[][] affine = new float[4][3];
@@ -1236,11 +1267,80 @@ public class ImageUtilities {
         if (img == null) {
             return;
         }
-
-        ImageIO.write(img, "png", file);
+        final ImageFormat format = ImageFormats.PNG;
+        try {
+            Imaging.writeImage(img, file, format, null);
+        } catch (ImageWriteException ex) {
+            throw new IOException(ex);
+        }
     }
     
-    public static void writeJpeg(BufferedImage img, float quality, File file) throws FileNotFoundException, IOException {
+    public static void writeBmp(BufferedImage img, File file) throws IOException {
+        if (img == null) {
+            return;
+        }
+        final ImageFormat format = ImageFormats.BMP;
+        try {
+            Imaging.writeImage(img, file, format, null);
+        } catch (ImageWriteException ex) {
+            throw new IOException(ex);
+        }
+    }
+    
+    public static void writePcx(BufferedImage img, File file) throws IOException {
+        if (img == null) {
+            return;
+        }
+        final ImageFormat format = ImageFormats.PCX;
+        try {
+            Imaging.writeImage(img, file, format, null);
+        } catch (ImageWriteException ex) {
+            throw new IOException(ex);
+        }
+    }
+    
+    public static void writeGif(BufferedImage img, File file) throws IOException {
+        if (img == null) {
+            return;
+        }
+        final ImageFormat format = ImageFormats.GIF;
+        try {
+            Imaging.writeImage(img, file, format, null);
+        } catch (ImageWriteException ex) {
+            throw new IOException(ex);
+        }
+    }
+    
+    public static void writeTiff(BufferedImage img, int compression, File file) throws IOException {
+        if (img == null) {
+            return;
+        }
+        final ImageFormat format = ImageFormats.TIFF;
+        final Map<String,Object> params = new HashMap<String,Object>();
+        
+        switch(compression) {
+            case TiffConstants.TIFF_COMPRESSION_UNCOMPRESSED:
+            case TiffConstants.TIFF_COMPRESSION_CCITT_1D:
+            case TiffConstants.TIFF_COMPRESSION_CCITT_GROUP_3:
+            case TiffConstants.TIFF_COMPRESSION_CCITT_GROUP_4:
+            case TiffConstants.TIFF_COMPRESSION_LZW:
+            case TiffConstants.TIFF_COMPRESSION_PACKBITS:
+            //case TiffConstants.TIFF_COMPRESSION_JPEG:
+                break;
+            default:
+                compression = TiffConstants.TIFF_COMPRESSION_UNCOMPRESSED;
+        };
+    
+        params.put(ImagingConstants.PARAM_KEY_COMPRESSION, new Integer(compression));
+        
+        try {
+            Imaging.writeImage(img, file, format, params);
+        } catch (ImageWriteException ex) {
+            throw new IOException(ex);
+        }
+    }
+    
+    public static void writeJpeg(BufferedImage img, float quality, File file) throws IOException {
         if (img == null) {
             return;
         }

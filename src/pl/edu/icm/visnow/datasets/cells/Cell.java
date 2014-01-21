@@ -1,5 +1,6 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+Copyright (C) 2006-2013 University of Warsaw, ICM
 
 This file is part of GNU Classpath.
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -33,12 +34,17 @@ module.  An independent module is a module which is not derived from
 or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+exception statement from your version.
+*/
+//</editor-fold>
 
 package pl.edu.icm.visnow.datasets.cells;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * 
+ *
  * @author Krzysztof S. Nowinski
  * University of Warsaw, ICM
  */
@@ -62,19 +68,56 @@ abstract public class Cell
    public static final int FACE = 4;
    public static final int FACE_EXTERN = 5;
    public static final int EXPLICIT = 8;
-   public static final String[] UCDnames = {"pt", "line", "tri", "quad", "tet", "pyr", "prism", "hex"};
-   public static final int[] nv = {1, 2, 3, 4, 4, 5, 6, 8};
+   public static final String[] NAMES        = {"point",  "line",  "triangle",  "quadrangle", 
+                                                "tetrahedron", "pyramid",  "prism",  "hexahedron"};
+   public static final String[] PLURAL_NAMES = {"points", "lines", "triangles", "quadrangles", 
+                                                "tetrahedra",  "pyramids", "prisms", "hexahedra"};
+   public static final String[] UCDnames = {"pt",  "line", "tri",   "quad", 
+                                            "tet", "pyr",  "prism", "hex"};
+   public static final int[] nv =  {1, 2, 3, 4, 4, 5, 6, 8};
    public static final int[] dim = {0, 1, 2, 2, 3, 3, 3, 3};
    public static final boolean[] isSimplexType = {true, true, true, false, true, false, false, false};
    public static final int[][] faceTypes =
      {{0,0,0,0,0,0,0,0},{2,0,0,0,0,0,0,0},{0,3,0,0,0,0,0,0},{0,4,0,0,0,0,0,0},
       {0,0,4,0,0,0,0,0},{0,0,4,1,0,0,0,0},{0,0,2,3,0,0,0,0},{0,0,0,6,0,0,0,0}};
-   public static final int orientingVerts[][] = 
+   public static final int orientingVerts[][] =
      {{0},{0},{0},{0},{0,1,2,3},{0,1,3,4},{0,1,2,3},{0,1,3,4}};
    public static final int[][] UCDnodeOrders =
    {{0}, {0, 1}, {0, 1, 2}, {0, 1, 2, 3}, {0, 1, 2, 3}, {4, 0, 3, 2, 1},
     {0, 1, 2, 3, 4, 5}, {0, 1, 2, 3, 4, 5, 6, 7}};
    
+   public static String[] shortCellNames =
+   {
+      "point", "pt", "line", "seg", "tri", "quad", "tet", "pyr", "prism", "hex"
+   };
+
+   public static final Map<String, Integer> idMap = new HashMap<String, Integer>();
+
+   static
+   {
+      idMap.put("pt", 0);    idMap.put("points", 0);
+      idMap.put("seg", 1);   idMap.put("lines", 1);  idMap.put("segments", 1);
+      idMap.put("tri", 2);   idMap.put("tris", 2);   idMap.put("triangles", 2);
+      idMap.put("quad", 3);  idMap.put("quads", 3);  idMap.put("quadrangles", 3);
+      idMap.put("tet", 4);   idMap.put("tetras", 4); idMap.put("tetrahedra", 4);
+      idMap.put("pyr", 5);   idMap.put("pyramids", 5);
+      idMap.put("prism", 6); idMap.put("prisms", 7);
+      idMap.put("hex", 6);   idMap.put("hexahedra", 7);
+   }
+   public static final Map<String, Integer> nVertsMap = new HashMap<String, Integer>();
+
+   static
+   {
+      nVertsMap.put("pt", 1);    nVertsMap.put("points", 1);
+      nVertsMap.put("seg", 2);   nVertsMap.put("lines", 2);  nVertsMap.put("segments", 2);
+      nVertsMap.put("tri", 3);   nVertsMap.put("tris", 3);   nVertsMap.put("triangles", 3);
+      nVertsMap.put("quad", 4);  nVertsMap.put("quads", 4);  nVertsMap.put("quadrangles", 4);
+      nVertsMap.put("tet", 4);   nVertsMap.put("tetras", 4); nVertsMap.put("tetrahedra", 4);
+      nVertsMap.put("pyr", 5);   nVertsMap.put("pyramids", 5);
+      nVertsMap.put("prism", 6); nVertsMap.put("prisms", 7);
+      nVertsMap.put("hex", 8);   nVertsMap.put("hexahedra", 8);
+   }
+
    protected int type;
    protected int status;
    protected int nspace;
@@ -140,7 +183,7 @@ abstract public class Cell
    {
       return type;
    }
-   
+
    abstract public boolean isSimplex();
 
    public int getDim()
@@ -213,6 +256,8 @@ abstract public class Cell
 
    /**
     * Creates array of cell faces for a given set of node indices and orientation
+    * @param nodes
+    * @param orientation
     * @return array faces
     */
    abstract public Cell[] faces(int[] nodes, boolean orientation);
@@ -223,7 +268,7 @@ abstract public class Cell
     */
    abstract public Cell[] triangulation();
 
-   
+
    /**
     * Divides into array of simplices
     * @return array of simplices of triangulation
@@ -244,6 +289,7 @@ abstract public class Cell
 
    /**
     * A convenience function reordering nodes array to increasing order (as long as possible)
+    * @param nodes
     * @return
     * true if orientation has been preserved, false otherwise
     */
@@ -289,12 +335,12 @@ abstract public class Cell
          f = this.faces();
          xf = x.faces();
          if (f != null && xf != null)
-            for (int i = 0; i < f.length; i++)
-               for (int j = 0; j < xf.length; j++)
+            for (Cell f1 : f)
+               for (Cell xf1 : xf)
                {
-                  if (f[i].compare(xf[j]) == 1)
+                  if (f1.compare(xf1) == 1)
                      return -2;
-                  if (f[i].compare(xf[j]) == -1)
+                  if (f1.compare(xf1) == -1)
                      return 2;
                }
          return 0;
@@ -303,26 +349,24 @@ abstract public class Cell
       {
          f = this.faces();
          if (f != null)
-            for (int i = 0; i < f.length; i++)
-            {
-               if (f[i].compare(x) == 1)
+            for (Cell f1 : f) {
+               if (f1.compare(x) == 1)
                   return 3;
-               if (f[i].compare(x) == -1)
+               if (f1.compare(x) == -1)
                   return -3;
-            }
+         }
          return 0;
       }
       if (x.getDim() == this.getDim() + 1)
       {
          xf = x.faces();
          if (xf != null)
-            for (int i = 0; i < xf.length; i++)
-            {
-               if (xf[i].compare(this) == 1)
+            for (Cell xf1 : xf) {
+               if (xf1.compare(this) == 1)
                   return 4;
-               if (xf[i].compare(this) == -1)
+               if (xf1.compare(this) == -1)
                   return -4;
-            }
+         }
          return 0;
       }
       return 0;
@@ -368,7 +412,7 @@ abstract public class Cell
            - v[0][1] * v[1][0] * v[2][2] - v[0][0] * v[1][2] * v[2][1] - v[0][2] * v[1][1] * v[2][0];
       return (int) (Math.signum(d));
    }
-   
+
    /**
     *
     * @param coords vertex coordinates
@@ -396,7 +440,11 @@ abstract public class Cell
    }
    /**
     *
+    * @param type
     * @param coords vertex coordinates
+    * @param geomspace
+    * @param vertices
+    * @param nspace
     * @return orientation of the cell
     */
    public static int geomOrientation(int type, int nspace, int geomspace, int[] vertices, float[] coords)
@@ -419,7 +467,7 @@ abstract public class Cell
            - v[0][1] * v[1][0] * v[2][2] - v[0][0] * v[1][2] * v[2][1] - v[0][2] * v[1][1] * v[2][0];
       return (int) (Math.signum(d));
    }
-   
+
    /**
     *
     * @param coords vertex coordinates
@@ -430,6 +478,12 @@ abstract public class Cell
    {
       if (vertices.length < 3)
          return 0;
+//      for (int i = 0; i < vertices.length; i++)
+//         if (vertices[i] < 0)
+//         {
+//            System.out.println("" + vertices[i]);
+//            return 0;
+//         }
       float[][] v = new float[nspace][nspace];
       float d;
       for (int i = 0; i < nspace -1; i++)
@@ -444,7 +498,7 @@ abstract public class Cell
            - v[0][1] * v[1][0] * v[2][2] - v[0][0] * v[1][2] * v[2][1] - v[0][2] * v[1][1] * v[2][0];
       return (int) (Math.signum(d));
    }
-   
+
    /**
     * Utility subdividing a quad according to the convention of lowest vertex at the diagonal
     * @param quad numbers of four quad vertices (ordered as in Quad class)
@@ -460,7 +514,7 @@ abstract public class Cell
       else
          return new int[][] {{quad[1], quad[2], quad[3]}, {quad[1], quad[3], quad[0]}};
    }
-   
+
    /**
     * Utility subdividing a quad according to the convention of lowest vertex at the diagonal
     * @param quad numbers of four quad vertices (ordered as in Quad class)
@@ -476,7 +530,7 @@ abstract public class Cell
       else
          return new int[][] {{1, 2, 3}, {1, 3, 0}};
    }
-   
+
    public float getMeasure(float[] coords)
    {
       int i0, i1, i2, i3;
@@ -524,17 +578,17 @@ abstract public class Cell
                v3[i] = coords[3 * i3 + i] - coords[3 * i0 + i];
             }
             r = v1[0] * v2[1] * v3[2] + v1[1] * v2[2] * v3[0] + v1[2] * v2[0] * v3[1] -
-                (v1[2] * v2[1] * v3[0] + v1[0] * v2[2] * v3[1] + v1[1] * v2[0] * v3[2]); 
+                (v1[2] * v2[1] * v3[0] + v1[0] * v2[2] * v3[1] + v1[1] * v2[0] * v3[2]);
             return Math.abs(r) / 6;
          default:
             Cell[] triang = triangulation();
             r = 0;
-            for (int i = 0; i < triang.length; i++)
-               r += triang[i].getMeasure(coords);
+            for (Cell triang1 : triang)
+               r += triang1.getMeasure(coords);
             return r;
       }
    }
-   
+
    public float getSignedMeasure(float[] coords)
    {
       int i0, i1, i2, i3;
@@ -582,16 +636,16 @@ abstract public class Cell
                v3[i] = coords[3 * i3 + i] - coords[3 * i0 + i];
             }
             r = v1[0] * v2[1] * v3[2] + v1[1] * v2[2] * v3[0] + v1[2] * v2[0] * v3[1] -
-                (v1[2] * v2[1] * v3[0] + v1[0] * v2[2] * v3[1] + v1[1] * v2[0] * v3[2]); 
+                (v1[2] * v2[1] * v3[0] + v1[0] * v2[2] * v3[1] + v1[1] * v2[0] * v3[2]);
             float sign = this.orientation ? 1 : -1;
 			return sign * r / 6;
          default:
             Cell[] triang = triangulation();
             r = 0;
-            for (int i = 0; i < triang.length; i++)
-               r += triang[i].getSignedMeasure(coords);
+            for (Cell triang1 : triang)
+               r += triang1.getSignedMeasure(coords);
             return r;
       }
    }
-   
+
 }

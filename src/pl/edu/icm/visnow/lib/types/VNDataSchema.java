@@ -48,7 +48,7 @@ import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
  */
 public class VNDataSchema implements VNDataSchemaInterface
 {
-
+   public static final int FIELD_DATA_SIMPLE_NUMERIC = 10;
    private boolean empty = false;
    private Class vnDataType = null;
    private boolean vnDataTypeSet = false;
@@ -160,32 +160,37 @@ public class VNDataSchema implements VNDataSchemaInterface
       "CELLS_3D",
       "TIME"
    };
-   private String[] dataTypesString = new String[8];
+   private String[] dataTypesString = new String[11];
 
    public VNDataSchema()
    {
       this.empty = true;
+      dataTypesString[DataArray.FIELD_DATA_BOOLEAN] = "BooleanDataArray";
       dataTypesString[DataArray.FIELD_DATA_BYTE] = "ByteDataArray";
       dataTypesString[DataArray.FIELD_DATA_SHORT] = "ShortDataArray";
       dataTypesString[DataArray.FIELD_DATA_INT] = "IntDataArray";
       dataTypesString[DataArray.FIELD_DATA_FLOAT] = "FloatDataArray";
       dataTypesString[DataArray.FIELD_DATA_DOUBLE] = "DoubleDataArray";
       dataTypesString[DataArray.FIELD_DATA_COMPLEX] = "ComplexDataArray";
-      dataTypesString[DataArray.FIELD_DATA_LOGIC] = "LogicDataArray";
       dataTypesString[DataArray.FIELD_DATA_STRING] = "StringDataArray";
-
+      dataTypesString[DataArray.FIELD_DATA_LOGIC] = "LogicDataArray";
+      dataTypesString[DataArray.FIELD_DATA_OBJECT] = "ObjectDataArray";
+      dataTypesString[FIELD_DATA_SIMPLE_NUMERIC] = "SimpleNumeric";
    }
 
    public VNDataSchema(String... args)
    {
+      dataTypesString[DataArray.FIELD_DATA_BOOLEAN] = "BooleanDataArray";
       dataTypesString[DataArray.FIELD_DATA_BYTE] = "ByteDataArray";
       dataTypesString[DataArray.FIELD_DATA_SHORT] = "ShortDataArray";
       dataTypesString[DataArray.FIELD_DATA_INT] = "IntDataArray";
       dataTypesString[DataArray.FIELD_DATA_FLOAT] = "FloatDataArray";
       dataTypesString[DataArray.FIELD_DATA_DOUBLE] = "DoubleDataArray";
       dataTypesString[DataArray.FIELD_DATA_COMPLEX] = "ComplexDataArray";
-      dataTypesString[DataArray.FIELD_DATA_LOGIC] = "LogicDataArray";
       dataTypesString[DataArray.FIELD_DATA_STRING] = "StringDataArray";
+      dataTypesString[DataArray.FIELD_DATA_LOGIC] = "LogicDataArray";
+      dataTypesString[DataArray.FIELD_DATA_OBJECT] = "ObjectDataArray";
+      dataTypesString[FIELD_DATA_SIMPLE_NUMERIC] = "SimpleNumeric";
 
       int nArgs = args.length / 2;
       HashMap<String, String> paramsMap = new HashMap<String, String>();
@@ -779,6 +784,11 @@ public class VNDataSchema implements VNDataSchemaInterface
             int[] tmpi = new int[tmp.length];
             for (int i = 0; i < tmp.length; i++)
             {
+               if (tmp[i].equals("BooleanDataArray"))
+               {
+                  tmpi[i] = DataArray.FIELD_DATA_BOOLEAN;
+                  continue;
+               }
                if (tmp[i].equals("ByteDataArray"))
                {
                   tmpi[i] = DataArray.FIELD_DATA_BYTE;
@@ -817,6 +827,16 @@ public class VNDataSchema implements VNDataSchemaInterface
                if (tmp[i].equals("StringDataArray"))
                {
                   tmpi[i] = DataArray.FIELD_DATA_STRING;
+                  continue;
+               }
+               if (tmp[i].equals("ObjectDataArray"))
+               {
+                  tmpi[i] = DataArray.FIELD_DATA_OBJECT;
+                  continue;
+               }
+               if (tmp[i].equals("SimpleNumeric"))
+               {
+                  tmpi[i] = FIELD_DATA_SIMPLE_NUMERIC;
                   continue;
                }
             }
@@ -966,6 +986,11 @@ public class VNDataSchema implements VNDataSchemaInterface
             int[] tmpi = new int[tmp.length];
             for (int i = 0; i < tmp.length; i++)
             {
+               if (tmp[i].equals("BooleanDataArray"))
+               {
+                  tmpi[i] = DataArray.FIELD_DATA_BOOLEAN;
+                  continue;
+               }
                if (tmp[i].equals("ByteDataArray"))
                {
                   tmpi[i] = DataArray.FIELD_DATA_BYTE;
@@ -1004,6 +1029,16 @@ public class VNDataSchema implements VNDataSchemaInterface
                if (tmp[i].equals("StringDataArray"))
                {
                   tmpi[i] = DataArray.FIELD_DATA_STRING;
+                  continue;
+               }
+               if (tmp[i].equals("ObjectDataArray"))
+               {
+                  tmpi[i] = DataArray.FIELD_DATA_OBJECT;
+                  continue;
+               }
+               if (tmp[i].equals("SimpleNumeric"))
+               {
+                  tmpi[i] = FIELD_DATA_SIMPLE_NUMERIC;
                   continue;
                }
             }
@@ -1525,15 +1560,15 @@ public class VNDataSchema implements VNDataSchemaInterface
    @Override
    public String toString()
    {
-      return getDescription("; ");
+      return getDescription("; ", "");
    }
 
    public String toHtmlString()
    {
-      return getDescription("<br>");
+      return getDescription("<br>","");
    }
 
-   private String getDescription(String newline)
+   private String getDescription(String newline, String tab)
    {
       String str = "";
 
@@ -1638,18 +1673,19 @@ public class VNDataSchema implements VNDataSchemaInterface
       {
          if (nDataSet)
          {
-            str += "" + nData + " components" + newline;
+            str += tab + nData + " components" + newline;
          }
 
          if (dataVeclenSet && dataVeclens != null)
          {
             for (int i = 0; i < dataVeclens.length; i++)
             {
-               str += "at least one " + (dataVeclens[i] == 1 ? "scalar" : ("veclen=" + dataVeclens[i])) + " component" + newline;
+               //str += "at least one " + (dataVeclens[i] == 1 ? "scalar" : ("veclen=" + dataVeclens[i])) + " component" + newline;
+                str += tab + (dataVeclens[i] == 1 ? "scalar" : ("veclen=" + dataVeclens[i])) + " component" + newline;
             }
          } else if (dataVeclensSet && dataVeclens != null)
          {
-            str += "with veclen=";
+            str += tab + "with veclen=";
             for (int i = 0; i < dataVeclens.length; i++)
             {
                str += "" + dataVeclens[i];
@@ -1665,11 +1701,12 @@ public class VNDataSchema implements VNDataSchemaInterface
          {
             for (int i = 0; i < dataTypes.length; i++)
             {
-               str += "at least one component of type " + DataArray.getTypeName(dataTypes[i]) + newline;
+               //str += "at least one component of type " + DataArray.getTypeName(dataTypes[i]) + newline;
+                str += tab + "component of type " + DataArray.getTypeName(dataTypes[i]) + newline;
             }
          } else if (dataTypesSet && dataTypes != null)
          {
-            str += "with types=";
+            str += tab + "with types=";
             for (int i = 0; i < dataTypes.length; i++)
             {
                str += "" + DataArray.getTypeName(dataTypes[i]);
@@ -1685,11 +1722,12 @@ public class VNDataSchema implements VNDataSchemaInterface
          {
             for (int i = 0; i < dataNames.length; i++)
             {
-               str += "at least one component named '" + dataNames[i] + "'" + newline;
+               //str += "at least one component named '" + dataNames[i] + "'" + newline;
+                str += tab + "component named '" + dataNames[i] + "'" + newline;
             }
          } else if (dataNamesSet && dataNames != null)
          {
-            str += "with names=";
+            str += tab + "with names=";
             for (int i = 0; i < dataNames.length; i++)
             {
                str += "" + dataNames[i];
@@ -1704,19 +1742,20 @@ public class VNDataSchema implements VNDataSchemaInterface
 
       if (isIrregularSet && isIrregular && isCellSetsSet && isCellSets)
       {
-         str += "" + nCellSets + " cell sets" + newline;
+         str += tab + nCellSets + " cell sets" + newline;
 
          if (cellSetNameSet && cellSetNames != null)
          {
             for (int i = 0; i < cellSetNames.length; i++)
             {
-               str += "at least one cell set named '" + cellSetNames[i] + "'" + newline;
+               //str += "at least one cell set named '" + cellSetNames[i] + "'" + newline;
+                str += tab + "cell set named '" + cellSetNames[i] + "'" + newline;
             }
          }
 
          if (cellSetNamesSet && cellSetNames != null)
          {
-            str += "with names=";
+            str += tab + "with names=";
             for (int i = 0; i < cellSetNames.length; i++)
             {
                str += "" + cellSetNames[i];
@@ -1730,21 +1769,21 @@ public class VNDataSchema implements VNDataSchemaInterface
 
          if (nCellDataSet && nCellData != 0)
          {
-            str += "" + nCellData + " cell components in cellsets" + newline;
+            str += tab + nCellData + " cell components in cellsets" + newline;
          }
 
          if (cellDataVeclenSet && cellDataVeclens != null)
          {
             for (int i = 0; i < cellDataVeclens.length; i++)
             {
-               str += "at least one "
-                       + (cellDataVeclens[i] == 1 ? "scalar" : ("veclen=" + cellDataVeclens[i])) + " cell component" + newline;
+               //str += "at least one " + (cellDataVeclens[i] == 1 ? "scalar" : ("veclen=" + cellDataVeclens[i])) + " cell component" + newline;
+                str += tab + (cellDataVeclens[i] == 1 ? "scalar" : ("veclen=" + cellDataVeclens[i])) + " cell component" + newline;
             }
          }
 
          if (cellDataVeclensSet && cellDataVeclens != null)
          {
-            str += "with cellset veclen=";
+            str += tab + "with cellset veclen=";
             for (int j = 0; j < cellDataVeclens.length; j++)
             {
                str += "" + cellDataVeclens[j];
@@ -1761,14 +1800,14 @@ public class VNDataSchema implements VNDataSchemaInterface
          {
             for (int i = 0; i < cellDataTypes.length; i++)
             {
-               str += "at least one cell component of type "
-                       + DataArray.getTypeName(cellDataTypes[i]) + newline;
+               //str += "at least one cell component of type " + DataArray.getTypeName(cellDataTypes[i]) + newline;
+                str += tab + "cell component of type " + DataArray.getTypeName(cellDataTypes[i]) + newline;
             }
          }
 
-         if (cellDataVeclensSet && cellDataTypes != null)
+         if (cellDataTypesSet && cellDataTypes != null)
          {
-            str += "with types=";
+            str += tab + "with types=";
             for (int j = 0; j < cellDataTypes.length; j++)
             {
                str += "" + DataArray.getTypeName(cellDataTypes[j]);
@@ -1784,13 +1823,14 @@ public class VNDataSchema implements VNDataSchemaInterface
          {
             for (int i = 0; i < cellDataNames.length; i++)
             {
-               str += "at least one cell component named '" + cellDataNames[i] + "'" + newline;
+               //str += "at least one cell component named '" + cellDataNames[i] + "'" + newline;
+                str += tab + "cell component named '" + cellDataNames[i] + "'" + newline;
             }
          }
 
          if (cellDataNamesSet && cellDataNames != null)
          {
-            str += "with names=";
+            str += tab + "with names=";
             for (int j = 0; j < cellDataNames.length; j++)
             {
                str += "" + cellDataNames[j];
@@ -1802,56 +1842,66 @@ public class VNDataSchema implements VNDataSchemaInterface
             str += newline;
          }
 
-         str += newline;
+         //str += newline;
 
          if (isCellsPointSet && isCellsPoint)
          {
-            str += "at least one cellset containing POINT cells" + newline;
+            //str += "at least one with POINT cells" + newline;
+             str += tab + "with POINT cells" + newline;
          }
 
          if (isCellsSegmentSet && isCellsSegment)
          {
-            str += "at least one cellset containing SEGMENT cells" + newline;
+            //str += "at least one with SEGMENT cells" + newline;
+             str += tab + "with SEGMENT cells" + newline;
          }
 
          if (isCells2DSet && isCells2D)
          {
-            str += "at least one cellset containing 2D cells" + newline;
+            //str += "at least one with 2D cells" + newline;
+             str += tab + "with 2D cells" + newline;
          }
 
          if (isCells3DSet && isCells3D)
          {
-            str += "at least one cellset containing 3D cells" + newline;
+            //str += "at least one with 3D cells" + newline;
+             str += tab + "with 3D cells" + newline;
          }
 
          if (isCellsTriangleSet && isCellsTriangle)
          {
-            str += "at least one cellset containing TRIANGLE cells" + newline;
+            //str += "at least one with TRIANGLE cells" + newline;
+             str += tab + "with TRIANGLE cells" + newline;
          }
 
          if (isCellsQuadSet && isCellsQuad)
          {
-            str += "at least one cellset containing QUAD cells" + newline;
+            //str += "at least one with QUAD cells" + newline;
+             str += tab + "with QUAD cells" + newline;
          }
 
          if (isCellsTetraSet && isCellsTetra)
          {
-            str += "at least one cellset containing TETRA cells" + newline;
+            //str += "at least one with TETRA cells" + newline;
+             str += tab + "with TETRA cells" + newline;
          }
 
          if (isCellsPyramidSet && isCellsPyramid)
          {
-            str += "at least one cellset containing PYRAMID cells" + newline;
+            //str += "at least one with PYRAMID cells" + newline;
+             str += tab + "with PYRAMID cells" + newline;
          }
 
          if (isCellsPrismSet && isCellsPrism)
          {
-            str += "at least one cellset containing PRISM cells" + newline;
+            //str += "at least one with PRISM cells" + newline;
+             str += tab + "with PRISM cells" + newline;
          }
 
          if (isCellsHexaSet && isCellsHexa)
          {
-            str += "at least one cellset containing HEXAHEDRON cells" + newline;
+            //str += "at least one with HEXAHEDRON cells" + newline;
+             str += tab + "with HEXAHEDRON cells" + newline;
          }
       }
 
@@ -2185,5 +2235,5 @@ public class VNDataSchema implements VNDataSchemaInterface
    @Override
    public void createStats()
    {
-   }
+   }   
 }

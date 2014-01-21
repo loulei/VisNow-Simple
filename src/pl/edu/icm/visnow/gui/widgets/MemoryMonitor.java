@@ -42,6 +42,7 @@ package pl.edu.icm.visnow.gui.widgets;
  * Created on 25 listopad 2003, 17:03
  */
 
+import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
@@ -69,7 +70,7 @@ public class MemoryMonitor extends JProgressBar implements Runnable
    {
       super();
       setStringPainted(true);
-      setFont(new java.awt.Font("Dialog", 0, 10));
+      setFont(new java.awt.Font("Dialog", 0, 11));
       updateValues();
       new Thread(this, "MemoryMonitor").start();
       this.addMouseListener(new MouseAdapter()
@@ -90,7 +91,8 @@ public class MemoryMonitor extends JProgressBar implements Runnable
       format = (DecimalFormat) NumberFormat.getInstance(Locale.US);
       format.applyPattern("00.0%");
       this.setToolTipText("Right-click for maximum mode change static/dynamic. Double-left-click for garbage collection.");
-
+      //preferred size used before in MainWindow
+      setPreferredSize(new Dimension(240,18)); 
    }
 
    private void updateValues()
@@ -99,6 +101,9 @@ public class MemoryMonitor extends JProgressBar implements Runnable
       long total = r.totalMemory();
       long free = r.freeMemory();
       long used = total - free;
+      //if VisNow not initialized yet then return (previously MemoryMonitor could not be initialized by NetBeans in design mode)
+      if (VisNow.get() == null) return;
+      
       long max = VisNow.get().getMemoryMax();
       if (modeStatic && max != Long.MAX_VALUE)
       {

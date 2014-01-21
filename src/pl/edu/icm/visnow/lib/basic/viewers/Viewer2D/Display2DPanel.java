@@ -1,40 +1,39 @@
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+ Copyright (C) 2006-2013 University of Warsaw, ICM
 
-This file is part of GNU Classpath.
+ This file is part of GNU Classpath.
 
-GNU Classpath is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+ GNU Classpath is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
 
-GNU Classpath is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
+ GNU Classpath is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+ You should have received a copy of the GNU General Public License
+ along with GNU Classpath; see the file COPYING.  If not, write to the 
+ University of Warsaw, Interdisciplinary Centre for Mathematical and 
+ Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
 
-Linking this library statically or dynamically with other modules is
-making a combined work based on this library.  Thus, the terms and
-conditions of the GNU General Public License cover the whole
-combination.
+ Linking this library statically or dynamically with other modules is
+ making a combined work based on this library.  Thus, the terms and
+ conditions of the GNU General Public License cover the whole
+ combination.
 
-As a special exception, the copyright holders of this library give you
-permission to link this library with independent modules to produce an
-executable, regardless of the license terms of these independent
-modules, and to copy and distribute the resulting executable under
-terms of your choice, provided that you also meet, for each linked
-independent module, the terms and conditions of the license of that
-module.  An independent module is a module which is not derived from
-or based on this library.  If you modify this library, you may extend
-this exception to your version of the library, but you are not
-obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
-
+ As a special exception, the copyright holders of this library give you
+ permission to link this library with independent modules to produce an
+ executable, regardless of the license terms of these independent
+ modules, and to copy and distribute the resulting executable under
+ terms of your choice, provided that you also meet, for each linked
+ independent module, the terms and conditions of the license of that
+ module.  An independent module is a module which is not derived from
+ or based on this library.  If you modify this library, you may extend
+ this exception to your version of the library, but you are not
+ obligated to do so.  If you do not wish to do so, delete this
+ exception statement from your version. */
 package pl.edu.icm.visnow.lib.basic.viewers.Viewer2D;
 
 import java.awt.*;
@@ -50,7 +49,10 @@ import javax.imageio.ImageIO;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.apache.commons.imaging.formats.tiff.constants.TiffConstants;
+import org.apache.commons.io.FilenameUtils;
 import pl.edu.icm.visnow.lib.basic.viewers.Viewer2D.Display2DControlsFrame.ImageFormat;
+import pl.edu.icm.visnow.lib.utils.ImageUtilities;
 import pl.edu.icm.visnow.lib.utils.YUVSaver;
 import pl.edu.icm.visnow.lib.utils.geometry2D.GeometryObject2D;
 import pl.edu.icm.visnow.lib.utils.geometry2D.TransformedGeometryObject2D;
@@ -75,7 +77,7 @@ public class Display2DPanel extends javax.swing.JPanel {
     protected String titleText = "";
     protected Display2DControlsFrame controlsFrame;
     protected boolean autoCenter = true;
-    protected boolean autoNormalize = false;
+    protected boolean autoNormalize = true;
     protected boolean firstRun = true;
     protected boolean move = false;
     protected int oldX, oldY;
@@ -261,7 +263,7 @@ public class Display2DPanel extends javax.swing.JPanel {
 
 
        if (tootltipActive) {
-           this.setToolTipText(currentUnderCursorObj.getGeometryObject2D().getDetailedLocalInfoAt(p[0], p[1]));           
+           this.setToolTipText(currentUnderCursorObj.getGeometryObject2D().getDetailedLocalInfoAt(p[0], p[1]));
            ToolTipManager.sharedInstance().setInitialDelay(0);
            ToolTipManager.sharedInstance().setDismissDelay(100000);
            ToolTipManager.sharedInstance().mouseMoved(
@@ -423,7 +425,7 @@ public class Display2DPanel extends javax.swing.JPanel {
         this.removeAllChildren();
     }
 
-    public Vector<TransformedGeometryObject2D> getChildren() {
+    public ArrayList<TransformedGeometryObject2D> getChildren() {
         return root.getChildren();
     }
 
@@ -519,6 +521,36 @@ public class Display2DPanel extends javax.swing.JPanel {
         return root0;
     }
 
+    public void writeImage(File file) {
+        BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+        dontWrite = true;
+        paintComponent(img.getGraphics());
+        dontWrite = false;
+
+        String ext = FilenameUtils.getExtension(file.getAbsolutePath()).toLowerCase();
+
+        try {
+            if (ext.equals("jpg") || ext.equals("jpeg")) {
+                ImageUtilities.writeJpeg(img, 1.0f, file);
+            } else if (ext.equals("png")) {
+                ImageUtilities.writePng(img, file);
+            } else if (ext.equals("gif")) {
+                ImageUtilities.writeGif(img, file);
+            } else if (ext.equals("tif") || ext.equals("tiff")) {
+                ImageUtilities.writeTiff(img, TiffConstants.TIFF_COMPRESSION_UNCOMPRESSED, file);
+            } else if (ext.equals("bmp")) {
+                ImageUtilities.writeBmp(img, file);
+            } else if (ext.equals("pcx")) {
+                ImageUtilities.writePcx(img, file);
+            } else {
+                throw new IllegalArgumentException("Invalid file extension " + ext);
+            }
+        } catch (IOException e) {
+            System.out.println("I/O exception for " + file.getAbsolutePath());
+        }
+
+    }
+
     public void writeImage(String fileName, int format) {
         //System.out.println("writing image: "+fileName);
         BufferedImage img = null;
@@ -530,7 +562,7 @@ public class Display2DPanel extends javax.swing.JPanel {
             File file = new File(fileName);
             switch (format) {
                 case FORMAT_PNG:
-                    ImageIO.write(img, ImageFormat.PNG_FORMAT.getExtension(), file);
+                    ImageUtilities.writePng(img, file);
                     break;
                 case FORMAT_YUV:
                     int[] content = null;

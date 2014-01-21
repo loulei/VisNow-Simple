@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,9 +35,11 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.utils.numeric;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
@@ -53,7 +56,7 @@ import static pl.edu.icm.visnow.lib.utils.numeric.SliceLookupTable.*;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */ 
 public class IrregularFieldSplitter 
 {
@@ -94,14 +97,14 @@ public class IrregularFieldSplitter
    
    protected int totalOutputCells = 0;
    
-   protected Vector<Vector<int[]>[]> newCells = new Vector<Vector<int[]>[]>();
-   protected Vector<Vector<int[]>[]> newCellDataIndices = new Vector<Vector<int[]>[]>();
-   protected Vector<int[]> totalCellsInSets = new Vector<int[]>();
+   protected ArrayList<ArrayList<int[]>[]> newCells = new ArrayList<ArrayList<int[]>[]>();
+   protected ArrayList<ArrayList<int[]>[]> newCellDataIndices = new ArrayList<ArrayList<int[]>[]>();
+   protected ArrayList<int[]> totalCellsInSets = new ArrayList<int[]>();
    
    protected int[] totalNewCells = new int[Cell.TYPES];
    protected int[] currentNewCells = new int[Cell.TYPES];
-   protected Vector<int[]>[] newCellsInSet;
-   protected Vector<int[]>[] newCellDataIndicesInSet;
+   protected ArrayList<int[]>[] newCellsInSet;
+   protected ArrayList<int[]>[] newCellDataIndicesInSet;
    
    protected int cellType;
    protected int nCellNodes;
@@ -128,12 +131,12 @@ public class IrregularFieldSplitter
    {
       Arrays.fill(totalNewCells, 0);
       Arrays.fill(currentNewCells, CHUNK);
-      newCellsInSet = new Vector[Cell.TYPES];
-      newCellDataIndicesInSet = new Vector[Cell.TYPES];
+      newCellsInSet = new ArrayList[Cell.TYPES];
+      newCellDataIndicesInSet = new ArrayList[Cell.TYPES];
       for (int i = 0; i < Cell.TYPES; i++)
       {
-         newCellsInSet[i] = new Vector<int[]>();
-         newCellDataIndicesInSet[i] = new Vector<int[]>();
+         newCellsInSet[i] = new ArrayList<int[]>();
+         newCellDataIndicesInSet[i] = new ArrayList<int[]>();
       }
       newCells.add(newCellsInSet);
       newCellDataIndices.add(newCellDataIndicesInSet);
@@ -478,8 +481,7 @@ public class IrregularFieldSplitter
          }
       for (int i = 0; i < nNewNodes; i++, cNode++)
          globalNewNodeIndices[nInNodes + i] = cNode;
-      outField = new IrregularField();
-      outField.setNNodes(nOutNodes);
+      outField = new IrregularField(nOutNodes);
       
       float[] coords = inField.getCoords();
       float[] outCoords = new float[3 * nOutNodes];
@@ -499,6 +501,27 @@ public class IrregularFieldSplitter
             outCoords[k] = r * coords[3 * k0 + j] + (1 - r) * coords[3 * k1 + j];
       }
       outField.setCoords(outCoords);
+      
+//      boolean[] mask = inField.getMask();
+//      if(mask != null) {
+//            boolean[] outMask = new boolean[nOutNodes];
+//            k = 0;
+//            for (int i = 0; i < usedNodes.length; i++)
+//               if (usedNodes[i]) {
+//                  outMask[k] = mask[i];
+//                  k++;
+//               }   
+//            for (int i = 0; i < nNewNodes; i++)
+//            {
+//               int k0 = newNodesArray[i].p0;
+//               int k1 = newNodesArray[i].p1;
+//               outMask[k] = (mask[k0] && mask[k1]);
+//               k++;
+//            }
+//            outField.setMask(outMask);
+//      }
+      
+      
       interpolateData();
       
       for (int iSet = 0; iSet < inField.getNCellSets(); iSet++)
@@ -520,8 +543,8 @@ public class IrregularFieldSplitter
             int nCellsInArray = totalNewCells[iArray];
             if (nCellsInArray < 1)
                continue;
-            Vector<int[]> cellsInArray = newCellsInSet[iArray];
-            Vector<int[]> cellDataIndicesInArray = newCellDataIndicesInSet[iArray];
+            ArrayList<int[]> cellsInArray = newCellsInSet[iArray];
+            ArrayList<int[]> cellDataIndicesInArray = newCellDataIndicesInSet[iArray];
             int[] cellNodes = new int[nVertsInCell * nCellsInArray];
             int[] cellDataIndices = new int[nCellsInArray];
             boolean[] orientations = new boolean[nCellsInArray];

@@ -152,7 +152,7 @@ public class Core {
             }
 
             log.debug("voxel size =" + voxelSize);
-            outField = r.regularize(outField, Runtime.getRuntime().availableProcessors(), voxelSize);
+            outField = r.regularize(outField, pl.edu.icm.visnow.system.main.VisNow.availableProcessors(), voxelSize);
         }
         progress = 1.0f;
         fireStatusChanged(progress);

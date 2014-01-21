@@ -70,12 +70,14 @@ public class ExtendedGadgetReader extends IrregularOutFieldVisualizationModule {
         parameters = params = new Params();
         params.addChangeListener(new ChangeListener() {
 
+            @Override
             public void stateChanged(ChangeEvent evt) {
                 startAction();
             }
         });
         params.addParameterChangelistener(new ParameterChangeListener() {
 
+            @Override
             public void parameterChanged(String name) {
                 if("show".equals(name)) {
                     fromGUI = true;
@@ -83,8 +85,9 @@ public class ExtendedGadgetReader extends IrregularOutFieldVisualizationModule {
                 }
             }
         });
-        SwingInstancer.swingRun(new Runnable() {
+        SwingInstancer.swingRunAndWait(new Runnable() {
 
+            @Override
             public void run() {
                 computeUI = new GUI();
                 computeUI.setParams(params);
@@ -96,6 +99,7 @@ public class ExtendedGadgetReader extends IrregularOutFieldVisualizationModule {
         core = new ExtendedReadGadgetData();
         core.addChangeListener(new ChangeListener() {
 
+            @Override
             public void stateChanged(ChangeEvent e) {
                 setProgress(core.getProgress());
             }
@@ -156,5 +160,10 @@ public class ExtendedGadgetReader extends IrregularOutFieldVisualizationModule {
        if(isForceFlag()) 
            computeUI.activateOpenDialog();
    }
-    
+ 
+   @Override
+   public boolean isGenerator() {
+      return true;
+   }
+   
 }

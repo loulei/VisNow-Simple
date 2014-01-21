@@ -1,40 +1,40 @@
 //<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+ Copyright (C) 2006-2013 University of Warsaw, ICM
 
-This file is part of GNU Classpath.
+ This file is part of GNU Classpath.
 
-GNU Classpath is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+ GNU Classpath is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
 
-GNU Classpath is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
+ GNU Classpath is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the
-University of Warsaw, Interdisciplinary Centre for Mathematical and
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
+ You should have received a copy of the GNU General Public License
+ along with GNU Classpath; see the file COPYING.  If not, write to the
+ University of Warsaw, Interdisciplinary Centre for Mathematical and
+ Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
-Linking this library statically or dynamically with other modules is
-making a combined work based on this library.  Thus, the terms and
-conditions of the GNU General Public License cover the whole
-combination.
+ Linking this library statically or dynamically with other modules is
+ making a combined work based on this library.  Thus, the terms and
+ conditions of the GNU General Public License cover the whole
+ combination.
 
-As a special exception, the copyright holders of this library give you
-permission to link this library with independent modules to produce an
-executable, regardless of the license terms of these independent
-modules, and to copy and distribute the resulting executable under
-terms of your choice, provided that you also meet, for each linked
-independent module, the terms and conditions of the license of that
-module.  An independent module is a module which is not derived from
-or based on this library.  If you modify this library, you may extend
-this exception to your version of the library, but you are not
-obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+ As a special exception, the copyright holders of this library give you
+ permission to link this library with independent modules to produce an
+ executable, regardless of the license terms of these independent
+ modules, and to copy and distribute the resulting executable under
+ terms of your choice, provided that you also meet, for each linked
+ independent module, the terms and conditions of the license of that
+ module.  An independent module is a module which is not derived from
+ or based on this library.  If you modify this library, you may extend
+ this exception to your version of the library, but you are not
+ obligated to do so.  If you do not wish to do so, delete this
+ exception statement from your version. */
 //</editor-fold>
 
 package pl.edu.icm.visnow.system.main;
@@ -43,6 +43,7 @@ import java.awt.*;
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
@@ -54,13 +55,17 @@ import javax.help.HelpSet;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import pl.edu.icm.visnow.application.application.Application;
+import pl.edu.icm.visnow.engine.core.ModuleCore;
 import pl.edu.icm.visnow.engine.error.Displayer;
 import pl.edu.icm.visnow.engine.exception.VNOuterIOException;
 import pl.edu.icm.visnow.engine.exception.VNSystemException;
@@ -71,11 +76,11 @@ import pl.edu.icm.visnow.system.framework.ScreenInfo;
 import pl.edu.icm.visnow.system.libraries.AttachWizard;
 import pl.edu.icm.visnow.system.libraries.MainLibraries;
 import pl.edu.icm.visnow.system.libraries.MainTypes;
+import pl.edu.icm.visnow.system.utils.usermessage.Level;
+import pl.edu.icm.visnow.system.utils.usermessage.UserMessage;
+import pl.edu.icm.visnow.system.utils.usermessage.UserMessageDispatcher;
+import pl.edu.icm.visnow.system.utils.usermessage.UserMessageListener;
 
-/**
- *
- * @author gacek
- */
 public class VisNow {
 
     private static final Logger LOGGER = Logger.getLogger(VisNow.class);
@@ -86,10 +91,10 @@ public class VisNow {
     public static final int SIMPLE_GUI = 1;
     public final static String MAIN_CLASS_NAME = "pl.edu.icm.visnow.system.main.VisNow";
     public final static String TITLE = "VisNow";
-    private final static String VERSION_BASE = "1.0";
+    private final static String VERSION_BASE = "1.1";
     public final static String CONFIG_DIR = ".visnow";
-    public final static String CONFIG_VERSION = "0.67";
-    public final static String PROJECT_NAME = "VNe4";
+    public final static String CONFIG_VERSION = "0.70";
+    public final static String PROJECT_NAME = "VN";
     public static final String LOG_OUTPUT_DIR = "log";  //subdir of CONFIG_DIR, place for *.log files (has to be equal as path defined in log4j_*.properties)
     private static final String LOG_CONFIG_TEMPLATES_DIR = "config_templates"; //directory of config templates which are copied to CONFIG_DIR
     private static final String LOG_CONFIG = "vnlog4j_default.properties"; //default configuration for logging in standard mode
@@ -103,8 +108,21 @@ public class VisNow {
     public static String tmpDirName = "";
     public static int guiLevel = SIMPLE_GUI;
     public static boolean allowGUISwitch = true;
-    public static int libraryLevel = BASIC_LIBRARY;
+    private static boolean substancedebug = false;
+    private static int libraryLevel = BASIC_LIBRARY;
     public static String VERSION = VERSION_BASE;
+    public static final int NAN_AS_0              = 0;
+    public static final int NAN_AS_MIN_DATA_VAL   = 1;
+    public static final int NAN_AS_MAX_DATA_VAL   = 2;
+    public static final int NAN_AS_MIN_NUMBER_VAL = 3;
+    public static final int NAN_AS_MAX_NUMBER_VAL = 4;
+    public static final int EXCEPTION_AT_NAN      = 5;
+    public static final int INF_AS_0                  = 0;
+    public static final int INF_AS_EXTREME_DATA_VAL   = 1;
+    public static final int INF_AS_EXTREME_NUMBER_VAL = 2;
+    public static final int EXCEPTION_AT_INF          = 3;
+    public static int actionOnNaN = NAN_AS_0;
+    public static int actionOnInf = INF_AS_0;
 
     public static File getTmpDir() {
         if (tmpDir == null) {
@@ -120,6 +138,22 @@ public class VisNow {
 
     public static String getTmpDirPath() {
         return getTmpDir().getAbsolutePath();
+    }
+
+    public static int getLibraryLevel() {
+        return libraryLevel;
+    }
+
+    public static String getLibraryLevelAsString() {
+        switch (libraryLevel) {
+            case SIMPLE_LIBRARY:
+                return "SIMPLE";
+            case BASIC_LIBRARY:
+                return "BASIC";
+            case FULL_LIBRARY:
+                return "FULL";
+        }
+        return "";
     }
 
     public void backup() {
@@ -160,6 +194,7 @@ public class VisNow {
         return (memoryMax - used);
     }
 
+    //TODO: looks like this gives me dist directory/not a project directory. Should be project directory when running from netbeans
     private static String findOperatingFolder() {
         return findOperatingFolder(findJarPath());
     }
@@ -167,14 +202,13 @@ public class VisNow {
     private static String findOperatingFolder(String jarPath) {
         if (jarPath.endsWith("build/classes/")) //RUNNING FROM NETBEANS
             return new File(jarPath).getParentFile().getParent();
-        else                              //RUNNING FROM JAR
+        else //RUNNING FROM JAR
             return new File(jarPath).getParent();
     }
 
-
-    private static String findJarPath(){
+    private static String findJarPath() {
         URL url;
-        try{
+        try {
             url = Class.forName(MAIN_CLASS_NAME).getProtectionDomain().getCodeSource().getLocation();
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException("Main class not found. How is everything working?");
@@ -202,8 +236,6 @@ public class VisNow {
             return jarPath;
         }
     }
-
-
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc=" FRAME ">
     private MainWindow mainFrame;
@@ -238,6 +270,18 @@ public class VisNow {
     public static boolean isDebug() {
         return debug;
     }
+    //TODO: this method along with findOperatingFolder should be deeply tested across different operating systems
+
+    private static void initConfigDir() {
+        File file = new File(new File(System.getProperty("user.home")) + File.separator + ".visnow");
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        file = new File(file.getPath() + File.separator + VisNow.CONFIG_VERSION);
+        if (!file.exists()) {
+            file.mkdir();
+        }
+    }
 
     private void initConfig() {
         try {
@@ -270,9 +314,14 @@ public class VisNow {
     }
 
     private void initLaf() {
+        if (substancedebug) {
+            return;
+        }
         try {
-            if(getOsType() == OsType.OS_MAC)
+            if (getOsType() == OsType.OS_MAC)
                 javax.swing.UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+
+            //javax.swing.UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
             LOGGER.info("Failed to set look-and-feel");
         }
@@ -289,8 +338,8 @@ public class VisNow {
         String helpHS = "vnhelp_HS.hs";
         try {
             URLClassLoader loader = new URLClassLoader(new URL[]{
-                        helpJarFile.toURI().toURL()
-                    });
+                helpJarFile.toURI().toURL()
+            });
             URL hsURL = HelpSet.findHelpSet(loader, helpHS);
             if (hsURL == null) {
                 throw new Exception();
@@ -420,21 +469,43 @@ public class VisNow {
                 }
             });
 
-            try {
-                for (int i = 0; i < libraryFiles.length; i++) {
-                    System.load(libDir + sep + lib + sep + libraryFiles[i]);
+            ArrayList<String> libsToRead = new ArrayList<String>();
+            for (int i = 0; i < libraryFiles.length; i++) {
+                libsToRead.add(libDir + sep + lib + sep + libraryFiles[i]);
+            }
+
+            //try readining libraries with possible dependencies until success
+            //WARNING: loop dependency is not supported
+            int fails = 0;
+            while (!libsToRead.isEmpty()) {
+                String libToRead = libsToRead.get(0);
+                libsToRead.remove(libToRead);
+                try {
+                    System.load(libToRead);
+                    fails = 0;
+                } catch (UnsatisfiedLinkError err) {
+                    libsToRead.add(libToRead);
+                    fails++;
                 }
+                if (fails > 0 && fails == libsToRead.size())
+                    break;
+            }
+
+            if (libsToRead.isEmpty()) {
                 LOGGER.info("Loaded " + lib + " native library.");
                 loadedNativeLibraries.add(lib);
-            } catch (UnsatisfiedLinkError err) {
-                LOGGER.warn("Loading " + lib + " failed:" + err.getMessage());
+            } else {
+                String failMessage = "Loading " + lib + " failed:";
+                for (int i = 0; i < libsToRead.size(); i++) {
+                    failMessage += " cannot read " + libsToRead.get(i) + ";";
+                }
+                LOGGER.warn(failMessage);
             }
         }
     }
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc=" **MAIN** ">
     private static VisNow visnow;
-
     public static VisNow get() {
         return visnow;
     }
@@ -464,13 +535,12 @@ public class VisNow {
         renderSplashFrame(0.3f, "Loading native libraries...");
         loadNativeLibraries();
         renderSplashFrame(0.4f, "Initializing config...");
-        initConfig();
-        renderSplashFrame(0.5f, "Initializing module libraries...");
         initLibraries();
         initTypes();
-        renderSplashFrame(0.6f, "Initializing module wizard...");
+        initConfig();
+        renderSplashFrame(0.5f, "Initializing module wizard...");
         initWizard();
-        renderSplashFrame(0.7f, "Initializing help...");
+        renderSplashFrame(0.6f, "Initializing help...");
         initHelp();
         initLaf();
 
@@ -493,27 +563,42 @@ public class VisNow {
             displayHeight = 1000;
         }
 
-        renderSplashFrame(0.8f, "Creating main window...");
+        renderSplashFrame(0.7f, "Creating main window...");
         mainFrame = new MainWindow();
         mainFrame.setBounds(displayWidth, 20, mainWindowWidth, displayHeight);
 
-        renderSplashFrame(0.9f, "Initializing application...");
-        mainFrame.getApplicationsPanel().addApplication(new Application("Untitled(" + mainFrame.getMainMenu().nextUntitled() + ")"));
+//TODO wczytywanie aplikacji z podanego argumentu wywołania
+//        if (args.length != 0) {
+//            File f = new File(args[0]);
+//            if(args[0].endsWith(".vna") && f.exists() && f.isFile()) {
+//                mainFrame.getMainMenu().betaOpenFile(f);
+//            } else {
+//                JOptionPane.showMessageDialog(mainFrame, "ERROR: cannot load VNA application\n"+f.getAbsolutePath(), "Error", JOptionPane.ERROR_MESSAGE);
+//            }
+//        } else {
+        renderSplashFrame(0.8f, "Initializing application...");
+        mainFrame.getApplicationsPanel().addApplication(new Application("Untitled(" + mainFrame.getMainMenu().nextUntitled() + ")", disableStartupViewers));
+//        }
 
-        if (!disableStartupViewers && mainFrame.getApplicationsPanel().getApplication() != null) {
-            if (mainConfig.isStartupViewer3D()) {
-                mainFrame.getApplicationsPanel().getApplication().addInitViewerByName("viewer 3D", "pl.edu.icm.visnow.lib.basic.viewers.Viewer3D.Viewer3D");
-            }
-            if (mainConfig.isStartupOrthoViewer3D()) {
-                mainFrame.getApplicationsPanel().getApplication().addInitViewerByName("orthoviewer 3D", "pl.edu.icm.visnow.lib.basic.viewers.MultiViewer3D.Viewer3D");
-            }
-            if (mainConfig.isStartupViewer2D()) {
-                mainFrame.getApplicationsPanel().getApplication().addInitViewerByName("viewer 2D", "pl.edu.icm.visnow.lib.basic.viewers.Viewer2D.Viewer2D");
-            }
-            if (mainConfig.isStartupFieldViewer3D()) {
-                mainFrame.getApplicationsPanel().getApplication().addInitViewerByName("field viewer 3D", "pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D.FieldViewer3D");
-            }
-        }
+
+
+
+//         if(libraryLevel == SIMPLE_LIBRARY) {
+//            Component c = mainFrame.getApplicationsPanel().getApplication().getApplicationFrame().getAreaLocator();
+//            if(c instanceof FAreaMajor) {
+//                FAreaSplittable spl = ((FAreaMajor)c).getChild();
+//                if(spl instanceof FAreaSplit) {
+//
+//                    JSplitPane pane = ((FAreaSplit)spl).getSplitPane();
+//                    FAreaSplittable spl2 = ((FAreaSplit)spl).getDaughter();
+//                    if(spl instanceof FAreaSplit) {
+//                        JSplitPane pane2 = ((FAreaSplit)spl2).getSplitPane();
+//                        pane2.setDividerLocation(0);
+//                    }
+//                }
+//            }
+//         }
+
 
         if (splash != null) {
             try {
@@ -521,6 +606,10 @@ public class VisNow {
             } catch (IllegalStateException ex) {
             }
         }
+        //TODO: test tool tip times
+//        ToolTipManager.sharedInstance().setInitialDelay(2000);
+//        ToolTipManager.sharedInstance().setDismissDelay(5000);
+
         mainFrame.setVisible(frameVisible);
         mainFrame.toFront();
     }
@@ -553,7 +642,7 @@ public class VisNow {
             //create log output dir (has to be the same as one specified in log4j*.properties file)
             makeConfigDir(LOG_OUTPUT_DIR, false);
             //location of log config templates
-            File logConfigTemplatesDir = new File(findOperatingFolder()+File.separator+LOG_CONFIG_TEMPLATES_DIR);
+            File logConfigTemplatesDir = new File(findOperatingFolder() + File.separator + LOG_CONFIG_TEMPLATES_DIR);
             //get config dir (place for log config templates)
             File configDir = getConfigDir();
 
@@ -561,7 +650,7 @@ public class VisNow {
             //copy log templates
             if (!new File(configDir, logConfigFilename).exists()) {
                 FileUtils.copyFile(new File(logConfigTemplatesDir.toString() + File.separator + logConfigFilename),
-                                   new File(configDir.toString() + File.separator + logConfigFilename));
+                        new File(configDir.toString() + File.separator + logConfigFilename));
             }
 
             LogManager.resetConfiguration();
@@ -570,9 +659,71 @@ public class VisNow {
             LOGGER.error("Can't load logger configuration ", e);
         }
     }
+    //global dispatcher for user messages
+    private UserMessageDispatcher userMessageDispatcher;
+
+    /**
+     * Initializes global user message dispatcher with default listeners (terminal, status bar label, message panel).
+     */
+    private void initUserMessages() {
+        LOGGER.info("");
+        userMessageDispatcher = new UserMessageDispatcher();
+        //1. Terminal output listener
+        userMessageDispatcher.addListener(new UserMessageListener() {
+            @Override
+            public void newMessage(UserMessage message) {
+                System.out.println(message.getInfo(true));
+            }
+        });
+
+        //2, 3. MainWindow listeners (status label, message panel)
+        for (UserMessageListener uml : VisNow.get().mainFrame.getUserMessageListeners())
+            userMessageDispatcher.addListener(uml);
+    }
+
+    /**
+     * Sends
+     * <code>message</code> to all registered listeners.
+     */
+    public void userMessageSend(UserMessage message) {
+        userMessageDispatcher.dispatch(message);
+    }
+
+    /**
+     * Sends
+     * <code>message</code> to all registered listeners. Application name and source name are taken from {@code moduleCore}.
+     * 
+     * @param title message title
+     * @param details message details
+     */
+    public void userMessageSend(ModuleCore moduleCore, String title, String details, Level level) {
+        //TODO: find general solution for applications
+        if (userMessageDispatcher != null) { //quick fix for custom applications
+            if (moduleCore.getApplication() == null) {
+                userMessageDispatcher.dispatch(new UserMessage("", moduleCore.getName(), title, details, level));
+            } else {
+                userMessageDispatcher.dispatch(new UserMessage(moduleCore.getApplication().getTitle(), moduleCore.getName(), title, details, level));
+            }
+        }
+    }
     private final static SplashScreen splash = SplashScreen.getSplashScreen();
 
     public static void main(final String[] args) {
+        /*
+         * try { for (javax.swing.UIManager.LookAndFeelInfo info :
+         * javax.swing.UIManager.getInstalledLookAndFeels()) { if
+         * ("Nimbus".equals(info.getName())) {
+         * javax.swing.UIManager.setLookAndFeel(info.getClassName()); break; } }
+         * } catch (ClassNotFoundException ex) {
+         * java.util.logging.LOGGER.getLogger(VisNow.class.getName()).log(java.util.logging.Level.SEVERE,
+         * null, ex); } catch (InstantiationException ex) {
+         * java.util.logging.LOGGER.getLogger(VisNow.class.getName()).log(java.util.logging.Level.SEVERE,
+         * null, ex); } catch (IllegalAccessException ex) {
+         * java.util.logging.LOGGER.getLogger(VisNow.class.getName()).log(java.util.logging.Level.SEVERE,
+         * null, ex); } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+         * java.util.logging.LOGGER.getLogger(VisNow.class.getName()).log(java.util.logging.Level.SEVERE,
+         * null, ex); }
+         */
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -582,20 +733,78 @@ public class VisNow {
                         debug = true;
                     }
 
+                    if (args[i].equals("-substancedebug")) {
+                        substancedebug = true;
+                    }
+
                     if (args[i].equals("-easy")) {
                         libraryLevel = SIMPLE_LIBRARY;
                         VERSION = VERSION_BASE + "-Simple";
                         allowGUISwitch = false;
                     }
 
+                    if (args[i].equals("-full")) {
+                        guiLevel = EXPERT_GUI;
+                        libraryLevel = FULL_LIBRARY;
+                        VERSION = VERSION_BASE + "-Pro";
+                    }
                 }
                 Locale.setDefault(Locale.US);
 
                 renderSplashFrame(0.1f, "Initializing logging...");
+                //TODO: test it see #initConfigDir
+                //                initConfigDir();
                 initLogging();
                 startupInfo();
                 renderSplashFrame(0.2f, "Initializing Java3D...");
                 initJava3D();
+
+                if (substancedebug) {
+                    try {
+
+                        Class substance = Class.forName("org.jvnet.substance.SubstanceLookAndFeel");
+                        Class selectedSkinClass;
+                        if (guiLevel == SIMPLE_GUI) {
+                            selectedSkinClass = Class.forName("org.jvnet.substance.skin.BusinessBlackSteelSkin");
+                        } else {
+                            @SuppressWarnings("unchecked")
+                            Map<String, Object> skinInfoMap = (Map<String, Object>) substance.getMethod("getAllSkins").invoke(null);
+                            List<String> skinClassNameArray = new ArrayList<String>();
+                            for (Object object : skinInfoMap.values()) {
+                                String cn = (String) object.getClass().getMethod("getClassName").invoke(object);
+                                LOGGER.info("Adding substance skin class: " + cn);
+                                skinClassNameArray.add(cn);
+                            }
+                            int skinClassIdx = 0;
+                            if (guiLevel == SIMPLE_GUI) {
+                                skinClassIdx = 2;
+                            } else {
+                                skinClassIdx = new Random().nextInt(skinClassNameArray.size());
+                            }
+                            LOGGER.info("Selected skin: " + skinClassNameArray.get(skinClassIdx));
+                            selectedSkinClass = Class.forName(skinClassNameArray.get(skinClassIdx));
+                        }
+
+//                        selectedSkinClass =Class.forName("org.jvnet.substance.skin.BusinessBlackSteelSkin");
+                        javax.swing.UIManager.setLookAndFeel("org.jvnet.substance.skin.SubstanceBusinessLookAndFeel");
+                        Class skinClass = Class.forName("org.jvnet.substance.api.SubstanceSkin");
+                        @SuppressWarnings("unchecked")
+                        Method m = substance.getMethod("setSkin", skinClass);
+                        m.invoke(null, selectedSkinClass.newInstance());
+                        JFrame.setDefaultLookAndFeelDecorated(true);
+                        JDialog.setDefaultLookAndFeelDecorated(true);
+                    } catch (Exception ex) {
+                        LOGGER.error("Failed to set lf: " + ex.getMessage());
+                    }
+                }
+
+                //resize borders from tabbedPane
+                //TODO: needs refactoring - initPresentation, initL&F or sth like that
+                try {
+                    UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(4,0,0,0));
+                } catch (Exception ex) {
+                    //this causes exception on MacOS X
+                }
 
                 try {
                     visnow = new VisNow();
@@ -619,8 +828,10 @@ public class VisNow {
                     return;
                 }
 
+                visnow.initUserMessages();               
             }
         });
+
     }
 
     public static void mainBlocking(final String[] args) {
@@ -633,28 +844,34 @@ public class VisNow {
                 debug = true;
             }
 
+            if (args[i].equals("-substancedebug")) {
+                substancedebug = true;
+            }
+
             if (args[i].equals("-easy")) {
                 libraryLevel = SIMPLE_LIBRARY;
                 VERSION = VERSION_BASE + "-Simple";
                 allowGUISwitch = false;
             }
 
+            if (args[i].equals("-full")) {
+                guiLevel = EXPERT_GUI;
+                libraryLevel = FULL_LIBRARY;
+                VERSION = VERSION_BASE + "-Pro";
+            }
         }
-        VNLogger.init(true);
+                
+        VNLogger.init(debug);
         Locale.setDefault(Locale.US);
 
         try {
-            for (int i = 0; i < args.length; i++) {
-                if (args[i].equalsIgnoreCase("debug")) {
-                    debug = true;
-                }
-            }
             visnow = new VisNow();
             visnow.init(args, showMainFrame, true);
 
         } catch (VNSystemException ex) {
             Displayer.display(1010101010, ex, null, "Initialization failed.");
         }
+        visnow.initUserMessages();
     }
 
     private static void startupInfo() {
@@ -721,8 +938,8 @@ public class VisNow {
             LOGGER.info("    os.name = " + System.getProperty("os.name"));
             LOGGER.info("    os.version = " + System.getProperty("os.version"));
             LOGGER.info("    java.library.path = " + System.getProperty("java.library.path"));
-            LOGGER.info("    java.ext.dirs = " + System.getProperty("java.ext.dirs"));
             LOGGER.info("    java.class.path = " + System.getProperty("java.class.path"));
+            LOGGER.info("    java.ext.dirs = " + System.getProperty("java.ext.dirs"));
             LOGGER.info("");
             LOGGER.info(" * Environment variables:");
             LOGGER.info("    JAVA_HOME = " + System.getenv("JAVA_HOME"));
@@ -910,11 +1127,10 @@ public class VisNow {
 
         OS_WINDOWS, OS_LINUX, OS_MAC, OS_SOLARIS, OS_AIX, OS_UNKNOWN
     }
-
     private static OsType osType = null;
 
     public static OsType getOsType() {
-        if(osType == null) {
+        if (osType == null) {
             String osName = System.getProperty("os.name");
             if (osName.startsWith("Windows") || osName.startsWith("windows")) {
                 osType = OsType.OS_WINDOWS;
@@ -938,7 +1154,6 @@ public class VisNow {
 
         CPU_X86, CPU_X86_64, CPU_PPC, CPU_PPC_64, CPU_SPARC, CPU_SPARCV9, CPU_OTHER
     }
-
     private static CpuArch cpuArch = null;
 
     public static boolean isCpuArch64() {
@@ -947,7 +1162,7 @@ public class VisNow {
     }
 
     public static CpuArch getCpuArch() {
-        if(cpuArch == null) {
+        if (cpuArch == null) {
             String arch = System.getProperty("os.arch");
 
             if ((arch.contains("86") && arch.contains("64")) || arch.toLowerCase().contains("amd64")) {
@@ -963,13 +1178,11 @@ public class VisNow {
             } else if (arch.toLowerCase().contains("sparc") && !arch.contains("9")) {
                 cpuArch = CpuArch.CPU_SPARC;
             } else {
-               cpuArch = CpuArch.CPU_OTHER;
+                cpuArch = CpuArch.CPU_OTHER;
             }
         }
         return cpuArch;
     }
-
-
 
     public static String getIconPath() {
         //return "/pl/edu/icm/visnow/gui/icons/vn.png";
@@ -1001,7 +1214,7 @@ public class VisNow {
                 return;
             }
 
-            if(!splash.isVisible())
+            if (!splash.isVisible())
                 return;
 
             Rectangle bounds = splash.getBounds();
@@ -1037,7 +1250,7 @@ public class VisNow {
 
 
             g.setPaintMode();
-    //        g.setColor(Color.BLACK);
+            //        g.setColor(Color.BLACK);
             g.setColor(new Color(0, 75, 50));
             g.drawString(loadText, PROGRESS_TEXT_X_POSITION, bounds.height - PROGRESS_TEXT_Y_MARGIN);
             g.drawString(bottomTextUpperLine, BOTTOM_TEXT_X_MARGIN, bounds.height - lowerLineTextHeight - BOTTOM_TEXT_Y_MARGIN);
@@ -1045,7 +1258,7 @@ public class VisNow {
             g.drawString(bottomTextLowerLine, BOTTOM_TEXT_X_MARGIN, bounds.height - BOTTOM_TEXT_Y_MARGIN);
             g.setFont(f);
 
-    //        g.setColor(Color.BLACK);
+            //        g.setColor(Color.BLACK);
             g.setColor(new Color(0, 150, 100));
             g.drawRect(PROGRESS_BAR_X_MARGIN,
                     bounds.height - PROGRESS_BAR_Y_MARGIN,
@@ -1065,8 +1278,40 @@ public class VisNow {
             }
 
             splash.update();
-        } catch(IllegalStateException ex) {
+        } catch (IllegalStateException ex) {
         }
     }
     //</editor-fold>
+    
+   public static int availableProcessors()
+   {
+      if (visnow == null)
+         return Runtime.getRuntime().availableProcessors();
+      return VisNow.get().getMainConfig().getNAvailableThreads();
+   }
+
+   public static int getActionOnInf()
+   {
+      if (visnow == null)
+         return actionOnInf;
+      return VisNow.get().getMainConfig().getInfAction();
+   }
+
+   public static int getActionOnNaN()
+   {
+      if (visnow == null)
+         return actionOnNaN;
+      return VisNow.get().getMainConfig().getNaNAction();
+   }
+
+   public static void setOnInf(int set)
+   {
+      actionOnInf = set;
+   }
+
+   public static void setOnNaN(int set)
+   {
+      actionOnNaN = set;
+   }
+
 }

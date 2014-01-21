@@ -351,7 +351,7 @@ public class Transform2DPanel extends javax.swing.JPanel
    
    public void resetTransform()
    {
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
           @Override
           public void run()

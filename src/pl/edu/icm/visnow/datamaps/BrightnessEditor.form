@@ -68,10 +68,10 @@
   <Properties>
     <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;drag  to change brightness&lt;p&gt;click to return to normal brightness" noResource="true"/>
     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[60, 21]"/>
+      <Dimension value="[50, 21]"/>
     </Property>
     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[100, 21]"/>
+      <Dimension value="[50, 21]"/>
     </Property>
   </Properties>
   <Events>

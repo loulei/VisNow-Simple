@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,8 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.lib.basic.filters.RadialCoordinates;
 
@@ -64,12 +67,12 @@ public class GUI extends javax.swing.JPanel
 
    public void setInField(RegularField inFld)
    {
-      if (inFld==null || inFld.getDims()==null)
+      if (inFld==null || inFld.getDims()==null || inField != null && inField.getDims().length == inFld.getDims().length)
          return;
-      this.inField = inFld;
-     
+      inField = inFld;
+
       logger.debug("GUI setting infield");
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          public void run()
          {
@@ -77,47 +80,65 @@ public class GUI extends javax.swing.JPanel
             switch (inField.getDims().length)
             {
             case 3:
-               xRButton.setVisible(true);
+               rPane.setSelectedComponent(varRPanel);
+               phiPane.setSelectedComponent(varPhiPanel);
+               psiPane.setSelectedComponent(varPsiPanel);
+               xRButton.setEnabled(true);
                xRButton.setSelected(true);
-               yRButton.setVisible(true);
-               zRButton.setVisible(true);
-               xPhiButton.setVisible(true);
-               yPhiButton.setVisible(true);
+               yRButton.setEnabled(true);
+               zRButton.setEnabled(true);
+               xPhiButton.setEnabled(true);
+               yPhiButton.setEnabled(true);
                yPhiButton.setSelected(true);
-               zPhiButton.setVisible(true);
-               xPsiButton.setVisible(true);
-               yPsiButton.setVisible(true);
-               zPsiButton.setVisible(true);
+               zPhiButton.setEnabled(true);
+               xPsiButton.setEnabled(true);
+               yPsiButton.setEnabled(true);
+               zPsiButton.setEnabled(true);
                zPsiButton.setSelected(true);
+               params.setRCoord(0);
+               params.setPhiCoord(1);
+               params.setPsiCoord(2);
                break;
             case 2:
-               xRButton.setVisible(true);
-               xRButton.setSelected(true);
-               yRButton.setVisible(true);
-               zRButton.setVisible(false);
-               xPhiButton.setVisible(true);
-               yPhiButton.setVisible(true);
-               yPhiButton.setSelected(true);
-               zPhiButton.setVisible(true);
-               xPsiButton.setVisible(true);
-               yPsiButton.setVisible(true);
-               zPsiButton.setVisible(true);
-               zPsiButton.setSelected(false);
+               rPane.setSelectedComponent(constRPanel);
+               phiPane.setSelectedComponent(varPhiPanel);
+               psiPane.setSelectedComponent(varPsiPanel);
+               xRButton.setEnabled(true);
+               xRButton.setSelected(false);
+               yRButton.setEnabled(true);
+               zRButton.setEnabled(false);
+               xPhiButton.setEnabled(true);
+               xPhiButton.setSelected(true);
+               yPhiButton.setEnabled(true);
+               zPhiButton.setEnabled(false);
+               xPsiButton.setEnabled(true);
+               yPsiButton.setEnabled(true);
+               yPsiButton.setSelected(true);
+               zPsiButton.setEnabled(false);
+               params.setRCoord(Params.CONSTANT);
+               params.setPhiCoord(0);
+               params.setPsiCoord(1);
                rPane.setSelectedIndex(1);
                break;
             case 1:
-               xRButton.setVisible(true);
-               yRButton.setVisible(false);
-               zRButton.setVisible(false);
-               xPhiButton.setVisible(true);
-               yPhiButton.setVisible(false);
-               zPhiButton.setVisible(false);
-               xPsiButton.setVisible(true);
+               rPane.setSelectedComponent(constRPanel);
+               phiPane.setSelectedComponent(varPhiPanel);
+               psiPane.setSelectedComponent(constPsiPanel);
+               xRButton.setEnabled(true);
+               yRButton.setEnabled(false);
+               zRButton.setEnabled(false);
+               xPhiButton.setEnabled(true);
+               yPhiButton.setEnabled(false);
+               zPhiButton.setEnabled(false);
+               xPsiButton.setEnabled(true);
                xPsiButton.setSelected(true);
-               yPsiButton.setVisible(false);
-               zPsiButton.setVisible(false);
+               yPsiButton.setEnabled(false);
+               zPsiButton.setEnabled(false);
                rPane.setSelectedIndex(1);
                phiPane.setSelectedIndex(1);
+               params.setRCoord(Params.CONSTANT);
+               params.setPhiCoord(Params.CONSTANT);
+               params.setPsiCoord(0);
                break;
             }
          }
@@ -131,467 +152,394 @@ public class GUI extends javax.swing.JPanel
     * always regenerated by the Form Editor.
     */
    @SuppressWarnings("unchecked")
-   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-   private void initComponents()
-   {
-      java.awt.GridBagConstraints gridBagConstraints;
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-      buttonGroup1 = new javax.swing.ButtonGroup();
-      buttonGroup2 = new javax.swing.ButtonGroup();
-      buttonGroup3 = new javax.swing.ButtonGroup();
-      jLabel1 = new javax.swing.JLabel();
-      mapCombo = new javax.swing.JComboBox();
-      jPanel4 = new javax.swing.JPanel();
-      rPane = new javax.swing.JTabbedPane();
-      varRPanel = new javax.swing.JPanel();
-      rRangeSlider = new pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider();
-      xRButton = new javax.swing.JRadioButton();
-      yRButton = new javax.swing.JRadioButton();
-      zRButton = new javax.swing.JRadioButton();
-      constRPanel = new javax.swing.JPanel();
-      rSlider = new pl.edu.icm.visnow.gui.widgets.FloatSlider();
-      phiPane = new javax.swing.JTabbedPane();
-      varPhiPanel = new javax.swing.JPanel();
-      phiRangeSlider = new pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider();
-      xPhiButton = new javax.swing.JRadioButton();
-      yPhiButton = new javax.swing.JRadioButton();
-      zPhiButton = new javax.swing.JRadioButton();
-      constPhiPanel = new javax.swing.JPanel();
-      phiSlider = new pl.edu.icm.visnow.gui.widgets.FloatSlider();
-      psiPane = new javax.swing.JTabbedPane();
-      varPsiPanel = new javax.swing.JPanel();
-      psiRangeSlider = new pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider();
-      xPsiButton = new javax.swing.JRadioButton();
-      yPsiButton = new javax.swing.JRadioButton();
-      zPsiButton = new javax.swing.JRadioButton();
-      constPsiPanel = new javax.swing.JPanel();
-      psiSlider = new pl.edu.icm.visnow.gui.widgets.FloatSlider();
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
+        buttonGroup3 = new javax.swing.ButtonGroup();
+        jLabel1 = new javax.swing.JLabel();
+        mapCombo = new javax.swing.JComboBox();
+        rPane = new javax.swing.JTabbedPane();
+        varRPanel = new javax.swing.JPanel();
+        rRangeSlider = new pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider();
+        xRButton = new javax.swing.JRadioButton();
+        yRButton = new javax.swing.JRadioButton();
+        zRButton = new javax.swing.JRadioButton();
+        constRPanel = new javax.swing.JPanel();
+        rSlider = new pl.edu.icm.visnow.gui.widgets.FloatSlider();
+        phiPane = new javax.swing.JTabbedPane();
+        varPhiPanel = new javax.swing.JPanel();
+        phiRangeSlider = new pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider();
+        xPhiButton = new javax.swing.JRadioButton();
+        yPhiButton = new javax.swing.JRadioButton();
+        zPhiButton = new javax.swing.JRadioButton();
+        constPhiPanel = new javax.swing.JPanel();
+        phiSlider = new pl.edu.icm.visnow.gui.widgets.FloatSlider();
+        psiPane = new javax.swing.JTabbedPane();
+        varPsiPanel = new javax.swing.JPanel();
+        psiRangeSlider = new pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider();
+        xPsiButton = new javax.swing.JRadioButton();
+        yPsiButton = new javax.swing.JRadioButton();
+        zPsiButton = new javax.swing.JRadioButton();
+        constPsiPanel = new javax.swing.JPanel();
+        psiSlider = new pl.edu.icm.visnow.gui.widgets.FloatSlider();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
-      setLayout(new java.awt.GridBagLayout());
+        setLayout(new java.awt.GridBagLayout());
 
-      java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("pl/edu/icm/visnow/lib/basic/filters/RadialCoordinates/Bundle"); // NOI18N
-      jLabel1.setText(bundle.getString("GUI.jLabel1.text")); // NOI18N
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      add(jLabel1, gridBagConstraints);
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("pl/edu/icm/visnow/lib/basic/filters/RadialCoordinates/Bundle"); // NOI18N
+        jLabel1.setText(bundle.getString("GUI.jLabel1.text")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jLabel1, gridBagConstraints);
 
-      mapCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "spherical", "cylindrical" }));
-      mapCombo.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            mapComboActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 1;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
-      add(mapCombo, gridBagConstraints);
+        mapCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "spherical", "cylindrical" }));
+        mapCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mapComboActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
+        add(mapCombo, gridBagConstraints);
 
-      javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-      jPanel4.setLayout(jPanel4Layout);
-      jPanel4Layout.setHorizontalGroup(
-         jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addGap(0, 227, Short.MAX_VALUE)
-      );
-      jPanel4Layout.setVerticalGroup(
-         jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addGap(0, 415, Short.MAX_VALUE)
-      );
+        varRPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        varRPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                varRPanelComponentShown(evt);
+            }
+        });
+        varRPanel.setLayout(new java.awt.GridBagLayout());
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 5;
-      gridBagConstraints.gridwidth = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.weighty = 1.0;
-      add(jPanel4, gridBagConstraints);
+        rRangeSlider.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        rRangeSlider.setMax(1.0F);
+        rRangeSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                rRangeSliderStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        varRPanel.add(rRangeSlider, gridBagConstraints);
 
-      rPane.setMinimumSize(new java.awt.Dimension(143, 100));
-      rPane.setPreferredSize(new java.awt.Dimension(100, 105));
+        buttonGroup1.add(xRButton);
+        xRButton.setSelected(true);
+        xRButton.setText(bundle.getString("GUI.xRButton.text_1")); // NOI18N
+        xRButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xRButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        varRPanel.add(xRButton, gridBagConstraints);
 
-      varRPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-      varRPanel.setPreferredSize(new java.awt.Dimension(200, 118));
-      varRPanel.addComponentListener(new java.awt.event.ComponentAdapter()
-      {
-         public void componentShown(java.awt.event.ComponentEvent evt)
-         {
-            varRPanelComponentShown(evt);
-         }
-      });
-      varRPanel.setLayout(new java.awt.GridBagLayout());
+        buttonGroup1.add(yRButton);
+        yRButton.setText(bundle.getString("GUI.yRButton.text_1")); // NOI18N
+        yRButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yRButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        varRPanel.add(yRButton, gridBagConstraints);
 
-      rRangeSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("GUI.rRangeSlider.border.title"))); // NOI18N
-      rRangeSlider.setMax(1.0F);
-      rRangeSlider.setMinimumSize(new java.awt.Dimension(96, 50));
-      rRangeSlider.setPreferredSize(new java.awt.Dimension(55, 55));
-      rRangeSlider.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            rRangeSliderStateChanged(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 1;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.gridheight = 3;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
-      varRPanel.add(rRangeSlider, gridBagConstraints);
+        buttonGroup1.add(zRButton);
+        zRButton.setText(bundle.getString("GUI.zRButton.text_1")); // NOI18N
+        zRButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zRButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        varRPanel.add(zRButton, gridBagConstraints);
 
-      buttonGroup1.add(xRButton);
-      xRButton.setSelected(true);
-      xRButton.setText(bundle.getString("GUI.xRButton.text_1")); // NOI18N
-      xRButton.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            xRButtonActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.weighty = 1.0;
-      varRPanel.add(xRButton, gridBagConstraints);
+        rPane.addTab(bundle.getString("GUI.varRPanel.TabConstraints.tabTitle"), varRPanel); // NOI18N
 
-      buttonGroup1.add(yRButton);
-      yRButton.setText(bundle.getString("GUI.yRButton.text_1")); // NOI18N
-      yRButton.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            yRButtonActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.weighty = 1.0;
-      varRPanel.add(yRButton, gridBagConstraints);
+        constRPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                constRPanelComponentShown(evt);
+            }
+        });
 
-      buttonGroup1.add(zRButton);
-      zRButton.setText(bundle.getString("GUI.zRButton.text_1")); // NOI18N
-      zRButton.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            zRButtonActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 2;
-      gridBagConstraints.weighty = 1.0;
-      varRPanel.add(zRButton, gridBagConstraints);
+        rSlider.setMax(10.0F);
+        rSlider.setVal(1.0F);
+        rSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                rSliderStateChanged(evt);
+            }
+        });
 
-      rPane.addTab(bundle.getString("GUI.varRPanel.TabConstraints.tabTitle"), varRPanel); // NOI18N
+        javax.swing.GroupLayout constRPanelLayout = new javax.swing.GroupLayout(constRPanel);
+        constRPanel.setLayout(constRPanelLayout);
+        constRPanelLayout.setHorizontalGroup(
+            constRPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 222, Short.MAX_VALUE)
+            .addGroup(constRPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(rSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE))
+        );
+        constRPanelLayout.setVerticalGroup(
+            constRPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 86, Short.MAX_VALUE)
+            .addGroup(constRPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(constRPanelLayout.createSequentialGroup()
+                    .addComponent(rSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        );
 
-      constRPanel.addComponentListener(new java.awt.event.ComponentAdapter()
-      {
-         public void componentShown(java.awt.event.ComponentEvent evt)
-         {
-            constRPanelComponentShown(evt);
-         }
-      });
+        rPane.addTab(bundle.getString("GUI.constRPanel.TabConstraints.tabTitle"), constRPanel); // NOI18N
 
-      rSlider.setMax(10.0F);
-      rSlider.setVal(1.0F);
-      rSlider.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            rSliderStateChanged(evt);
-         }
-      });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        add(rPane, gridBagConstraints);
 
-      javax.swing.GroupLayout constRPanelLayout = new javax.swing.GroupLayout(constRPanel);
-      constRPanel.setLayout(constRPanelLayout);
-      constRPanelLayout.setHorizontalGroup(
-         constRPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addGap(0, 222, Short.MAX_VALUE)
-         .addGroup(constRPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(rSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE))
-      );
-      constRPanelLayout.setVerticalGroup(
-         constRPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addGap(0, 86, Short.MAX_VALUE)
-         .addGroup(constRPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(constRPanelLayout.createSequentialGroup()
-               .addComponent(rSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-               .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-      );
+        varPhiPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        varPhiPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                varPhiPanelComponentShown(evt);
+            }
+        });
+        varPhiPanel.setLayout(new java.awt.GridBagLayout());
 
-      rPane.addTab(bundle.getString("GUI.constRPanel.TabConstraints.tabTitle"), constRPanel); // NOI18N
+        phiRangeSlider.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        phiRangeSlider.setLow(-90.0F);
+        phiRangeSlider.setMax(90.0F);
+        phiRangeSlider.setMin(-90.0F);
+        phiRangeSlider.setOpaque(false);
+        phiRangeSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                phiRangeSliderStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        varPhiPanel.add(phiRangeSlider, gridBagConstraints);
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.gridwidth = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.weightx = 1.0;
-      add(rPane, gridBagConstraints);
+        buttonGroup2.add(xPhiButton);
+        xPhiButton.setText(bundle.getString("GUI.xPhiButton.text")); // NOI18N
+        xPhiButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xPhiButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        varPhiPanel.add(xPhiButton, gridBagConstraints);
 
-      phiPane.setPreferredSize(new java.awt.Dimension(100, 105));
+        buttonGroup2.add(yPhiButton);
+        yPhiButton.setSelected(true);
+        yPhiButton.setText(bundle.getString("GUI.yPhiButton.text")); // NOI18N
+        yPhiButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yPhiButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        varPhiPanel.add(yPhiButton, gridBagConstraints);
 
-      varPhiPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-      varPhiPanel.setPreferredSize(new java.awt.Dimension(200, 118));
-      varPhiPanel.addComponentListener(new java.awt.event.ComponentAdapter()
-      {
-         public void componentShown(java.awt.event.ComponentEvent evt)
-         {
-            varPhiPanelComponentShown(evt);
-         }
-      });
-      varPhiPanel.setLayout(new java.awt.GridBagLayout());
+        buttonGroup2.add(zPhiButton);
+        zPhiButton.setText(bundle.getString("GUI.zPhiButton.text")); // NOI18N
+        zPhiButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zPhiButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        varPhiPanel.add(zPhiButton, gridBagConstraints);
 
-      phiRangeSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("GUI.phiRangeSlider.border.title"))); // NOI18N
-      phiRangeSlider.setLow(-90.0F);
-      phiRangeSlider.setMax(90.0F);
-      phiRangeSlider.setMin(-90.0F);
-      phiRangeSlider.setMinimumSize(new java.awt.Dimension(96, 50));
-      phiRangeSlider.setOpaque(false);
-      phiRangeSlider.setPreferredSize(new java.awt.Dimension(150, 55));
-      phiRangeSlider.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            phiRangeSliderStateChanged(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 1;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.gridheight = 3;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
-      varPhiPanel.add(phiRangeSlider, gridBagConstraints);
+        phiPane.addTab(bundle.getString("GUI.varPhiPanel.TabConstraints.tabTitle"), varPhiPanel); // NOI18N
 
-      buttonGroup2.add(xPhiButton);
-      xPhiButton.setText(bundle.getString("GUI.xPhiButton.text")); // NOI18N
-      xPhiButton.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            xPhiButtonActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.weighty = 1.0;
-      varPhiPanel.add(xPhiButton, gridBagConstraints);
+        constPhiPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                constPhiPanelComponentShown(evt);
+            }
+        });
 
-      buttonGroup2.add(yPhiButton);
-      yPhiButton.setSelected(true);
-      yPhiButton.setText(bundle.getString("GUI.yPhiButton.text")); // NOI18N
-      yPhiButton.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            yPhiButtonActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.weighty = 1.0;
-      varPhiPanel.add(yPhiButton, gridBagConstraints);
+        phiSlider.setMax(90.0F);
+        phiSlider.setMin(-90.0F);
+        phiSlider.setVal(0.0F);
+        phiSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                phiSliderStateChanged(evt);
+            }
+        });
 
-      buttonGroup2.add(zPhiButton);
-      zPhiButton.setText(bundle.getString("GUI.zPhiButton.text")); // NOI18N
-      zPhiButton.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            zPhiButtonActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 2;
-      gridBagConstraints.weighty = 1.0;
-      varPhiPanel.add(zPhiButton, gridBagConstraints);
+        javax.swing.GroupLayout constPhiPanelLayout = new javax.swing.GroupLayout(constPhiPanel);
+        constPhiPanel.setLayout(constPhiPanelLayout);
+        constPhiPanelLayout.setHorizontalGroup(
+            constPhiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 222, Short.MAX_VALUE)
+            .addGroup(constPhiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(phiSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE))
+        );
+        constPhiPanelLayout.setVerticalGroup(
+            constPhiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 104, Short.MAX_VALUE)
+            .addGroup(constPhiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, constPhiPanelLayout.createSequentialGroup()
+                    .addComponent(phiSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        );
 
-      phiPane.addTab(bundle.getString("GUI.varPhiPanel.TabConstraints.tabTitle"), varPhiPanel); // NOI18N
+        phiPane.addTab(bundle.getString("GUI.constPhiPanel.TabConstraints.tabTitle_1"), constPhiPanel); // NOI18N
 
-      constPhiPanel.addComponentListener(new java.awt.event.ComponentAdapter()
-      {
-         public void componentShown(java.awt.event.ComponentEvent evt)
-         {
-            constPhiPanelComponentShown(evt);
-         }
-      });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        add(phiPane, gridBagConstraints);
 
-      phiSlider.setMax(90.0F);
-      phiSlider.setMin(-90.0F);
-      phiSlider.setVal(0.0F);
-      phiSlider.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            phiSliderStateChanged(evt);
-         }
-      });
+        varPsiPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        varPsiPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                varPsiPanelComponentShown(evt);
+            }
+        });
+        varPsiPanel.setLayout(new java.awt.GridBagLayout());
 
-      javax.swing.GroupLayout constPhiPanelLayout = new javax.swing.GroupLayout(constPhiPanel);
-      constPhiPanel.setLayout(constPhiPanelLayout);
-      constPhiPanelLayout.setHorizontalGroup(
-         constPhiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addGap(0, 222, Short.MAX_VALUE)
-         .addGroup(constPhiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(phiSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE))
-      );
-      constPhiPanelLayout.setVerticalGroup(
-         constPhiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addGap(0, 86, Short.MAX_VALUE)
-         .addGroup(constPhiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, constPhiPanelLayout.createSequentialGroup()
-               .addComponent(phiSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-               .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-      );
+        psiRangeSlider.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        psiRangeSlider.setLow(-180.0F);
+        psiRangeSlider.setMax(360.0F);
+        psiRangeSlider.setUp(180.0F);
+        psiRangeSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                psiRangeSliderStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        varPsiPanel.add(psiRangeSlider, gridBagConstraints);
 
-      phiPane.addTab(bundle.getString("GUI.constPhiPanel.TabConstraints.tabTitle_1"), constPhiPanel); // NOI18N
+        buttonGroup3.add(xPsiButton);
+        xPsiButton.setText(bundle.getString("GUI.xPsiButton.text")); // NOI18N
+        xPsiButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xPsiButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        varPsiPanel.add(xPsiButton, gridBagConstraints);
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 2;
-      gridBagConstraints.gridwidth = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      add(phiPane, gridBagConstraints);
+        buttonGroup3.add(yPsiButton);
+        yPsiButton.setText(bundle.getString("GUI.yPsiButton.text")); // NOI18N
+        yPsiButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yPsiButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        varPsiPanel.add(yPsiButton, gridBagConstraints);
 
-      psiPane.setMinimumSize(new java.awt.Dimension(80, 100));
-      psiPane.setPreferredSize(new java.awt.Dimension(100, 105));
+        buttonGroup3.add(zPsiButton);
+        zPsiButton.setSelected(true);
+        zPsiButton.setText(bundle.getString("GUI.zPsiButton.text")); // NOI18N
+        zPsiButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zPsiButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        varPsiPanel.add(zPsiButton, gridBagConstraints);
 
-      varPsiPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-      varPsiPanel.setMinimumSize(new java.awt.Dimension(60, 60));
-      varPsiPanel.setPreferredSize(new java.awt.Dimension(200, 65));
-      varPsiPanel.addComponentListener(new java.awt.event.ComponentAdapter()
-      {
-         public void componentShown(java.awt.event.ComponentEvent evt)
-         {
-            varPsiPanelComponentShown(evt);
-         }
-      });
-      varPsiPanel.setLayout(new java.awt.GridBagLayout());
+        psiPane.addTab(bundle.getString("GUI.varPsiPanel.TabConstraints.tabTitle"), varPsiPanel); // NOI18N
 
-      psiRangeSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("GUI.psiRangeSlider.border.title"))); // NOI18N
-      psiRangeSlider.setLow(-180.0F);
-      psiRangeSlider.setMax(360.0F);
-      psiRangeSlider.setMinimumSize(new java.awt.Dimension(96, 50));
-      psiRangeSlider.setPreferredSize(new java.awt.Dimension(150, 55));
-      psiRangeSlider.setUp(180.0F);
-      psiRangeSlider.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            psiRangeSliderStateChanged(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 1;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.gridheight = 3;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
-      varPsiPanel.add(psiRangeSlider, gridBagConstraints);
+        constPsiPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                constPsiPanelComponentShown(evt);
+            }
+        });
 
-      buttonGroup3.add(xPsiButton);
-      xPsiButton.setText(bundle.getString("GUI.xPsiButton.text")); // NOI18N
-      xPsiButton.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            xPsiButtonActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.weighty = 1.0;
-      varPsiPanel.add(xPsiButton, gridBagConstraints);
+        psiSlider.setMax(180.0F);
+        psiSlider.setMin(-180.0F);
+        psiSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                psiSliderStateChanged(evt);
+            }
+        });
 
-      buttonGroup3.add(yPsiButton);
-      yPsiButton.setText(bundle.getString("GUI.yPsiButton.text")); // NOI18N
-      yPsiButton.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            yPsiButtonActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 1;
-      gridBagConstraints.weighty = 1.0;
-      varPsiPanel.add(yPsiButton, gridBagConstraints);
+        javax.swing.GroupLayout constPsiPanelLayout = new javax.swing.GroupLayout(constPsiPanel);
+        constPsiPanel.setLayout(constPsiPanelLayout);
+        constPsiPanelLayout.setHorizontalGroup(
+            constPsiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(psiSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
+        );
+        constPsiPanelLayout.setVerticalGroup(
+            constPsiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(constPsiPanelLayout.createSequentialGroup()
+                .addComponent(psiSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
-      buttonGroup3.add(zPsiButton);
-      zPsiButton.setSelected(true);
-      zPsiButton.setText(bundle.getString("GUI.zPsiButton.text")); // NOI18N
-      zPsiButton.addActionListener(new java.awt.event.ActionListener()
-      {
-         public void actionPerformed(java.awt.event.ActionEvent evt)
-         {
-            zPsiButtonActionPerformed(evt);
-         }
-      });
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 2;
-      gridBagConstraints.weighty = 1.0;
-      varPsiPanel.add(zPsiButton, gridBagConstraints);
+        psiPane.addTab(bundle.getString("GUI.constPsiPanel.TabConstraints.tabTitle"), constPsiPanel); // NOI18N
 
-      psiPane.addTab(bundle.getString("GUI.varPsiPanel.TabConstraints.tabTitle"), varPsiPanel); // NOI18N
-
-      constPsiPanel.addComponentListener(new java.awt.event.ComponentAdapter()
-      {
-         public void componentShown(java.awt.event.ComponentEvent evt)
-         {
-            constPsiPanelComponentShown(evt);
-         }
-      });
-
-      psiSlider.setMax(180.0F);
-      psiSlider.setMin(-180.0F);
-      psiSlider.addChangeListener(new javax.swing.event.ChangeListener()
-      {
-         public void stateChanged(javax.swing.event.ChangeEvent evt)
-         {
-            psiSliderStateChanged(evt);
-         }
-      });
-
-      javax.swing.GroupLayout constPsiPanelLayout = new javax.swing.GroupLayout(constPsiPanel);
-      constPsiPanel.setLayout(constPsiPanelLayout);
-      constPsiPanelLayout.setHorizontalGroup(
-         constPsiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addComponent(psiSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
-      );
-      constPsiPanelLayout.setVerticalGroup(
-         constPsiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addGroup(constPsiPanelLayout.createSequentialGroup()
-            .addComponent(psiSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-      );
-
-      psiPane.addTab(bundle.getString("GUI.constPsiPanel.TabConstraints.tabTitle"), constPsiPanel); // NOI18N
-
-      gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 3;
-      gridBagConstraints.gridwidth = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      add(psiPane, gridBagConstraints);
-   }// </editor-fold>//GEN-END:initComponents
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        add(psiPane, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.weighty = 1.0;
+        add(filler1, gridBagConstraints);
+    }// </editor-fold>//GEN-END:initComponents
 
    private void xRButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_xRButtonActionPerformed
    {//GEN-HEADEREND:event_xRButtonActionPerformed
@@ -655,11 +603,12 @@ public class GUI extends javax.swing.JPanel
 
    private void mapComboActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_mapComboActionPerformed
    {//GEN-HEADEREND:event_mapComboActionPerformed
-      java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("pl/edu/icm/visnow/lib/basic/filters/RadialCoordinates/Bundle");      
+      java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("pl/edu/icm/visnow/lib/basic/filters/RadialCoordinates/Bundle");
       if (mapCombo.getSelectedIndex() == 1)
       {
          psiPane.removeTabAt(1);
          psiPane.removeTabAt(0);
+         psiRangeSlider.setParams(-1,1,-1,1);
          psiPane.addTab(bundle.getString("GUI.varPsiPanel.TabConstraints.zTitle"), varPsiPanel); // NOI18N
          psiPane.addTab(bundle.getString("GUI.constPsiPanel.TabConstraints.zTitle"), constPsiPanel);
       }
@@ -667,6 +616,7 @@ public class GUI extends javax.swing.JPanel
       {
          psiPane.removeTabAt(1);
          psiPane.removeTabAt(0);
+         psiRangeSlider.setParams(0,360,0,180);
          psiPane.addTab(bundle.getString("GUI.varPsiPanel.TabConstraints.tabTitle"), varPsiPanel); // NOI18N
          psiPane.addTab(bundle.getString("GUI.constPsiPanel.TabConstraints.tabTitle"), constPsiPanel);
       }
@@ -769,8 +719,17 @@ public class GUI extends javax.swing.JPanel
          if (xPsiButton.isSelected()) params.setPsiCoord(0);
          if (yPsiButton.isSelected()) params.setPsiCoord(1);
          if (zPsiButton.isSelected()) params.setPsiCoord(2);
-         params.setPsiMin(psiRangeSlider.getLow());
-         params.setPsiMax(psiRangeSlider.getUp());
+         if (mapCombo.getSelectedIndex() == 0)
+         {
+             params.setPsiMin(psiRangeSlider.getLow());
+             params.setPsiMax(psiRangeSlider.getUp());
+         }
+         else
+         {
+             params.setZMin(psiRangeSlider.getLow());
+             params.setZMax(psiRangeSlider.getUp());
+         }
+
       }
       else
       {
@@ -784,36 +743,36 @@ public class GUI extends javax.swing.JPanel
       params.fireStateChanged();
    }
 
-   // Variables declaration - do not modify//GEN-BEGIN:variables
-   private javax.swing.ButtonGroup buttonGroup1;
-   private javax.swing.ButtonGroup buttonGroup2;
-   private javax.swing.ButtonGroup buttonGroup3;
-   private javax.swing.JPanel constPhiPanel;
-   private javax.swing.JPanel constPsiPanel;
-   private javax.swing.JPanel constRPanel;
-   private javax.swing.JLabel jLabel1;
-   private javax.swing.JPanel jPanel4;
-   private javax.swing.JComboBox mapCombo;
-   private javax.swing.JTabbedPane phiPane;
-   private pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider phiRangeSlider;
-   private pl.edu.icm.visnow.gui.widgets.FloatSlider phiSlider;
-   private javax.swing.JTabbedPane psiPane;
-   private pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider psiRangeSlider;
-   private pl.edu.icm.visnow.gui.widgets.FloatSlider psiSlider;
-   private javax.swing.JTabbedPane rPane;
-   private pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider rRangeSlider;
-   private pl.edu.icm.visnow.gui.widgets.FloatSlider rSlider;
-   private javax.swing.JPanel varPhiPanel;
-   private javax.swing.JPanel varPsiPanel;
-   private javax.swing.JPanel varRPanel;
-   private javax.swing.JRadioButton xPhiButton;
-   private javax.swing.JRadioButton xPsiButton;
-   private javax.swing.JRadioButton xRButton;
-   private javax.swing.JRadioButton yPhiButton;
-   private javax.swing.JRadioButton yPsiButton;
-   private javax.swing.JRadioButton yRButton;
-   private javax.swing.JRadioButton zPhiButton;
-   private javax.swing.JRadioButton zPsiButton;
-   private javax.swing.JRadioButton zRButton;
-   // End of variables declaration//GEN-END:variables
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.ButtonGroup buttonGroup3;
+    private javax.swing.JPanel constPhiPanel;
+    private javax.swing.JPanel constPsiPanel;
+    private javax.swing.JPanel constRPanel;
+    private javax.swing.Box.Filler filler1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JComboBox mapCombo;
+    private javax.swing.JTabbedPane phiPane;
+    private pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider phiRangeSlider;
+    private pl.edu.icm.visnow.gui.widgets.FloatSlider phiSlider;
+    private javax.swing.JTabbedPane psiPane;
+    private pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider psiRangeSlider;
+    private pl.edu.icm.visnow.gui.widgets.FloatSlider psiSlider;
+    private javax.swing.JTabbedPane rPane;
+    private pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider rRangeSlider;
+    private pl.edu.icm.visnow.gui.widgets.FloatSlider rSlider;
+    private javax.swing.JPanel varPhiPanel;
+    private javax.swing.JPanel varPsiPanel;
+    private javax.swing.JPanel varRPanel;
+    private javax.swing.JRadioButton xPhiButton;
+    private javax.swing.JRadioButton xPsiButton;
+    private javax.swing.JRadioButton xRButton;
+    private javax.swing.JRadioButton yPhiButton;
+    private javax.swing.JRadioButton yPsiButton;
+    private javax.swing.JRadioButton yRButton;
+    private javax.swing.JRadioButton zPhiButton;
+    private javax.swing.JRadioButton zPsiButton;
+    private javax.swing.JRadioButton zRButton;
+    // End of variables declaration//GEN-END:variables
 }

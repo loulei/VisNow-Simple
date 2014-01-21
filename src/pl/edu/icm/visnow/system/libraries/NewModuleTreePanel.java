@@ -103,13 +103,13 @@ public class NewModuleTreePanel extends javax.swing.JMenuItem
                     VisNow.get().getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     VisNow.get().getMainWindow().repaint();
                     popup.setVisible(false);
-                    SwingInstancer.swingRun(new Runnable()
+                    SwingInstancer.swingRunAndWait(new Runnable()
                     {
                         @Override
                         public void run()
                         {
                             LibraryCore cr = (LibraryCore)tn.getUserObject();
-                            Application a = VisNow.get().getMainWindow().getApplicationsPanel().getApplication();
+                            Application a = VisNow.get().getMainWindow().getApplicationsPanel().getCurrentApplication();
                             if(point == null)
                                     a.addModuleByName(cr.getName(), cr.getClassPath(), false);
                             else

@@ -67,7 +67,7 @@ public class MainMenu {
     protected MainWindow window;
 
     protected Application  getApplication() {
-        return window.getApplicationsPanel().getApplication();
+        return window.getApplicationsPanel().getCurrentApplication();
     }
     //</editor-fold>
 
@@ -141,7 +141,7 @@ public class MainMenu {
 
     //<editor-fold defaultstate="collapsed" desc=" File ">
     protected void newApplication() {
-        window.getApplicationsPanel().addApplication(new Application("Untitled("+nextUntitled()+")"));
+        window.getApplicationsPanel().addApplication(new Application("Untitled("+nextUntitled()+")", false));
     }
 
 
@@ -218,7 +218,7 @@ public class MainMenu {
 
         
         if(chosen) {
-            return window.getApplicationsPanel().getApplication().saveAs(chooser.getSelectedFile());
+            return window.getApplicationsPanel().getCurrentApplication().saveAs(chooser.getSelectedFile());
         }
         return false;
     }
@@ -228,7 +228,6 @@ public class MainMenu {
     }
 
     protected void closeApplication() {
-        /* TODO: prompt o save */
         window.getApplicationsPanel().removeCurrentApplication();
     }
     //</editor-fold>
@@ -276,7 +275,7 @@ public class MainMenu {
     //</editor-fold>
 
     void clearState() {
-        window.getApplicationsPanel().getApplication().doTheMainReset();
+        window.getApplicationsPanel().getCurrentApplication().doTheMainReset();
     }
 
     JFileChooser chooser = new JFileChooser( VisNow.get().getMainConfig().getUsableApplicationsPath() );
@@ -307,7 +306,12 @@ public class MainMenu {
             File file = VNFileChooser.fileWithExtensionAddedIfNecessary( chooser.getSelectedFile(), 
 					vnaFilter );
             VisNow.get().getMainConfig().setLastApplicationsPath(file.getAbsolutePath());
-            return window.getApplicationsPanel().getApplication().betaSaveAs(file);
+            String newAppName = file.getName();
+            //trim extension (string part after dot ".") 
+            if (newAppName.lastIndexOf('.') > 0) //but only if there is anything else (so no trimming for filenames like ".xyz")
+                newAppName = newAppName.substring(0, newAppName.lastIndexOf('.'));
+            window.getApplicationsPanel().getCurrentApplication().setTitle(newAppName);
+            return window.getApplicationsPanel().getCurrentApplication().betaSaveAs(file);
         }
         return false;
         
@@ -384,13 +388,13 @@ public class MainMenu {
                     public void actionPerformed(java.awt.event.ActionEvent evt) {
                         VisNow.get().getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                         VisNow.get().getMainWindow().repaint();
-                        SwingInstancer.swingRun(new Runnable() {
+                        SwingInstancer.swingRunAndWait(new Runnable() {
                             @Override
                             public void run() {
                                 if(p == null)
-                                    window.getApplicationsPanel().getApplication().addModuleByName(core.getName()+"[" + getApplication().getEngine().nextModuleNumber() + "]", core.getClassPath(), true);                        
+                                    window.getApplicationsPanel().getCurrentApplication().addModuleByName(core.getName()+"[" + getApplication().getEngine().nextModuleNumber() + "]", core.getClassPath(), true);                        
                                 else
-                                    window.getApplicationsPanel().getApplication().addModuleByName(core.getName()+"[" + getApplication().getEngine().nextModuleNumber() + "]", core.getClassPath(), p, true);
+                                    window.getApplicationsPanel().getCurrentApplication().addModuleByName(core.getName()+"[" + getApplication().getEngine().nextModuleNumber() + "]", core.getClassPath(), p, true);
                                 VisNow.get().getMainWindow().setCursor(Cursor.getDefaultCursor());
                                 VisNow.get().getMainWindow().repaint();
                             }
@@ -441,13 +445,13 @@ public class MainMenu {
                     public void actionPerformed(java.awt.event.ActionEvent evt) {
                         VisNow.get().getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                         VisNow.get().getMainWindow().repaint();
-                        SwingInstancer.swingRun(new Runnable() {
+                        SwingInstancer.swingRunAndWait(new Runnable() {
                             @Override
                             public void run() {
                                 if(p == null)
-                                    window.getApplicationsPanel().getApplication().addModuleByName(core.getName()+"[" + getApplication().getEngine().nextModuleNumber() + "]", core.getClassPath(), false);
+                                    window.getApplicationsPanel().getCurrentApplication().addModuleByName(core.getName()+"[" + getApplication().getEngine().nextModuleNumber() + "]", core.getClassPath(), false);
                                 else
-                                    window.getApplicationsPanel().getApplication().addModuleByName(core.getName()+"[" + getApplication().getEngine().nextModuleNumber() + "]", core.getClassPath(), p, false);                        
+                                    window.getApplicationsPanel().getCurrentApplication().addModuleByName(core.getName()+"[" + getApplication().getEngine().nextModuleNumber() + "]", core.getClassPath(), p, false);                        
                                 VisNow.get().getMainWindow().setCursor(Cursor.getDefaultCursor());
                                 VisNow.get().getMainWindow().repaint();
                             }

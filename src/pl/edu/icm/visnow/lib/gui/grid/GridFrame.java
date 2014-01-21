@@ -64,7 +64,7 @@ import pl.edu.icm.visnow.system.main.VisNow;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public class GridFrame extends javax.swing.JFrame
 {
@@ -251,7 +251,7 @@ public class GridFrame extends javax.swing.JFrame
             progressBar.setIndeterminate(true);  
             res = loc.locate();
             progressBar.setIndeterminate(false);  
-            SwingInstancer.swingRun(new Runnable()
+            SwingInstancer.swingRunAndWait(new Runnable()
             {
                @Override
                public void run()
@@ -295,7 +295,7 @@ public class GridFrame extends javax.swing.JFrame
             progressBar.setIndeterminate(true);  
             tList = currentSite.getTasks();
             progressBar.setIndeterminate(false);  
-            SwingInstancer.swingRun(new Runnable()
+            SwingInstancer.swingRunAndWait(new Runnable()
             {
                @Override
                public void run()
@@ -350,7 +350,7 @@ public class GridFrame extends javax.swing.JFrame
             int n = selectedNode.getChildCount();
             for (int i = n - 1; i >= 0; i--)
                model.removeNodeFromParent((MutableTreeNode)selectedNode.getChildAt(i));
-            SwingInstancer.swingRun(new Runnable()
+            SwingInstancer.swingRunAndWait(new Runnable()
             {
                @Override
                public void run()
@@ -565,7 +565,7 @@ pathLoop:
                   aborted = false;
                   fireStateChanged();
                }
-               SwingInstancer.swingRun(new Runnable()
+               SwingInstancer.swingRunAndWait(new Runnable()
                {
 
                   @Override

@@ -58,16 +58,19 @@ public class Params extends Parameters
    private static ParameterEgg[] eggs = new ParameterEgg[]
    {
       new ParameterEgg<Integer>(DIM, ParameterType.independent, 3),
-      new ParameterEgg<int[]>(RESOLUTION, ParameterType.independent, new int[]{100, 100, 100}),
+      new ParameterEgg<int[]>(RESOLUTION, ParameterType.independent, null),
       new ParameterEgg<Boolean>(ADJUSTING, ParameterType.independent, false),
       new ParameterEgg<Boolean>(OUTPUT, ParameterType.independent, false),
-      new ParameterEgg<TransformParams>(TRANSFORM, ParameterType.independent, new TransformParams()),
-      new ParameterEgg<Integer>(THREADS, ParameterType.independent, Runtime.getRuntime().availableProcessors())
+      new ParameterEgg<TransformParams>(TRANSFORM, ParameterType.independent, null),
+      new ParameterEgg<Integer>(THREADS, ParameterType.independent, null)
    };
 
    public Params()
    {
       super(eggs);
+      setValue(RESOLUTION,new int[]{100, 100, 100});
+      setValue(TRANSFORM,new TransformParams());
+      setValue(THREADS,pl.edu.icm.visnow.system.main.VisNow.availableProcessors());
    }
 
    public int[] getResolution()

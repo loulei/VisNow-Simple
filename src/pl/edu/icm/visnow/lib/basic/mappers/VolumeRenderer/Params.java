@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,9 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
+
 
 package pl.edu.icm.visnow.lib.basic.mappers.VolumeRenderer;
 
@@ -58,7 +62,9 @@ public class Params extends Parameters
    }
    private static ParameterEgg[] eggs = new ParameterEgg[]
    {
-      new ParameterEgg<Boolean>("cropExtents", ParameterType.dependent, true)
+      new ParameterEgg<Boolean>("cropExtents", ParameterType.dependent, true),
+      new ParameterEgg<Integer>("shadow", ParameterType.dependent, -1),
+      new ParameterEgg<Float>("shadow range", ParameterType.dependent, Float.MAX_VALUE),
    };
 
    public boolean isOutCroppedField()
@@ -90,5 +96,26 @@ public class Params extends Parameters
    {
       this.dataMappingParams = dataMappingParams;
    }
-   
+
+   public float getShadow()
+   {
+      return (Float) getValue("shadow range");
+   }
+
+   public void setShadow(float shadow)
+   {
+      setValue("shadow range", shadow);
+      fireStateChanged();
+   }
+
+   public int getShadowRange()
+   {
+      return (Integer) getValue("shadow");
+   }
+
+   public void setShadowRange(int shadowRange)
+   {
+      setValue("shadow", shadowRange);
+      fireStateChanged();
+   }
 }

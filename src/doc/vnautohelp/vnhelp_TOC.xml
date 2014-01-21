@@ -14,13 +14,13 @@
             <tocitem text="Main menu" target="window.menu"/>
             <tocitem text="Status bar" target="window.status"/>
         </tocitem>
+        <tocitem text="Preferences" target="window.preferences"/>
 
         <tocitem text="Common elements" target="common.intro" expand="false">
             <tocitem text="Data model" target="common.datamodel"/>
             <tocitem text="Common interfaces" target="common.uiintro" expand="false">
                 <tocitem text="Presentation panel" target="common.presentation.simple"/>
-                <tocitem text="Colormapping panel" target="common.colormappanel.simple"/>
-                <tocitem text="Geometry panel" target="common.geometrypanel.simple"/>
+                <tocitem text="Colormap editor" target="common.colormapeditor.pro"/>
             </tocitem>
             
         </tocitem>
@@ -34,16 +34,28 @@
 <tocitem text="Image Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadImage" expand="false">
     
         </tocitem>
+<tocitem text="VTK File Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadVTK" expand="false">
+    
+        </tocitem>
 <tocitem text="Volume Reader" target="pl.edu.icm.visnow.lib.basic.readers.VolumeReader" expand="false">
     
         </tocitem>
 <tocitem text="AVS Field Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadAVSField" expand="false">
     
         </tocitem>
+<tocitem text="CSV Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadCSV" expand="false">
+    
+        </tocitem>
 
         </tocitem>
 <tocitem text="irregular data readers" target="pl.edu.icm.visnow.lib.basic.readers.irregular_help_folder" expand="false">
-    <tocitem text="UCD Data Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadUCD" expand="false">
+    <tocitem text="VisNow Field Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadVisNowField" expand="false">
+    
+        </tocitem>
+<tocitem text="UCD Data Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadUCD" expand="false">
+    
+        </tocitem>
+<tocitem text="VTK File Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadVTK" expand="false">
     
         </tocitem>
 <tocitem text="Wavefront OBJ Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadOBJ" expand="false">
@@ -53,6 +65,9 @@
     
         </tocitem>
 <tocitem text="ANSYS Fluent Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadFluent" expand="false">
+    
+        </tocitem>
+<tocitem text="STL Reader" target="pl.edu.icm.visnow.lib.basic.readers.ReadSTL" expand="false">
     
         </tocitem>
 
@@ -66,7 +81,13 @@
 
         </tocitem>
 <tocitem text="test objects" target="pl.edu.icm.visnow.lib.basic.testdata.help_folder" expand="false">
-    <tocitem text="Test Line Mesh" target="pl.edu.icm.visnow.lib.basic.testdata.TestLineMesh" expand="false">
+    <tocitem text="Color Cube" target="pl.edu.icm.visnow.lib.basic.testdata.ColorCube" expand="false">
+    
+        </tocitem>
+<tocitem text="Test Cells" target="pl.edu.icm.visnow.lib.basic.testdata.TestCells" expand="false">
+    
+        </tocitem>
+<tocitem text="Test Line Mesh" target="pl.edu.icm.visnow.lib.basic.testdata.TestLineMesh" expand="false">
     
         </tocitem>
 <tocitem text="Test Points" target="pl.edu.icm.visnow.lib.basic.testdata.TestPoints" expand="false">
@@ -159,7 +180,7 @@
 <tocitem text="Graph 3D" target="pl.edu.icm.visnow.lib.basic.mappers.Graph3D" expand="false">
     
         </tocitem>
-<tocitem text="Interpolated Field Slice" target="pl.edu.icm.visnow.lib.basic.mappers.FieldSlicePlane" expand="false">
+<tocitem text="Interpolated Field Slice" target="pl.edu.icm.visnow.lib.basic.mappers.InterpolatedSlice" expand="false">
     
         </tocitem>
 <tocitem text="Irregular Field Slice" target="pl.edu.icm.visnow.lib.basic.mappers.PlanarSlice" expand="false">

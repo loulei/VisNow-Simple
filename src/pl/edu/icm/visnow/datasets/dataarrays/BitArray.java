@@ -818,5 +818,12 @@ public class BitArray {
         return 1;
     }
 
+    /**
+     * @return the size
+     */
+    public int getSize() {
+        return size;
+    }
+
 }
 

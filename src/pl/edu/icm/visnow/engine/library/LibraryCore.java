@@ -98,7 +98,10 @@ public class LibraryCore implements Comparable {
 
         String[] tmp = null;
         try {
-            tmp = ModuleXMLReader.getModuleInfo(packageName);
+            if(root instanceof JarLibraryRoot)
+                tmp = ModuleXMLReader.getModuleInfo(packageName, ((JarLibraryRoot)root).getLoader());
+            else            
+                tmp = ModuleXMLReader.getModuleInfo(packageName, null);
         } catch(IOException ex) {
         } catch(ParserConfigurationException ex) {
         } catch(SAXException ex) {

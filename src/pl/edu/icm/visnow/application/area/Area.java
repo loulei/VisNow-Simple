@@ -77,16 +77,17 @@ public class Area {
             item.setSelected(true);
             if(item instanceof ModulePanel) {
                 moduleSelectionChanged( ((ModulePanel)item).getModule().getName());
+                areaPanel.repaint();
+                return;
             }
-        } else {
-            moduleSelectionChanged(null);
         }
-        areaPanel.repaint();
+        moduleSelectionChanged(null);
+        areaPanel.repaint();        
     }
 
     public void selectNull() {
-        for(SelectableAreaItem i: selection) {
-            i.setSelected(false);
+        for(int i=0; i<selection.size();i++) {
+            selection.get(i).setSelected(false);
         }
         selection.clear();
         areaPanel.repaint();

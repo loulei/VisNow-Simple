@@ -73,15 +73,16 @@ public class GUI extends javax.swing.JPanel {
 
         setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
-        jLabel1.setText("Transformation direction:");
+        jLabel1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jLabel1.setText("Transformation direction");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(10, 5, 0, 5);
         add(jLabel1, gridBagConstraints);
 
-        dirCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Forward", "Inverse" }));
+        dirCB.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        dirCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "forward", "inverse" }));
         dirCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dirCBActionPerformed(evt);
@@ -96,6 +97,7 @@ public class GUI extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         add(dirCB, gridBagConstraints);
 
+        jCheckBox1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jCheckBox1.setSelected(true);
         jCheckBox1.setText("Center origin");
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
@@ -108,7 +110,6 @@ public class GUI extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;

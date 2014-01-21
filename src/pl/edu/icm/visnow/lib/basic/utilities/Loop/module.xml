@@ -6,6 +6,7 @@
         </output>
         <output name="value" type="java.lang.Float">
         </output>
+        <geometryOutput/>
     </outputs>
     <description value="loops over a range of values"/>
 </module>

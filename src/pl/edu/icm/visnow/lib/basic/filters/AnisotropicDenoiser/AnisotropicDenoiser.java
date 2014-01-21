@@ -83,7 +83,7 @@ public class AnisotropicDenoiser extends ModuleCore
    public AnisotropicDenoiser()
    {
       parameters = params = new Params();
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          public void run()
          {

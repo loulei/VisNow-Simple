@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,7 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.basic.readers.ReadUCD;
 
@@ -45,6 +47,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import pl.edu.icm.visnow.datasets.cells.Cell;
 import pl.edu.icm.visnow.engine.core.OutputEgg;
+import pl.edu.icm.visnow.geometries.parameters.AbstractRenderingParams;
 import pl.edu.icm.visnow.gui.widgets.FileErrorFrame;
 import pl.edu.icm.visnow.lib.templates.visualization.modules.IrregularOutFieldVisualizationModule;
 import pl.edu.icm.visnow.lib.types.VNIrregularField;
@@ -81,7 +84,7 @@ public class ReadUCD extends IrregularOutFieldVisualizationModule
             startAction();
          }
       });
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
             @Override
          public void run()
@@ -95,8 +98,8 @@ public class ReadUCD extends IrregularOutFieldVisualizationModule
       setPanel(ui);
    }
 
-   public static boolean isGenerator()
-   {
+   @Override
+   public boolean isGenerator() {
       return true;
    }
 
@@ -118,7 +121,7 @@ public class ReadUCD extends IrregularOutFieldVisualizationModule
          {
             Logger.getLogger(ReadUCD.class.getName()).log(Level.SEVERE, null, ex);
          }
-         
+
          if (binary)
             outField = new BinaryReader().readUCD(params, errorFrame);
          else
@@ -129,16 +132,17 @@ public class ReadUCD extends IrregularOutFieldVisualizationModule
          if (params.isShow())
          {
             prepareOutputGeometry();
+            irregularFieldGeometry.getFieldDisplayParams().setShadingMode(AbstractRenderingParams.FLAT_SHADED);
             show();
          }
          setOutputValue("UCD field", new VNIrregularField(outField));
       }
    }
-   
+
    @Override
    public void onInitFinishedLocal() {
-       if(isForceFlag()) 
+       if(isForceFlag())
            computeUI.activateOpenDialog();
    }
-   
+
 }

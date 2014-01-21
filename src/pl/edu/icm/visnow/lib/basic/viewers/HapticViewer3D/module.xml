@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<module name="haptic viewer 3D" class="Viewer3D">
+<module name="haptic viewer" class="gui.HapticViewer3D">
 
     <inputs>
-       <input name="inObject" type="pl.edu.icm.visnow.lib.types.VNGeometryObject" modifiers="NECESSARY:TRIGGERING" maxConnections="-1">
-       </input>
-       <input name="hapticField" type="pl.edu.icm.visnow.lib.types.VNGeometryObject" modifiers="TRIGGERING">
-            <acceptor>
-                <param name="REGULAR" value="true"/>
-                <param name="DATA_VECLEN" value="1,3"/>
-            </acceptor>
-       </input>
+        <input name="inObject" type="pl.edu.icm.visnow.lib.types.VNGeometryObject" modifiers="NECESSARY:TRIGGERING" maxConnections="-1">            
+            <description value="Regular field for haptic effects"/>            
+        </input>
     </inputs>
     <outputs>
     </outputs>
     <parameters>
     </parameters>
-    <description value="viewer for 3D objects (supporting haptic input devices)"/>
+    <description value="Viewer with external pointing devices. So far only Phantom Premium haptic device is supported, but also tablets are planned."/>
 </module>

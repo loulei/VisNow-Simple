@@ -97,7 +97,7 @@ public class BgPanel extends JPanel {
     //<editor-fold defaultstate="collapsed" desc=" [Constructor] ">
     public BgPanel() {        
         super();
-        this.setBackground(new Color(200,200,0));
+        this.setBackground(new Color(0,0,0));
         BgPanel.initBackImages();
         locked = false;
     }

@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,8 +35,10 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.geometries.objects;
+import java.awt.Color;
 import pl.edu.icm.visnow.geometries.objects.generics.OpenBranchGroup;
 import java.util.SortedSet;
 
@@ -55,9 +58,10 @@ public interface GeometryParent
    public OpenBranchGroup getGeometryObj();
    public void clearAllGeometry();
    public void addNode(Node node);
-   public void draw2D(J3DGraphics2D vGraphics, LocalToWindow ltw);
+   public void draw2D(J3DGraphics2D vGraphics, LocalToWindow ltw, int h, int w);
    public int getAreaWidth();
    public int getAreaHeight();
+   public Color getBackgroundColor();
    public boolean removeChild(GeometryObject child);
    public void setScale(double s);
    public AbstractRenderingParams getRenderingParams();

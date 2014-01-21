@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,8 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.system.config;
 
@@ -101,6 +104,18 @@ public class PropertiesEditorPanel extends javax.swing.JPanel
       {
          useDatDirCB.setSelectedItem("default");
       }
+      infCombo.setSelectedIndex(VisNow.get().getMainConfig().getInfAction());
+      nanCombo.setSelectedIndex(VisNow.get().getMainConfig().getNaNAction());
+      int nThreads = VisNow.availableProcessors();
+      if(nThreads >= Runtime.getRuntime().availableProcessors()) {
+          allThreadsRB.setSelected(true);
+          threadsSP.setEnabled(false);
+          threadsSP.setValue(nThreads);
+      } else {
+          limitedThreadsRB.setSelected(true);
+          threadsSP.setEnabled(true);
+          threadsSP.setValue(nThreads);
+      }
    }
 
    /**
@@ -113,6 +128,7 @@ public class PropertiesEditorPanel extends javax.swing.JPanel
    {
       java.awt.GridBagConstraints gridBagConstraints;
 
+      buttonGroup1 = new javax.swing.ButtonGroup();
       jLabel1 = new javax.swing.JLabel();
       jPanel1 = new javax.swing.JPanel();
       startupViewer2DCB = new javax.swing.JCheckBox();
@@ -141,6 +157,15 @@ public class PropertiesEditorPanel extends javax.swing.JPanel
       jPanel9 = new javax.swing.JPanel();
       performanceSlider = new javax.swing.JSlider();
       jLabel6 = new javax.swing.JLabel();
+      jPanel10 = new javax.swing.JPanel();
+      allThreadsRB = new javax.swing.JRadioButton();
+      limitedThreadsRB = new javax.swing.JRadioButton();
+      threadsSP = new javax.swing.JSpinner();
+      jPanel11 = new javax.swing.JPanel();
+      jLabel7 = new javax.swing.JLabel();
+      jLabel8 = new javax.swing.JLabel();
+      nanCombo = new pl.edu.icm.visnow.gui.widgets.SteppedComboBox();
+      infCombo = new pl.edu.icm.visnow.gui.widgets.SteppedComboBox();
 
       setMinimumSize(new java.awt.Dimension(400, 374));
       setLayout(new java.awt.GridBagLayout());
@@ -152,11 +177,11 @@ public class PropertiesEditorPanel extends javax.swing.JPanel
       gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
       add(jLabel1, gridBagConstraints);
 
-      jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Startup viewers", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12))); // NOI18N
-      jPanel1.setMinimumSize(new java.awt.Dimension(250, 48));
+      jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Startup viewers", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 11))); // NOI18N
+      jPanel1.setMinimumSize(new java.awt.Dimension(250, 68));
       jPanel1.setName("jPanel1"); // NOI18N
       jPanel1.setOpaque(false);
-      jPanel1.setPreferredSize(new java.awt.Dimension(250, 48));
+      jPanel1.setPreferredSize(new java.awt.Dimension(250, 68));
       jPanel1.setLayout(new java.awt.GridLayout(2, 2));
 
       startupViewer2DCB.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
@@ -189,6 +214,7 @@ public class PropertiesEditorPanel extends javax.swing.JPanel
 
       startupOrthoViewer3DCB.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
       startupOrthoViewer3DCB.setText("Orthoviewer 3D");
+      startupOrthoViewer3DCB.setEnabled(false);
       startupOrthoViewer3DCB.setMaximumSize(new java.awt.Dimension(120, 16));
       startupOrthoViewer3DCB.setMinimumSize(new java.awt.Dimension(120, 16));
       startupOrthoViewer3DCB.setName("startupOrthoViewer3DCB"); // NOI18N
@@ -198,13 +224,14 @@ public class PropertiesEditorPanel extends javax.swing.JPanel
 
       gridBagConstraints = new java.awt.GridBagConstraints();
       gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 2;
+      gridBagConstraints.gridy = 3;
+      gridBagConstraints.gridwidth = 2;
       gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
       gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.weighty = 1.0;
       add(jPanel1, gridBagConstraints);
 
-      jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Auto connect", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12))); // NOI18N
+      jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Auto connect", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 11))); // NOI18N
       jPanel2.setMinimumSize(new java.awt.Dimension(124, 40));
       jPanel2.setName("jPanel2"); // NOI18N
       jPanel2.setOpaque(false);
@@ -222,6 +249,7 @@ public class PropertiesEditorPanel extends javax.swing.JPanel
 
       autoconnectOrthoViewer3DCB.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
       autoconnectOrthoViewer3DCB.setText("to Orthoviewer 3D");
+      autoconnectOrthoViewer3DCB.setEnabled(false);
       autoconnectOrthoViewer3DCB.setMaximumSize(new java.awt.Dimension(120, 16));
       autoconnectOrthoViewer3DCB.setMinimumSize(new java.awt.Dimension(120, 16));
       autoconnectOrthoViewer3DCB.setName("autoconnectOrthoViewer3DCB"); // NOI18N
@@ -231,13 +259,14 @@ public class PropertiesEditorPanel extends javax.swing.JPanel
 
       gridBagConstraints = new java.awt.GridBagConstraints();
       gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 3;
+      gridBagConstraints.gridy = 4;
+      gridBagConstraints.gridwidth = 2;
       gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
       gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.weighty = 1.0;
       add(jPanel2, gridBagConstraints);
 
-      jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Application file chooser", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12))); // NOI18N
+      jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Application file chooser", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 11))); // NOI18N
       jPanel5.setName("jPanel5"); // NOI18N
       jPanel5.setLayout(new java.awt.GridBagLayout());
 
@@ -325,13 +354,14 @@ public class PropertiesEditorPanel extends javax.swing.JPanel
 
       gridBagConstraints = new java.awt.GridBagConstraints();
       gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 4;
+      gridBagConstraints.gridy = 5;
+      gridBagConstraints.gridwidth = 2;
       gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
       gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.weighty = 1.0;
       add(jPanel5, gridBagConstraints);
 
-      jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Data file choosers", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12))); // NOI18N
+      jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Data file choosers", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 11))); // NOI18N
       jPanel3.setName("jPanel3"); // NOI18N
       jPanel3.setLayout(new java.awt.GridBagLayout());
 
@@ -419,9 +449,12 @@ public class PropertiesEditorPanel extends javax.swing.JPanel
 
       gridBagConstraints = new java.awt.GridBagConstraints();
       gridBagConstraints.gridx = 0;
-      gridBagConstraints.gridy = 5;
+      gridBagConstraints.gridy = 6;
+      gridBagConstraints.gridwidth = 2;
       gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
       gridBagConstraints.weightx = 1.0;
+      gridBagConstraints.weighty = 1.0;
       add(jPanel3, gridBagConstraints);
 
       jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "hardware performance", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
@@ -451,9 +484,145 @@ public class PropertiesEditorPanel extends javax.swing.JPanel
       gridBagConstraints = new java.awt.GridBagConstraints();
       gridBagConstraints.gridx = 0;
       gridBagConstraints.gridy = 1;
-      gridBagConstraints.gridwidth = 3;
+      gridBagConstraints.gridwidth = 2;
       gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+      gridBagConstraints.weightx = 1.0;
       add(jPanel9, gridBagConstraints);
+
+      jPanel10.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Multithreading", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 11))); // NOI18N
+      jPanel10.setMinimumSize(new java.awt.Dimension(250, 70));
+      jPanel10.setName("jPanel10"); // NOI18N
+      jPanel10.setPreferredSize(new java.awt.Dimension(250, 70));
+      jPanel10.setLayout(new java.awt.GridBagLayout());
+
+      buttonGroup1.add(allThreadsRB);
+      allThreadsRB.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      allThreadsRB.setSelected(true);
+      allThreadsRB.setText("use all available CPU cores");
+      allThreadsRB.setName("allThreadsRB"); // NOI18N
+      allThreadsRB.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            allThreadsRBActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridwidth = 2;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+      gridBagConstraints.weightx = 1.0;
+      jPanel10.add(allThreadsRB, gridBagConstraints);
+
+      buttonGroup1.add(limitedThreadsRB);
+      limitedThreadsRB.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      limitedThreadsRB.setText("limit number of CPU cores to:");
+      limitedThreadsRB.setName("limitedThreadsRB"); // NOI18N
+      limitedThreadsRB.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            limitedThreadsRBActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 1;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+      gridBagConstraints.weighty = 1.0;
+      jPanel10.add(limitedThreadsRB, gridBagConstraints);
+
+      threadsSP.setEnabled(false);
+      threadsSP.setMinimumSize(new java.awt.Dimension(48, 20));
+      threadsSP.setName("threadsSP"); // NOI18N
+      threadsSP.setPreferredSize(new java.awt.Dimension(48, 20));
+      threadsSP.setValue(Runtime.getRuntime().availableProcessors());
+      threadsSP.addChangeListener(new javax.swing.event.ChangeListener()
+      {
+         public void stateChanged(javax.swing.event.ChangeEvent evt)
+         {
+            threadsSPStateChanged(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 1;
+      gridBagConstraints.gridy = 1;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+      gridBagConstraints.weightx = 1.0;
+      gridBagConstraints.weighty = 1.0;
+      gridBagConstraints.insets = new java.awt.Insets(2, 5, 0, 0);
+      jPanel10.add(threadsSP, gridBagConstraints);
+
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 2;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+      gridBagConstraints.weightx = 1.0;
+      add(jPanel10, gridBagConstraints);
+
+      jPanel11.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Action on excepional float/double values", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+      jPanel11.setName("jPanel11"); // NOI18N
+      jPanel11.setLayout(new java.awt.GridBagLayout());
+
+      jLabel7.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      jLabel7.setText("on NaN");
+      jLabel7.setName("jLabel7"); // NOI18N
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      jPanel11.add(jLabel7, gridBagConstraints);
+
+      jLabel8.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      jLabel8.setText("on Infinity ");
+      jLabel8.setName("jLabel8"); // NOI18N
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 1;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      jPanel11.add(jLabel8, gridBagConstraints);
+
+      nanCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "set 0", "set data min", "set data max", "set number min", "set number max", "throw exception" }));
+      nanCombo.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      nanCombo.setMinimumSize(new java.awt.Dimension(100, 24));
+      nanCombo.setName("nanCombo"); // NOI18N
+      nanCombo.setPreferredSize(new java.awt.Dimension(100, 24));
+      nanCombo.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            nanComboActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.weightx = 1.0;
+      jPanel11.add(nanCombo, gridBagConstraints);
+
+      infCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "set 0", "set data extreme", "set number extreme", "throw exception" }));
+      infCombo.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      infCombo.setMinimumSize(new java.awt.Dimension(100, 24));
+      infCombo.setName("infCombo"); // NOI18N
+      infCombo.setPreferredSize(new java.awt.Dimension(100, 24));
+      infCombo.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            infComboActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 1;
+      gridBagConstraints.gridy = 1;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.weightx = 1.0;
+      jPanel11.add(infCombo, gridBagConstraints);
+
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 1;
+      gridBagConstraints.gridy = 2;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.weightx = 1.0;
+      add(jPanel11, gridBagConstraints);
    }// </editor-fold>//GEN-END:initComponents
 
     private void defAppDirBBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_defAppDirBBActionPerformed
@@ -473,20 +642,62 @@ public class PropertiesEditorPanel extends javax.swing.JPanel
           defDatDirTF.setText(chooser.getSelectedFile().getAbsolutePath());
        }
     }//GEN-LAST:event_defDatDirBBActionPerformed
+
+    private void threadsSPStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_threadsSPStateChanged
+        int n = (Integer)threadsSP.getValue();
+        int N = Runtime.getRuntime().availableProcessors();
+        if(n < 1) {
+            threadsSP.setValue(1);
+            return;            
+        }
+        
+        if(n > N) {
+            threadsSP.setValue(N);
+            return;
+        }
+    }//GEN-LAST:event_threadsSPStateChanged
+
+    private void allThreadsRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allThreadsRBActionPerformed
+        threadsSP.setEnabled(limitedThreadsRB.isSelected());
+    }//GEN-LAST:event_allThreadsRBActionPerformed
+
+    private void limitedThreadsRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limitedThreadsRBActionPerformed
+        threadsSP.setEnabled(limitedThreadsRB.isSelected());
+    }//GEN-LAST:event_limitedThreadsRBActionPerformed
+
+   private void nanComboActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_nanComboActionPerformed
+   {//GEN-HEADEREND:event_nanComboActionPerformed
+      VisNow.setOnNaN(nanCombo.getSelectedIndex());
+   }//GEN-LAST:event_nanComboActionPerformed
+
+   private void infComboActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_infComboActionPerformed
+   {//GEN-HEADEREND:event_infComboActionPerformed
+      VisNow.setOnInf(infCombo.getSelectedIndex());
+   }//GEN-LAST:event_infComboActionPerformed
+
+    
+    
    // Variables declaration - do not modify//GEN-BEGIN:variables
+   private javax.swing.JRadioButton allThreadsRB;
    private javax.swing.JCheckBox autoconnectOrthoViewer3DCB;
    private javax.swing.JCheckBox autoconnectViewerCB;
+   private javax.swing.ButtonGroup buttonGroup1;
    private javax.swing.JButton defAppDirBB;
    private javax.swing.JTextField defAppDirTF;
    private javax.swing.JButton defDatDirBB;
    private javax.swing.JTextField defDatDirTF;
+   private pl.edu.icm.visnow.gui.widgets.SteppedComboBox infCombo;
    private javax.swing.JLabel jLabel1;
    private javax.swing.JLabel jLabel2;
    private javax.swing.JLabel jLabel3;
    private javax.swing.JLabel jLabel4;
    private javax.swing.JLabel jLabel5;
    private javax.swing.JLabel jLabel6;
+   private javax.swing.JLabel jLabel7;
+   private javax.swing.JLabel jLabel8;
    private javax.swing.JPanel jPanel1;
+   private javax.swing.JPanel jPanel10;
+   private javax.swing.JPanel jPanel11;
    private javax.swing.JPanel jPanel2;
    private javax.swing.JPanel jPanel3;
    private javax.swing.JPanel jPanel4;
@@ -495,11 +706,14 @@ public class PropertiesEditorPanel extends javax.swing.JPanel
    private javax.swing.JPanel jPanel7;
    private javax.swing.JPanel jPanel8;
    private javax.swing.JPanel jPanel9;
+   private javax.swing.JRadioButton limitedThreadsRB;
+   private pl.edu.icm.visnow.gui.widgets.SteppedComboBox nanCombo;
    private javax.swing.JSlider performanceSlider;
    private javax.swing.JCheckBox startupFieldViewer3DCB;
    private javax.swing.JCheckBox startupOrthoViewer3DCB;
    private javax.swing.JCheckBox startupViewer2DCB;
    private javax.swing.JCheckBox startupViewer3DCB;
+   private javax.swing.JSpinner threadsSP;
    private javax.swing.JComboBox useAppDirCB;
    private javax.swing.JComboBox useDatDirCB;
    // End of variables declaration//GEN-END:variables
@@ -517,6 +731,10 @@ public class PropertiesEditorPanel extends javax.swing.JPanel
       VisNow.get().getMainConfig().setDefaultDataPath(defDatDirTF.getText());
       VisNow.get().getMainConfig().setUsableDataPathType((String) useDatDirCB.getSelectedItem());
       VisNow.get().getMainConfig().setColorAdjustingLimit(1 << 4 * performanceSlider.getValue() + 13);
+      VisNow.get().getMainConfig().setInfAction(infCombo.getSelectedIndex());
+      VisNow.get().getMainConfig().setNaNAction(nanCombo.getSelectedIndex());
+      VisNow.get().getMainConfig().setNAvailableThreads(allThreadsRB.isSelected()?Runtime.getRuntime().availableProcessors():(Integer)threadsSP.getValue());
+      VisNow.get().getMainConfig().saveConfig();
 
    }
 }

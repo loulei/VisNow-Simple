@@ -14,9 +14,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -48,26 +48,18 @@ import pl.edu.icm.visnow.datasets.RegularField;
  */
 public class FieldWriter
 {
-   
+
    /**
     * Creates a new instance of FieldWriter
     */
    public FieldWriter()
    {
    }
-   
-   public static void writeVolume(String filePath, RegularField inField)
+
+   public static void writeVolume(DataOutputStream out, int[] dims, byte[] data)
    {
-	   if( inField == null )
-		   return;
-      DataOutputStream out = null;
       try
       {
-         if (filePath.endsWith("_gz") || filePath.endsWith("_GZ"))
-            out = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(filePath)));
-         else
-            out = new DataOutputStream(new FileOutputStream(filePath));
-         int[] dims = inField.getDims();
          if (dims.length==3)
          {
             if (dims[0]<256 && dims[1]<256 && dims[2]<256)
@@ -91,7 +83,27 @@ public class FieldWriter
          }
          else if (dims.length==1)
             out.writeInt(dims[0]);
-         out.write(inField.getData(0).getBData());
+         out.write(data);
+      }
+      catch (Exception e)
+      {
+         System.out.println(""+e);
+         e.printStackTrace();
+      }
+   }
+
+   public static void writeVolume(String filePath, RegularField inField)
+   {
+	   if( inField == null )
+		   return;
+      DataOutputStream out = null;
+      try
+      {
+         if (filePath.endsWith("_gz") || filePath.endsWith("_GZ"))
+            out = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(filePath)));
+         else
+            out = new DataOutputStream(new FileOutputStream(filePath));
+         writeVolume(out, inField.getDims(), inField.getData(0).getBData());
          float[][] affine = inField.getAffine();
          for (int i = 0; i < affine.length; i++)
             for (int j = 0; j < affine[i].length; j++)
@@ -108,7 +120,7 @@ public class FieldWriter
          System.out.println(""+e);
          e.printStackTrace();
       }
-      
+
    }
-   
+
 }

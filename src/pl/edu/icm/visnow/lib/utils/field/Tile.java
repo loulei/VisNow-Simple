@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,12 +35,13 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.utils.field;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public class Tile
 {
@@ -97,8 +99,8 @@ public class Tile
                }
             break;
          case 2:
-            for (int j = Math.max(tile[1][0], 0), jj = Math.max(-tile[1][0], 0);
-                    j < tile[1][1] && jj < dims[1]; j++, jj++)
+         for (int j = Math.max(tile[1][0], 0), jj = Math.max(-tile[1][0], 0);
+                 jj < tileDims[1] && j < dims[1]; j++, jj ++)
             {
                int startCont = vlen * (jj * tileDims[0] + Math.max(-tile[0][0], 0));
                int startTarg = vlen * (j * dims[0] + Math.max(tile[0][0], 0));
@@ -129,7 +131,7 @@ public class Tile
          tileDims[i] = tile[i][1] - tile[i][0] + 1;
          tile_size *= tileDims[i];
       }
-      if (cont.length != tile_size)
+      if (cont.length != vlen * tile_size)
          return TILE_DIMS_MISMATCH;
       switch (dims.length)
       {
@@ -141,10 +143,10 @@ public class Tile
                      j < dims[1] &&               jj < tileDims[1]; 
                      j++,                         jj ++)
                for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
-                        ks = (tileDims[1] * ii + jj) * tileDims[0] + Math.max(-tile[0][0], 0),
+                        ks = (tileDims[1] * ii + jj) * tileDims[0] + Math.max(-tile[0][0], 0) +coord,
                         kt = vlen * ((dims[1] * i + j) * dims[0] + Math.max(tile[0][0], 0)) +coord; 
                         k < dims[0] &&                   kk < tileDims[0]; 
-                        k++,                             kk++, ks ++, kt += vlen)
+                        k++,                             kk++, ks += vlen, kt += vlen)
                      target[kt] = cont[ks] != 0;
                   
          break;
@@ -153,18 +155,18 @@ public class Tile
                   j < dims[1] &&               jj < tileDims[1]; 
                   j++,                         jj ++)
             for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
-                     ks = jj * tileDims[0] + Math.max(-tile[0][0], 0),
+                     ks = jj * tileDims[0] + Math.max(-tile[0][0], 0) +coord,
                      kt = vlen * (j * dims[0] + Math.max(tile[0][0], 0)) +coord; 
                      k < dims[0] &&                   kk < tileDims[0]; 
-                     k++,                             kk++, ks ++, kt += vlen)
+                     k++,                             kk++, ks += vlen, kt += vlen)
                   target[kt] = cont[ks] != 0;
          break;
       case 1:
-            for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
+            for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0), ks = coord,
                   kt = vlen * (Math.max(tile[0][0], 0)) + coord; 
                   k < dims[0] &&                   kk < tileDims[0]; 
-                  k++,                             kk++, kt += vlen)
-                  target[kt] = cont[kk] != 0;
+                  k++,                             kk++, ks += vlen, kt += vlen)
+                  target[kt] = cont[ks] != 0;
          break;
       }
       return TILE_OK;
@@ -198,7 +200,7 @@ public class Tile
          break;
       case 2:
          for (int j = Math.max(tile[1][0], 0), jj = Math.max(-tile[1][0], 0);
-                  j < tile[1][1] && jj < dims[1]; j++, jj ++)
+                 jj < tileDims[1] && j < dims[1]; j++, jj ++)
             System.arraycopy(
                      cont, vlen * (jj * tileDims[0] + Math.max(-tile[0][0], 0)), 
                      target, vlen * (j * dims[0] + Math.max(tile[0][0], 0)), nCopied);
@@ -212,6 +214,7 @@ public class Tile
    
    private static int putTile(int[][] tile, int[] dims, byte[]target, byte[] cont, int vlen, int coord) 
    {
+
       if (coord == -1)
          return putTile(tile, dims, target, cont, vlen);
       int tile_size = 1;
@@ -223,7 +226,7 @@ public class Tile
          tileDims[i] = tile[i][1] - tile[i][0] + 1;
          tile_size *= tileDims[i];
       }
-      if (cont.length != tile_size)
+      if (cont.length != vlen * tile_size)
          return TILE_DIMS_MISMATCH;
       switch (dims.length)
       {
@@ -235,10 +238,10 @@ public class Tile
                      j < dims[1] &&               jj < tileDims[1]; 
                      j++,                         jj ++)
                for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
-                        ks = (tileDims[1] * ii + jj) * tileDims[0] + Math.max(-tile[0][0], 0),
+                        ks = (tileDims[1] * ii + jj) * tileDims[0] + Math.max(-tile[0][0], 0) +coord,
                         kt = vlen * ((dims[1] * i + j) * dims[0] + Math.max(tile[0][0], 0)) +coord; 
                         k < dims[0] &&                   kk < tileDims[0]; 
-                        k++,                             kk++, ks ++, kt += vlen)
+                        k++,                             kk++, ks += vlen, kt += vlen)
                      target[kt] = cont[ks];
                   
          break;
@@ -247,18 +250,18 @@ public class Tile
                   j < dims[1] &&               jj < tileDims[1]; 
                   j++,                         jj ++)
             for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
-                     ks = jj * tileDims[0] + Math.max(-tile[0][0], 0),
+                     ks = jj * tileDims[0] + Math.max(-tile[0][0], 0) +coord,
                      kt = vlen * (j * dims[0] + Math.max(tile[0][0], 0)) +coord; 
                      k < dims[0] &&                   kk < tileDims[0]; 
-                     k++,                             kk++, ks ++, kt += vlen)
+                     k++,                             kk++, ks += vlen, kt += vlen)
                   target[kt] = cont[ks];
          break;
       case 1:
-            for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
+            for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0), ks = coord,
                   kt = vlen * (Math.max(tile[0][0], 0)) + coord; 
                   k < dims[0] &&                   kk < tileDims[0]; 
-                  k++,                             kk++, kt += vlen)
-                  target[kt] = cont[kk];
+                  k++,                             kk++, ks += vlen, kt += vlen)
+                  target[kt] = cont[ks];
          break;
       }
       return TILE_OK;
@@ -292,7 +295,7 @@ public class Tile
          break;
       case 2:
          for (int j = Math.max(tile[1][0], 0), jj = Math.max(-tile[1][0], 0);
-                  j < tile[1][1] && jj < dims[1]; j++, jj ++)
+                 jj < tileDims[1] && j < dims[1]; j++, jj ++)
             System.arraycopy(
                      cont, vlen * (jj * tileDims[0] + Math.max(-tile[0][0], 0)), 
                      target, vlen * (j * dims[0] + Math.max(tile[0][0], 0)), nCopied);
@@ -317,7 +320,7 @@ public class Tile
          tileDims[i] = tile[i][1] - tile[i][0] + 1;
          tile_size *= tileDims[i];
       }
-      if (cont.length != tile_size)
+      if (cont.length != vlen * tile_size)
          return TILE_DIMS_MISMATCH;
       switch (dims.length)
       {
@@ -329,10 +332,10 @@ public class Tile
                      j < dims[1] &&               jj < tileDims[1]; 
                      j++,                         jj ++)
                for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
-                        ks = (tileDims[1] * ii + jj) * tileDims[0] + Math.max(-tile[0][0], 0),
+                        ks = (tileDims[1] * ii + jj) * tileDims[0] + Math.max(-tile[0][0], 0) +coord,
                         kt = vlen * ((dims[1] * i + j) * dims[0] + Math.max(tile[0][0], 0)) +coord; 
                         k < dims[0] &&                   kk < tileDims[0]; 
-                        k++,                             kk++, ks ++, kt += vlen)
+                        k++,                             kk++, ks += vlen, kt += vlen)
                      target[kt] = cont[ks];
                   
          break;
@@ -341,17 +344,18 @@ public class Tile
                   j < dims[1] &&               jj < tileDims[1]; 
                   j++,                         jj ++)
             for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
-                     ks = jj * tileDims[0] + Math.max(-tile[0][0], 0),
+                     ks = jj * tileDims[0] + Math.max(-tile[0][0], 0) +coord,
                      kt = vlen * (j * dims[0] + Math.max(tile[0][0], 0)) +coord; 
                      k < dims[0] &&                   kk < tileDims[0]; 
-                     k++,                             kk++, ks ++, kt += vlen)
-                  target[kt] = cont[kk];
+                     k++,                             kk++, ks += vlen, kt += vlen)
+                  target[kt] = cont[ks];
          break;
       case 1:
-            for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
+            for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0), ks = coord,
                   kt = vlen * (Math.max(tile[0][0], 0)) + coord; 
                   k < dims[0] &&                   kk < tileDims[0]; 
-                  k++,                             kk++, kt += vlen)
+                  k++,                             kk++, ks += vlen, kt += vlen)
+                  target[kt] = cont[ks];
          break;
       }
       return TILE_OK;
@@ -385,7 +389,7 @@ public class Tile
          break;
       case 2:
          for (int j = Math.max(tile[1][0], 0), jj = Math.max(-tile[1][0], 0);
-                  j < tile[1][1] && jj < dims[1]; j++, jj ++)
+                 jj < tileDims[1] && j < dims[1]; j++, jj ++)
             System.arraycopy(
                      cont, vlen * (jj * tileDims[0] + Math.max(-tile[0][0], 0)), 
                      target, vlen * (j * dims[0] + Math.max(tile[0][0], 0)), nCopied);
@@ -410,7 +414,7 @@ public class Tile
          tileDims[i] = tile[i][1] - tile[i][0] + 1;
          tile_size *= tileDims[i];
       }
-      if (cont.length != tile_size)
+      if (cont.length != vlen * tile_size)
          return TILE_DIMS_MISMATCH;
       switch (dims.length)
       {
@@ -422,10 +426,10 @@ public class Tile
                      j < dims[1] &&               jj < tileDims[1]; 
                      j++,                         jj ++)
                for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
-                        ks = (tileDims[1] * ii + jj) * tileDims[0] + Math.max(-tile[0][0], 0),
+                        ks = (tileDims[1] * ii + jj) * tileDims[0] + Math.max(-tile[0][0], 0) +coord,
                         kt = vlen * ((dims[1] * i + j) * dims[0] + Math.max(tile[0][0], 0)) +coord; 
                         k < dims[0] &&                   kk < tileDims[0]; 
-                        k++,                             kk++, ks ++, kt += vlen)
+                        k++,                             kk++, ks += vlen, kt += vlen)
                      target[kt] = cont[ks];
                   
          break;
@@ -434,22 +438,23 @@ public class Tile
                   j < dims[1] &&               jj < tileDims[1]; 
                   j++,                         jj ++)
             for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
-                     ks = jj * tileDims[0] + Math.max(-tile[0][0], 0),
+                     ks = jj * tileDims[0] + Math.max(-tile[0][0], 0) +coord,
                      kt = vlen * (j * dims[0] + Math.max(tile[0][0], 0)) +coord; 
                      k < dims[0] &&                   kk < tileDims[0]; 
-                     k++,                             kk++, ks ++, kt += vlen)
+                     k++,                             kk++, ks += vlen, kt += vlen)
                   target[kt] = cont[ks];
          break;
       case 1:
-            for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
+            for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0), ks = coord,
                   kt = vlen * (Math.max(tile[0][0], 0)) + coord; 
                   k < dims[0] &&                   kk < tileDims[0]; 
-                  k++,                             kk++, kt += vlen)
-                  target[kt] = cont[kk];
+                  k++,                             kk++, ks += vlen, kt += vlen)
+                  target[kt] = cont[ks];
          break;
       }
       return TILE_OK;
    }  
+   
    private static int putTile(int[][] tile, int[] dims, float[]target, float[] cont, int vlen)
    {
       int k = 1;
@@ -478,7 +483,7 @@ public class Tile
          break;
       case 2:
          for (int j = Math.max(tile[1][0], 0), jj = Math.max(-tile[1][0], 0);
-                  j < tile[1][1] && jj < dims[1]; j++, jj ++)
+                 jj < tileDims[1] && j < dims[1]; j++, jj ++)
             System.arraycopy(
                      cont, vlen * (jj * tileDims[0] + Math.max(-tile[0][0], 0)), 
                      target, vlen * (j * dims[0] + Math.max(tile[0][0], 0)), nCopied);
@@ -503,7 +508,7 @@ public class Tile
          tileDims[i] = tile[i][1] - tile[i][0] + 1;
          tile_size *= tileDims[i];
       }
-      if (cont.length != tile_size)
+      if (cont.length != vlen * tile_size)
          return TILE_DIMS_MISMATCH;
       switch (dims.length)
       {
@@ -515,10 +520,10 @@ public class Tile
                      j < dims[1] &&               jj < tileDims[1]; 
                      j++,                         jj ++)
                for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
-                        ks = (tileDims[1] * ii + jj) * tileDims[0] + Math.max(-tile[0][0], 0),
+                        ks = (tileDims[1] * ii + jj) * tileDims[0] + Math.max(-tile[0][0], 0) +coord,
                         kt = vlen * ((dims[1] * i + j) * dims[0] + Math.max(tile[0][0], 0)) +coord; 
                         k < dims[0] &&                   kk < tileDims[0]; 
-                        k++,                             kk++, ks ++, kt += vlen)
+                        k++,                             kk++, ks += vlen, kt += vlen)
                      target[kt] = cont[ks];
                   
          break;
@@ -527,18 +532,18 @@ public class Tile
                   j < dims[1] &&               jj < tileDims[1]; 
                   j++,                         jj ++)
             for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
-                     ks = jj * tileDims[0] + Math.max(-tile[0][0], 0),
+                     ks = jj * tileDims[0] + Math.max(-tile[0][0], 0) +coord,
                      kt = vlen * (j * dims[0] + Math.max(tile[0][0], 0)) +coord; 
                      k < dims[0] &&                   kk < tileDims[0]; 
-                     k++,                             kk++, ks ++, kt += vlen)
+                     k++,                             kk++, ks += vlen, kt += vlen)
                   target[kt] = cont[ks];
          break;
       case 1:
-            for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
+            for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0), ks = coord,
                   kt = vlen * (Math.max(tile[0][0], 0)) + coord; 
                   k < dims[0] &&                   kk < tileDims[0]; 
-                  k++,                             kk++, kt += vlen)
-                  target[kt] = cont[kk];
+                  k++,                             kk++, ks += vlen, kt += vlen)
+                  target[kt] = cont[ks];
          break;
       }
       return TILE_OK;
@@ -572,7 +577,7 @@ public class Tile
          break;
       case 2:
          for (int j = Math.max(tile[1][0], 0), jj = Math.max(-tile[1][0], 0);
-                  j < tile[1][1] && jj < dims[1]; j++, jj ++)
+                 jj < tileDims[1] && j < dims[1]; j++, jj ++)
             System.arraycopy(
                      cont, vlen * (jj * tileDims[0] + Math.max(-tile[0][0], 0)), 
                      target, vlen * (j * dims[0] + Math.max(tile[0][0], 0)), nCopied);
@@ -597,7 +602,7 @@ public class Tile
          tileDims[i] = tile[i][1] - tile[i][0] + 1;
          tile_size *= tileDims[i];
       }
-      if (cont.length != tile_size)
+      if (cont.length != vlen * tile_size)
          return TILE_DIMS_MISMATCH;
       switch (dims.length)
       {
@@ -609,10 +614,10 @@ public class Tile
                      j < dims[1] &&               jj < tileDims[1]; 
                      j++,                         jj ++)
                for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
-                        ks = (tileDims[1] * ii + jj) * tileDims[0] + Math.max(-tile[0][0], 0),
+                        ks = (tileDims[1] * ii + jj) * tileDims[0] + Math.max(-tile[0][0], 0) +coord,
                         kt = vlen * ((dims[1] * i + j) * dims[0] + Math.max(tile[0][0], 0)) +coord; 
                         k < dims[0] &&                   kk < tileDims[0]; 
-                        k++,                             kk++, ks ++, kt += vlen)
+                        k++,                             kk++, ks += vlen, kt += vlen)
                      target[kt] = cont[ks];
                   
          break;
@@ -621,18 +626,18 @@ public class Tile
                   j < dims[1] &&               jj < tileDims[1]; 
                   j++,                         jj ++)
             for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
-                     ks = jj * tileDims[0] + Math.max(-tile[0][0], 0),
+                     ks = jj * tileDims[0] + Math.max(-tile[0][0], 0) +coord,
                      kt = vlen * (j * dims[0] + Math.max(tile[0][0], 0)) +coord; 
                      k < dims[0] &&                   kk < tileDims[0]; 
-                     k++,                             kk++, ks ++, kt += vlen)
+                     k++,                             kk++, ks += vlen, kt += vlen)
                   target[kt] = cont[ks];
          break;
       case 1:
-            for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
+            for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0), ks = coord,
                   kt = vlen * (Math.max(tile[0][0], 0)) + coord; 
                   k < dims[0] &&                   kk < tileDims[0]; 
-                  k++,                             kk++, kt += vlen)
-                  target[kt] = cont[kk];
+                  k++,                             kk++, ks += vlen, kt += vlen)
+                  target[kt] = cont[ks];
          break;
       }
       return TILE_OK;
@@ -665,7 +670,7 @@ public class Tile
          break;
       case 2:
          for (int j = Math.max(tile[1][0], 0), jj = Math.max(-tile[1][0], 0);
-                  j < tile[1][1] && jj < dims[1]; j++, jj ++)
+                 jj < tileDims[1] && j < dims[1]; j++, jj ++)
             System.arraycopy(
                      cont, vlen * (jj * tileDims[0] + Math.max(-tile[0][0], 0)), 
                      target, vlen * (j * dims[0] + Math.max(tile[0][0], 0)), nCopied);
@@ -690,7 +695,7 @@ public class Tile
          tileDims[i] = tile[i][1] - tile[i][0] + 1;
          tile_size *= tileDims[i];
       }
-      if (cont.length != tile_size)
+      if (cont.length != vlen * tile_size)
          return TILE_DIMS_MISMATCH;
       switch (dims.length)
       {
@@ -702,10 +707,10 @@ public class Tile
                      j < dims[1] &&               jj < tileDims[1]; 
                      j++,                         jj ++)
                for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
-                        ks = (tileDims[1] * ii + jj) * tileDims[0] + Math.max(-tile[0][0], 0),
+                        ks = (tileDims[1] * ii + jj) * tileDims[0] + Math.max(-tile[0][0], 0) +coord,
                         kt = vlen * ((dims[1] * i + j) * dims[0] + Math.max(tile[0][0], 0)) +coord; 
                         k < dims[0] &&                   kk < tileDims[0]; 
-                        k++,                             kk++, ks ++, kt += vlen)
+                        k++,                             kk++, ks += vlen, kt += vlen)
                      target[kt] = cont[ks];
                   
          break;
@@ -714,20 +719,20 @@ public class Tile
                   j < dims[1] &&               jj < tileDims[1]; 
                   j++,                         jj ++)
             for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
-                     ks = jj * tileDims[0] + Math.max(-tile[0][0], 0),
+                     ks = jj * tileDims[0] + Math.max(-tile[0][0], 0) +coord,
                      kt = vlen * (j * dims[0] + Math.max(tile[0][0], 0)) +coord; 
                      k < dims[0] &&                   kk < tileDims[0]; 
-                     k++,                             kk++, ks ++, kt += vlen)
+                     k++,                             kk++, ks += vlen, kt += vlen)
                   target[kt] = cont[ks];
          break;
       case 1:
-            for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0),
+            for (int k = Math.max(tile[0][0], 0), kk = Math.max(-tile[0][0], 0), ks = coord,
                   kt = vlen * (Math.max(tile[0][0], 0)) + coord; 
                   k < dims[0] &&                   kk < tileDims[0]; 
-                  k++,                             kk++, kt += vlen)
-                  target[kt] = cont[kk];
+                  k++,                             kk++, ks += vlen, kt += vlen)
+                  target[kt] = cont[ks];
          break;
       }
       return TILE_OK;
-   }  
+   }
 }

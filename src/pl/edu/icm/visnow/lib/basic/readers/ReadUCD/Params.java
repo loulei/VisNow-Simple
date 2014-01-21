@@ -58,6 +58,7 @@ public class Params extends Parameters
     private static ParameterEgg[] eggs = new ParameterEgg[]{
         new ParameterEgg<String>("fileName", ParameterType.filename, ""),
         new ParameterEgg<Boolean>("materials as sets", ParameterType.independent, true),
+        new ParameterEgg<Boolean>("indices", ParameterType.independent, true),
         new ParameterEgg<Boolean>("show", ParameterType.independent, true),
         new ParameterEgg<Integer>("input source", ParameterType.independent, InputSource.FILE)
     };
@@ -80,6 +81,16 @@ public class Params extends Parameters
        setValue("materials as sets", materialsAsSets);
     }
 
+    public boolean addIndices()
+    {
+       return (Boolean)getValue("indices");
+    }
+
+    public void setIndices(boolean indices)
+    {
+       setValue("indices", indices);
+    }
+    
     public boolean isShow()
     {
        return (Boolean)getValue("show");

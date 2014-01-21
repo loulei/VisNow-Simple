@@ -1,39 +1,41 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+ Copyright (C) 2006-2013 University of Warsaw, ICM
 
-This file is part of GNU Classpath.
+ This file is part of GNU Classpath.
 
-GNU Classpath is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+ GNU Classpath is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
 
-GNU Classpath is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
+ GNU Classpath is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+ You should have received a copy of the GNU General Public License
+ along with GNU Classpath; see the file COPYING.  If not, write to the
+ University of Warsaw, Interdisciplinary Centre for Mathematical and
+ Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
-Linking this library statically or dynamically with other modules is
-making a combined work based on this library.  Thus, the terms and
-conditions of the GNU General Public License cover the whole
-combination.
+ Linking this library statically or dynamically with other modules is
+ making a combined work based on this library.  Thus, the terms and
+ conditions of the GNU General Public License cover the whole
+ combination.
 
-As a special exception, the copyright holders of this library give you
-permission to link this library with independent modules to produce an
-executable, regardless of the license terms of these independent
-modules, and to copy and distribute the resulting executable under
-terms of your choice, provided that you also meet, for each linked
-independent module, the terms and conditions of the license of that
-module.  An independent module is a module which is not derived from
-or based on this library.  If you modify this library, you may extend
-this exception to your version of the library, but you are not
-obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
+ As a special exception, the copyright holders of this library give you
+ permission to link this library with independent modules to produce an
+ executable, regardless of the license terms of these independent
+ modules, and to copy and distribute the resulting executable under
+ terms of your choice, provided that you also meet, for each linked
+ independent module, the terms and conditions of the license of that
+ module.  An independent module is a module which is not derived from
+ or based on this library.  If you modify this library, you may extend
+ this exception to your version of the library, but you are not
+ obligated to do so.  If you do not wish to do so, delete this
+ exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.basic.mappers.ObjectFlow;
 
@@ -48,6 +50,7 @@ import pl.edu.icm.visnow.geometries.viewer3d.eventslisteners.render.FrameRendere
 import pl.edu.icm.visnow.lib.templates.visualization.modules.OutFieldVisualizationModule;
 import pl.edu.icm.visnow.lib.types.VNField;
 import pl.edu.icm.visnow.lib.types.VNGeometryObject;
+import pl.edu.icm.visnow.lib.types.VNIrregularField;
 import pl.edu.icm.visnow.lib.types.VNRegularField;
 import pl.edu.icm.visnow.lib.utils.SwingInstancer;
 
@@ -79,7 +82,7 @@ public class ObjectFlow extends OutFieldVisualizationModule
       {
          @Override
          public void stateChanged(ChangeEvent evt)
-         {            
+         {
             if(ignoreUI)
             {
                ignoreUI = false;
@@ -92,19 +95,19 @@ public class ObjectFlow extends OutFieldVisualizationModule
             if(outField.isMask()) {
                 show();
             } else {
-                if (outField.getCoords() != null)                
+                if (outField.getCoords() != null)
                     fieldGeometry.updateCoords(outField.getCoords());
                 fieldGeometry.updateDataMap();
             }
-            
+
             if(outObj.getCurrentViewer() != null)
                 outObj.getCurrentViewer().setWaitForExternalTrigger(params.isContinuousUpdate());
-            
+
             //if(outObj.getCurrentViewer() != null && !params.isContinuousUpdate()) {
             //    outObj.getCurrentViewer().setWaitForExternalTrigger(false);
             //}
-            
-            
+
+
             if (!params.isAdjusting() || params.isContinuousUpdate()) {
                fromGUI = true;
                 //if(outObj.getCurrentViewer() != null && params.isContinuousUpdate()) {
@@ -114,7 +117,7 @@ public class ObjectFlow extends OutFieldVisualizationModule
             }
          }
       });
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
          @Override
          public void run()
@@ -132,10 +135,9 @@ public class ObjectFlow extends OutFieldVisualizationModule
 
 
    @Override
-   public void onInitFinished()
+   public void onInitFinishedLocal()
    {
       outObj.setCreator(this);
-      outObj.getGeometryObj().setUserData(getName());
       setOutputValue("outObj", new VNGeometryObject(outObj));
    }
 
@@ -147,11 +149,11 @@ public class ObjectFlow extends OutFieldVisualizationModule
          boolean[] inMask = inField.getMask(frame);
          if (inMask != null)
             System.arraycopy(inMask, 0, outMask, 0, outMask.length);
-         for (int i = 0; i < outField.getNNodes(); i++) 
+         for (int i = 0; i < outField.getNNodes(); i++)
             transparencyMask[i] = (frame >= from[i] - 1) && (frame <= to[i] + 1);
       }
    }
-   
+
    private void updateUI()
    {
       ignoreUI = true;
@@ -189,7 +191,7 @@ public class ObjectFlow extends OutFieldVisualizationModule
                transparencyMask = new boolean[outField.getNNodes()];
                from = inField.getData("from").getIData();
                to = inField.getData("to").getIData();
-               for (int i = 0; i < transparencyMask.length; i++) 
+               for (int i = 0; i < transparencyMask.length; i++)
                   transparencyMask[i] = true;
                isTransparencyMask = true;
                outField.setTransparencyMask(transparencyMask);
@@ -197,15 +199,21 @@ public class ObjectFlow extends OutFieldVisualizationModule
             prepareOutputGeometry();
          }
       }
-      //System.out.println(""+outField.getCurrentTime());
       outField.setCurrentTime(params.getTimeFrame());
-      setOutputValue("outField", new VNField(outField));
-      if (outField instanceof RegularField)
-         setOutputValue("regularOutField", new VNRegularField((RegularField) outField));
+      if (outField != null && outField instanceof RegularField) {
+          setOutputValue("outRegularField", new VNRegularField((RegularField)outField));
+          setOutputValue("outIrregularField", null);
+      } else if(outField != null && outField instanceof IrregularField) {
+          setOutputValue("outRegularField", null);
+          setOutputValue("outIrregularField", new VNIrregularField((IrregularField)outField));
+      } else {
+          setOutputValue("outRegularField", null);
+          setOutputValue("outIrregularField", null);
+      }
       show();
       fromGUI = false;
    }
-   
+
    @Override
    public FrameRenderedListener getFrameRenderedListener()
    {

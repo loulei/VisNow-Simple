@@ -133,7 +133,7 @@ public class AttachWizard {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        Application a = VisNow.get().getMainWindow().getApplicationsPanel().getApplication();
+                        Application a = VisNow.get().getMainWindow().getApplicationsPanel().getCurrentApplication();
                         if(p == null)
                             a.addModuleByName(cr.getName(), cr.getClassPath(), false);
                         else
@@ -241,14 +241,19 @@ public class AttachWizard {
         return ret;
     }
 
-    protected void portChosen(LibraryCore core, String port) {
-        Application a = out.getModuleBox().getEngine().getApplication();
-        String name = core.getName() + "[" + a.getEngine().nextModuleNumber() + "]";
-        a.getReceiver().receive(new ModuleAddCommand(name, core.getCoreName(),
-                new Point(pointX - 10, pointY + 30), false));
-        a.getReceiver().receive(new LinkAddCommand(new LinkName(out.getModuleBox().getName(),
-                out.getName(), name, port), true));
-        //a.getEngine().getModule(name).startAction(); //odpalac czy nie??
+    protected void portChosen(final LibraryCore core, final String port) {
+        Thread t = new Thread("attachThread") {
+            @Override
+            public void run(){
+                Application a = out.getModuleBox().getEngine().getApplication();
+                String name = core.getName() + "[" + a.getEngine().nextModuleNumber() + "]";
+                a.getReceiver().receive(new ModuleAddCommand(name, core.getCoreName(),
+                        new Point(pointX - 10, pointY + 30), false));
+                a.getReceiver().receive(new LinkAddCommand(new LinkName(out.getModuleBox().getName(),
+                        out.getName(), name, port), true));
+            }
+        };
+        t.start();
     }
 
     private JMenu filterMenu(JMenu inMenu, VNDataSchemaInterface[] schemas) {

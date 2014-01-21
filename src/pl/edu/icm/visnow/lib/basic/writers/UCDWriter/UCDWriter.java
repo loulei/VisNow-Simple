@@ -75,7 +75,7 @@ public class UCDWriter extends ModuleCore {
                 startAction();
             }
         });
-        SwingInstancer.swingRun(new Runnable() {
+        SwingInstancer.swingRunAndWait(new Runnable() {
             public void run() {
                 ui = new GUI();
             }

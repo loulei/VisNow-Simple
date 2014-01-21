@@ -51,7 +51,7 @@ public class RegularFieldSliceGUI extends javax.swing.JPanel
    public void setDims(int[] dims)
    {
       params.setActive(false);     
-      sliceSlider.setMax(dims[params.getAxis()]);
+      sliceSlider.setMax(dims[params.getAxis()]-1);
       if (this.dims == null || this.dims[0] != dims[0]  || this.dims[1] != dims[1]  || this.dims[2] != dims[2]  || 
           params.getSlice() < 0 || params.getSlice() >= dims[params.getAxis()])
       {
@@ -60,7 +60,6 @@ public class RegularFieldSliceGUI extends javax.swing.JPanel
       }            
       this.dims = dims;
       params.setActive(true);
-      params.fireStateChanged();
    }
 
    /** Creates new form EmptyVisnowModuleGUI */
@@ -247,7 +246,7 @@ public class RegularFieldSliceGUI extends javax.swing.JPanel
     }//GEN-LAST:event_sliceSliderStateChanged
 
     private void recalculateMinMaxCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recalculateMinMaxCBActionPerformed
-        params.setRecalculateMinMax(recalculateMinMaxCB.isSelected());
+        params.setRecalculate(recalculateMinMaxCB.isSelected());
     }//GEN-LAST:event_recalculateMinMaxCBActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

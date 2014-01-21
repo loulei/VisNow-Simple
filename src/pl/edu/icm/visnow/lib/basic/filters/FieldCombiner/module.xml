@@ -6,7 +6,7 @@
        <input name="inFields" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING"  maxConnections="-1"/>
     </inputs>
     <outputs>
-        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNField"/>
         <output name="outRegularField" type="pl.edu.icm.visnow.lib.types.VNRegularField"/>
+        <output name="outIrregularField" type="pl.edu.icm.visnow.lib.types.VNIrregularField"/>
     </outputs>
 </module>

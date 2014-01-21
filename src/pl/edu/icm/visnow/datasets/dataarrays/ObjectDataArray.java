@@ -37,7 +37,7 @@ exception statement from your version. */
 
 package pl.edu.icm.visnow.datasets.dataarrays;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import pl.edu.icm.visnow.datasets.TimeData;
 import pl.edu.icm.visnow.datasets.VNObject;
 
@@ -52,6 +52,7 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
     * an array holding real part of data
     */
    private T[] data;
+   private TimeData<T[]> timeData = new TimeData<T[]>();
 
    /**
      * Creates a new <code>StringDataArray</code> object.
@@ -63,6 +64,8 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
    public ObjectDataArray(DataArraySchema schema, int ndata)
    {
       super(schema, ndata);
+      timeData.clear();
+      abstractTimeData = timeData;
       schema.setMinv(0.0f);
       schema.setMaxv(1.0f);
       recomputeMinMax();
@@ -73,6 +76,8 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
    public ObjectDataArray(int ndata, int veclen)
    {
       super(FIELD_DATA_OBJECT, ndata, veclen);
+      timeData.clear();
+      abstractTimeData = timeData;
       schema.setMinv(0.0f);
       schema.setMaxv(1.0f);
       recomputeMinMax();
@@ -82,6 +87,8 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
    public ObjectDataArray(int ndata, int veclen, String name)
    {
       super(FIELD_DATA_OBJECT, ndata, veclen, name, "", null);
+      timeData.clear();
+      abstractTimeData = timeData;
       schema.setMinv(0.0f);
       schema.setMaxv(1.0f);
       recomputeMinMax();
@@ -92,6 +99,9 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
    {
       super(FIELD_DATA_OBJECT, ndata, veclen, name, units, userData);
       data = (T[]) (new Object[ndata * veclen]);
+      timeData.clear();
+      timeData.add(data);
+      abstractTimeData = timeData;
       schema.setMinv(0.0f);
       schema.setMaxv(1.0f);
       recomputeMinMax();
@@ -105,6 +115,9 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
    {
       super(FIELD_DATA_OBJECT, data.length / veclen, veclen, name, units, userData);
       this.data = data;
+      timeData.clear();
+      timeData.add(data);
+      abstractTimeData = timeData;
       schema.setMinv(0.0f);
       schema.setMaxv(0.0f);
       recomputeMinMax();
@@ -118,10 +131,27 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
    {
       super(FIELD_DATA_OBJECT, data.length, veclen, name, "", null);
       this.data = data;
+      timeData.clear();
+      timeData.add(data);
+      abstractTimeData = timeData;
       schema.setMinv(0.0f);
       schema.setMaxv(1.0f);
       recomputeMinMax();
    }
+   
+   @SuppressWarnings(
+   {
+      "unchecked"
+   })
+   public ObjectDataArray(TimeData<T[]> tData, int veclen, String name, String units, String[] userData)
+   {
+        super(FIELD_DATA_OBJECT, (tData == null || tData.get(0) == null) ? -1 : tData.get(0).length / veclen, veclen, name, units, userData);
+        abstractTimeData = timeData = tData;
+        setCurrentTime(currentTime);
+        recomputeMinMax();
+   }
+   
+   
 
    @SuppressWarnings(
    {
@@ -131,110 +161,12 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
    {
       super(FIELD_DATA_OBJECT, data.length, 1, name, "", null);
       this.data = data;
+      timeData.clear();
+      timeData.add(data);
+      abstractTimeData = timeData;
       schema.setMinv(0.0f);
       schema.setMaxv(1.0f);
       recomputeMinMax();
-   }
-   
-    @Override
-   public int getNFrames()
-   {
-      return 1;
-   }
-
-    @Override
-   public final void recomputeMinMax()
-   {
-      int vlen = getVeclen();
-      if (vlen == 1)
-      {
-         float minv = data[0].toFloat();
-         float maxv = data[0].toFloat();
-         for (int i = 0; i < data.length; i++)
-         {
-            if (data[i].toFloat() < minv)
-            {
-               minv = data[i].toFloat();
-            }
-            if (data[i].toFloat() > maxv)
-            {
-               maxv = data[i].toFloat();
-            }
-         }
-         setMinv(minv);
-         setMaxv(maxv);
-         setPhysMin(minv);
-         setPhysMax(maxv);
-      } else
-      {
-         float maxv = 0;
-         for (int i = 0; i < data.length; i += vlen)
-         {
-            float v = 0;
-            for (int j = 0; j < vlen; j++)
-            {
-               v += data[i + j].toFloat() * data[i + j].toFloat();
-            }
-            v = (float) Math.sqrt(v);
-            if (v > maxv)
-            {
-               maxv = v;
-            }
-         }
-         setMinv(0);
-         setMaxv(maxv);
-         setPhysMin(0);
-         setPhysMax(maxv);
-      }
-   }
-
-    @Override
-   public final void recomputeMinMax(boolean[] mask)
-   {
-      int vlen = getVeclen();
-      if (vlen == 1)
-      {
-         float minv = data[0].toFloat();
-         float maxv = data[0].toFloat();
-         for (int i = 0; i < data.length; i++)
-         {
-            if (!mask[i])
-               continue;
-            if (data[i].toFloat() < minv)
-            {
-               minv = data[i].toFloat();
-            }
-            if (data[i].toFloat() > maxv)
-            {
-               maxv = data[i].toFloat();
-            }
-         }
-         setMinv(minv);
-         setMaxv(maxv);
-         setPhysMin(minv);
-         setPhysMax(maxv);
-      } else
-      {
-         float maxv = 0;
-         for (int i=0, m = 0; i<data.length; i += vlen, m++)
-         {
-            if (!mask[m]) continue;
-            float v = 0;
-            for (int j = 0; j < vlen; j++)
-            {
-               v += data[i + j].toFloat() * data[i + j].toFloat();
-            }
-            v = (float) Math.sqrt(v);
-            if (v > maxv)
-            {
-               maxv = v;
-            }
-         }
-         setMinv(0);
-         setMaxv(maxv);
-         setPhysMin(0);
-         setPhysMax(maxv);
-      }
    }
 
    @SuppressWarnings(
@@ -244,7 +176,9 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
     @Override
    public ObjectDataArray clone(String newName)
    {
-      return new ObjectDataArray(data, schema.getVeclen(), newName, schema.getUnit(), schema.getUserData());
+      ObjectDataArray da = new ObjectDataArray(timeData, schema.getVeclen(), newName, schema.getUnit(), schema.getUserData());
+      da.setCurrentTime(currentTime);
+      return da;
    }
 
    @SuppressWarnings(
@@ -254,12 +188,20 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
     @Override
    public ObjectDataArray cloneDeep(String newName)
    {
-      return new ObjectDataArray(data.clone(), schema.getVeclen(), new String(newName), new String(schema.getUnit()), schema.getUserData().clone());
+       ObjectDataArray da;
+       if(schema.getUserData() != null)
+            da = new ObjectDataArray((TimeData<T[]>)timeData.clone(), schema.getVeclen(), newName, schema.getUnit(), schema.getUserData().clone());
+       else
+            da = new ObjectDataArray((TimeData<T[]>)timeData.clone(), schema.getVeclen(), newName, schema.getUnit(), null);
+       da.setCurrentTime(currentTime);
+       return da;
    }
 
    @Override
    public float[] get2DSlice(int start, int n0, int step0, int n1, int step1)
    {
+      if (data == null)
+         setCurrentTime(currentTime);
       int veclen = schema.getVeclen();
       float[] out = new float[n0 * n1 * veclen];
       int i0, i1, j, k, l0, l1;
@@ -301,6 +243,8 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
    @Override
    public float[] get1DSlice(int start, int n, int step)
    {
+      if (data == null)
+         setCurrentTime(currentTime);
       int veclen = schema.getVeclen();
       float[] out = new float[n * veclen];
       for (int i = 0, k = 0, l = start * veclen; i < n; i++, l += step * veclen)
@@ -316,7 +260,8 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
     @Override
    public float[] getVData(int start)
    {
-
+      if (data == null)
+         setCurrentTime(currentTime);
       int veclen = schema.getVeclen();
       float[] out = new float[veclen];
       for (int i = 0, j = start * veclen; i < veclen; i++, j++)
@@ -329,14 +274,21 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
     @Override
    public byte[] getBData()
    {
-      return null;
+      if (data == null)
+         setCurrentTime(currentTime);
+      byte[] v = new byte[data.length];
+      for (int i = 0; i < v.length; i++)
+      {
+         v[i] = (byte) data[i].toFloat();
+      }
+      return v;
    }
 
     @Override
    public short[] getSData()
    {
       if (data == null)
-         setCurrentTime(0);
+         setCurrentTime(currentTime);
       short[] v = new short[data.length];
       for (int i = 0; i < v.length; i++)
       {
@@ -349,7 +301,7 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
    public int[] getIData()
    {
       if (data == null)
-         setCurrentTime(0);
+         setCurrentTime(currentTime);
       int[] v = new int[data.length];
       for (int i = 0; i < v.length; i++)
       {
@@ -362,7 +314,7 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
    public float[] getFData()
    {
       if (data == null)
-         setCurrentTime(0);
+         setCurrentTime(currentTime);
       float[] v = new float[data.length];
       for (int i = 0; i < v.length; i++)
       {
@@ -393,13 +345,20 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
     @Override
    public double[] getDData()
    {
-      return null;
+      if (data == null)
+         setCurrentTime(currentTime);
+      double[] v = new double[data.length];
+      for (int i = 0; i < v.length; i++)
+      {
+         v[i] = data[i].toFloat();
+      }
+      return v;
    }
 
    public String[] getStringData()
    {
       if (data == null)
-         setCurrentTime(0);
+         setCurrentTime(currentTime);
       String[] out = new String[data.length];
       for (int i = 0; i < out.length; i++)
       {
@@ -410,6 +369,8 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
    
    public T[] getObjData()
    {
+      if (data == null)
+         setCurrentTime(currentTime);
       return data;
    }
 
@@ -427,24 +388,38 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
    @Override
    public float getData(int i)
    {
+      if (data == null)
+         setCurrentTime(currentTime);
       return data[i].toFloat();
    }
    @Override
    public void resetData()
    {
-      throw new UnsupportedOperationException("Not supported yet.");
+      data = timeData.getData(currentTime);
+      timeData.clear();
+      timeData.setData(data, 0);
    }
 
    @Override
    public void addData(Object d, float time)
    {
-      throw new UnsupportedOperationException("Not supported yet.");
+      if (d instanceof VNObject[])
+      {
+         timeData.setData((T[])d, time);
+         currentTime = time;
+         timeData.setCurrentTime(time);
+         data = timeData.getData();
+         recomputeMinMax();
+      }
    }
 
    @Override
-   public void setCurrentTime(float currentTime)
+   public final void setCurrentTime(float currentTime)
    {
-      throw new UnsupportedOperationException("Not supported yet.");
+      if (currentTime == timeData.getCurrentTime() && data != null)
+         return;
+      timeData.setCurrentTime(currentTime);
+      data = timeData.getData();
    }
  
    @Override
@@ -480,30 +455,159 @@ public class ObjectDataArray<T extends VNObject> extends DataArray
     @Override
    public void setTimeData(TimeData tData)
    {
-      throw new UnsupportedOperationException("Not supported yet.");
+      if (tData == null || tData.isEmpty())
+         return;
+      if (!(tData.get(0) instanceof VNObject[]) || ((VNObject[])(tData.get(0))).length != ndata * getVeclen())
+         return;
+      abstractTimeData = timeData = tData;
+      setCurrentTime(currentTime);
+      recomputeMinMax();
    }
    
     @Override
    public TimeData getTimeData()
    {
-      throw new UnsupportedOperationException("Not supported yet.");
+      return timeData;
    }
    
-   @Override
-   public void setCurrentFrame(int currentFrame)
-   {
-      //currentFrame = Math.max(0, Math.min(currentFrame, timeData.size()));
-      //data = timeData.get(currentFrame);
-      this.currentFrame = currentFrame;
-   }
-
     @Override
     public Object getData() {
         return getObjData();
     }
 
     @Override
+    public final void recomputeMinMax() {
+        float minv = Float.MAX_VALUE;
+        float maxv = -Float.MAX_VALUE;
+        float vv, v;
+        for (int step = 0; step < timeData.size(); step++) {
+            T[] dta = timeData.get(step);
+            int vlen = getVeclen();
+            if (vlen == 1) {
+                for (int i = 0; i < dta.length; i++) {
+                    v = dta[i].toFloat();
+                    if (v < minv) {
+                        minv = v;
+                    }
+                    if (v > maxv) {
+                        maxv = v;
+                    }
+                }
+            } else {
+                for (int i = 0; i < dta.length; i += vlen) {
+                    vv = 0;
+                    for (int j = 0; j < vlen; j++) {
+                        v = dta[i + j].toFloat();
+                        vv += v * v;
+                    }
+                    vv = (float) Math.sqrt(vv);
+                    if (vv > maxv) {
+                        maxv = vv;
+                    }
+                    if (vv < minv) {
+                        minv = vv;
+                    }
+                }                
+            }
+        }
+        recomputePhysMinMax(minv, maxv);
+        setMinv(minv);
+        setMaxv(maxv);        
+    }
+
+    @Override
+   public final void recomputeMinMax(boolean[] mask)
+   {
+        float minv = Float.MAX_VALUE;
+        float maxv = -Float.MAX_VALUE;
+        float vv, v;
+        for (int step = 0; step < timeData.size(); step++) {
+            T[] dta = timeData.get(step);
+            int vlen = getVeclen();
+            if (vlen == 1) {
+                for (int i = 0; i < dta.length; i++) {
+                    if (!mask[i]) {
+                        continue;
+                    }
+                    v = dta[i].toFloat();
+                    if (v < minv) {
+                        minv = v;
+                    }
+                    if (v > maxv) {
+                        maxv = v;
+                    }
+                }
+            } else {
+                for (int i = 0, m = 0; i < dta.length; i += vlen, m++) {
+                    if (!mask[m]) {
+                        continue;
+                    }
+                    vv = 0;
+                    for (int j = 0; j < vlen; j++) {
+                        v = dta[i + j].toFloat();
+                        vv += v * v;
+                    }
+                    vv = (float) Math.sqrt(vv);
+                    if (vv > maxv) {
+                        maxv = vv;
+                    }
+                    if (vv < minv) {
+                        minv = vv;
+                    }
+                }                
+            }
+        }
+        recomputePhysMinMax(minv, maxv);
+        setMinv(minv);
+        setMaxv(maxv);        
+   }
+    
+    @Override
     public void recomputeMinMax(TimeData<boolean[]> timeMask) {
+        float minv = Float.MAX_VALUE;
+        float maxv = -Float.MAX_VALUE;
+        float vv, v;
+        ArrayList<Float> timeline = timeData.getTimeSeries();
+        for (int step = 0; step < timeline.size(); step++) {
+            T[] dta = timeData.get(step);
+            boolean[] mask = timeMask.getData(timeline.get(step));
+            int vlen = getVeclen();
+            if (vlen == 1) {
+                for (int i = 0; i < dta.length; i++) {
+                    if (!mask[i]) {
+                        continue;
+                    }
+                    v = dta[i].toFloat();
+                    if (v < minv) {
+                        minv = v;
+                    }
+                    if (v > maxv) {
+                        maxv = v;
+                    }
+                }
+            } else {
+                for (int i = 0, m = 0; i < dta.length; i += vlen, m++) {
+                    if (!mask[m]) {
+                        continue;
+                    }
+                    vv = 0;
+                    for (int j = 0; j < vlen; j++) {
+                        v = dta[i + j].toFloat();
+                        vv += v * v;
+                    }
+                    vv = (float) Math.sqrt(vv);
+                    if (vv > maxv) {
+                        maxv = vv;
+                    }
+                    if (vv < minv) {
+                        minv = vv;
+                    }
+                }                
+            }
+        }
+        recomputePhysMinMax(minv, maxv);
+        setMinv(minv);
+        setMaxv(maxv);        
     }
     
 }

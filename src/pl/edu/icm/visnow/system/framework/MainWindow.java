@@ -1,179 +1,182 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+ Copyright (C) 2006-2013 University of Warsaw, ICM
 
-This file is part of GNU Classpath.
+ This file is part of GNU Classpath.
 
-GNU Classpath is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+ GNU Classpath is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
 
-GNU Classpath is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
+ GNU Classpath is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+ You should have received a copy of the GNU General Public License
+ along with GNU Classpath; see the file COPYING.  If not, write to the 
+ University of Warsaw, Interdisciplinary Centre for Mathematical and 
+ Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
 
-Linking this library statically or dynamically with other modules is
-making a combined work based on this library.  Thus, the terms and
-conditions of the GNU General Public License cover the whole
-combination.
+ Linking this library statically or dynamically with other modules is
+ making a combined work based on this library.  Thus, the terms and
+ conditions of the GNU General Public License cover the whole
+ combination.
 
-As a special exception, the copyright holders of this library give you
-permission to link this library with independent modules to produce an
-executable, regardless of the license terms of these independent
-modules, and to copy and distribute the resulting executable under
-terms of your choice, provided that you also meet, for each linked
-independent module, the terms and conditions of the license of that
-module.  An independent module is a module which is not derived from
-or based on this library.  If you modify this library, you may extend
-this exception to your version of the library, but you are not
-obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
-
+ As a special exception, the copyright holders of this library give you
+ permission to link this library with independent modules to produce an
+ executable, regardless of the license terms of these independent
+ modules, and to copy and distribute the resulting executable under
+ terms of your choice, provided that you also meet, for each linked
+ independent module, the terms and conditions of the license of that
+ module.  An independent module is a module which is not derived from
+ or based on this library.  If you modify this library, you may extend
+ this exception to your version of the library, but you are not
+ obligated to do so.  If you do not wish to do so, delete this
+ exception statement from your version. */
 package pl.edu.icm.visnow.system.framework;
 
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import javax.swing.*;
+import org.apache.log4j.Logger;
+import pl.edu.icm.visnow.application.area.widgets.BgPanel;
 import pl.edu.icm.visnow.engine.error.Displayer;
 import pl.edu.icm.visnow.engine.exception.VNException;
 import pl.edu.icm.visnow.engine.exception.VNSystemException;
-import pl.edu.icm.visnow.gui.widgets.MemoryMonitor;
-import pl.edu.icm.visnow.help.whatnew.WhatNewFrame;
+import pl.edu.icm.visnow.gui.icons.UIIconLoader;
+import pl.edu.icm.visnow.gui.icons.UIIconLoader.IconType;
 import pl.edu.icm.visnow.system.config.PreferencesWindow;
 import pl.edu.icm.visnow.system.main.VisNow;
+import pl.edu.icm.visnow.system.swing.JComponentViewer;
 import pl.edu.icm.visnow.system.swing.VNSwingUtils;
 import pl.edu.icm.visnow.system.utils.log.LogWindow;
+import pl.edu.icm.visnow.system.utils.usermessage.Level;
+import pl.edu.icm.visnow.system.utils.usermessage.UserMessage;
+import pl.edu.icm.visnow.system.utils.usermessage.UserMessageListener;
 
 /**
  *
  * @author Hubert Orlik-Grzesik, University of Warsaw, ICM
  */
-public class MainWindow extends javax.swing.JFrame
-{
+public class MainWindow extends javax.swing.JFrame {
 
-   protected ApplicationsPanel applicationsPanel;
-   protected MainMenu menu;
-   protected PreferencesWindow preferencesWindow;
-   protected WhatNewFrame whatNewFrame;
-   protected ColorMapEditorFrame colorMapEditorFrame;
+    private static final Logger LOGGER = Logger.getLogger(MainWindow.class);
+    protected ApplicationsPanel applicationsPanel;
+    protected MainMenu menu;
+    protected PreferencesWindow preferencesWindow;
+    protected ColorMapEditorFrame colorMapEditorFrame;
+    protected static InfoFrame infoFrame = new InfoFrame();
 
-   //<editor-fold defaultstate="collapsed" desc=" Getters ">
-   public ApplicationsPanel getApplicationsPanel()
-   {
-      return applicationsPanel;
-   }
+    //<editor-fold defaultstate="collapsed" desc=" Getters ">
+    public ApplicationsPanel getApplicationsPanel() {
+        return applicationsPanel;
+    }
 
-   public ColorMapEditorFrame getColorMapEditorFrame()
-   {
-      return colorMapEditorFrame;
-   }
+    public ColorMapEditorFrame getColorMapEditorFrame() {
+        return colorMapEditorFrame;
+    }
 
-   public MainMenu getMainMenu()
-   {
-      return menu;
-   }
-   //</editor-fold>
+    public MainMenu getMainMenu() {
+        return menu;
+    }
+    //</editor-fold>
 
-   //<editor-fold defaultstate="collapsed" desc=" [CONSTRUCTOR] inits ">
-   private void initTemplates()
-   {
-      addTemplateFolder(templatesMenu, VisNow.get().getMainConfig().getTemplateRoot());
-   }
+    //<editor-fold defaultstate="collapsed" desc=" [CONSTRUCTOR] inits ">
+    private void initTemplates() {
+        addTemplateFolder(templatesMenu, VisNow.get().getMainConfig().getTemplateRoot());
+    }
 
-   private void addTemplateFolder(JMenu menu, File file)
-   {
-      File[] tab = file.listFiles();
-      Arrays.sort(tab, new Comparator<File>()
-      {
+    private void addTemplateFolder(JMenu menu, File file) {
+        File[] tab = file.listFiles();
+        Arrays.sort(tab, new Comparator<File>() {
+            @Override
+            public int compare(File o1, File o2) {
+                return o1.getName().compareToIgnoreCase(o2.getName());
+            }
+        });
 
-         @Override
-         public int compare(File o1, File o2)
-         {
-            return o1.getName().compareToIgnoreCase(o2.getName());
-         }
-      });
-
-      for (int i = 0; i < tab.length; ++i)
-      {
-         if (tab[i].isDirectory())
-         {
-            JMenu tmp = new JMenu(tab[i].getName());
-            addTemplateFolder(tmp, tab[i]);
-            menu.add(tmp);
-         }
-      }
-      for (int i = 0; i < tab.length; ++i)
-      {
-         if (tab[i].isDirectory())
-            continue;
-         JMenuItem item = new JMenuItem(tab[i].getName());
-         item.addActionListener(new TemplateActionListener(tab[i], this.menu));
-         menu.add(item);
-      }
-   }
-
-   //<editor-fold defaultstate="collapsed" desc=" [CONSTRUCTOR]  ">
-   /**
-    * Creates new form MainWindow
-    */
-   public MainWindow()
-   {
-      initComponents();
-
-      actionMenu.setVisible(false);
-      jMenu1.setVisible(false);
-      jSeparator1.setVisible(false);
-      jSeparator3.setVisible(false);
-      templatesMenu.setVisible(false);
-      viewMenu.setVisible(false);
-      undoItem.setVisible(false);
-      redoItem.setVisible(false);
-      historyItem.setVisible(false);
-      setIconImage(new ImageIcon(getClass().getResource("/pl/edu/icm/visnow/gui/icons/big/visnow.png")).getImage());
-      applicationsPanel = new ApplicationsPanel();
-      preferencesWindow = new PreferencesWindow();
-      menu = new MainMenu(this);
-      ArrayList<Component> readers = menu.getReadersMenu(null);
-      if(readers != null)
-        for (int i = 0; i < readers.size(); i++) {
-            openDataMenu.add(readers.get(i));
+        for (int i = 0; i < tab.length; ++i) {
+            if (tab[i].isDirectory()) {
+                JMenu tmp = new JMenu(tab[i].getName());
+                addTemplateFolder(tmp, tab[i]);
+                menu.add(tmp);
+            }
         }
-      else
-          openDataMenu.setVisible(false);
-
-      ArrayList<Component> testdata = menu.getTestdataMenu(null);
-      if(testdata != null)
-        for (int i = 0; i < testdata.size(); i++) {
-            openTestDataMenu.add(testdata.get(i));
+        for (int i = 0; i < tab.length; ++i) {
+            if (tab[i].isDirectory())
+                continue;
+            JMenuItem item = new JMenuItem(tab[i].getName());
+            item.addActionListener(new TemplateActionListener(tab[i], this.menu));
+            menu.add(item);
         }
-      else
-          openTestDataMenu.setVisible(false);
-      
-      VNSwingUtils.setFillerComponent(mainPanel, applicationsPanel);
-      setTitle(VisNow.TITLE + " v" + VisNow.VERSION);
-      leftStatusLabel.setText(VisNow.TITLE + " v" + VisNow.VERSION);
-      GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
-      gridBagConstraints.gridx = 1;
-      gridBagConstraints.gridy = 0;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-      gridBagConstraints.weightx = 0.0;
-      MemoryMonitor mm = new MemoryMonitor();
-      mm.setPreferredSize(new Dimension(200,18));
-      statusPanel.add(mm, gridBagConstraints);
-   }
+    }
 
-   @SuppressWarnings("unchecked")
+    //<editor-fold defaultstate="collapsed" desc=" [CONSTRUCTOR]  ">
+    /**
+     * Creates new form MainWindow
+     */
+    public MainWindow() {
+        initComponents();
+
+        actionMenu.setVisible(false);
+        jMenu1.setVisible(false);
+        jSeparator1.setVisible(false);
+        jSeparator3.setVisible(false);
+        templatesMenu.setVisible(false);
+        viewMenu.setVisible(false);
+        undoItem.setVisible(false);
+        redoItem.setVisible(false);
+        historyItem.setVisible(false);
+        setIconImage(new ImageIcon(getClass().getResource("/pl/edu/icm/visnow/gui/icons/big/visnow.png")).getImage());
+        applicationsPanel = new ApplicationsPanel();
+        preferencesWindow = new PreferencesWindow();
+        menu = new MainMenu(this);
+        ArrayList<Component> readers = menu.getReadersMenu(null);
+        if (readers != null)
+            for (int i = 0; i < readers.size(); i++) {
+                openDataMenu.add(readers.get(i));
+            }
+        else
+            openDataMenu.setVisible(false);
+
+        ArrayList<Component> testdata = menu.getTestdataMenu(null);
+        if (testdata != null)
+            for (int i = 0; i < testdata.size(); i++) {
+                openTestDataMenu.add(testdata.get(i));
+            }
+        else
+            openTestDataMenu.setVisible(false);
+
+        VNSwingUtils.setFillerComponent(mainPanel, applicationsPanel);
+        setTitle(VisNow.TITLE + " v" + VisNow.VERSION);
+
+        userMessagePanelToggle(false);
+    }
+
+    public UserMessageListener[] getUserMessageListeners() {
+        UserMessageListener labelUML = new UserMessageListener() {
+            @Override
+            public void newMessage(UserMessage message) {
+                Insets insets = statusPanelLabel.getInsets();
+                int size = statusPanelLabel.getHeight() - insets.top - insets.bottom - 2; // height - border - margin (2px)
+
+                IconType iconType = IconType.INFO;
+                if (message.getLevel() == Level.ERROR) iconType = IconType.ERROR;
+                if (message.getLevel() == Level.WARNING) iconType = IconType.WARNING;
+                statusPanelLabelSet(message.toString(), UIIconLoader.getIcon(iconType, size, size));
+            }
+        };
+
+        return new UserMessageListener[]{labelUML, userMessagePanel};
+    }
+
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
@@ -182,7 +185,9 @@ public class MainWindow extends javax.swing.JFrame
         jPopupMenu1 = new javax.swing.JPopupMenu();
         jPanel1 = new javax.swing.JPanel();
         statusPanel = new javax.swing.JPanel();
-        leftStatusLabel = new javax.swing.JLabel();
+        userMessagePanel = new pl.edu.icm.visnow.system.framework.UserMessagePanel();
+        statusPanelLabel = new javax.swing.JLabel();
+        statusPanelMemoryMonitor = new pl.edu.icm.visnow.gui.widgets.MemoryMonitor();
         mainPanel = new javax.swing.JPanel();
         jMenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
@@ -240,16 +245,44 @@ public class MainWindow extends javax.swing.JFrame
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        statusPanel.setBackground(new java.awt.Color(153, 153, 153));
+        statusPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         statusPanel.setLayout(new java.awt.GridBagLayout());
 
-        leftStatusLabel.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-        leftStatusLabel.setForeground(new java.awt.Color(204, 204, 204));
-        leftStatusLabel.setText("VisNow");
+        userMessagePanel.addCloseListener(new pl.edu.icm.visnow.system.framework.UserMessagePanel.CloseListener() {
+            public void closeButtonAction(java.util.EventObject evt) {
+                userMessagePanelCloseButtonAction(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        statusPanel.add(leftStatusLabel, gridBagConstraints);
+        gridBagConstraints.weighty = 1.0;
+        statusPanel.add(userMessagePanel, gridBagConstraints);
+
+        statusPanelLabel.setBackground(new java.awt.Color(221, 221, 221));
+        statusPanelLabel.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
+        statusPanelLabel.setForeground(new java.awt.Color(85, 85, 85));
+        statusPanelLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 10));
+        statusPanelLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        statusPanelLabel.setOpaque(true);
+        statusPanelLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                statusPanelLabelMouseClicked(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        statusPanel.add(statusPanelLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        statusPanel.add(statusPanelMemoryMonitor, gridBagConstraints);
 
         jPanel1.add(statusPanel, java.awt.BorderLayout.SOUTH);
 
@@ -257,11 +290,11 @@ public class MainWindow extends javax.swing.JFrame
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 884, Short.MAX_VALUE)
+            .addGap(0, 882, Short.MAX_VALUE)
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 538, Short.MAX_VALUE)
+            .addGap(0, 303, Short.MAX_VALUE)
         );
 
         jPanel1.add(mainPanel, java.awt.BorderLayout.CENTER);
@@ -564,178 +597,191 @@ public class MainWindow extends javax.swing.JFrame
         setBounds(600, 20, 892, 600);
     }// </editor-fold>//GEN-END:initComponents
 
-   //<editor-fold defaultstate="collapsed" desc=" [Menu] file ">
+    //<editor-fold defaultstate="collapsed" desc=" [Menu] file ">
 private void newFileItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileItemActionPerformed
-   menu.newApplication();
+    menu.newApplication();
 }//GEN-LAST:event_newFileItemActionPerformed
 
 private void openFileItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileItemActionPerformed
-   //   new Thread(new Runnable(){public void run() {
-   menu.openApplication();
-   //   }}).start();
+    //   new Thread(new Runnable(){public void run() {
+    menu.openApplication();
+    //   }}).start();
 }//GEN-LAST:event_openFileItemActionPerformed
 
 private void saveFileItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileItemActionPerformed
 //    new Thread(new Runnable(){public void run() {
-   menu.saveApplication();
-   //   }}).start();
+    menu.saveApplication();
+    //   }}).start();
 }//GEN-LAST:event_saveFileItemActionPerformed
 
 private void saveAsFileItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsFileItemActionPerformed
 //    new Thread(new Runnable(){public void run() {
-   menu.saveAsApplication();
+    menu.saveAsApplication();
 //    }}).start();
 }//GEN-LAST:event_saveAsFileItemActionPerformed
 
 private void closeFileItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeFileItemActionPerformed
-   menu.closeApplication();
+    menu.closeApplication();
 }//GEN-LAST:event_closeFileItemActionPerformed
 
 private void exitFileItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitFileItemActionPerformed
-   formWindowClosing(null);
+    formWindowClosing(null);
 }//GEN-LAST:event_exitFileItemActionPerformed
-   //</editor-fold>
+    //</editor-fold>
 
-   //<editor-fold defaultstate="collapsed" desc=" [Menu] edif ">
+    //<editor-fold defaultstate="collapsed" desc=" [Menu] edif ">
 private void undoItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoItemActionPerformed
-   menu.undo();
+    menu.undo();
 }//GEN-LAST:event_undoItemActionPerformed
 
 private void redoItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redoItemActionPerformed
-   menu.redo();
+    menu.redo();
 
 }//GEN-LAST:event_redoItemActionPerformed
 
 private void historyItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_historyItemActionPerformed
-   menu.showHistory();
+    menu.showHistory();
 }//GEN-LAST:event_historyItemActionPerformed
-   //</editor-fold>
+    //</editor-fold>
 
-   public void showPreferences()
-   {
-      preferencesWindow.init();
-   }
+    public void showPreferences() {
+        preferencesWindow.init();
+    }
 
 private void preferencesEditMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_preferencesEditMenuItemActionPerformed
-   preferencesWindow.init();
+    preferencesWindow.init();
 }//GEN-LAST:event_preferencesEditMenuItemActionPerformed
 
-   //<editor-fold defaultstate="collapsed" desc=" [Menu] action ">
+    //<editor-fold defaultstate="collapsed" desc=" [Menu] action ">
 private void interruptItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_interruptItemActionPerformed
-   menu.interrupt();
+    menu.interrupt();
 }//GEN-LAST:event_interruptItemActionPerformed
-   //</editor-fold>
+    //</editor-fold>
 
-   //<editor-fold defaultstate="collapsed" desc=" [Menu] help ">
+    //<editor-fold defaultstate="collapsed" desc=" [Menu] help ">
 private void aboutItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutItemActionPerformed
-   menu.about();
+    menu.about();
 }//GEN-LAST:event_aboutItemActionPerformed
-   //</editor-fold>
+    //</editor-fold>
 
-   //<editor-fold defaultstate="collapsed" desc=" Closing ">
+    //<editor-fold defaultstate="collapsed" desc=" Closing ">
 private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-   while (applicationsPanel.isApplicationOpened())
-   {
-      if (!applicationsPanel.getApplication().hasChanged() ||
-           applicationsPanel.getApplication().getEngine().getModules().isEmpty() ||
-           applicationsPanel.getApplication().getEngine().getModules().size() <= 1)
-      {
-         applicationsPanel.removeCurrentApplication();
-         continue;
-      }
-      int i = JOptionPane.showConfirmDialog(
-              this,
-              "Application " + applicationsPanel.getApplication().getTitle()
-              + " has changed. Do you want to save it?",
-              "Exit VN",
-              JOptionPane.YES_NO_CANCEL_OPTION,
-              JOptionPane.WARNING_MESSAGE);
-      if (i == JOptionPane.CANCEL_OPTION)
-         return;
-      if (i == JOptionPane.YES_OPTION)
-         if (!menu.saveApplication())
+    while (applicationsPanel.isApplicationOpened()) {
+        if(!applicationsPanel.removeCurrentApplication()) {
             return;
-      applicationsPanel.removeCurrentApplication();
-   }
-
-   VisNow.get().backup();
-   System.exit(0);
+        }
+    }
+    VisNow.get().backup();
+    System.exit(0);
 }//GEN-LAST:event_formWindowClosing
-   //</editor-fold>
+    //</editor-fold>
 
-   //<editor-fold defaultstate="collapsed" desc=" [Menu] delete ">
+    //<editor-fold defaultstate="collapsed" desc=" [Menu] delete ">
 private void deleteItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteItemActionPerformed
-   menu.delete();
+    menu.delete();
 }//GEN-LAST:event_deleteItemActionPerformed
-   //</editor-fold>
+    //</editor-fold>
 
 private void colormapItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colormapItemActionPerformed
-   if (colorMapEditorFrame == null)
-   {
-      colorMapEditorFrame = new ColorMapEditorFrame();
-   }
-   colorMapEditorFrame.setVisible(true);
+    if (colorMapEditorFrame == null) {
+        colorMapEditorFrame = new ColorMapEditorFrame();
+    }
+    colorMapEditorFrame.setVisible(true);
 }//GEN-LAST:event_colormapItemActionPerformed
 
 private void oopsItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oopsItemActionPerformed
 
-   new JFileChooser().showOpenDialog(this);
+    new JFileChooser().showOpenDialog(this);
 
-   Object o = null;
-   try
-   {
-      o.toString();
-      float f = 1 / 0;
-   } catch (Exception ex)
-   {
-      VNException e = new VNException(
-              200907101000L,
-              "Some exception",
-              ex,
-              this,
-              Thread.currentThread());
-      VNSystemException ee = new VNSystemException(
-              200907101001L,
-              "Do not divide by 0!",
-              e,
-              this,
-              Thread.currentThread());
-      Displayer.display(200907101002L, ee, this, "Errors catched!");
-   }
+    Object o = null;
+    try {
+        o.toString();
+        float f = 1 / 0;
+    } catch (Exception ex) {
+        VNException e = new VNException(
+                200907101000L,
+                "Some exception",
+                ex,
+                this,
+                Thread.currentThread());
+        VNSystemException ee = new VNSystemException(
+                200907101001L,
+                "Do not divide by 0!",
+                e,
+                this,
+                Thread.currentThread());
+        Displayer.display(200907101002L, ee, this, "Errors catched!");
+    }
 }//GEN-LAST:event_oopsItemActionPerformed
 
 private void clearStateItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearStateItemActionPerformed
-   menu.clearState();
+    menu.clearState();
 }//GEN-LAST:event_clearStateItemActionPerformed
 
 private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-   menu.betaSave();
+    menu.betaSave();
 }//GEN-LAST:event_jMenuItem2ActionPerformed
 
 private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-   menu.betaOpen();
+    menu.betaOpen();
 }//GEN-LAST:event_jMenuItem3ActionPerformed
 
 private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpMenuItemActionPerformed
-   menu.help();
+    menu.help();
 }//GEN-LAST:event_helpMenuItemActionPerformed
 
 private void viewWorkspaceItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewWorkspaceItemActionPerformed
-   //TODO
+    //TODO
 }//GEN-LAST:event_viewWorkspaceItemActionPerformed
 
 private void viewLibrariesItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewLibrariesItemActionPerformed
-   // TODO add your handling code here:
+    // TODO add your handling code here:
 }//GEN-LAST:event_viewLibrariesItemActionPerformed
 
 private void viewUIItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewUIItemActionPerformed
-   // TODO add your handling code here:
+    // TODO add your handling code here:
 }//GEN-LAST:event_viewUIItemActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         LogWindow.openLogWindow();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+    private boolean statusPanelExpanded = false;
+    private void statusPanelLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_statusPanelLabelMouseClicked
+        userMessagePanelToggle(!statusPanelExpanded);
+    }//GEN-LAST:event_statusPanelLabelMouseClicked
 
+    private void userMessagePanelCloseButtonAction(java.util.EventObject evt) {//GEN-FIRST:event_userMessagePanelCloseButtonAction
+        userMessagePanelToggle(false);
+    }//GEN-LAST:event_userMessagePanelCloseButtonAction
+
+    private void userMessagePanelToggle(boolean expanded) {
+        statusPanelExpanded = expanded;
+        statusPanelLabel.setVisible(!statusPanelExpanded);
+        //TODO: check the flow
+        //clear status label on collapse (in expanded mode is not visible anyway)
+        if (!statusPanelExpanded) statusPanelLabelSet("", null);
+
+        statusPanelMemoryMonitor.setVisible(!statusPanelExpanded);
+
+
+        userMessagePanel.setVisible(statusPanelExpanded);
+
+        statusPanel.revalidate();
+    }
+
+    /**
+     * Sets status panel label text and icon.
+     *
+     * @param icon icon to set or null to remove icon
+     */
+    private void statusPanelLabelSet(String text, Icon icon) {
+        statusPanelLabel.setText(text);
+        statusPanelLabel.setIcon(icon);
+    }
+
+    public static InfoFrame getInfoFrame() {
+        return infoFrame;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutItem;
     private javax.swing.JMenu actionMenu;
@@ -763,7 +809,6 @@ private void viewUIItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
-    private javax.swing.JLabel leftStatusLabel;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuItem newFileItem;
     private javax.swing.JMenuItem oopsItem;
@@ -775,8 +820,11 @@ private void viewUIItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JMenuItem saveAsFileItem;
     private javax.swing.JMenuItem saveFileItem;
     private javax.swing.JPanel statusPanel;
+    private javax.swing.JLabel statusPanelLabel;
+    private pl.edu.icm.visnow.gui.widgets.MemoryMonitor statusPanelMemoryMonitor;
     private javax.swing.JMenu templatesMenu;
     private javax.swing.JMenuItem undoItem;
+    private pl.edu.icm.visnow.system.framework.UserMessagePanel userMessagePanel;
     private javax.swing.JCheckBoxMenuItem viewApplicationItem;
     private javax.swing.JCheckBoxMenuItem viewLibrariesItem;
     private javax.swing.JMenu viewMenu;

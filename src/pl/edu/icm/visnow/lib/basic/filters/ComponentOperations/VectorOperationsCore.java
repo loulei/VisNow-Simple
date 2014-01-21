@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,8 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
+
 
 package pl.edu.icm.visnow.lib.basic.filters.ComponentOperations;
 
@@ -158,6 +161,30 @@ public class VectorOperationsCore
                      norms[j] = (float) (Math.sqrt(norms[j]));
                   }
                   outField.addData(DataArray.create(norms, 1, inField.getData(i).getName() + "_norm"));
+               }
+               l += 1;
+            }
+      boolean[] vCNormalize = params.getVCNormalize();
+      if (vCNormalize != null)
+         for (int i = 0, l = 0; i < inField.getNData(); i++)
+            if (inField.getData(i).isSimpleNumeric() && inField.getData(i).getVeclen() > 1)
+            {
+               if (vCNormalize[l])
+               {
+                  float[] data = inField.getData(i).getFData();
+                  int vlen = inField.getData(i).getVeclen();
+                  float[] normalizeds = new float[n * vlen];
+                  for (int j = 0; j < n; j++)
+                  {
+                     double norm = 0;
+                     for (int k = 0; k < vlen; k++)
+                        norm += data[vlen * j + k] * data[vlen * j + k];
+                     float fNorm = (float) (Math.sqrt(norm));
+                     
+                     for (int k = 0; k < vlen; k++)
+                        normalizeds[vlen * j + k] = data[vlen * j + k] / fNorm;
+                  }
+                  outField.addData(DataArray.create(normalizeds, vlen, inField.getData(i).getName() + "_normalized"));
                }
                l += 1;
             }

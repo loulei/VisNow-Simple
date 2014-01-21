@@ -1,40 +1,39 @@
 /* VisNow
-   Copyright (C) 2006-2013 University of Warsaw, ICM
+ Copyright (C) 2006-2013 University of Warsaw, ICM
 
-This file is part of GNU Classpath.
+ This file is part of GNU Classpath.
 
-GNU Classpath is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+ GNU Classpath is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
 
-GNU Classpath is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
+ GNU Classpath is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+ You should have received a copy of the GNU General Public License
+ along with GNU Classpath; see the file COPYING.  If not, write to the 
+ University of Warsaw, Interdisciplinary Centre for Mathematical and 
+ Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
 
-Linking this library statically or dynamically with other modules is
-making a combined work based on this library.  Thus, the terms and
-conditions of the GNU General Public License cover the whole
-combination.
+ Linking this library statically or dynamically with other modules is
+ making a combined work based on this library.  Thus, the terms and
+ conditions of the GNU General Public License cover the whole
+ combination.
 
-As a special exception, the copyright holders of this library give you
-permission to link this library with independent modules to produce an
-executable, regardless of the license terms of these independent
-modules, and to copy and distribute the resulting executable under
-terms of your choice, provided that you also meet, for each linked
-independent module, the terms and conditions of the license of that
-module.  An independent module is a module which is not derived from
-or based on this library.  If you modify this library, you may extend
-this exception to your version of the library, but you are not
-obligated to do so.  If you do not wish to do so, delete this
-exception statement from your version. */
-
+ As a special exception, the copyright holders of this library give you
+ permission to link this library with independent modules to produce an
+ executable, regardless of the license terms of these independent
+ modules, and to copy and distribute the resulting executable under
+ terms of your choice, provided that you also meet, for each linked
+ independent module, the terms and conditions of the license of that
+ module.  An independent module is a module which is not derived from
+ or based on this library.  If you modify this library, you may extend
+ this exception to your version of the library, but you are not
+ obligated to do so.  If you do not wish to do so, delete this
+ exception statement from your version. */
 package pl.edu.icm.visnow.lib.basic.viewers.Viewer2D;
 
 import java.awt.Color;
@@ -53,19 +52,19 @@ import pl.edu.icm.visnow.system.main.VisNow;
 import pl.edu.icm.visnow.system.swing.filechooser.VNFileChooser;
 
 /**
- * @author  Bartosz Borucki (babor@icm.edu.pl)
- * Warsaw University, Interdisciplinary Centre
- * for Mathematical and Computational Modelling
+ * @author Bartosz Borucki (babor@icm.edu.pl) Warsaw University,
+ * Interdisciplinary Centre for Mathematical and Computational Modelling
  */
 public class Display2DControlsFrame extends javax.swing.JFrame {
 
     private Display2DPanel displayPanel = null;
     private int level;
     private TransformedGeometryObject2DTreeModel treeModel;
-
     JFileChooser dataFileChooser = new JFileChooser();
 
-    /** Creates new form Display2DControlsFrame */
+    /**
+     * Creates new form Display2DControlsFrame
+     */
     public Display2DControlsFrame() {
         initComponents();
         setTitle("Viewer2D Controls");
@@ -81,10 +80,10 @@ public class Display2DControlsFrame extends javax.swing.JFrame {
     }
 
     private void init() {
+        dataFileChooser.setAcceptAllFileFilterUsed(false);
         objectEditor.setPanel(displayPanel);
         objectsTree.setModel(treeModel);
         objectsTree.addTreeSelectionListener(new TreeSelectionListener() {
-
             public void valueChanged(TreeSelectionEvent evt) {
                 if (objectsTree.getSelectionPath() != null) {
                     upButton.setEnabled(true);
@@ -106,13 +105,13 @@ public class Display2DControlsFrame extends javax.swing.JFrame {
 
         movieCreationPanel.setPanel(displayPanel);
 
-		dataFileChooser.setCurrentDirectory( new File( VisNow.get().getMainConfig().getWorkeffectPath() ) );
+        dataFileChooser.setCurrentDirectory(new File(VisNow.get().getMainConfig().getWorkeffectPath()));
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -131,8 +130,6 @@ public class Display2DControlsFrame extends javax.swing.JFrame {
         normalizeButton = new javax.swing.JButton();
         writeImagePanel = new javax.swing.JPanel();
         writeButton = new javax.swing.JButton();
-        jpegRB = new javax.swing.JRadioButton();
-        pngRB = new javax.swing.JRadioButton();
         movieCreationPanel = new pl.edu.icm.visnow.lib.basic.viewers.Viewer2D.MovieCreationPanel2D();
         bottomPanel = new javax.swing.JPanel();
         objectsTabPanel = new javax.swing.JPanel();
@@ -292,7 +289,7 @@ public class Display2DControlsFrame extends javax.swing.JFrame {
         writeImagePanel.setLayout(new java.awt.GridBagLayout());
 
         writeButton.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
-        writeButton.setText("Write image");
+        writeButton.setText("Save as...");
         writeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 writeButtonActionPerformed(evt);
@@ -307,27 +304,6 @@ public class Display2DControlsFrame extends javax.swing.JFrame {
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         writeImagePanel.add(writeButton, gridBagConstraints);
-
-        formatBG.add(jpegRB);
-        jpegRB.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
-        jpegRB.setSelected(true);
-        jpegRB.setText("JPEG");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
-        writeImagePanel.add(jpegRB, gridBagConstraints);
-
-        formatBG.add(pngRB);
-        pngRB.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
-        pngRB.setText("PNG");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
-        writeImagePanel.add(pngRB, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -353,7 +329,7 @@ public class Display2DControlsFrame extends javax.swing.JFrame {
         );
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 14, Short.MAX_VALUE)
+            .addGap(0, 38, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -512,28 +488,29 @@ public class Display2DControlsFrame extends javax.swing.JFrame {
 
     private void writeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeButtonActionPerformed
 
-	   FileNameExtensionFilter jpegFilter =
-				  new FileNameExtensionFilter("JPEG image file","jpg","JPG","jpeg","JPEG");
-	   FileNameExtensionFilter pngFilter =
-				  new FileNameExtensionFilter("PNG image file","png","PNG","jpeg","JPEG");
+        FileNameExtensionFilter jpegImagesFilter = new FileNameExtensionFilter("JPEG images (*.jpg, *.jpeg)", "jpg", "jpeg", "JPG", "JPEG");
+        FileNameExtensionFilter gifImagesFilter =
+                new FileNameExtensionFilter("GIF images (*.gif)", "gif", "GIF");
+        FileNameExtensionFilter pngImagesFilter =
+                new FileNameExtensionFilter("PNG images (*.png)", "png", "PNG");
+        FileNameExtensionFilter tiffImagesFilter =
+                new FileNameExtensionFilter("TIFF images (*.tif, *.tiff)", "tif", "TIF", "tiff", "TIFF");
+        FileNameExtensionFilter bmpImagesFilter =
+                new FileNameExtensionFilter("BMP images (*.bmp)", "bmp", "BMP");
+        FileNameExtensionFilter pcxImagesFilter =
+                new FileNameExtensionFilter("PCX images (*.pcx)", "pcx", "PCX");
+        
+        dataFileChooser.addChoosableFileFilter(jpegImagesFilter);
+    dataFileChooser.addChoosableFileFilter(gifImagesFilter);
+    dataFileChooser.addChoosableFileFilter(pngImagesFilter);
+    dataFileChooser.addChoosableFileFilter(tiffImagesFilter);
+    dataFileChooser.addChoosableFileFilter(bmpImagesFilter);
+    dataFileChooser.addChoosableFileFilter(pcxImagesFilter);
 
-	   FileNameExtensionFilter selectedFilter = null;
-
-	   if( jpegRB.isSelected() )
-		   selectedFilter = jpegFilter;
-	   if( pngRB.isSelected() )
-		   selectedFilter = pngFilter;
-
-	    dataFileChooser.setFileFilter(selectedFilter);
 
         int returnVal = dataFileChooser.showSaveDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            String fileName = VNFileChooser.filenameWithExtenstionAddedIfNecessary(dataFileChooser.getSelectedFile(), selectedFilter);
-            if (jpegRB.isSelected()) {
-                displayPanel.writeImage(fileName, Display2DPanel.FORMAT_JPEG);
-            } else if (pngRB.isSelected()) {
-                displayPanel.writeImage(fileName, Display2DPanel.FORMAT_PNG);
-            }
+            displayPanel.writeImage(VNFileChooser.fileWithExtensionAddedIfNecessary(dataFileChooser.getSelectedFile(), (FileNameExtensionFilter)dataFileChooser.getFileFilter()));
         }
 
 
@@ -547,7 +524,6 @@ public class Display2DControlsFrame extends javax.swing.JFrame {
     private void normalizeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_normalizeButtonActionPerformed
         displayPanel.normalize();
     }//GEN-LAST:event_normalizeButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton autoCenterTB;
     private javax.swing.JToggleButton autoNormalizeTB;
@@ -560,14 +536,12 @@ public class Display2DControlsFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JRadioButton jpegRB;
     private javax.swing.JPanel movePanel;
     private pl.edu.icm.visnow.lib.basic.viewers.Viewer2D.MovieCreationPanel2D movieCreationPanel;
     private javax.swing.JButton normalizeButton;
     private pl.edu.icm.visnow.lib.basic.viewers.Viewer2D.Display2DObjectEditor objectEditor;
     private javax.swing.JPanel objectsTabPanel;
     private javax.swing.JTree objectsTree;
-    private javax.swing.JRadioButton pngRB;
     private javax.swing.JButton titleButton;
     private javax.swing.JPanel topPanel;
     private javax.swing.JScrollPane treeSP;
@@ -575,10 +549,11 @@ public class Display2DControlsFrame extends javax.swing.JFrame {
     private javax.swing.JButton writeButton;
     private javax.swing.JPanel writeImagePanel;
     // End of variables declaration//GEN-END:variables
+
     public void setDisplayPanel(Display2DPanel panel) {
         this.displayPanel = panel;
         movieCreationPanel.setPanel(displayPanel);
-        
+
     }
 
     public Display2DPanel getDisplayPanel() {
@@ -593,11 +568,10 @@ public class Display2DControlsFrame extends javax.swing.JFrame {
     public void resetTree() {
         javax.swing.SwingUtilities.invokeLater(
                 new Runnable() {
-
-                    public void run() {
-                        objectsTree.updateUI();
-                    }
-                });
+            public void run() {
+                objectsTree.updateUI();
+            }
+        });
         objectsTree.clearSelection();
         objectEditor.setObject(null);
     }
@@ -605,11 +579,10 @@ public class Display2DControlsFrame extends javax.swing.JFrame {
     public void updateTree() {
         javax.swing.SwingUtilities.invokeLater(
                 new Runnable() {
-
-                    public void run() {
-                        objectsTree.updateUI();
-                    }
-                });
+            public void run() {
+                objectsTree.updateUI();
+            }
+        });
     }
 
     public void update() {

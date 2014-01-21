@@ -42,7 +42,7 @@ import pl.edu.icm.visnow.lib.utils.numeric.NumericalMethods;
 
 /**
  *
- * @author know
+ * @author Krzysztof S. Nowinski, University of Warsaw ICM
  */
 public class InvertedJacobian
 {

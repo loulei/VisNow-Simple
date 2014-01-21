@@ -58,9 +58,6 @@ public class RadiusTool extends GeometryTool {
     private Point currentPoint = null;
     private Point endPoint = null;
 
-    private boolean holding = false;
-
-
     @Override
     public void paint(Graphics g) {
         if(holding && startPoint != null && currentPoint != null) {

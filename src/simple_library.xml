@@ -12,15 +12,19 @@ analysing and displaying data.
         <folder name="regular data readers" autohelpfile="pl.edu.icm.visnow.lib.basic.readers.regular_help_folder.html" open="yes">
             <core package="pl.edu.icm.visnow.lib.basic.readers.ReadVisNowField"/>
             <core package="pl.edu.icm.visnow.lib.basic.readers.ReadImage"/>
+            <core package="pl.edu.icm.visnow.lib.basic.readers.ReadVTK"/>
             <core package="pl.edu.icm.visnow.lib.basic.readers.VolumeReader"/>
             <core package="pl.edu.icm.visnow.lib.basic.readers.ReadAVSField"/>
+            <core package="pl.edu.icm.visnow.lib.basic.readers.ReadCSV"/>
         </folder>
         <folder name="irregular data readers" autohelpfile="pl.edu.icm.visnow.lib.basic.readers.irregular_help_folder.html" open="yes">
+            <core package="pl.edu.icm.visnow.lib.basic.readers.ReadVisNowField"/>
             <core package="pl.edu.icm.visnow.lib.basic.readers.ReadUCD"/>
-            <core package="pl.edu.icm.visnow.lib.experimental.creed.VTK"/>           
+            <core package="pl.edu.icm.visnow.lib.basic.readers.ReadVTK"/>
             <core package="pl.edu.icm.visnow.lib.basic.readers.ReadOBJ"/> 
             <core package="pl.edu.icm.visnow.lib.basic.readers.ExtendedReadGADGET2"/>
             <core package="pl.edu.icm.visnow.lib.basic.readers.ReadFluent"/>
+            <core package="pl.edu.icm.visnow.lib.basic.readers.ReadSTL"/>            
         </folder>
         <folder name="medical data readers" autohelpfile="pl.edu.icm.visnow.lib.basic.readers.medreaders.help_folder.html" open="no">
             <core package="pl.edu.icm.visnow.lib.basic.readers.medreaders.ReadDICOM"/>
@@ -31,6 +35,8 @@ analysing and displaying data.
         <core package="pl.edu.icm.visnow.lib.basic.testdata.TestRegularField2D"/>
         <core package="pl.edu.icm.visnow.lib.basic.testdata.TestPoints"/>
         <core package="pl.edu.icm.visnow.lib.basic.testdata.TestLineMesh"/>
+        <core package="pl.edu.icm.visnow.lib.basic.testdata.TestCells"/>
+        <core package="pl.edu.icm.visnow.lib.basic.testdata.ColorCube"/>
     </folder>
     <folder name="utilities" autohelpfile="pl.edu.icm.visnow.lib.basic.utilities.help_folder.html" autosort="yes">
         <core package="pl.edu.icm.visnow.lib.basic.utilities.FieldStats"/>
@@ -64,7 +70,7 @@ analysing and displaying data.
         <core package="pl.edu.icm.visnow.lib.basic.mappers.VolumeRenderer"/>
         <core package="pl.edu.icm.visnow.lib.basic.mappers.PlanarSlice"/>
         <core package="pl.edu.icm.visnow.lib.basic.mappers.RegularFieldSlice"/>
-        <core package="pl.edu.icm.visnow.lib.basic.mappers.FieldSlicePlane"/>
+        <core package="pl.edu.icm.visnow.lib.basic.mappers.InterpolatedSlice"/>
         <core package="pl.edu.icm.visnow.lib.basic.mappers.VectorFieldDisplacement"/>
         <core package="pl.edu.icm.visnow.lib.basic.mappers.Streamlines"/>
         <core package="pl.edu.icm.visnow.lib.basic.mappers.AnimatedStream"/>

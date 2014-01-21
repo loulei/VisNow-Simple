@@ -115,7 +115,7 @@ public class JarLibraryRoot implements LibraryRoot {
     @Override
     public HashMap<String, String> getInputTypes(String className) {
         HashMap<String, String> ret = new HashMap<String, String>();
-        InputEgg[] e = ModuleCore.getInputEggs(className);
+        InputEgg[] e = ModuleCore.getInputEggs(className, loader);
         if(e == null)
             return ret;
         for(InputEgg egg: e) {
@@ -127,7 +127,7 @@ public class JarLibraryRoot implements LibraryRoot {
     @Override
     public HashMap<String, VNDataAcceptor[]> getInputVNDataAcceptors(String className) {
         HashMap<String, VNDataAcceptor[]> ret = new HashMap<String, VNDataAcceptor[]>();
-        InputEgg[] e = ModuleCore.getInputEggs(className);
+        InputEgg[] e = ModuleCore.getInputEggs(className, loader);
         if(e == null)
             return ret;
 

@@ -67,19 +67,31 @@ import org.w3c.dom.Text;
 public class AutoHelpGenerator {
 
     //paths realtive to project/src
-    private static final String MODULE_HELP_TEMPLATE = "pl/edu/icm/visnow/autohelp/resources/module_help_template.html";
-    private static final String MODULE_MAP_TEMPLATE = "pl/edu/icm/visnow/autohelp/resources/vnhelp_MAP_template.xml";
-    private static final String MODULE_TOC_TEMPLATE = "pl/edu/icm/visnow/autohelp/resources/vnhelp_TOC_template.xml";
+    public static final String MODULE_HELP_TEMPLATE = "pl/edu/icm/visnow/autohelp/resources/module_help_template.html";
+    public static final String MODULE_MAP_TEMPLATE_PRO = "pl/edu/icm/visnow/autohelp/resources/vnhelp_MAP_template_pro.xml";
+    public static final String MODULE_TOC_TEMPLATE_PRO = "pl/edu/icm/visnow/autohelp/resources/vnhelp_TOC_template_pro.xml";
+    public static final String MODULE_MAP_TEMPLATE_SIMPLE = "pl/edu/icm/visnow/autohelp/resources/vnhelp_MAP_template_simple.xml";
+    public static final String MODULE_TOC_TEMPLATE_SIMPLE = "pl/edu/icm/visnow/autohelp/resources/vnhelp_TOC_template_simple.xml";
     public static final String AUTOHELP_ROOT = "doc/vnautohelp";
     //paths realtive to AUTOHELP_ROOT
     public static final String AUTOHELP_MODULES_DIR = "help/modules";
     public static final String AUTOHELP_MODULE_IMAGES_DIR = "help/modules/resources";
+    public static final String LIBRARY_XML_PRO = "extended_library.xml";
+    public static final String LIBRARY_XML_SIMPLE = "simple_library.xml";
+    public static final String HELP_PACKAGE_PRO = "help_resources_pro";
+    public static final String HELP_PACKAGE_SIMPLE = "help_resources";
+
     protected final ArrayList<String> modules;
     protected final ArrayList<String> moduleBases;
     protected final String srcDir;
     protected TypesMap typesMap;
     protected ArrayList<String> folders;
-    private static String libraryXml = "simple_library.xml";
+    
+    //this variable is used for pro/simple selection when no external argument is given to main
+    private static boolean buildPro = false;
+    
+    
+    
 
     public AutoHelpGenerator(String srcDir, ArrayList<String> modules, ArrayList<String> moduleBases, TypesMap typesMap, ArrayList<String> folders) {
         this.srcDir = srcDir;
@@ -90,17 +102,25 @@ public class AutoHelpGenerator {
     }
 
     public static void main(String[] args) throws IOException {
+        if(args != null && args.length == 1) {
+            buildPro = (args[0].equals("-pro"));
+        }
+        
         String workDir = System.getProperty("user.dir");
         String srcDir = workDir + File.separator + "src";
+        String libraryXml;
+        if(buildPro) {
+            //settings for help for VisNow Pro
+            libraryXml = LIBRARY_XML_PRO;
+        } else {
+            //settings for help for VisNow Simple
+            libraryXml = LIBRARY_XML_SIMPLE;
+        }        
         System.out.println("scanning source dir: " + srcDir + File.separator + libraryXml);
-
         ArrayList<String> moduleBases = new ArrayList<String>();
         moduleBases.add("pl.edu.icm.visnow.lib.basic");
         moduleBases.add("pl.edu.icm.visnow.lib.chemistry");
         ArrayList<String> modules = listModules(srcDir + File.separator + libraryXml, moduleBases);
-        //ArrayList<String> modules = new ArrayList<String>();
-        //modules.add("pl.edu.icm.visnow.lib.basic.mappers.VolumeRenderer");
-
         System.out.println("done.");
 
 
@@ -141,13 +161,8 @@ public class AutoHelpGenerator {
 
 
         System.out.println("storing help files in dir: " + srcDir + File.separator + AUTOHELP_ROOT);
-        //ArrayList<String> modulesShort = new ArrayList<String>();
-        //modulesShort.add("pl.edu.icm.visnow.lib.basic.mappers.VolumeRenderer");
-        //modulesShort.add("pl.edu.icm.visnow.lib.basic.mappers.Isosurface");        
-        //AutoHelp help = new AutoHelpGenerator(srcDir, modulesShort, typesMap);
-
         AutoHelpGenerator help = new AutoHelpGenerator(srcDir, modules, moduleBases, typesMap, folders);
-        help.generateHelp();
+        help.generateHelp(buildPro);
         System.out.println("done.");
     }
 
@@ -179,7 +194,7 @@ public class AutoHelpGenerator {
         }
     }
 
-    private void generateHelpFile(String module) {
+    private void generateHelpFile(String module, boolean pro) {
         boolean found = false;
         for (int i = 0; i < modules.size(); i++) {
             if (modules.get(i).equals(module)) {
@@ -204,14 +219,14 @@ public class AutoHelpGenerator {
                 System.err.println("Error reading module.xml for module: " + module);
                 return;
             }
-            String[] moduleInfo = ModuleXMLReader.getModuleInfoFromStream(module, is);
+            String[] moduleInfo = ModuleXMLReader.getModuleInfoFromStream(module, is, null);
             is.close();
             data.put("module.name", toCapital(moduleInfo[0]));
             data.put("module.description", moduleInfo[2]);
 
             data.put("module.image", "resources/module_image_" + module + ".png");
             is = new FileInputStream(moduleXmlFile);
-            InputEgg[] moduleInputs = ModuleXMLReader.getInputEggsFromStream(module, is);
+            InputEgg[] moduleInputs = ModuleXMLReader.getInputEggsFromStream(module, is, null);
             is.close();
 
             if (moduleInputs != null && moduleInputs.length > 0) {
@@ -245,7 +260,7 @@ public class AutoHelpGenerator {
             }
 
             is = new FileInputStream(moduleXmlFile);
-            OutputEgg[] moduleOutputs = ModuleXMLReader.getOutputEggsFromStream(module, is);
+            OutputEgg[] moduleOutputs = ModuleXMLReader.getOutputEggsFromStream(module, is, null);
             is.close();
             if (moduleOutputs != null && moduleOutputs.length > 0) {
                 String outputs = "";
@@ -278,15 +293,22 @@ public class AutoHelpGenerator {
             }
 
             //put help_desc to data <$ module.helpfile $>
-
-            String helpFileResourcesSrc = srcDir + File.separator + module.replace('.', File.separatorChar) + File.separator + "help_resources";
-            String helpFileSrc = helpFileResourcesSrc + File.separator + "help_desc.html";
             String targetDir = srcDir + File.separator
                     + AUTOHELP_ROOT + File.separator
                     + AUTOHELP_MODULES_DIR + File.separator
                     + module + File.separator
                     + "resources";
 
+            String hp = HELP_PACKAGE_SIMPLE;
+            if(pro) {
+                hp = HELP_PACKAGE_PRO;
+                File helpFileResources = new File(srcDir + File.separator + module.replace('.', File.separatorChar) + File.separator + hp);
+                if(!helpFileResources.exists()) {
+                    hp = HELP_PACKAGE_SIMPLE;
+                }
+            }
+            String helpFileResourcesSrc = srcDir + File.separator + module.replace('.', File.separatorChar) + File.separator + hp;
+            String helpFileSrc = helpFileResourcesSrc + File.separator + "help_desc.html";            
             File helpFileResources = new File(helpFileResourcesSrc);
             File helpFile = new File(helpFileSrc);
             if (helpFileResources.exists() && helpFileResources.isDirectory() && helpFile.exists()) {
@@ -342,8 +364,8 @@ public class AutoHelpGenerator {
                             helpfileContent.indexOf("<head>"),
                             helpfileContent.indexOf("</head>"));
                     if (helpfileContentHeader.contains("<style")) {
-                        String helpfileContentStyle = helpfileContent.substring(
-                                helpfileContentHeader.indexOf("<style type=\"text/css\">"),
+                        String helpfileContentStyle = helpfileContentHeader.substring(
+                                helpfileContentHeader.indexOf("<style type=\"text/css\">")+23,
                                 helpfileContentHeader.indexOf("</style>"));
                         data.put("module.helpfile.style", helpfileContentStyle);
                     }
@@ -384,13 +406,13 @@ public class AutoHelpGenerator {
         }
     }
 
-    private void generateHelpFiles() throws IOException {
+    private void generateHelpFiles(boolean pro) throws IOException {
         for (String module : modules) {
-            generateHelpFile(module);
+            generateHelpFile(module, pro);
         }
     }
 
-    private void generateHelpMap() {
+    private void generateHelpMap(boolean pro) {
         HashMap<String, String> data = new HashMap<String, String>();
         String modulesString = "";
         String module;
@@ -432,7 +454,8 @@ public class AutoHelpGenerator {
         data.put("folders", foldersString);
 
         try {
-            String template = convertStreamToString(new FileInputStream(srcDir + File.separator + MODULE_MAP_TEMPLATE));
+            String mm = pro?MODULE_MAP_TEMPLATE_PRO:MODULE_MAP_TEMPLATE_SIMPLE;
+            String template = convertStreamToString(new FileInputStream(srcDir + File.separator + mm));
             MetaBlock mainBlock = new MainMetaBlock(template, data);
             String out = mainBlock.getParsed();
             //System.out.println(out);
@@ -445,10 +468,10 @@ public class AutoHelpGenerator {
 
     }
 
-    private void generateHelpTOC() {
+    private void generateHelpTOC(boolean pro) {
         HashMap<String, String> data = new HashMap<String, String>();
-
-        try {
+        String libraryXml = pro?LIBRARY_XML_PRO:LIBRARY_XML_SIMPLE;
+        try {            
             InputStream is = new FileInputStream(srcDir + File.separator + libraryXml);
             Node main = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is).getDocumentElement();
             if (!main.getNodeName().equalsIgnoreCase("library")) {
@@ -466,7 +489,8 @@ public class AutoHelpGenerator {
         }
 
         try {
-            String template = convertStreamToString(new FileInputStream(srcDir + File.separator + MODULE_TOC_TEMPLATE));
+            String mt = pro?MODULE_TOC_TEMPLATE_PRO:MODULE_TOC_TEMPLATE_SIMPLE;
+            String template = convertStreamToString(new FileInputStream(srcDir + File.separator + mt));
             MetaBlock mainBlock = new MainMetaBlock(template, data);
             String out = mainBlock.getParsed();
             //System.out.println(out);
@@ -477,10 +501,10 @@ public class AutoHelpGenerator {
 
     }
 
-    public void generateHelp() throws IOException {
-        generateHelpFiles();
-        generateHelpMap();
-        generateHelpTOC();
+    public void generateHelp(boolean pro) throws IOException {
+        generateHelpFiles(pro);
+        generateHelpMap(pro);
+        generateHelpTOC(pro);
     }
 
     public static ArrayList<String> listModules(String libraryXmlPath, ArrayList<String> packageRootFilters) {
@@ -748,7 +772,7 @@ public class AutoHelpGenerator {
                     System.err.println("Error reading module.xml for module: " + modPackage);
                     return;
                 }
-                String[] moduleInfo = ModuleXMLReader.getModuleInfoFromStream(modPackage, is);
+                String[] moduleInfo = ModuleXMLReader.getModuleInfoFromStream(modPackage, is, null);
                 is.close();
 
                 data.put(mod + ".name", toCapital(moduleInfo[0]));
@@ -969,7 +993,7 @@ public class AutoHelpGenerator {
                 String modPackage = node0.getAttributes().getNamedItem("package").getNodeValue();
                 File f = new File(clipboard + File.separator + modPackage.replace('.', File.separatorChar) + File.separator + "module.xml");
                 InputStream is = new FileInputStream(f);
-                String[] moduleInfo = ModuleXMLReader.getModuleInfoFromStream(modPackage, is);
+                String[] moduleInfo = ModuleXMLReader.getModuleInfoFromStream(modPackage, is, null);
                 is.close();
                 module0Name = toCapital(moduleInfo[0]);
             } catch(Exception ex) {
@@ -980,7 +1004,7 @@ public class AutoHelpGenerator {
                 String modPackage = node1.getAttributes().getNamedItem("package").getNodeValue();
                 File f = new File(clipboard + File.separator + modPackage.replace('.', File.separatorChar) + File.separator + "module.xml");
                 InputStream is = new FileInputStream(f);
-                String[] moduleInfo = ModuleXMLReader.getModuleInfoFromStream(modPackage, is);
+                String[] moduleInfo = ModuleXMLReader.getModuleInfoFromStream(modPackage, is, null);
                 is.close();
                 module1Name = toCapital(moduleInfo[0]);
             } catch(Exception ex) {

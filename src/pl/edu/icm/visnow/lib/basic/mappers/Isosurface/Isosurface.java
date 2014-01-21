@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,6 +35,7 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.basic.mappers.Isosurface;
 
@@ -42,11 +44,12 @@ import javax.swing.event.ChangeListener;
 import pl.edu.icm.visnow.datasets.Field;
 import pl.edu.icm.visnow.datasets.IrregularField;
 import pl.edu.icm.visnow.datasets.RegularField;
+import pl.edu.icm.visnow.datasets.cells.Cell;
 import pl.edu.icm.visnow.engine.core.InputEgg;
 import pl.edu.icm.visnow.engine.core.OutputEgg;
 import pl.edu.icm.visnow.gui.events.FloatValueModificationEvent;
 import pl.edu.icm.visnow.gui.events.FloatValueModificationListener;
-import pl.edu.icm.visnow.lib.templates.visualization.modules.IrregularOutFieldVisualizationModule;
+import pl.edu.icm.visnow.lib.templates.visualization.modules.OutFieldVisualizationModule;
 import pl.edu.icm.visnow.lib.types.VNField;
 import pl.edu.icm.visnow.lib.types.VNIrregularField;
 import pl.edu.icm.visnow.lib.utils.SwingInstancer;
@@ -59,7 +62,7 @@ import pl.edu.icm.visnow.system.main.VisNow;
  * Warsaw University, Interdisciplinary Centre
  * for Mathematical and Computational Modelling
  */
-public class Isosurface extends IrregularOutFieldVisualizationModule
+public class Isosurface extends OutFieldVisualizationModule
 {
 
    /**
@@ -89,17 +92,18 @@ public class Isosurface extends IrregularOutFieldVisualizationModule
    public Isosurface()
    {
       parameters = params = new IsosurfaceParams();
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
 
          @Override
          public void run()
          {
             computeUI = new IsosurfaceGUI();
+            computeUI.setParams(params);
+            ui.addComputeGUI(computeUI);
+            setPanel(ui);
          }
       });
-      computeUI.setParams(params);
-      ui.addComputeGUI(computeUI);
       outObj.setName("isosurface");
       params.addChangeListener(new ChangeListener()
       {
@@ -115,7 +119,6 @@ public class Isosurface extends IrregularOutFieldVisualizationModule
             startAction();
          }
       });
-      setPanel(ui);
       smoother.addFloatValueModificationListener(
               new FloatValueModificationListener()
               {
@@ -154,14 +157,15 @@ public class Isosurface extends IrregularOutFieldVisualizationModule
          for (int i = 0; i < thresholds.length; i++)
          {
             IrregularField currentField = 
-                    isosurfaceEngine.makeIsosurface(params, params.getThresholds()[i]);
+               isosurfaceEngine.makeIsosurface(params, params.getThresholds()[i]);
             if (currentField != null)
                tmpField = MergeIrregularField.merge(tmpField, currentField, i, params.isSeparate());
          }
       }
       if (tmpField == null) {
           outField = null;
-          setOutputValue("isosurfaceField", new VNIrregularField());
+          outIrregularField = null;
+          setOutputValue("isosurfaceField", null);
           
           show();   
 //      if (tmpField == null || tmpField.getNData() == 0)
@@ -171,24 +175,34 @@ public class Isosurface extends IrregularOutFieldVisualizationModule
       {
          smoother.setInField(tmpField);
          outField = tmpField.clone();
-         outField.setCoords(smoother.smoothCoords(params.getSmoothSteps(), .5f));
+         outIrregularField = (IrregularField) outField;
+         outIrregularField.setCoords(smoother.smoothCoords(params.getSmoothSteps(), .5f));
          if (tmpField.getNormals() != null)
-            outField.setNormals(smoother.smoothNormals(params.getSmoothSteps(), .5f));
-      } else
+            outIrregularField.setNormals(smoother.smoothNormals(params.getSmoothSteps(), .5f));
+      } else {
          outField = tmpField;
-      outField.setExtents(inField.getExtents());
+         outIrregularField = (IrregularField) outField;
+      }
+      outIrregularField.setExtents(inField.getExtents());
       prepareOutputGeometry();
       show();
-      setOutputValue("isosurfaceField", new VNIrregularField(outField));
+      setOutputValue("isosurfaceField", new VNIrregularField(outIrregularField));
       if (inField.getCurrentTime() != dataCurrentTime)
          inField.setCurrentTime(dataCurrentTime);
    }
 
    private void updateUI()
    {
-      ignoreUI = true;
-      computeUI.setInField(inField);
-      ignoreUI = false;
+      SwingInstancer.swingRunAndWait(new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            ignoreUI = true;
+            computeUI.setInField(inField);
+            ignoreUI = false;
+         }
+      });
    }
 
    @Override
@@ -196,36 +210,52 @@ public class Isosurface extends IrregularOutFieldVisualizationModule
    {
       if (!fromGUI)
       {
-         VNField inFld = (VNField) getInputFirstValue("inField");
-         if (inFld != null)
-         {
-            Field newInField = inFld.getField();
-            if (newInField != null && (inField == null || inField != newInField || newInField.getCurrentTime() != lastTime))
-            {
-               params.setRecompute(true);
-               lastTime = newInField.getCurrentTime();
-            }
-            if (newInField != null && inField != newInField)
-            {
-               //TODO jak idzie null to tego nie resetujemy?
-               inField = newInField;
-               
-               if (inField.getNSpace() != 3 || inField.getNData() < 1)
-                  return;
-               if (inField instanceof RegularField)
-               {
-                  int[] inDims = ((RegularField) inField).getDims();
-                  if (inDims.length != 3 || inDims[0] < 2 || inDims[1] < 2 || inDims[2] < 2)
-                     return;
-                  isosurfaceEngine = new RegularFieldIsosurface((RegularField) inField);
-                  isosurfaceEngine.addFloatValueModificationListener(progressListener);
-               } else
-               {
-                  isosurfaceEngine = new IrregularFieldIsosurface((IrregularField) inField);
-                  isosurfaceEngine.addFloatValueModificationListener(progressListener);
-               }
-               updateUI();
-            }
+        VNField inFld = (VNField) getInputFirstValue("inField");
+        if(inFld == null || inFld.getField() == null) {
+             inField = null;
+             outField = null;
+             outIrregularField = null;
+             return;
+        }
+        Field newInField = inFld.getField();
+        if (inField == null || inField != newInField || newInField.getCurrentTime() != lastTime)
+        {
+           params.setRecompute(true);
+           lastTime = newInField.getCurrentTime();
+        }
+        if (inField != newInField)
+        {
+           inField = newInField;
+
+           if (inField.getNSpace() != 3 || inField.getNData() < 1) {
+              inField = null;
+              outField = null;
+              outIrregularField = null;
+              return;
+           }
+           if (inField instanceof RegularField)
+           {
+              int[] inDims = ((RegularField) inField).getDims();
+              if (inDims.length != 3 || inDims[0] < 2 || inDims[1] < 2 || inDims[2] < 2) {
+                 inField = null;
+                 outField = null;
+                 outIrregularField = null;
+                 return;
+              }
+              isosurfaceEngine = new RegularFieldIsosurface((RegularField) inField);
+              isosurfaceEngine.addFloatValueModificationListener(progressListener);
+           } else {
+              IrregularField irf = ((IrregularField)inField);
+              if(!(irf.hasCellsType(Cell.TETRA) || irf.hasCellsType(Cell.PYRAMID) || irf.hasCellsType(Cell.PRISM) || irf.hasCellsType(Cell.HEXAHEDRON))) {
+                  inField = null;
+                  outField = null;
+                  outIrregularField = null;
+                  return;                  
+              }
+              isosurfaceEngine = new IrregularFieldIsosurface((IrregularField) inField);
+              isosurfaceEngine.addFloatValueModificationListener(progressListener);
+           }
+           updateUI();
          }
          if (getInputFirstValue("threshold") != null)
          {
@@ -238,7 +268,6 @@ public class Isosurface extends IrregularOutFieldVisualizationModule
                params.setRecompute(true);
             }
          }
-         fieldDisplayParams = null;
       }
 
       fromGUI = false;

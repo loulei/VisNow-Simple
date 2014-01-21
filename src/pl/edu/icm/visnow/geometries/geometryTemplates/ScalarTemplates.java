@@ -231,14 +231,14 @@ public class ScalarTemplates
 
          int i,j,k,k0,l;
          float t0,t1,t2,r;
-         float[] p0 = new float[3];
-         float[] p1 = new float[3];
-         float[] p2 = new float[3];
 
-         float[] q0 = new float[3];
-         float[] q1 = new float[3];
-         float[] q2 = new float[3];
+         float[] p0 = new float[] {0,0,1};
+         float[] p1 = new float[] {1,0,0};
+         float[] p2 = new float[] {0,1,0};
 
+         float[] q0 = new float[] {0,1,0};
+         float[] q1 = new float[] {0,0,1};
+         float[] q2 = new float[] {-1,0,0};
          verts     = new float[12*lod*lod];
          normals   = new float[12*lod*lod];
          pntsIndex = new int[8*(lod-1)*lod];
@@ -246,25 +246,6 @@ public class ScalarTemplates
 
          for (i=0;i<4*(lod-1);i++)
             strips[i]=2*lod;
-         p0[0]=0.f;
-         p0[1]=0.f;
-         p0[2]=1.f;
-         p1[0]=1.f;
-         p1[1]=0.f;
-         p1[2]=0.f;
-         p2[0]=0.f;
-         p2[1]=1.f;
-         p2[2]=0.f;
-
-         q0[0]=0.f;
-         q0[1]=1.f;
-         q0[2]=0.f;
-         q1[0]=0.f;
-         q1[1]=0.f;
-         q1[2]=1.f;
-         q2[0]=-1.f;
-         q2[1]=0.f;
-         q2[2]=0.f;
 
          k  = 0;
          k0 = k;

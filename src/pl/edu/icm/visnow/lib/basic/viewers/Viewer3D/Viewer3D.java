@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
 /* VisNow
    Copyright (C) 2006-2013 University of Warsaw, ICM
 
@@ -14,9 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the 
-University of Warsaw, Interdisciplinary Centre for Mathematical and 
-Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
 
 Linking this library statically or dynamically with other modules is
 making a combined work based on this library.  Thus, the terms and
@@ -34,11 +35,13 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
+//</editor-fold>
 
 package pl.edu.icm.visnow.lib.basic.viewers.Viewer3D;
 
 import java.util.Vector;
 import javax.swing.JFrame;
+import pl.edu.icm.visnow.application.application.Application;
 import pl.edu.icm.visnow.engine.core.InputEgg;
 import pl.edu.icm.visnow.engine.core.LinkFace;
 import pl.edu.icm.visnow.engine.core.ModuleCore;
@@ -58,7 +61,7 @@ public class Viewer3D extends ModuleCore
 {
    public static InputEgg[] inputEggs = null;
    public static OutputEgg[] outputEggs = null;
-   private static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Viewer3D.class);
+   private static org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(Viewer3D.class);
    protected Display3DFrame window = null;
    protected Display3DPanel displayPanel = null;
    protected Display3DControlsPanel controlsPanel = null;
@@ -69,8 +72,9 @@ public class Viewer3D extends ModuleCore
     */
    public Viewer3D()
    {
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
+         @Override
          public void run()
          {
             ui = new GUI();
@@ -83,27 +87,34 @@ public class Viewer3D extends ModuleCore
             displayPanel.setControlsFrame(null);
             displayPanel.setControlsPanel(controlsPanel);
             window.setVisible(true);
+            setPanel(ui);
          }
       });
-      setPanel(ui);
    }
    
+   @Override
+    public void setApplication(Application application) {
+        super.setApplication(application);
+        displayPanel.setApplication(application);
+    }   
+
    @Override
    public void onInitFinished()
    {
       displayPanel.setName(getName());
    }
 
-   public static boolean isViewer()
+   @Override
+   public boolean isViewer()
    {
       return true;
    }
-   
+
    void showWindow()
    {
       window.setVisible(true);
    }
-   
+
    void setTransientControlsFrame(JFrame transientControlsFrame)
    {
       displayPanel.setTransientControlsFrame(transientControlsFrame);
@@ -140,11 +151,11 @@ public class Viewer3D extends ModuleCore
    @Override
    public void onActive()
    {
-       
+
       window.getDisplayPanel().setPostRenderSilent(true);
 
-      if(!window.isVisible()) window.setVisible(true);                 
-      
+      if(!window.isVisible()) window.setVisible(true);
+
       window.getDisplayPanel().clearAllGeometry();
       Vector ins = getInputValues("inObject");
       for (Object obj : ins)
@@ -152,7 +163,7 @@ public class Viewer3D extends ModuleCore
                  ((VNGeometryObject) obj).getGeometryObject() != null)
             window.getDisplayPanel().addChild(
                     ((VNGeometryObject) obj).getGeometryObject());
-      
+
       window.getDisplayPanel().setPostRenderSilent(false);
       //if(window.getDisplayPanel().isStoringFrames())
       if(window.getDisplayPanel().isWaitingForExternalTrigger())

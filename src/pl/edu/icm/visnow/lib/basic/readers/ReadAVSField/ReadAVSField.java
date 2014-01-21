@@ -66,13 +66,15 @@ public class ReadAVSField extends RegularOutFieldVisualizationModule
       parameters = params = new ReaderParams();
       params.addChangeListener(new ChangeListener()
       {
+         @Override
          public void stateChanged(ChangeEvent evt)
          {
             startAction();
          }
       });
-      SwingInstancer.swingRun(new Runnable()
+      SwingInstancer.swingRunAndWait(new Runnable()
       {
+         @Override
          public void run()
          {
             computeUI = new GUI("Field reader", "Field file", "fld", "FLD");
@@ -83,8 +85,8 @@ public class ReadAVSField extends RegularOutFieldVisualizationModule
       setPanel(ui);
 }
 
-   public static boolean isGenerator()
-   {
+   @Override
+   public boolean isGenerator() {
       return true;
    }
    

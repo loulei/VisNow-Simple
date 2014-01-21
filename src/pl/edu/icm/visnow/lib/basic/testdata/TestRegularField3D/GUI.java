@@ -40,6 +40,7 @@ package pl.edu.icm.visnow.lib.basic.testdata.TestRegularField3D;
 import java.util.ArrayList;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import pl.edu.icm.visnow.system.main.VisNow;
 
 /**
  *
@@ -47,10 +48,11 @@ import javax.swing.event.ChangeListener;
  */
 public class GUI extends javax.swing.JPanel
 {
-   
+   private int numThreads = 1;
    /** Creates new form SliceUI */
    public GUI()
    {
+      numThreads = VisNow.availableProcessors();
       initComponents();
       dimSlider.setVal(50);
    }
@@ -64,7 +66,7 @@ public class GUI extends javax.swing.JPanel
 
    public int getNThreads()
    {
-      return (Integer)threadSpinner.getValue();
+      return numThreads;
    }
    
    /** This method is called from within the constructor to
@@ -74,59 +76,20 @@ public class GUI extends javax.swing.JPanel
     */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
-        jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        threadSpinner = new javax.swing.JSpinner();
         dimSlider = new pl.edu.icm.visnow.gui.widgets.EnhancedIntSlider();
 
-        setMinimumSize(new java.awt.Dimension(180, 70));
-        setPreferredSize(new java.awt.Dimension(200, 75));
-        setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1.0;
-        add(jPanel1, gridBagConstraints);
-
-        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        jLabel2.setText("threads");
-        jLabel2.setMaximumSize(new java.awt.Dimension(45, 15));
-        jLabel2.setMinimumSize(new java.awt.Dimension(45, 15));
-        jLabel2.setPreferredSize(new java.awt.Dimension(45, 15));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
-        add(jLabel2, gridBagConstraints);
-
-        threadSpinner.setModel(new javax.swing.SpinnerNumberModel(Runtime.getRuntime().availableProcessors(), 1, Runtime.getRuntime().availableProcessors(), 1));
-        threadSpinner.setValue(Runtime.getRuntime().availableProcessors());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        add(threadSpinner, gridBagConstraints);
+        setLayout(new java.awt.BorderLayout());
 
         dimSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "resolution", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
         dimSlider.setMax(300);
-        dimSlider.setMinimumSize(new java.awt.Dimension(90, 60));
-        dimSlider.setPreferredSize(new java.awt.Dimension(200, 62));
+        dimSlider.setMin(3);
         dimSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 dimSliderStateChanged(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(dimSlider, gridBagConstraints);
+        add(dimSlider, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
    private void dimSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_dimSliderStateChanged
@@ -170,9 +133,6 @@ public class GUI extends javax.swing.JPanel
       
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private pl.edu.icm.visnow.gui.widgets.EnhancedIntSlider dimSlider;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JSpinner threadSpinner;
     // End of variables declaration//GEN-END:variables
    
 }

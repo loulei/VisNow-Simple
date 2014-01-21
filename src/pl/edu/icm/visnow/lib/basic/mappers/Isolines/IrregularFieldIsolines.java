@@ -104,8 +104,7 @@ public class IrregularFieldIsolines
                coords[k] = tCoords[i][l];
          }
       }
-      outField = new IrregularField();
-      outField.setNNodes(nVerts);
+      outField = new IrregularField(nVerts);
       outField.setNSpace(3);
       outField.setCoords(coords);
       CellSet cellSet = new CellSet(inField.getName()+"isolines");

@@ -42,6 +42,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.AbstractCellEditor;
 import javax.swing.Icon;
@@ -273,7 +274,7 @@ public class GUI extends javax.swing.JPanel
    {
       params.setActive(false);
       this.inField = inField;
-      Vector<DataArray> inData = inField.getData();
+      ArrayList<DataArray> inData = inField.getData();
       indices = new int[inData.size()];
       componentTableModel = new ComponentTableModel();
       int n = 0;
@@ -718,7 +719,7 @@ public class GUI extends javax.swing.JPanel
    private void fontSizeSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_fontSizeSliderStateChanged
    {//GEN-HEADEREND:event_fontSizeSliderStateChanged
        if (params != null && !fontSizeSlider.getValueIsAdjusting())
-          params.setFontSize(fontSizeSlider.getValue());
+          params.setFontSize(fontSizeSlider.getValue() / 1000.f);
    }//GEN-LAST:event_fontSizeSliderStateChanged
 
    private void lineWidthSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_lineWidthSliderStateChanged

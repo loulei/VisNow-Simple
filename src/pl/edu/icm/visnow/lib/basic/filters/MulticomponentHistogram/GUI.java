@@ -114,31 +114,20 @@ public class GUI extends javax.swing.JPanel {
         ySizeSP = new javax.swing.JSpinner();
         xSizeSP = new javax.swing.JSpinner();
         zSizeSP = new javax.swing.JSpinner();
+        roundByteCB = new javax.swing.JCheckBox();
         binningPanel = new javax.swing.JPanel();
         binningTP = new javax.swing.JTabbedPane();
         binByComponentsPanel = new javax.swing.JPanel();
-        xCompPanel = new javax.swing.JPanel();
         xCompSelector = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
-        xCompLabel = new javax.swing.JLabel();
-        yCompPanel = new javax.swing.JPanel();
         yCompSelector = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
-        yCompLabel = new javax.swing.JLabel();
-        zCompPanel = new javax.swing.JPanel();
         zCompSelector = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
-        zCompLabel = new javax.swing.JLabel();
         outGeometryCB = new javax.swing.JCheckBox();
-        jPanel8 = new javax.swing.JPanel();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         binByCoordsPanel = new javax.swing.JPanel();
-        xCoordPanel = new javax.swing.JPanel();
-        xCoordLabel = new javax.swing.JLabel();
         xCoordCB = new javax.swing.JComboBox();
-        yCoordPanel = new javax.swing.JPanel();
-        yCoordLabel = new javax.swing.JLabel();
         yCoordCB = new javax.swing.JComboBox();
-        zCoordPanel = new javax.swing.JPanel();
-        zCoordLabel = new javax.swing.JLabel();
         zCoordCB = new javax.swing.JComboBox();
-        jPanel1 = new javax.swing.JPanel();
+        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         logCB = new javax.swing.JCheckBox();
         dropbgCB = new javax.swing.JCheckBox();
         jLabel2 = new javax.swing.JLabel();
@@ -152,8 +141,6 @@ public class GUI extends javax.swing.JPanel {
         filterTable = new javax.swing.JTable();
         computeButton = new javax.swing.JButton();
 
-        setMinimumSize(new java.awt.Dimension(200, 400));
-        setPreferredSize(new java.awt.Dimension(200, 400));
         setLayout(new java.awt.GridBagLayout());
 
         basicPanel.setLayout(new java.awt.GridBagLayout());
@@ -163,7 +150,7 @@ public class GUI extends javax.swing.JPanel {
 
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setFont(new java.awt.Font("Dialog", 0, 11));
+        jLabel1.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         jLabel1.setText("Dimensions:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -171,7 +158,7 @@ public class GUI extends javax.swing.JPanel {
         jPanel3.add(jLabel1, gridBagConstraints);
 
         buttonGroup1.add(d1RB);
-        d1RB.setFont(new java.awt.Font("Dialog", 0, 11));
+        d1RB.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         d1RB.setText("1D");
         d1RB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -183,7 +170,7 @@ public class GUI extends javax.swing.JPanel {
         jPanel3.add(d1RB, gridBagConstraints);
 
         buttonGroup1.add(d2RB);
-        d2RB.setFont(new java.awt.Font("Dialog", 0, 11));
+        d2RB.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         d2RB.setText("2D");
         d2RB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -195,7 +182,7 @@ public class GUI extends javax.swing.JPanel {
         jPanel3.add(d2RB, gridBagConstraints);
 
         buttonGroup1.add(d3RB);
-        d3RB.setFont(new java.awt.Font("Dialog", 0, 11));
+        d3RB.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         d3RB.setText("3D");
         d3RB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -215,7 +202,7 @@ public class GUI extends javax.swing.JPanel {
 
         jPanel4.setLayout(new java.awt.GridBagLayout());
 
-        xSizeLabel.setFont(new java.awt.Font("Dialog", 0, 11));
+        xSizeLabel.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         xSizeLabel.setText("x");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -223,7 +210,7 @@ public class GUI extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(1, 3, 0, 3);
         jPanel4.add(xSizeLabel, gridBagConstraints);
 
-        ySizeLabel.setFont(new java.awt.Font("Dialog", 0, 11));
+        ySizeLabel.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         ySizeLabel.setText("y");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -232,7 +219,7 @@ public class GUI extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(1, 3, 0, 3);
         jPanel4.add(ySizeLabel, gridBagConstraints);
 
-        zSizeLabel.setFont(new java.awt.Font("Dialog", 0, 11));
+        zSizeLabel.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         zSizeLabel.setText("z");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
@@ -304,8 +291,23 @@ public class GUI extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
         resolutionPanel.add(jPanel4, gridBagConstraints);
+
+        roundByteCB.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
+        roundByteCB.setText("round dims to 32 for byte data");
+        roundByteCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                roundByteCBActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
+        resolutionPanel.add(roundByteCB, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
@@ -314,30 +316,18 @@ public class GUI extends javax.swing.JPanel {
         basicPanel.add(resolutionPanel, gridBagConstraints);
 
         binningPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "binning", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12))); // NOI18N
-        binningPanel.setMinimumSize(new java.awt.Dimension(200, 260));
-        binningPanel.setPreferredSize(new java.awt.Dimension(200, 260));
         binningPanel.setLayout(new java.awt.GridBagLayout());
 
-        binningTP.setFont(new java.awt.Font("Dialog", 0, 11));
-        binningTP.setMinimumSize(new java.awt.Dimension(200, 160));
-        binningTP.setPreferredSize(new java.awt.Dimension(200, 160));
+        binningTP.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         binningTP.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 binningTPStateChanged(evt);
             }
         });
 
-        binByComponentsPanel.setMinimumSize(new java.awt.Dimension(100, 100));
-        binByComponentsPanel.setPreferredSize(new java.awt.Dimension(180, 120));
         binByComponentsPanel.setLayout(new java.awt.GridBagLayout());
 
-        xCompPanel.setMinimumSize(new java.awt.Dimension(140, 35));
-        xCompPanel.setPreferredSize(new java.awt.Dimension(180, 35));
-        xCompPanel.setLayout(new java.awt.GridBagLayout());
-
-        xCompSelector.setBorder(null);
-        xCompSelector.setMinimumSize(new java.awt.Dimension(100, 30));
-        xCompSelector.setPreferredSize(new java.awt.Dimension(100, 40));
+        xCompSelector.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "x", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
         xCompSelector.setScalarComponentsOnly(true);
         xCompSelector.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -345,36 +335,14 @@ public class GUI extends javax.swing.JPanel {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        xCompPanel.add(xCompSelector, gridBagConstraints);
-
-        xCompLabel.setFont(new java.awt.Font("Dialog", 0, 11));
-        xCompLabel.setText("x");
-        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(10, 5, 0, 5);
-        xCompPanel.add(xCompLabel, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
-        binByComponentsPanel.add(xCompPanel, gridBagConstraints);
+        binByComponentsPanel.add(xCompSelector, gridBagConstraints);
 
-        yCompPanel.setMinimumSize(new java.awt.Dimension(140, 35));
-        yCompPanel.setPreferredSize(new java.awt.Dimension(180, 35));
-        yCompPanel.setLayout(new java.awt.GridBagLayout());
-
-        yCompSelector.setBorder(null);
-        yCompSelector.setMinimumSize(new java.awt.Dimension(100, 30));
-        yCompSelector.setPreferredSize(new java.awt.Dimension(100, 40));
+        yCompSelector.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "y", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
         yCompSelector.setScalarComponentsOnly(true);
         yCompSelector.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -382,37 +350,14 @@ public class GUI extends javax.swing.JPanel {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        yCompPanel.add(yCompSelector, gridBagConstraints);
-
-        yCompLabel.setFont(new java.awt.Font("Dialog", 0, 11));
-        yCompLabel.setText("y");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(10, 5, 0, 5);
-        yCompPanel.add(yCompLabel, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        binByComponentsPanel.add(yCompPanel, gridBagConstraints);
+        binByComponentsPanel.add(yCompSelector, gridBagConstraints);
 
-        zCompPanel.setMinimumSize(new java.awt.Dimension(140, 35));
-        zCompPanel.setPreferredSize(new java.awt.Dimension(180, 35));
-        zCompPanel.setLayout(new java.awt.GridBagLayout());
-
-        zCompSelector.setBorder(null);
-        zCompSelector.setMinimumSize(new java.awt.Dimension(100, 30));
-        zCompSelector.setPreferredSize(new java.awt.Dimension(100, 40));
+        zCompSelector.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "z", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
         zCompSelector.setScalarComponentsOnly(true);
         zCompSelector.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -420,29 +365,12 @@ public class GUI extends javax.swing.JPanel {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        zCompPanel.add(zCompSelector, gridBagConstraints);
-
-        zCompLabel.setFont(new java.awt.Font("Dialog", 0, 11));
-        zCompLabel.setText("z");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(10, 5, 0, 5);
-        zCompPanel.add(zCompLabel, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        binByComponentsPanel.add(zCompPanel, gridBagConstraints);
+        binByComponentsPanel.add(zCompSelector, gridBagConstraints);
 
         outGeometryCB.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         outGeometryCB.setText("set geometry to data ranges");
@@ -454,147 +382,67 @@ public class GUI extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 2, 0, 0);
         binByComponentsPanel.add(outGeometryCB, gridBagConstraints);
-
-        jPanel8.setMinimumSize(new java.awt.Dimension(160, 10));
-        jPanel8.setPreferredSize(new java.awt.Dimension(180, 100));
-        jPanel8.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        binByComponentsPanel.add(jPanel8, gridBagConstraints);
+        binByComponentsPanel.add(filler1, gridBagConstraints);
 
         binningTP.addTab("by components", binByComponentsPanel);
 
         binByCoordsPanel.setLayout(new java.awt.GridBagLayout());
 
-        xCoordPanel.setLayout(new java.awt.GridBagLayout());
-
-        xCoordLabel.setFont(new java.awt.Font("Dialog", 0, 11));
-        xCoordLabel.setText("x");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(8, 5, 0, 5);
-        xCoordPanel.add(xCoordLabel, gridBagConstraints);
-
-        xCoordCB.setFont(new java.awt.Font("Dialog", 0, 12));
+        xCoordCB.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        xCoordCB.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "x", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
         xCoordCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 xCoordCBActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-        xCoordPanel.add(xCoordCB, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
-        binByCoordsPanel.add(xCoordPanel, gridBagConstraints);
-
-        yCoordPanel.setLayout(new java.awt.GridBagLayout());
-
-        yCoordLabel.setFont(new java.awt.Font("Dialog", 0, 11));
-        yCoordLabel.setText("y");
-        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(8, 5, 0, 5);
-        yCoordPanel.add(yCoordLabel, gridBagConstraints);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        binByCoordsPanel.add(xCoordCB, gridBagConstraints);
 
-        yCoordCB.setFont(new java.awt.Font("Dialog", 0, 12));
+        yCoordCB.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        yCoordCB.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "y", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
         yCoordCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 yCoordCBActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-        yCoordPanel.add(yCoordCB, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        binByCoordsPanel.add(yCoordPanel, gridBagConstraints);
+        binByCoordsPanel.add(yCoordCB, gridBagConstraints);
 
-        zCoordPanel.setLayout(new java.awt.GridBagLayout());
-
-        zCoordLabel.setFont(new java.awt.Font("Dialog", 0, 11));
-        zCoordLabel.setText("z");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(8, 5, 0, 5);
-        zCoordPanel.add(zCoordLabel, gridBagConstraints);
-
-        zCoordCB.setFont(new java.awt.Font("Dialog", 0, 12));
+        zCoordCB.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        zCoordCB.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "z", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
         zCoordCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 zCoordCBActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-        zCoordPanel.add(zCoordCB, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        binByCoordsPanel.add(zCoordPanel, gridBagConstraints);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 229, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 39, Short.MAX_VALUE)
-        );
-
+        binByCoordsPanel.add(zCoordCB, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        binByCoordsPanel.add(jPanel1, gridBagConstraints);
+        binByCoordsPanel.add(filler2, gridBagConstraints);
 
         binningTP.addTab("by coordinates", binByCoordsPanel);
 
@@ -622,7 +470,7 @@ public class GUI extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(3, 5, 0, 0);
         binningPanel.add(logCB, gridBagConstraints);
 
-        dropbgCB.setFont(new java.awt.Font("Dialog", 0, 11));
+        dropbgCB.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         dropbgCB.setText("drop background count");
         dropbgCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -640,7 +488,7 @@ public class GUI extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 0);
         binningPanel.add(dropbgCB, gridBagConstraints);
 
-        jLabel2.setFont(new java.awt.Font("Dialog", 0, 11));
+        jLabel2.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         jLabel2.setText("log constant");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -649,7 +497,7 @@ public class GUI extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(3, 27, 0, 0);
         binningPanel.add(jLabel2, gridBagConstraints);
 
-        logConstantTF.setFont(new java.awt.Font("Dialog", 0, 11));
+        logConstantTF.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         logConstantTF.setText("1.0");
         logConstantTF.setMinimumSize(new java.awt.Dimension(60, 17));
         logConstantTF.setPreferredSize(new java.awt.Dimension(60, 17));
@@ -890,6 +738,8 @@ public class GUI extends javax.swing.JPanel {
                 params.setBinning(Params.BINNING_BY_COORDINATES);
                 break;
         }
+        roundByteCB.setEnabled(params.getBinning() == Params.BINNING_BY_COMPONENTS);
+        
     }//GEN-LAST:event_binningTPStateChanged
     
     private void logCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logCBActionPerformed
@@ -931,6 +781,10 @@ public class GUI extends javax.swing.JPanel {
         params.setOutGeometryToData(outGeometryCB.isSelected());
     }//GEN-LAST:event_outGeometryCBActionPerformed
 
+    private void roundByteCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundByteCBActionPerformed
+        params.setRoundByteDimsTo32(roundByteCB.isSelected());
+    }//GEN-LAST:event_roundByteCBActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel advancedPanel;
     private javax.swing.JPanel basicPanel;
@@ -944,14 +798,14 @@ public class GUI extends javax.swing.JPanel {
     private javax.swing.JRadioButton d2RB;
     private javax.swing.JRadioButton d3RB;
     private javax.swing.JCheckBox dropbgCB;
+    private javax.swing.Box.Filler filler1;
+    private javax.swing.Box.Filler filler2;
     private javax.swing.JTable filterTable;
     private javax.swing.JPanel filtersPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -962,28 +816,17 @@ public class GUI extends javax.swing.JPanel {
     private javax.swing.JTable operationsTable;
     private javax.swing.JCheckBox outGeometryCB;
     private javax.swing.JPanel resolutionPanel;
-    private javax.swing.JLabel xCompLabel;
-    private javax.swing.JPanel xCompPanel;
+    private javax.swing.JCheckBox roundByteCB;
     private pl.edu.icm.visnow.lib.gui.DataComponentSelector xCompSelector;
     private javax.swing.JComboBox xCoordCB;
-    private javax.swing.JLabel xCoordLabel;
-    private javax.swing.JPanel xCoordPanel;
     private javax.swing.JLabel xSizeLabel;
     private javax.swing.JSpinner xSizeSP;
-    private javax.swing.JLabel yCompLabel;
-    private javax.swing.JPanel yCompPanel;
     private pl.edu.icm.visnow.lib.gui.DataComponentSelector yCompSelector;
     private javax.swing.JComboBox yCoordCB;
-    private javax.swing.JLabel yCoordLabel;
-    private javax.swing.JPanel yCoordPanel;
     private javax.swing.JLabel ySizeLabel;
     private javax.swing.JSpinner ySizeSP;
-    private javax.swing.JLabel zCompLabel;
-    private javax.swing.JPanel zCompPanel;
     private pl.edu.icm.visnow.lib.gui.DataComponentSelector zCompSelector;
     private javax.swing.JComboBox zCoordCB;
-    private javax.swing.JLabel zCoordLabel;
-    private javax.swing.JPanel zCoordPanel;
     private javax.swing.JLabel zSizeLabel;
     private javax.swing.JSpinner zSizeSP;
     // End of variables declaration//GEN-END:variables
@@ -996,7 +839,7 @@ public class GUI extends javax.swing.JPanel {
     public void setInField(Field field) {
         this.inField = field;
         
-        final Vector<DataArraySchema> components = inField.getSchema().getComponentSchemas();
+        final ArrayList<DataArraySchema> components = inField.getSchema().getComponentSchemas();
         int nComps = components.size();
         compIndices = new int[nComps];
         nScalarComps = 0;
@@ -1075,6 +918,7 @@ public class GUI extends javax.swing.JPanel {
         xSizeSP.setValue(size[0]);
         ySizeSP.setValue(size[1]);
         zSizeSP.setValue(size[2]);
+        roundByteCB.setSelected(params.isRoundByteDimsTo32());
         updateBinning();
         updateComponents();
         logCB.setSelected(params.isCountLogScale());
@@ -1097,10 +941,10 @@ public class GUI extends javax.swing.JPanel {
     private void updateNDims() {
         boolean oldSilent = silent;
         silent = true;
-        xCompPanel.setVisible(true);
+        xCompSelector.setVisible(true);
         xSizeLabel.setVisible(true);
         xSizeSP.setVisible(true);
-        xCoordPanel.setVisible(true);
+        xCoordCB.setVisible(true);
         switch (params.getNDims()) {
             case 1:
                 d1RB.setSelected(true);
@@ -1108,10 +952,10 @@ public class GUI extends javax.swing.JPanel {
                 ySizeSP.setVisible(false);
                 zSizeLabel.setVisible(false);
                 zSizeSP.setVisible(false);
-                yCompPanel.setVisible(false);
-                zCompPanel.setVisible(false);
-                yCoordPanel.setVisible(false);
-                zCoordPanel.setVisible(false);
+                yCompSelector.setVisible(false);
+                zCompSelector.setVisible(false);
+                yCoordCB.setVisible(false);
+                zCoordCB.setVisible(false);
                 break;
             case 2:
                 d2RB.setSelected(true);
@@ -1119,10 +963,10 @@ public class GUI extends javax.swing.JPanel {
                 ySizeSP.setVisible(true);
                 zSizeLabel.setVisible(false);
                 zSizeSP.setVisible(false);
-                yCompPanel.setVisible(true);
-                zCompPanel.setVisible(false);
-                yCoordPanel.setVisible(true);
-                zCoordPanel.setVisible(false);
+                yCompSelector.setVisible(true);
+                zCompSelector.setVisible(false);
+                yCoordCB.setVisible(true);
+                zCoordCB.setVisible(false);
                 break;
             case 3:
                 d3RB.setSelected(true);
@@ -1130,10 +974,10 @@ public class GUI extends javax.swing.JPanel {
                 ySizeSP.setVisible(true);
                 zSizeLabel.setVisible(true);
                 zSizeSP.setVisible(true);
-                yCompPanel.setVisible(true);
-                zCompPanel.setVisible(true);
-                yCoordPanel.setVisible(true);
-                zCoordPanel.setVisible(true);
+                yCompSelector.setVisible(true);
+                zCompSelector.setVisible(true);
+                yCoordCB.setVisible(true);
+                zCoordCB.setVisible(true);
                 break;
         }
         silent = oldSilent;
@@ -1150,6 +994,7 @@ public class GUI extends javax.swing.JPanel {
                 binningTP.setSelectedIndex(1);
                 break;
         }
+        roundByteCB.setEnabled(params.getBinning() == Params.BINNING_BY_COMPONENTS);
         silent = oldSilent;
     }
     

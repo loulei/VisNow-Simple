@@ -38,14 +38,26 @@ exception statement from your version. */
 package pl.edu.icm.visnow.lib.basic.viewers.FieldViewer3D.Geometry;
 
 import java.util.ArrayList;
+import pl.edu.icm.visnow.datasets.CellArray;
+import pl.edu.icm.visnow.datasets.CellSet;
+import pl.edu.icm.visnow.datasets.IrregularField;
 import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
 import pl.edu.icm.visnow.datasets.RegularField;
+import pl.edu.icm.visnow.datasets.VNObject;
+import pl.edu.icm.visnow.datasets.cells.Cell;
+import pl.edu.icm.visnow.datasets.dataarrays.BitArray;
+import pl.edu.icm.visnow.datasets.dataarrays.BooleanDataArray;
+import pl.edu.icm.visnow.datasets.dataarrays.ComplexDataArray;
+import pl.edu.icm.visnow.datasets.dataarrays.LogicDataArray;
+import pl.edu.icm.visnow.datasets.dataarrays.ObjectDataArray;
+import pl.edu.icm.visnow.datasets.dataarrays.StringDataArray;
 
 /**
  *
- * @author Krzysztof S. Nowinski
- *         Warsaw University, ICM
+ * @author Bartosz Borucki (babor@icm.edu.pl), University of Warsaw, ICM
+ *
  */
+
 public class GeometryParams {
 
     private ArrayList<PointDescriptor> pointsDescriptors = new ArrayList<PointDescriptor>();
@@ -70,6 +82,9 @@ public class GeometryParams {
 
     private String nextPointName = null;
     private boolean blockAdding = false;
+    
+    private int currentClassId = -1;
+    private boolean addFieldData = false;
 
     public GeometryParams() {
     }
@@ -82,38 +97,8 @@ public class GeometryParams {
         return points;
     }
 
-    public RegularField getPointsGeometryField() {
-        int nPoints = pointsDescriptors.size();
-        if (nPoints < 1) {
-            return null;
-        }
-
-        RegularField field = new RegularField();
-        int[] dims = new int[1];
-        dims[0] = nPoints;
-        field.setDims(dims);
-        field.setNSpace(3);
-
-        float[] coords = new float[nPoints * 3];
-        int[] data = new int[nPoints];
-        String[] names = new String[nPoints];
-        float[] p;
-        for (int i = 0; i < data.length; i++) {
-            p = pointsDescriptors.get(i).getWorldCoords();
-            data[i] = i + 1;
-            coords[3 * i] = p[0];
-            coords[3 * i + 1] = p[1];
-            coords[3 * i + 2] = p[2];
-            names[i] = pointsDescriptors.get(i).getName();
-        }
-
-        field.setCoords(coords);
-        DataArray da = DataArray.create(data, 1, "points");
-        da.setUserData(names);
-        field.addData(da);
-
-
-        return field;
+    public IrregularField getPointsGeometryField(boolean addFieldDataComponents) {
+        return GeometryFieldConverter.pac2field(pointsDescriptors, connectionDescriptors, currentClassId != -1, addFieldDataComponents, inField);
     }
 
     public int modifyPoint(int n, int[] p) {
@@ -192,10 +177,10 @@ public class GeometryParams {
         }
 
         if(nextPointName != null) {
-            pointsDescriptors.add(new PointDescriptor(new String(nextPointName), p, c));
+            pointsDescriptors.add(new PointDescriptor(new String(nextPointName), p, c, currentClassId));
             nextPointName = null;
         } else {
-            pointsDescriptors.add(new PointDescriptor(p, c));
+            pointsDescriptors.add(new PointDescriptor(p, c, currentClassId));
         }
 //        int[] tmp = new int[pointsDescriptors.size()];
 //        int[] dims = inField.getDims();
@@ -215,7 +200,21 @@ public class GeometryParams {
             return -1;
         }
         float[] c = inField.getGridCoords((float) (p[0]), (float) (p[1]), (float) (p[2]));
-        pointsDescriptors.add(new PointDescriptor(name, p, c));
+        pointsDescriptors.add(new PointDescriptor(name, p, c, currentClassId));
+        int out = pointsDescriptors.size()-1;
+        fireGeometryParamsChanged(GeometryParamsEvent.TYPE_POINT_ADDED);
+        return out;
+    }
+    
+    public int addPoint(String name, int[] p, int classId) {
+        if (blockAdding || inField == null) {
+            return -1;
+        }
+        float[] c = inField.getGridCoords((float) (p[0]), (float) (p[1]), (float) (p[2]));
+        pointsDescriptors.add(new PointDescriptor(name, p, c, classId));
+        if(classId >= currentClassId)
+            currentClassId = classId + 1;
+        
         int out = pointsDescriptors.size()-1;
         fireGeometryParamsChanged(GeometryParamsEvent.TYPE_POINT_ADDED);
         return out;
@@ -236,12 +235,36 @@ public class GeometryParams {
             fp[1] = tmp[1];
             fp[2] = inField.getAffine()[3][2];
         }
-        pointsDescriptors.add(new PointDescriptor(name, p, fp));
+        pointsDescriptors.add(new PointDescriptor(name, p, fp, currentClassId));
         int out = pointsDescriptors.size()-1;
         fireGeometryParamsChanged(GeometryParamsEvent.TYPE_POINT_ADDED);
         return out;
     }
 
+    public int addPoint(String name, float[] c, int classId) {
+        if (blockAdding || inField == null || c == null) {
+            return -1;
+        }
+        int[] p = inField.getIndices(c[0], c[1], c[2]);
+        float[] fp = null;
+        if(inField.getDims().length == 3) {
+            fp = inField.getGridCoords(p[0], p[1], p[2]);
+        } else if(inField.getDims().length == 2) {
+            float[] tmp = inField.getGridCoords(p[0], p[1]);
+            fp = new float[3];
+            fp[0] = tmp[0];
+            fp[1] = tmp[1];
+            fp[2] = inField.getAffine()[3][2];
+        }
+        pointsDescriptors.add(new PointDescriptor(name, p, fp, classId));
+        if(classId >= currentClassId)
+            currentClassId = classId + 1;
+        
+        int out = pointsDescriptors.size()-1;
+        fireGeometryParamsChanged(GeometryParamsEvent.TYPE_POINT_ADDED);
+        return out;
+    }
+    
     public int[] addPoint(CalculablePoint cp) {
         if(cp == null)
             return null;
@@ -267,15 +290,23 @@ public class GeometryParams {
         return outa;
     }
 
-
     public int[] addPoints(String[] name, int[][] p) {
+        return addPoints(name, p, null);
+    }
+
+    public int[] addPoints(String[] name, int[][] p, int[] classes) {
         if (blockAdding || inField == null || name == null || p == null || name.length != p.length) {
             return null;
         }
         int[] out = new int[p.length];
+        int cId = -1;
         for (int i = 0; i < p.length; i++) {
             float[] c = inField.getGridCoords((float) (p[i][0]), (float) (p[i][1]), (float) (p[i][2]));
-            pointsDescriptors.add(new PointDescriptor(name[i], p[i], c));
+            if(classes != null) 
+                cId = classes[i];
+            pointsDescriptors.add(new PointDescriptor(name[i], p[i], c, cId));
+            if(cId >= currentClassId)
+                currentClassId = cId + 1;
             out[i] = pointsDescriptors.size()-1;
         }
 
@@ -296,6 +327,19 @@ public class GeometryParams {
         }
         return out;
     }
+    
+    public int[] addPoints(float[][] p) {
+        if (blockAdding || inField == null || p == null) {
+            return null;
+        }
+
+        int[] out = new int[p.length];
+        for (int i = 0; i < p.length; i++) {
+            out[i] = addPoint(p[i]);            
+        }
+        return out;
+    }
+    
 
     public int addPoint(float[] c) {
         if (blockAdding || inField == null) {
@@ -304,10 +348,10 @@ public class GeometryParams {
         int[] p = inField.getIndices(c[0], c[1], c[2]);
         float[] fp = inField.getGridCoords(p[0], p[1], p[2]);
         if(nextPointName != null) {
-            pointsDescriptors.add(new PointDescriptor(new String(nextPointName), p, fp));
+            pointsDescriptors.add(new PointDescriptor(new String(nextPointName), p, fp, currentClassId));
             nextPointName = null;
         } else {
-            pointsDescriptors.add(new PointDescriptor(p, fp));
+            pointsDescriptors.add(new PointDescriptor(p, fp, currentClassId));
         }
         int out = pointsDescriptors.size()-1;
         fireGeometryParamsChanged(GeometryParamsEvent.TYPE_POINT_ADDED);
@@ -321,10 +365,10 @@ public class GeometryParams {
         int[] p = inField.getIndices(c[0], c[1], c[2]);
         float[] fp = inField.getGridCoords(p[0], p[1], p[2]);
         if(nextPointName != null) {
-            pointsDescriptors.add(new PointDescriptor(new String(nextPointName), p, fp));
+            pointsDescriptors.add(new PointDescriptor(new String(nextPointName), p, fp, currentClassId));
             nextPointName = null;
         } else {
-            pointsDescriptors.add(new PointDescriptor(p, fp));
+            pointsDescriptors.add(new PointDescriptor(p, fp, currentClassId));
         }
         if(p0 != null && vv != null)
             slicesDescriptors.add(new CustomSlicesDescriptor(p0.clone(), vv.clone()));
@@ -604,7 +648,7 @@ public class GeometryParams {
         if(selectedPoints == null || selectedPoints.length == 0) {
             this.selectedPoints = null;
         } else {
-            this.selectedPoints = selectedPoints;
+            this.selectedPoints = selectedPoints.clone();
         }
         fireGeometryParamsChanged(GeometryParamsEvent.TYPE_POINT_SELECTION);
     }
@@ -921,5 +965,39 @@ public class GeometryParams {
                 }
             }
         }
+    }
+
+    /**
+     * @return the currentClassId
+     */
+    public int getCurrentClassId() {
+        return currentClassId;
+    }
+
+    /**
+     * @param currentClassId the currentClassId to set
+     */
+    public void setCurrentClassId(int currentClassId) {
+        if(currentClassId == this.currentClassId)
+            return;
+        
+        boolean fire = (currentClassId == -1 || this.currentClassId == -1);
+        this.currentClassId = currentClassId;
+        if(fire)
+            fireGeometryParamsChanged(GeometryParamsEvent.TYPE_POINT_CLASS);
+    }
+
+    /**
+     * @return the addFieldData
+     */
+    public boolean isAddFieldData() {
+        return addFieldData;
+    }
+
+    /**
+     * @param addFieldData the addFieldData to set
+     */
+    public void setAddFieldData(boolean addFieldData) {
+        this.addFieldData = addFieldData;
     }
 }
