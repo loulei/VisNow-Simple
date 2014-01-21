@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="WriteSTL" class="WriteSTL">
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="NSPACE" value="3"/>
+                <param name="IRREGULAR" value="true"/>
+            </acceptor>
+        </input>
+    </inputs>
+    <outputs>
+    </outputs>
+</module>

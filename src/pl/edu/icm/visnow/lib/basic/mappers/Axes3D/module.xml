@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="axes 3D" class="Axes3D">
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
+            <!--<acceptor>
+                <param name="REGULAR" value="true"/>
+                <param name="NSPACE" value="3"/>
+            </acceptor>
+            <acceptor>
+                <param name="IRREGULAR" value="true"/>
+                <param name="NSPACE" value="3"/>
+            </acceptor>-->
+        </input>
+    </inputs>
+    <outputs>
+        <geometryOutput/>
+    </outputs>    
+    <parameters>
+    </parameters>
+    <description value="creates labelled coordinate axes and box "/>
+</module>

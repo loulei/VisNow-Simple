@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="interpolate to regular mesh" class="InterpolationToRegularField">
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="NSPACE" value="3"/>
+                <param name="REGULAR" value="true"/>
+                <param name="NDIMS" value="3"/>
+                <param name="COORDS" value="true"/>
+            </acceptor>
+            <acceptor>
+                <param name="NSPACE" value="2"/>
+                <param name="REGULAR" value="true"/>
+                <param name="NDIMS" value="2"/>
+                <param name="COORDS" value="true"/>
+            </acceptor>
+            <acceptor>
+                <param name="NSPACE" value="3"/>
+                <param name="IRREGULAR" value="true"/>
+            </acceptor>
+        </input>
+    </inputs>
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+        </output>
+        <geometryOutput/>
+    </outputs>    
+    <parameters>
+    </parameters>
+</module>

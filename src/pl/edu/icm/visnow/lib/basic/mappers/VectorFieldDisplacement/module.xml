@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="coordinate displacement" class="VectorFieldDisplacement">
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
+        </input>
+    </inputs>
+    <outputs>
+        <output name="outRegularField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="REGULAR" value="true"/>
+            </schema>
+        </output>
+        <output name="outIrregularField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <schema>
+                <param name="IRREGULAR" value="true"/>
+            </schema>
+        </output>        
+        <geometryOutput/>
+    </outputs>
+    <description value="displaces each node by the value of a vector component at this node, animates such displacement"/>
+</module>

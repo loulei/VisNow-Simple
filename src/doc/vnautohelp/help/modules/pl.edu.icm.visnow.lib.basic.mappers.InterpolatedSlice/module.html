@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Module - Interpolated Field Slice</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style type="text/css">
+        ol{margin:0;padding:0}.c8{list-style-type:disc;margin:0;padding:0}.c6{max-width:468pt;background-color:#ffffff;padding:72pt 72pt 72pt 72pt}.c1{height:11pt;direction:ltr}.c4{padding-left:0pt;margin-left:36pt}.c2{line-height:1.1500000000000001;direction:ltr}.c7{line-height:1.1400000000000001}.c0{font-weight:bold}.c5{direction:ltr}.c3{line-height:1.1500000000000001}.title{padding-top:0pt;line-height:1.15;text-align:left;color:#000000;font-size:21pt;font-family:"Trebuchet MS";padding-bottom:0pt}.subtitle{padding-top:0pt;line-height:1.15;text-align:left;color:#666666;font-style:italic;font-size:13pt;font-family:"Trebuchet MS";padding-bottom:10pt}li{color:#000000;font-size:11pt;font-family:"Arial"}p{color:#000000;font-size:11pt;margin:0;font-family:"Arial"}h1{padding-top:10pt;line-height:1.15;text-align:left;color:#000000;font-size:16pt;font-family:"Trebuchet MS";padding-bottom:0pt}h2{padding-top:10pt;line-height:1.15;text-align:left;color:#000000;font-size:13pt;font-family:"Trebuchet MS";font-weight:bold;padding-bottom:0pt}h3{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:12pt;font-family:"Trebuchet MS";font-weight:bold;padding-bottom:0pt}h4{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:11pt;text-decoration:underline;font-family:"Trebuchet MS";padding-bottom:0pt}h5{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:11pt;font-family:"Trebuchet MS";padding-bottom:0pt}h6{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-style:italic;font-size:11pt;font-family:"Trebuchet MS";padding-bottom:0pt}        
+    </style>
+  </head>
+  <body>
+      <table width="100%" border="0">
+          <tr>
+              <td align="left">
+                  <img src="../../common/images/horizontal.png" width="200" height="64"/>
+              </td>
+              <td align="right">
+                  <img src="../../common/images/icm_logo.png" width="120" height="64"/>
+              </td>
+          </tr>
+      </table>
+      
+      <h1>Module: Interpolated Field Slice</h1>
+      <p><img src="resources/module_image_pl.edu.icm.visnow.lib.basic.mappers.InterpolatedSlice.png"/><br></p>
+      <p>outputs a planar slice of any type of 3D field (regular or irregular) interpolated to a regular 2D field<br><br></p>
+      <table border="1">          
+      <tr bgcolor="silver">
+         <th width=150 height="40">input port</th>
+         <th width=150>type</th>
+         <th width=500>description</th>
+         <th width=300>data acceptors</th>
+      </tr>
+<tr>
+         <td valign="top">inField</td>
+         <td valign="top"><font color="#0000ff">VNField</font></td>
+         <td valign="top"></td>
+         <td valign="top">Regular Field 3D 3-space <br>Irregular Field 3-space <br></td>
+      </tr>
+<tr bgcolor="silver">
+         <th height="40">output port</th>
+         <th>type</th>
+         <th>description</th>
+         <th>data schemas</th>
+      </tr>
+<tr>
+         <td valign="top">outField</td>
+         <td valign="top"><font color="#0088ff">VNRegularField</font></td>
+         <td valign="top"></td>
+         <td valign="top">Regular Field 2D 3-space with affine geometry <br></td>
+      </tr>
+<tr>
+         <td valign="top">outObj</td>
+         <td valign="top"><font color="#ee0000">VNGeometryObject</font></td>
+         <td valign="top">Output of geometry object for 3D rendered volume</td>
+         <td valign="top"></td>
+      </tr>
+</table>
+      <br><br><br>
+      <hr><p class="c5"><span>&nbsp;</span></p><p class="c5"><span class="c0">INTERPOLATED FIELD SLICE</span></p><hr><p class="c5"><span>&nbsp;</span></p><p class="c1"><span class="c0"></span></p><p class="c5"><span>The interpolated field slice extracts a 2D slice from a field with an arbitrarily positioned slice plane.</span></p><p class="c1"><span></span></p><hr><p class="c5"><span>&nbsp;</span></p><p class="c5"><span class="c0">Input data</span></p><p class="c1"><span class="c0"></span></p><p class="c5"><span>The input field is 3D regular 3-space or irregular 3-space.</span></p><p class="c1"><span></span></p><hr><p class="c5"><span>&nbsp;</span></p><p class="c5"><span class="c0">Output data</span></p><p class="c1"><span class="c0"></span></p><p class="c2"><span>The output field is regular 2D 3-space with affine geometry. A 3D geometry object of the field.</span></p><p class="c1 c3"><span></span></p><hr><p class="c2"><span>&nbsp;</span></p><p class="c2"><span class="c0">Computation parameters</span></p><p class="c1 c3"><span class="c0"></span></p><p class="c2"><img height="190" src="resources/images/image00.jpg" width="238"></p><p class="c1 c3"><span class="c0"></span></p><p class="c2"><span>A radio button panel defines the slice orientation as </span><span class="c0">yz slice</span><span>, </span><span class="c0">xz slice</span><span>&nbsp;or </span><span class="c0">xy slice</span><span>.</span></p><p class="c1 c3"><span></span></p><p class="c2"><span>Two sliders allow to adjust the </span><span class="c0">slice resolution</span><span>&nbsp;in i- and j-direction.</span></p><p class="c1 c3"><span></span></p><p class="c1 c3"><span></span></p><p class="c1 c3"><span></span></p><p class="c1 c3"><span></span></p><p class="c1 c3"><span></span></p><p class="c1 c3"><span></span></p><p class="c1 c3"><span></span></p><p class="c1 c3"><span></span></p><p class="c1 c3"><span></span></p><p class="c2"><img height="318" src="resources/images/image01.jpg" width="245"></p><p class="c1 c3"><span></span></p><p class="c2"><span>The user can carry out several slice transformations:</span></p><p class="c1 c3"><span></span></p><ol class="c8" start="1"><li class="c4 c2"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rotations: </span><span class="c0">x rot</span><span>, </span><span class="c0">y rot</span><span>,</span><span class="c0">&nbsp;z rot</span></li><li class="c4 c2"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;transformations: </span><span class="c0">x trans</span><span>,</span><span class="c0">&nbsp;y trans</span><span>, </span><span class="c0">z trans</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li class="c2 c4"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scaling: </span><span class="c0">scale</span><span>, </span><span class="c0">x scale</span><span>, </span><span class="c0">y scale</span><span>,</span><span class="c0">&nbsp;z scale</span></li></ol><p class="c1 c3"><span></span></p><p class="c2"><span>by using the wheels or typing values into the text fields on the right hand side of the wheels. Clicking on the buttons on the right most side cancels this particular transformation.</span></p><p class="c1 c3"><span></span></p><p class="c2"><span>Push the </span><span class="c0">reset/inherit</span><span>&nbsp;button to withdraw all transformations.</span></p><p class="c1 c3"><span></span></p><p class="c2"><span>The export transformation button prepares output field of the module.</span></p><p class="c1 c3"><span></span></p><hr><p class="c5"><span>&nbsp;</span></p><p class="c5"><span class="c0">Presentation parameters</span></p><p class="c1"><span class="c0"></span></p><p class="c5"><span>Presentation tab contents are described in the common interfaces section unter the </span><span class="c0"><a href="../../common/SimplePresentationPanel.html">Presentation Panel</a></span><span>&nbsp;entry.</span></p><p class="c1"><span></span></p><p class="c1 c7"><span></span></p><p class="c1 c3"><span></span></p><p class="c1 c3"><span></span></p><p class="c1"><span></span></p>
+  </body>
+</html>

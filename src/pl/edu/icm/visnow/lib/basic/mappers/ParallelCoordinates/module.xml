@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="parallel coordinates plot" class="ParallelCoordinates">
+    <inputs>
+       <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING"/>
+    </inputs>
+    <outputs>
+        <geometryOutput/>
+    </outputs>
+    <description value="Creates visualization of variables using Parallel Coordinates"/>
+</module>

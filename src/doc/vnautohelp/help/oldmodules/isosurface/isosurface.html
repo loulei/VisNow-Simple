@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Module - Isosurface</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="../../common/vnstyle.css" />
+  </head>
+  <body>
+      <h1 class="title">Isosurface</h1>
+      <h1 class="titletype">VisNow module</h1>
+      <p>
+          <img class="moduleimage" src="isosurface.png"/>          
+      </p>
+      <p>
+      Maps volumetric data creating surface of constant data values (isosurface).
+      Outputs both a geometry object and an irregular field containing all
+      data components restricted to the surface. A modified marching cube algorithm resolving 
+      incompatibilities of triangulations of neighbor surface fragments is used.
+      </p>
+      <table border="1">
+      <tr bgcolor="silver">
+         <td>input port</td><td>attributes</td><td>type</td> <td>description</td>
+      </tr>
+      <tr>
+         <td>inField</td><td>req, trigger</td><td>any 3D field </td> <td>data to be mapped <br>(must have a numeric scalar component)</td>
+      </tr>
+      <tr bgcolor="silver">
+         <td>output port</td><td>attributes</td><td>type</td> <td>description</td>
+      </tr>
+      <tr>
+         <td>outObj</td><td> </td><td>geometry object</td> <td>color or texture mapped isosurface</td>
+      </tr>
+      <tr>
+         <td>outField</td><td>on demand</td><td>irregular surface field (triangulated)</td> <td>triangulated isosurface <br> with all original data components <br>
+         interpolated to the surface</td>
+      </tr>
+      </table>      
+      on demand, "uncertainty vectors" (normal vectors divided by the gradient norm) are computed. One can then 
+      use glyphs selecting "symmetric segment" glyph template to visualize the range of isosurface locations corresponding to a given uncertainty of the input data.
+  </body>
+</html>

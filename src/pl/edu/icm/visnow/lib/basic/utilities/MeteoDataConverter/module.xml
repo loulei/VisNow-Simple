@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="meteo converter" class="MeteoDataConverter">
+
+    <inputs>
+       <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="REGULAR" value="true"/>
+            </acceptor>
+       </input>
+    </inputs>
+    <outputs>
+        <output name="outRegularField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="REGULAR" value="true"/>
+            </schema>
+        </output>
+        <output name="outIrregularField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <schema>
+                <param name="IRREGULAR" value="true"/>
+            </schema>
+        </output>        
+    </outputs>
+    <description value="converts temperature K->C, pressure Pa->hPa, sets standard min/max values"/>
+</module>

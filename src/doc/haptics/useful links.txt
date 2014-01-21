@@ -1,0 +1,3 @@
+http://old.siggraph.org/education/materials/siggraph_courses/S99/40/course40.pdf - Java3D, behaviors, input devices, picking API etc.
+
+ 

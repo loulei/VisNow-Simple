@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<project name="VN" default="default" basedir=".">
+    <description>Builds, tests, and runs the project VN.</description>
+    <import file="nbproject/build-impl.xml"/>
+    <!--
+
+    There exist several targets which are by default empty and which can be 
+    used for execution of your tasks. These targets are usually executed 
+    before and after some main targets. They are: 
+
+      -pre-init:                 called before initialization of project properties
+      -post-init:                called after initialization of project properties
+      -pre-compile:              called before javac compilation
+      -post-compile:             called after javac compilation
+      -pre-compile-single:       called before javac compilation of single file
+      -post-compile-single:      called after javac compilation of single file
+      -pre-compile-test:         called before javac compilation of JUnit tests
+      -post-compile-test:        called after javac compilation of JUnit tests
+      -pre-compile-test-single:  called before javac compilation of single JUnit test
+      -post-compile-test-single: called after javac compilation of single JUunit test
+      -pre-jar:                  called before JAR building
+      -post-jar:                 called after JAR building
+      -post-clean:               called after cleaning build products
+
+    (Targets beginning with '-' are not intended to be called on their own.)
+
+    Example of inserting an obfuscator after compilation could look like this:
+
+        <target name="-post-compile">
+            <obfuscate>
+                <fileset dir="${build.classes.dir}"/>
+            </obfuscate>
+        </target>
+
+    For list of available properties check the imported 
+    nbproject/build-impl.xml file. 
+
+
+    Another way to customize the build is by overriding existing main targets.
+    The targets of interest are: 
+
+      -init-macrodef-javac:     defines macro for javac compilation
+      -init-macrodef-junit:     defines macro for junit execution
+      -init-macrodef-debug:     defines macro for class debugging
+      -init-macrodef-java:      defines macro for class execution
+      -do-jar-with-manifest:    JAR building (if you are using a manifest)
+      -do-jar-without-manifest: JAR building (if you are not using a manifest)
+      run:                      execution of project 
+      -javadoc-build:           Javadoc generation
+      test-report:              JUnit report generation
+
+    An example of overriding the target for project execution could look like this:
+
+        <target name="run" depends="VN-impl.jar">
+            <exec dir="bin" executable="launcher.exe">
+                <arg file="${dist.jar}"/>
+            </exec>
+        </target>
+
+    Notice that the overridden target depends on the jar target and not only on 
+    the compile target as the regular run target does. Again, for a list of available 
+    properties which you can use, check the target you are overriding in the
+    nbproject/build-impl.xml file. 
+
+    -->
+
+    <target name="-post-jar">
+        <mkdir dir="${dist.dir}/config_templates"/>
+        <copy todir="${dist.dir}/config_templates">
+            <fileset dir="${basedir}/config_templates" includes="*.properties"></fileset>
+        </copy>
+        
+        <mkdir dir="${dist.dir}/lib/native/linux/x86"/>
+        <copy todir="${dist.dir}/lib/native/linux/x86">
+            <fileset dir="${basedir}/native_libraries/linux/x86" includes="**/*.so"></fileset>
+        </copy>
+        
+        <mkdir dir="${dist.dir}/lib/native/linux/x86_64"/>
+        <copy todir="${dist.dir}/lib/native/linux/x86_64">
+            <fileset dir="${basedir}/native_libraries/linux/x86_64" includes="**/*.so"></fileset>
+        </copy>
+        
+        <mkdir dir="${dist.dir}/lib/native/windows/win32"/>
+        <copy todir="${dist.dir}/lib/native/windows/win32">
+            <fileset dir="${basedir}/native_libraries/windows/win32" includes="**/*.dll"></fileset>
+        </copy>
+        
+        <mkdir dir="${dist.dir}/lib/native/windows/win64"/>
+        <copy todir="${dist.dir}/lib/native/windows/win64">
+            <fileset dir="${basedir}/native_libraries/windows/win64" includes="**/*.dll"></fileset>
+        </copy>
+
+        <!-- Licenses copy -->
+        <copy file="${basedir}/license/COPYING" tofile="${dist.dir}/COPYING"/>
+        <copy file="${basedir}/license/LICENSE" tofile="${dist.dir}/LICENSE"/>
+        <copy file="${basedir}/license/LICENSE-Java3D-v1_5_2.txt" tofile="${dist.dir}/LICENSE-Java3D"/>        
+        
+                
+
+        <jar jarfile="${dist.dir}/doc/VNhelp.jar">
+           <zipfileset dir="src/doc/vnautohelp/"/>
+        </jar>        
+        <echo>To use VN documentation separately extract files from "${dist.dir}/doc/VNhelp.jar"</echo>
+        <echo>  </echo>    
+
+    </target>        
+
+    <!--
+    <target name="help" description="Rebuilds project, rebuilds whole help and creates new JAR" depends="jar">
+        <java classname="pl.edu.icm.visnow.autohelp.FullHelpGenerator">
+         <arg value="${help.arg}"/>
+         <classpath>
+           <pathelement location="${dist.jar}"/>
+         </classpath>
+       </java>
+       <antcall target="jar"></antcall>
+    </target>
+    -->
+        
+    <target name="sample-data" description="Builds ZIP file with sample datasets.">
+        <mkdir dir="${dist.dir}/data"/>
+        <zip destfile="${dist.dir}/data/sample_data.zip">
+           <zipfileset dir="sample_data"/>
+        </zip>
+        <echo>Sample datasets stored in ZIP file: "${dist.dir}/data/sample_data.zip"</echo>
+    </target>
+
+    <target name="izpack-conditions" description="Build JAR with custom conditions for IzPack">
+        <echo message=" "/>
+        <echo message="Building custom conditions for IzPack..."/>
+        <antcall target="-maybe-call-dep">
+            <param location="${basedir}/izpack/IzPackConditions" name="call.subproject"/>
+            <param location="${basedir}/izpack/IzPackConditions/build.xml" name="call.script"/>
+            <param name="call.target" value="clean"/>
+        </antcall>
+        <antcall target="-maybe-call-dep">
+            <param location="${basedir}/izpack/IzPackConditions" name="call.subproject"/>
+            <param location="${basedir}/izpack/IzPackConditions/build.xml" name="call.script"/>
+            <param name="call.target" value="jar"/>
+        </antcall>
+        <echo message="Custom conditions done."/>
+    </target>
+
+
+    <!--    ******************************************************************************************** -->
+    <!--    ************************************ GENERIC *********************************************** -->
+    <!--    ******************************************************************************************** -->
+    <target name="build-installer-generic" description="Create OS independent installer" depends="jar,izpack-conditions">
+
+        <echo message=" "/>
+        <echo message="Setting property and task for installer creation" />
+
+        <copy file="${basedir}/izpack/build_installer_generic_template.xml" tofile="${basedir}/izpack/build_installer_generic.xml"/>
+        <copy file="${basedir}/izpack/linux/unix_shortcut_specification_template.xml" tofile="${basedir}/izpack/linux/unix_shortcut_specification.xml"/>
+        <copy file="${basedir}/izpack/windows/windows_shortcut_specification_template.xml" tofile="${basedir}/izpack/windows/windows_shortcut_specification.xml"/>
+        <copy file="${basedir}/izpack/linux/start_template.sh" tofile="${basedir}/izpack/linux/start.sh"/>
+        <copy file="${basedir}/izpack/windows/start_template.bat" tofile="${basedir}/izpack/windows/start.bat"/>
+        <copy file="${basedir}/izpack/macos/Info_template.plist" tofile="${basedir}/izpack/macos/Info.plist"/>
+        <copy file="${basedir}/izpack/macos/start_template.sh" tofile="${basedir}/izpack/macos/start.sh"/>
+        
+        <property name="izpack-installdef" value="${basedir}/izpack/build_installer_generic.xml"/>
+       
+        <replace file="${izpack-installdef}">
+            <replacefilter token="$APP-NAME" value="${deploy.title}" />
+            <replacefilter token="$APP-VERSION" value="${deploy.version}" />
+            <replacefilter token="$APP-VENDOR" value="${deploy.vendor}" />
+        </replace>       
+        <replace file="${basedir}/izpack/linux/unix_shortcut_specification.xml">
+            <replacefilter token="$APP-NAME" value="${deploy.title}" />
+            <replacefilter token="$APP-VERSION" value="${deploy.version}" />
+        </replace>       
+        <replace file="${basedir}/izpack/windows/windows_shortcut_specification.xml">
+            <replacefilter token="$APP-NAME" value="${deploy.title}" />
+            <replacefilter token="$APP-VERSION" value="${deploy.version}" />
+        </replace>       
+        <replace file="${basedir}/izpack/linux/start.sh">
+            <replacefilter token="$APP-STARTCLASS" value="${deploy.startclass}" />
+        </replace>       
+        <replace file="${basedir}/izpack/windows/start.bat">
+            <replacefilter token="$APP-STARTCLASS" value="${deploy.startclass}" />
+        </replace>       
+        <replace file="${basedir}/izpack/macos/Info.plist">
+            <replacefilter token="$APP-NAME" value="${deploy.title}" />
+            <replacefilter token="$APP-VERSION" value="${deploy.version}" />
+        </replace>       
+        <replace file="${basedir}/izpack/macos/start.sh">
+            <replacefilter token="$APP-STARTCLASS" value="${deploy.startclass}" />
+        </replace>       
+       
+        <property name="izpack-installer" value="${deploy.installername}_generic.jar"/>
+        <property name="izpack.basedir" value="${basedir}"/>
+        <property name="izpack.targetdir" value="${basedir}/${dist.dir}/izpack"/>
+        <property name="izpack.custom-conditions" value ="${basedir}/izpack/IzPackConditions/dist/IzPackConditions.jar"/>
+        
+        <taskdef name="izpack" classpath="${basedir}/izpack/standalone-compiler.jar:${izpack.custom-conditions}" 
+                 classname="com.izforge.izpack.ant.IzPackTask"/>
+
+        <echo message=" "/>
+        <echo message="Makes the installer using IzPack..."/>
+        <echo message="  target directory: ${izpack.targetdir}"/>
+        <echo message=" "/>
+
+        <mkdir dir="${izpack.targetdir}"/>
+        <delete file="${izpack.targetdir}/${izpack-installer}"/>
+        
+        
+        <izpack input="${izpack-installdef}"
+                output="${izpack.targetdir}/${izpack-installer}"  
+                installerType="standard"              
+                basedir="${izpack.basedir}"/>
+
+        <echo message=" "/>
+
+        <delete file="${basedir}/izpack/build_installer_generic.xml"/>
+        <delete file="${basedir}/izpack/linux/unix_shortcut_specification.xml"/>
+        <delete file="${basedir}/izpack/windows/windows_shortcut_specification.xml"/>
+        <delete file="${basedir}/izpack/linux/start.sh"/>
+        <delete file="${basedir}/izpack/windows/start.bat"/>
+        <delete file="${basedir}/izpack/macos/Info.plist"/>
+        <delete file="${basedir}/izpack/macos/start.sh"/>
+        
+        <echo message="Created installer: ${izpack.targetdir}/${izpack-installer}"/>
+    </target>   
+
+
+
+    <!--    ******************************************************************************************** -->
+    <!--    ************************************* LINUX ************************************************ -->
+    <!--    ******************************************************************************************** -->
+    <target name="build-installer-linux" description="Create Linux installer" depends="jar,izpack-conditions">
+
+        <echo message=" "/>
+        <echo message="Setting property and task for installer creation" />
+
+        <copy file="${basedir}/izpack/build_installer_linux_template.xml" tofile="${basedir}/izpack/build_installer_linux.xml"/>
+        <copy file="${basedir}/izpack/linux/unix_shortcut_specification_template.xml" tofile="${basedir}/izpack/linux/unix_shortcut_specification.xml"/>
+        <copy file="${basedir}/izpack/linux/start_template.sh" tofile="${basedir}/izpack/linux/start.sh"/>
+
+        <property name="izpack-installdef" value="${basedir}/izpack/build_installer_linux.xml"/>
+
+        <replace file="${izpack-installdef}">
+            <replacefilter token="$APP-NAME" value="${deploy.title}" />
+            <replacefilter token="$APP-VERSION" value="${deploy.version}" />
+            <replacefilter token="$APP-VENDOR" value="${deploy.vendor}" />
+        </replace>       
+        <replace file="${basedir}/izpack/linux/unix_shortcut_specification.xml">
+            <replacefilter token="$APP-NAME" value="${deploy.title}" />
+            <replacefilter token="$APP-VERSION" value="${deploy.version}" />
+        </replace>       
+        <replace file="${basedir}/izpack/linux/start.sh">
+            <replacefilter token="$APP-STARTCLASS" value="${deploy.startclass}" />
+        </replace>       
+       
+        <property name="izpack-installer" value="${deploy.installername}_linux.jar"/>
+        <property name="izpack.basedir" value="${basedir}"/>
+        <property name="izpack.targetdir" value="${basedir}/${dist.dir}/izpack"/>
+        <property name="izpack.custom-conditions" value ="${basedir}/izpack/IzPackConditions/dist/IzPackConditions.jar"/>
+        
+        <taskdef name="izpack" classpath="${basedir}/izpack/standalone-compiler.jar:${izpack.custom-conditions}" 
+                 classname="com.izforge.izpack.ant.IzPackTask"/>
+
+        <echo message=" "/>
+        <echo message="Makes the installer using IzPack..."/>
+        <echo message="  target directory: ${izpack.targetdir}"/>
+        <echo message=" "/>
+
+        <mkdir dir="${izpack.targetdir}"/>
+        <delete file="${izpack.targetdir}/${izpack-installer}"/>
+        
+        <izpack input="${izpack-installdef}"
+                output="${izpack.targetdir}/${izpack-installer}"  
+                installerType="standard"              
+                basedir="${izpack.basedir}"/>
+
+        <echo message=" "/>
+
+        <delete file="${basedir}/izpack/build_installer_linux.xml"/>
+        <delete file="${basedir}/izpack/linux/unix_shortcut_specification.xml"/>
+        <delete file="${basedir}/izpack/linux/start.sh"/>
+        
+        <echo message="Created installer: ${izpack.targetdir}/${izpack-installer}"/>
+    </target>   
+
+
+    <!--    ******************************************************************************************** -->
+    <!--    ************************************ WINDOWS *********************************************** -->
+    <!--    ******************************************************************************************** -->
+    <target name="build-installer-windows" description="Create Windows installer" depends="jar,izpack-conditions">
+
+        <echo message=" "/>
+        <echo message="Setting property and task for installer creation" />
+
+        <copy file="${basedir}/izpack/build_installer_windows_template.xml" tofile="${basedir}/izpack/build_installer_windows.xml"/>
+        <copy file="${basedir}/izpack/windows/windows_shortcut_specification_template.xml" tofile="${basedir}/izpack/windows/windows_shortcut_specification.xml"/>
+        <copy file="${basedir}/izpack/windows/start_template.bat" tofile="${basedir}/izpack/windows/start.bat"/>
+        
+        <property name="izpack-installdef" value="${basedir}/izpack/build_installer_windows.xml"/>
+
+        <replace file="${izpack-installdef}">
+            <replacefilter token="$APP-NAME" value="${deploy.title}" />
+            <replacefilter token="$APP-VERSION" value="${deploy.version}" />
+            <replacefilter token="$APP-VENDOR" value="${deploy.vendor}" />
+        </replace>       
+        <replace file="${basedir}/izpack/windows/windows_shortcut_specification.xml">
+            <replacefilter token="$APP-NAME" value="${deploy.title}" />
+            <replacefilter token="$APP-VERSION" value="${deploy.version}" />
+        </replace>       
+        <replace file="${basedir}/izpack/windows/start.bat">
+            <replacefilter token="$APP-STARTCLASS" value="${deploy.startclass}" />
+        </replace>       
+       
+        <property name="izpack-installer" value="${deploy.installername}_windows.jar"/>
+        <property name="izpack.basedir" value="${basedir}"/>
+        <property name="izpack.targetdir" value="${basedir}/${dist.dir}/izpack"/>
+        <property name="izpack.custom-conditions" value ="${basedir}/izpack/IzPackConditions/dist/IzPackConditions.jar"/>
+        
+        <taskdef name="izpack" classpath="${basedir}/izpack/standalone-compiler.jar:${izpack.custom-conditions}" 
+                 classname="com.izforge.izpack.ant.IzPackTask"/>
+
+        <echo message=" "/>
+        <echo message="Makes the installer using IzPack..."/>
+        <echo message="  target directory: ${izpack.targetdir}"/>
+        <echo message=" "/>
+
+        <mkdir dir="${izpack.targetdir}"/>
+        <delete file="${izpack.targetdir}/${izpack-installer}"/>
+        
+        <izpack input="${izpack-installdef}"
+                output="${izpack.targetdir}/${izpack-installer}"  
+                installerType="standard"              
+                basedir="${izpack.basedir}"/>
+
+        <echo message=" "/>
+        
+        <delete file="${basedir}/izpack/build_installer_windows.xml"/>
+        <delete file="${basedir}/izpack/windows/windows_shortcut_specification.xml"/>
+        <delete file="${basedir}/izpack/windows/start.bat"/>
+
+        <echo message="Created installer: ${izpack.targetdir}/${izpack-installer}"/>
+    </target>   
+
+
+    <!--    ******************************************************************************************** -->
+    <!--    *********************************** MAC OS X *********************************************** -->
+    <!--    ******************************************************************************************** -->
+    <target name="build-installer-macos" description="Create MacOS X installer" depends="jar,izpack-conditions">
+        <echo message=" "/>
+        <echo message="Setting property and task for installer creation" />
+
+        <copy file="${basedir}/izpack/build_installer_macos_template.xml" tofile="${basedir}/izpack/build_installer_macos.xml"/>
+        <copy file="${basedir}/izpack/macos/Info_template.plist" tofile="${basedir}/izpack/macos/Info.plist"/>
+        <copy file="${basedir}/izpack/macos/start_template.sh" tofile="${basedir}/izpack/macos/start.sh"/>
+
+        <property name="izpack-installdef" value="${basedir}/izpack/build_installer_macos.xml"/>
+       
+        <replace file="${izpack-installdef}">
+            <replacefilter token="$APP-NAME" value="${deploy.title}" />
+            <replacefilter token="$APP-VERSION" value="${deploy.version}" />
+            <replacefilter token="$APP-VENDOR" value="${deploy.vendor}" />
+        </replace>       
+        <replace file="${basedir}/izpack/macos/Info.plist">
+            <replacefilter token="$APP-NAME" value="${deploy.title}" />
+            <replacefilter token="$APP-VERSION" value="${deploy.version}" />
+        </replace>       
+        <replace file="${basedir}/izpack/macos/start.sh">
+            <replacefilter token="$APP-STARTCLASS" value="${deploy.startclass}" />
+        </replace>       
+       
+        <property name="izpack-installer" value="${deploy.installername}_macos.jar"/>
+        <property name="izpack.basedir" value="${basedir}"/>
+        <property name="izpack.targetdir" value="${basedir}/${dist.dir}/izpack"/>
+        <property name="izpack.custom-conditions" value ="${basedir}/izpack/IzPackConditions/dist/IzPackConditions.jar"/>
+        
+        <taskdef name="izpack" classpath="${basedir}/izpack/standalone-compiler.jar:${izpack.custom-conditions}" 
+                 classname="com.izforge.izpack.ant.IzPackTask"/>
+
+        <echo message=" "/>
+        <echo message="Makes the installer using IzPack..."/>
+        <echo message="  target directory: ${izpack.targetdir}"/>
+        <echo message=" "/>
+
+        <mkdir dir="${izpack.targetdir}"/>
+        <delete file="${izpack.targetdir}/${izpack-installer}"/>
+        <delete file="${izpack.targetdir}/${deploy.installername}_macos.dmg"/>
+        
+        <izpack input="${izpack-installdef}"
+                output="${izpack.targetdir}/${izpack-installer}"  
+                installerType="standard"              
+                basedir="${izpack.basedir}"/>
+
+        <echo message=" "/>
+        <echo message="Created installer: ${izpack.targetdir}/${izpack-installer}"/>
+
+        <echo message=" "/>
+        
+        <delete file="${basedir}/izpack/build_installer_macos.xml"/>
+        <delete file="${basedir}/izpack/macos/Info.plist"/>
+        <delete file="${basedir}/izpack/macos/start.sh"/>
+        
+        <echo message="Creating Mac OS application bundle for installer..."/>
+        
+        <!--        
+        <taskdef name="jarbundler" 
+            classpath="${basedir}/izpack/jarbundler-2.2.0.jar"
+            classname="net.sourceforge.jarbundler.JarBundler" />
+
+        <jarbundler dir="${izpack.targetdir}"
+            name="${deploy.installername}"
+            mainclass="com.izforge.izpack.installer.Installer" 
+            jar="${izpack.targetdir}/${izpack-installer}"
+            stubfile="${basedir}/izpack/macos/JavaApplicationStub"/>
+            -->
+          
+        <taskdef name="bundleapp" 
+                 classpath="${basedir}/izpack/appbundler-1.0.jar"
+                 classname="com.oracle.appbundler.AppBundlerTask"/> 
+                
+        <bundleapp outputdirectory="${izpack.targetdir}"
+            name="${deploy.installername}"
+            displayname="${deploy.installername}"
+            identifier="pl.edu.icm.visnow.installer"
+            shortversion="1.0"
+            applicationCategory="public.app-category.developer-tools"
+            mainclassname="com/izforge/izpack/installer/Installer">
+            <classpath file="${izpack.targetdir}/${izpack-installer}"/>
+            <option value="-Dapple.laf.useScreenMenuBar=true"/>
+        </bundleapp>            
+
+        <echo message=" "/>
+        <exec executable="/usr/bin/sudo">
+            <arg value="${basedir}/izpack/macos/app2dmg.sh"/>            
+            <arg value="${izpack.targetdir}/${deploy.installername}.app/"/>
+            <arg value="${izpack.targetdir}/${deploy.installername}_macos.dmg"/>
+        </exec>
+
+        <echo message=" "/>
+        <echo message="Built DMG image: ${izpack.targetdir}/${deploy.installername}_macos.dmg"/>
+        <delete dir="${izpack.targetdir}/${deploy.installername}.app/"/>
+        <delete file="${izpack.targetdir}/${izpack-installer}"/>
+    </target>   
+
+
+</project>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="irregular field slice" class="PlanarSlice">
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="REGULAR" value="true"/>
+                <param name="NDIMS" value="3"/>
+                <param name="COORDS" value="true"/>
+            </acceptor>
+            <acceptor>
+                <param name="NSPACE" value="3"/>
+                <param name="IRREGULAR" value="true"/>
+            </acceptor>
+        </input>
+    </inputs>
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <schema>
+                <param name="NSPACE" value="3"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>    
+    <parameters>
+    </parameters>
+    <description value="outputs a planar slice of an irregular field by triangulating it and slicing every simplex "/>
+</module>

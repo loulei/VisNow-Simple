@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="shrink cells" class="ScaleCells">
+
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
+        </input>
+    </inputs>
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+        </output>
+        <geometryOutput/>
+    </outputs>
+    <description value="shrinks all cells by a constant factor to reveal cell structure"/>
+</module>

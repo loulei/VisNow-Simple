@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="segmented surfaces" class="SegmentedSurfaces">
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="NSPACE" value="3"/>
+                <param name="REGULAR" value="true"/>
+                <param name="NDIMS" value="3"/>
+                <param name="DATA_VECLEN" value="1"/>
+            </acceptor>
+            <acceptor>
+                <param name="NSPACE" value="3"/>
+                <param name="IRREGULAR" value="true"/>
+                <param name="DATA_VECLEN" value="1"/>
+            </acceptor>
+        </input>
+        <input name="threshold" type="java.lang.Float" modifiers="TRIGGERING:HIDDEN"/>
+    </inputs>
+
+    <outputs>
+        <output name="isosurfaceField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <schema>
+                <param name="NSPACE" value="3"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>
+    <parameters>
+    </parameters>
+    <description value="Maps volumetric data creating surface of constant data values."/>
+</module>

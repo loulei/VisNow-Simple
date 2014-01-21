@@ -1,0 +1,317 @@
+/* VisNow
+   Copyright (C) 2006-2013 University of Warsaw, ICM
+
+This file is part of GNU Classpath.
+
+GNU Classpath is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+
+GNU Classpath is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with GNU Classpath; see the file COPYING.  If not, write to the 
+University of Warsaw, Interdisciplinary Centre for Mathematical and 
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland. 
+
+Linking this library statically or dynamically with other modules is
+making a combined work based on this library.  Thus, the terms and
+conditions of the GNU General Public License cover the whole
+combination.
+
+As a special exception, the copyright holders of this library give you
+permission to link this library with independent modules to produce an
+executable, regardless of the license terms of these independent
+modules, and to copy and distribute the resulting executable under
+terms of your choice, provided that you also meet, for each linked
+independent module, the terms and conditions of the license of that
+module.  An independent module is a module which is not derived from
+or based on this library.  If you modify this library, you may extend
+this exception to your version of the library, but you are not
+obligated to do so.  If you do not wish to do so, delete this
+exception statement from your version. */
+
+package pl.edu.icm.visnow.geometries.viewer3d.controls.clip_editor;
+
+import javax.media.j3d.ModelClip;
+import javax.vecmath.Vector4d;
+
+/**
+ *
+ ** @author Krzysztof S. Nowinski, University of Warsaw ICM
+ */
+public class ClipPlaneUI extends javax.swing.JPanel
+{
+
+   protected ModelClip modelClip;
+   protected int clip;
+   protected double[] plane0Coeffs = new double[4];
+   protected double[] plane1Coeffs = new double[4];
+   protected boolean active = true;
+
+   public void setData(ModelClip modelClip, int clip)
+   {
+      if (clip < 0 || clip > 2) 
+         return;
+      active = false;
+      this.modelClip = modelClip;
+      this.clip      = clip;
+      switch (clip)
+      {
+         case 0:
+            aField.setText(""+1);
+            bField.setText(""+0);
+            cField.setText(""+0);
+            break;
+         case 1:
+            aField.setText(""+0);
+            bField.setText(""+1);
+            cField.setText(""+0);
+            break;
+         case 2:
+            aField.setText(""+0);
+            bField.setText(""+0);
+            cField.setText(""+1);
+            break;
+
+      }
+      for (int i = 0; i < plane0Coeffs.length; i++)
+         plane0Coeffs[i] = plane1Coeffs[i] = 0;
+      plane0Coeffs[clip] = -1; plane0Coeffs[3] = 10;
+      plane1Coeffs[clip] =  1; plane1Coeffs[3] = -10;
+      modelClip.setPlane(2 * clip,     new Vector4d(plane0Coeffs));
+      modelClip.setPlane(2 * clip + 1, new Vector4d(plane1Coeffs));
+      modelClip.setEnable(2 * clip,     false);
+      modelClip.setEnable(2 * clip + 1, false);
+      active = true;
+   }
+   
+   private void update()
+   {
+      if (!active)
+         return;
+      try
+      {
+         plane0Coeffs[0] = -Double.parseDouble(aField.getText());
+         plane1Coeffs[0] =  Double.parseDouble(aField.getText());
+         plane0Coeffs[1] = -Double.parseDouble(bField.getText());
+         plane1Coeffs[1] =  Double.parseDouble(bField.getText());
+         plane0Coeffs[2] = -Double.parseDouble(cField.getText());
+         plane1Coeffs[2] =  Double.parseDouble(cField.getText());
+      } catch (Exception e)
+      {
+         return;
+      }
+      plane0Coeffs[3] = clipSlider.getLow();
+      plane1Coeffs[3] = -clipSlider.getUp();
+      modelClip.setPlane(2 * clip,     new Vector4d(plane0Coeffs));
+      modelClip.setPlane(2 * clip + 1, new Vector4d(plane1Coeffs));
+      modelClip.setEnable(2 * clip,     enableButton.isSelected());
+      modelClip.setEnable(2 * clip + 1, enableButton.isSelected());
+   }
+
+   /** Creates new form ClipPlaneUI */
+   public ClipPlaneUI()
+   {
+      initComponents();
+   }
+
+   public void setExtents(float low, float up)
+   {
+      float oldLow  = clipSlider.getMin();
+      float oldUp  = clipSlider.getMax();
+      float d = .03f * Math.max(up - low, oldUp - oldLow);
+      if (Math.abs(up - oldUp) < d && Math.abs(low - oldLow) < d)
+         return;
+      d = .03f * (up - low);
+      clipSlider.setParams(low - d, up + d, low - d, up + d);
+   }
+
+   /** This method is called from within the constructor to
+    * initialize the form.
+    * WARNING: Do NOT modify this code. The content of this method is
+    * always regenerated by the Form Editor.
+    */
+   @SuppressWarnings("unchecked")
+   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+   private void initComponents() {
+      java.awt.GridBagConstraints gridBagConstraints;
+
+      jLabel1 = new javax.swing.JLabel();
+      jLabel2 = new javax.swing.JLabel();
+      jLabel3 = new javax.swing.JLabel();
+      aField = new javax.swing.JTextField();
+      bField = new javax.swing.JTextField();
+      cField = new javax.swing.JTextField();
+      enableButton = new javax.swing.JCheckBox();
+      jLabel4 = new javax.swing.JLabel();
+      clipSlider = new pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider();
+
+      setLayout(new java.awt.GridBagLayout());
+
+      jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
+      jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+      jLabel1.setText("A");
+      jLabel1.setName("jLabel1"); // NOI18N
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 0;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+      gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 5);
+      add(jLabel1, gridBagConstraints);
+
+      jLabel2.setFont(new java.awt.Font("Dialog", 0, 12));
+      jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+      jLabel2.setText("B");
+      jLabel2.setName("jLabel2"); // NOI18N
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 1;
+      gridBagConstraints.gridy = 0;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+      gridBagConstraints.insets = new java.awt.Insets(4, 3, 0, 5);
+      add(jLabel2, gridBagConstraints);
+
+      jLabel3.setFont(new java.awt.Font("Dialog", 0, 12));
+      jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+      jLabel3.setText("C");
+      jLabel3.setName("jLabel3"); // NOI18N
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 2;
+      gridBagConstraints.gridy = 0;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+      gridBagConstraints.insets = new java.awt.Insets(4, 5, 0, 5);
+      add(jLabel3, gridBagConstraints);
+
+      aField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+      aField.setText("1");
+      aField.setName("aField"); // NOI18N
+      aField.addActionListener(new java.awt.event.ActionListener() {
+         public void actionPerformed(java.awt.event.ActionEvent evt) {
+            aFieldActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 1;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.ipadx = 8;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+      gridBagConstraints.weightx = 1.0;
+      gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
+      add(aField, gridBagConstraints);
+
+      bField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+      bField.setText("0");
+      bField.setName("bField"); // NOI18N
+      bField.addActionListener(new java.awt.event.ActionListener() {
+         public void actionPerformed(java.awt.event.ActionEvent evt) {
+            bFieldActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 1;
+      gridBagConstraints.gridy = 1;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.ipadx = 8;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+      gridBagConstraints.weightx = 1.0;
+      gridBagConstraints.insets = new java.awt.Insets(2, 6, 0, 0);
+      add(bField, gridBagConstraints);
+
+      cField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+      cField.setText("0");
+      cField.setName("cField"); // NOI18N
+      cField.addActionListener(new java.awt.event.ActionListener() {
+         public void actionPerformed(java.awt.event.ActionEvent evt) {
+            cFieldActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 2;
+      gridBagConstraints.gridy = 1;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.ipadx = 8;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+      gridBagConstraints.weightx = 1.0;
+      gridBagConstraints.insets = new java.awt.Insets(2, 6, 0, 0);
+      add(cField, gridBagConstraints);
+
+      enableButton.setName("enableButton"); // NOI18N
+      enableButton.addActionListener(new java.awt.event.ActionListener() {
+         public void actionPerformed(java.awt.event.ActionEvent evt) {
+            enableButtonActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 3;
+      gridBagConstraints.gridy = 1;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+      gridBagConstraints.insets = new java.awt.Insets(0, 1, 0, 0);
+      add(enableButton, gridBagConstraints);
+
+      jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
+      jLabel4.setText("on");
+      jLabel4.setName("jLabel4"); // NOI18N
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+      gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+      add(jLabel4, gridBagConstraints);
+
+      clipSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "clip extent", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+      clipSlider.setMax(1.0F);
+      clipSlider.setMin(-1.0F);
+      clipSlider.setName("clipSlider"); // NOI18N
+      clipSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+         public void stateChanged(javax.swing.event.ChangeEvent evt) {
+            clipSliderStateChanged(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.gridy = 2;
+      gridBagConstraints.gridwidth = 4;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      add(clipSlider, gridBagConstraints);
+   }// </editor-fold>//GEN-END:initComponents
+
+   private void clipSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_clipSliderStateChanged
+   {//GEN-HEADEREND:event_clipSliderStateChanged
+      update();
+   }//GEN-LAST:event_clipSliderStateChanged
+
+   private void enableButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_enableButtonActionPerformed
+   {//GEN-HEADEREND:event_enableButtonActionPerformed
+      update();
+   }//GEN-LAST:event_enableButtonActionPerformed
+
+   private void aFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_aFieldActionPerformed
+   {//GEN-HEADEREND:event_aFieldActionPerformed
+      update();
+   }//GEN-LAST:event_aFieldActionPerformed
+
+   private void bFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bFieldActionPerformed
+   {//GEN-HEADEREND:event_bFieldActionPerformed
+      update();
+   }//GEN-LAST:event_bFieldActionPerformed
+
+   private void cFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cFieldActionPerformed
+   {//GEN-HEADEREND:event_cFieldActionPerformed
+      update();
+   }//GEN-LAST:event_cFieldActionPerformed
+
+   // Variables declaration - do not modify//GEN-BEGIN:variables
+   protected javax.swing.JTextField aField;
+   protected javax.swing.JTextField bField;
+   protected javax.swing.JTextField cField;
+   protected pl.edu.icm.visnow.gui.widgets.FloatSubRangeSlider.ExtendedFloatSubRangeSlider clipSlider;
+   protected javax.swing.JCheckBox enableButton;
+   protected javax.swing.JLabel jLabel1;
+   protected javax.swing.JLabel jLabel2;
+   protected javax.swing.JLabel jLabel3;
+   protected javax.swing.JLabel jLabel4;
+   // End of variables declaration//GEN-END:variables
+}

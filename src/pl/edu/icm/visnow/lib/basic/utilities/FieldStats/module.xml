@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="field statistics" class="FieldStats">
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
+        </input>
+    </inputs>
+    <description value="Computes statistics and histograms of data components"/>
+</module>

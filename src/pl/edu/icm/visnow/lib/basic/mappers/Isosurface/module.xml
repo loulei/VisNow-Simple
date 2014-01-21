@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="isosurface" class="Isosurface">
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
+            <description value="Input for data field to extract isosurface"/>
+            <acceptor>
+                <param name="NSPACE" value="3"/>
+                <param name="REGULAR" value="true"/>
+                <param name="NDIMS" value="3"/>
+                <param name="DATA_VECLEN" value="1"/>
+            </acceptor>
+            <acceptor>
+                <param name="NSPACE" value="3"/>
+                <param name="IRREGULAR" value="true"/>
+                <param name="DATA_VECLEN" value="1"/>
+                <param name="CELLS_3D" value="true"/>
+            </acceptor>
+        </input>
+        <input name="threshold" type="java.lang.Float" modifiers="TRIGGERING:HIDDEN">
+            <description value="Input for isolevel value"/>
+        </input>
+    </inputs>
+
+    <outputs>
+        <output name="isosurfaceField" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <description value="Output for surface field"/>
+            <schema>
+                <param name="NSPACE" value="3"/>
+                <param name="IRREGULAR" value="true"/>
+                <param name="CELLS_TRIANGLE" value="true"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>
+    <description value="Maps volumetric data creating surface of constant data values."/>
+</module>

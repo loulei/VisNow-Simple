@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="write 2D field as image" class="ImageWriter">
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="NDIMS" value="2"/>
+            </acceptor>
+        </input>
+    </inputs>
+    <outputs>
+        <geometryOutput/>
+    </outputs>
+    <description value="writes 2D regular field as one-to-one mapped image"/>    
+</module>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="line slice" class="LineSlice">
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="NDIMS" value="3"/>
+            </acceptor>
+            <acceptor>
+                <param name="NDIMS" value="2"/>
+            </acceptor>
+        </input>
+    </inputs>
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+        </output>
+        <geometryOutput/>
+    </outputs>    
+    <parameters>
+    </parameters>
+    <description value="creates a slice of the input along a line"/>
+</module>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="morphological operations" class="LocalOperations">
+
+    <inputs>
+       <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="REGULAR" value="true"/>
+            </acceptor>
+       </input>
+    </inputs>
+
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+        </output>
+        <geometryOutput/>
+    </outputs>
+    <parameters>
+    </parameters>
+    <description value="performs a series of generalizad dilate/erode (local min/max) operations"/>
+</module>

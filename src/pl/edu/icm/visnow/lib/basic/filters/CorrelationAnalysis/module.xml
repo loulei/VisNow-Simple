@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="correlation analysis" class="CorrelationAnalysis">
+    <inputs>
+        <input name="inField" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
+        </input>
+    </inputs>
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="NDIMS" value="2"/>
+            </schema>
+        </output>
+    </outputs>    
+    <parameters>
+    </parameters>
+</module>

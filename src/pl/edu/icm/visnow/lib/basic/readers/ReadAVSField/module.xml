@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="AVS field reader" class="ReadAVSField">
+    <reader datatype="AVS Field"/>
+    <description value="Reads AVS/Express field files."/>
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="REGULAR" value="true"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>
+</module>
+

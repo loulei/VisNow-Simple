@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Module - Streamlines</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style type="text/css">
+                
+    </style>
+  </head>
+  <body>
+      <table width="100%" border="0">
+          <tr>
+              <td align="left">
+                  <img src="../../common/images/horizontal.png" width="200" height="64"/>
+              </td>
+              <td align="right">
+                  <img src="../../common/images/icm_logo.png" width="120" height="64"/>
+              </td>
+          </tr>
+      </table>
+      
+      <h1>Module: Streamlines</h1>
+      <p><img src="resources/module_image_pl.edu.icm.visnow.lib.basic.mappers.Streamlines.png"/><br></p>
+      <p>Creates streamlines of a vector field.<br><br></p>
+      <table border="1">          
+      <tr bgcolor="silver">
+         <th width=150 height="40">input port</th>
+         <th width=150>type</th>
+         <th width=500>description</th>
+         <th width=300>data acceptors</th>
+      </tr>
+<tr>
+         <td valign="top">inField</td>
+         <td valign="top"><font color="#0000ff">VNField</font></td>
+         <td valign="top">Input vector field for streamlines</td>
+         <td valign="top">Field <br>veclen=3 component<br>Field <br>veclen=2 component<br></td>
+      </tr>
+<tr>
+         <td valign="top">startPoints</td>
+         <td valign="top"><font color="#0000ff">VNField</font></td>
+         <td valign="top">Input field for streamlines starting points</td>
+         <td valign="top">Field <br></td>
+      </tr>
+<tr bgcolor="silver">
+         <th height="40">output port</th>
+         <th>type</th>
+         <th>description</th>
+         <th>data schemas</th>
+      </tr>
+<tr>
+         <td valign="top">streamlinesField</td>
+         <td valign="top"><font color="#8800ff">VNIrregularField</font></td>
+         <td valign="top">Output of streamlines field</td>
+         <td valign="top"></td>
+      </tr>
+<tr>
+         <td valign="top">regularFlowField</td>
+         <td valign="top"><font color="#0088ff">VNRegularField</font></td>
+         <td valign="top">Output of regular flow field</td>
+         <td valign="top"></td>
+      </tr>
+<tr>
+         <td valign="top">irregularFlowField</td>
+         <td valign="top"><font color="#8800ff">VNIrregularField</font></td>
+         <td valign="top">Output of irregular flow field</td>
+         <td valign="top"></td>
+      </tr>
+<tr>
+         <td valign="top">outObj</td>
+         <td valign="top"><font color="#ee0000">VNGeometryObject</font></td>
+         <td valign="top">Output of geometry object for 3D streamlines</td>
+         <td valign="top"></td>
+      </tr>
+</table>
+      <br><br><br>
+      <p style="color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p><hr><p style="color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span style="font-weight:bold">Streamlines</span></p><hr><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span style="font-weight:bold"></span></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span style="font-weight:bold"></span></p><p style="color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span>The module integrates a vector field to produce streamlines.</span></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><hr><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span style="font-weight:bold">Input data</span></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span style="font-weight:bold"></span></p><p style="color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span>T</span><span>he module requires a 3D field with at least one veclen=3 component. Optionally there is an input port for starting points for the streamlines.</span></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><hr><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span style="font-weight:bold">Output data</span></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span style="font-weight:bold"></span></p><p style="line-height:1.1500000000000001;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span>At output there is a 3D irregular field of streamlines, a 3D geometry object of this field, and a flow field.</span></p><p style="line-height:1.1500000000000001;height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><hr><p style="line-height:1.1500000000000001;height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="line-height:1.1500000000000001;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span style="font-weight:bold">Computation parameters</span></p><p style="line-height:1.1500000000000001;height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span style="font-weight:bold"></span></p><p style="line-height:1.1500000000000001;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><img height="263" src="resources/images/image00.jpg" width="258"><span style="font-weight:bold">&nbsp;</span><img height="265" src="resources/images/image02.jpg" width="257"></p><p style="line-height:1.1500000000000001;height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span style="font-weight:bold"></span></p><p style="line-height:1.1500000000000001;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span>If</span><span style="font-weight:bold">&nbsp;wait </span><span>button is pressed processing is stopped. By default the button is not pressed and changes of parameters are processed immediately.</span></p><p style="line-height:1.1500000000000001;height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="line-height:1.1500000000000001;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span>The </span><span style="font-weight:bold">vector component </span><span>drop down list sets the input component with veclen=3 for which streamlines will be calculated. By default, the first component of the list is used.</span></p><p style="line-height:1.1500000000000001;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span>The </span><span style="font-weight:bold">downsize</span><span>&nbsp;menu in case of a regular field and and the </span><span style="font-weight:bold">downsize init points set</span><span>&nbsp;menu in case of an irregular field reduces the size of the field, saving processing time and memory by &quot;thinning out&quot; the data. Default downsize values depend on the dimensions of the input field and are chosen automatically.</span></p><p style="color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span>If </span><span style="font-weight:bold">dynamic</span><span>&nbsp;button is pressed output is generated every time the downsize parameter changes. </span><span style="font-weight:bold">No down</span><span>&nbsp;button cancels downsize. </span><span style="font-weight:bold">Default</span><span>&nbsp;button adjusts the default values for downsize.</span></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span style="font-weight:bold">Integration step</span><span>&nbsp;slider sets the integration step length for vector integration. Smaller steps are more accurate. If check box on the right hand side of the slider is on the user is able to change minimum, maximum and current value.</span></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span style="font-weight:bold">Steps range</span><span>&nbsp;slider sets the number of integration steps which will be used to compute one streamline path. Point 0 is the initial point of the streamline.</span></p><p style="line-height:1.1500000000000001;height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><hr><p style="line-height:1.1500000000000001;height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="line-height:1.1500000000000001;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span style="font-weight:bold">Presentation parameters</span></p><p style="line-height:1.1500000000000001;height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span style="font-weight:bold"></span></p><p style="line-height:1.1500000000000001;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span>Presentation parameters are described in the common interfaces section under the Presentation Panel entry.</span></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><hr><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span style="font-weight:bold">Example</span></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><img height="230" src="resources/images/image03.jpg" width="344"></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span>Choose </span><span style="font-weight:bold">test regular field 3D</span><span>&nbsp;module from test objects library and </span><span style="font-weight:bold">regular field slice</span><span>&nbsp;and </span><span style="font-weight:bold">streamlines</span><span>&nbsp;modules from 3D field mappers library and connect them.</span></p><p style="color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span>In the regular field slice UI choose axis </span><span style="font-style:italic">k </span><span>and</span><span>&nbsp;slice number </span><span style="font-style:italic">49</span><span>. In streamlines computation UI choose vector component </span><span style="font-style:italic">vortex</span><span>&nbsp;and downsize </span><span style="font-style:italic">(8,8,1)</span><span>. In the presentation UI choose color component </span><span style="font-style:italic">vector</span><span>&nbsp;and a small enough line width.</span></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><img height="443" src="resources/images/image01.jpg" width="436"></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p><p style="height:11pt;color:#000000;direction:ltr;font-size:11pt;margin:0;font-family:"Arial";padding:0"><span></span></p>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="read ZAF" class="ReadFranz">
+    <description value="Reads ZAF data."/>
+    <outputs>
+        <output name="volume" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="NSPACE" value="3"/>
+                <param name="NDIMS" value="3"/>
+                <param name="AFFINE" value="true"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>
+</module>
+

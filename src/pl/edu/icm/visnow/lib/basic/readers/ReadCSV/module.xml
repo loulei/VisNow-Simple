@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="CSV reader" class="ReadCSV">
+    <description value="Reads field components from CSV columns."/>
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="NDIMS" value="1"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>
+</module>
+

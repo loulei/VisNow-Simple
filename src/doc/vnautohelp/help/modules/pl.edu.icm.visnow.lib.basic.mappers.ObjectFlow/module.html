@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Module - Time Select/animate</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style type="text/css">
+        ol{margin:0;padding:0}.c5{list-style-type:disc;margin:0;padding:0}.c3{max-width:468pt;background-color:#ffffff;padding:72pt 72pt 72pt 72pt}.c0{height:11pt;direction:ltr}.c2{padding-left:0pt;margin-left:36pt}.c6{text-align:center}.c4{font-weight:bold}.c1{direction:ltr}.title{padding-top:0pt;line-height:1.15;text-align:left;color:#000000;font-size:21pt;font-family:"Trebuchet MS";padding-bottom:0pt}.subtitle{padding-top:0pt;line-height:1.15;text-align:left;color:#666666;font-style:italic;font-size:13pt;font-family:"Trebuchet MS";padding-bottom:10pt}li{color:#000000;font-size:11pt;font-family:"Arial"}p{color:#000000;font-size:11pt;margin:0;font-family:"Arial"}h1{padding-top:10pt;line-height:1.15;text-align:left;color:#000000;font-size:16pt;font-family:"Trebuchet MS";padding-bottom:0pt}h2{padding-top:10pt;line-height:1.15;text-align:left;color:#000000;font-size:13pt;font-family:"Trebuchet MS";font-weight:bold;padding-bottom:0pt}h3{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:12pt;font-family:"Trebuchet MS";font-weight:bold;padding-bottom:0pt}h4{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:11pt;text-decoration:underline;font-family:"Trebuchet MS";padding-bottom:0pt}h5{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-size:11pt;font-family:"Trebuchet MS";padding-bottom:0pt}h6{padding-top:8pt;line-height:1.15;text-align:left;color:#666666;font-style:italic;font-size:11pt;font-family:"Trebuchet MS";padding-bottom:0pt}        
+    </style>
+  </head>
+  <body>
+      <table width="100%" border="0">
+          <tr>
+              <td align="left">
+                  <img src="../../common/images/horizontal.png" width="200" height="64"/>
+              </td>
+              <td align="right">
+                  <img src="../../common/images/icm_logo.png" width="120" height="64"/>
+              </td>
+          </tr>
+      </table>
+      
+      <h1>Module: Time Select/animate</h1>
+      <p><img src="resources/module_image_pl.edu.icm.visnow.lib.basic.mappers.ObjectFlow.png"/><br></p>
+      <p>Selects a time moment from dtime dependent data, animates time dependent data over time.<br><br></p>
+      <table border="1">          
+      <tr bgcolor="silver">
+         <th width=150 height="40">input port</th>
+         <th width=150>type</th>
+         <th width=500>description</th>
+         <th width=300>data acceptors</th>
+      </tr>
+<tr>
+         <td valign="top">inField</td>
+         <td valign="top"><font color="#0000ff">VNField</font></td>
+         <td valign="top">Input for data field with time frames</td>
+         <td valign="top">Field with time frames <br></td>
+      </tr>
+<tr>
+         <td valign="top">frame</td>
+         <td valign="top"><font color="#666666">Integer</font></td>
+         <td valign="top"></td>
+         <td valign="top"></td>
+      </tr>
+<tr bgcolor="silver">
+         <th height="40">output port</th>
+         <th>type</th>
+         <th>description</th>
+         <th>data schemas</th>
+      </tr>
+<tr>
+         <td valign="top">outRegularField</td>
+         <td valign="top"><font color="#0088ff">VNRegularField</font></td>
+         <td valign="top"></td>
+         <td valign="top">Regular Field <br></td>
+      </tr>
+<tr>
+         <td valign="top">outIrregularField</td>
+         <td valign="top"><font color="#8800ff">VNIrregularField</font></td>
+         <td valign="top"></td>
+         <td valign="top">Irregular Field <br></td>
+      </tr>
+<tr>
+         <td valign="top">outObj</td>
+         <td valign="top"><font color="#ee0000">VNGeometryObject</font></td>
+         <td valign="top"></td>
+         <td valign="top"></td>
+      </tr>
+</table>
+      <br><br><br>
+      <hr><p class="c1"><span>&nbsp;</span></p><p class="c1"><span class="c4">TIME SELECT/ANIMATE</span></p><hr><p class="c1"><span>&nbsp;</span></p><p class="c0"><span class="c4"></span></p><p class="c1"><span>The module selects a time moment from time dependent data and animates time dependent data over time.</span></p><p class="c0"><span></span></p><hr><p class="c1"><span>&nbsp;</span></p><p class="c1"><span class="c4">Input data</span></p><p class="c0"><span class="c4"></span></p><p class="c1"><span>The input field is a data field with time frames.</span></p><p class="c0"><span></span></p><hr><p class="c1"><span>&nbsp;</span></p><p class="c1"><span class="c4">Output data</span></p><p class="c0"><span class="c4"></span></p><p class="c1"><span>At output there is a field, a regular field and a geometric object of the field.</span></p><p class="c0"><span></span></p><hr><p class="c1"><span>&nbsp;</span></p><p class="c1"><span class="c4">Computation tab</span></p><p class="c0"><span class="c4"></span></p><p class="c1 c6"><img height="319" src="resources/images/image00.jpg" width="243"></p><p class="c0"><span class="c4"></span></p><p class="c1"><span>Using the </span><span class="c4">time range</span><span>&nbsp;slider or the text fields below the slider the user defines the time interval of the animation. By default the whole interval of time steps is used.</span></p><p class="c0"><span></span></p><p class="c1"><span>The </span><span class="c4">frames</span><span>&nbsp;text field contains the number of time frames. By default the number equals the number of time steps. If frame number is different from the number of time steps the values of the data are interpolated.</span></p><p class="c0"><span></span></p><p class="c1"><span>A set of buttons allows to navigate from frame to frame:</span></p><ol class="c5" start="1"><li class="c2 c1"><span>reset: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sets animation to the first frame, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li class="c2 c1"><span>run back: displays sequence of frames backwards, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li class="c2 c1"><span>step back: takes one step to the previous frame, </span></li><li class="c2 c1"><span>pause, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li class="c2 c1"><span>step: advances by one frame, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li class="c2 c1"><span>run: displays forward, according to the run option mode, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li class="c2 c1"><span>reset back: sets animation to the last frame. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li></ol><p class="c0"><span></span></p><p class="c1"><span>The </span><span class="c4">current frame </span><span>slider and the</span><span class="c4">&nbsp;frame</span><span>&nbsp;and </span><span class="c4">time</span><span>&nbsp;text fields show the current frame and time step. The user can choose a frame number dragging the slider or entering a value into the </span><span class="c4">frame</span><span>&nbsp;text field, and a time step entering a new value into the </span><span class="c4">time </span><span>text</span><span>&nbsp;field.</span></p><p class="c1"><span>The </span><span class="c4">play speed</span><span>&nbsp;slider defines the animation speed.</span></p><p class="c0"><span></span></p><p class="c1"><span>There are three run options for running the animation:</span></p><ol class="c5" start="1"><li class="c1 c2"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c4">once</span><span>: animation is performed once</span></li><li class="c2 c1"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c4">cycle</span><span>: animation is repeated &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li class="c2 c1"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c4">bounce</span><span>: animation is performed out and back</span></li></ol><p class="c0"><span></span></p><p class="c1"><span>Press the </span><span class="c4">detach</span><span>&nbsp;button to detach/attach the navigation panel for the animation.</span></p><p class="c0"><span></span></p><p class="c1"><span>By default during animation only the geometry object is updated. In order to update output fields the </span><span class="c4">continuous output update</span><span>&nbsp;check box can be switched on.</span></p><p class="c0"><span></span></p>
+  </body>
+</html>

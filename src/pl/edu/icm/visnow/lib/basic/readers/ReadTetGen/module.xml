@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="TetGen data reader" class="ReadTetGen">
+    <reader datatype="AVS UCD"/>
+    <description value="Reads tetrahedral mesh in TetGen format"/>
+    <outputs>
+        <output name="UCD field" type="pl.edu.icm.visnow.lib.types.VNIrregularField">
+            <schema>
+                <param name="IRREGULAR" value="true"/>
+                <param name="NSPACE" value="3"/>
+            </schema>
+        </output>
+        <geometryOutput/>
+    </outputs>
+</module>
+

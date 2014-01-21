@@ -1,0 +1,478 @@
+//<editor-fold defaultstate="collapsed" desc=" COPYRIGHT AND LICENSE ">
+/* VisNow
+   Copyright (C) 2006-2013 University of Warsaw, ICM
+
+This file is part of GNU Classpath.
+
+GNU Classpath is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+
+GNU Classpath is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with GNU Classpath; see the file COPYING.  If not, write to the
+University of Warsaw, Interdisciplinary Centre for Mathematical and
+Computational Modelling, Pawinskiego 5a, 02-106 Warsaw, Poland.
+
+Linking this library statically or dynamically with other modules is
+making a combined work based on this library.  Thus, the terms and
+conditions of the GNU General Public License cover the whole
+combination.
+
+As a special exception, the copyright holders of this library give you
+permission to link this library with independent modules to produce an
+executable, regardless of the license terms of these independent
+modules, and to copy and distribute the resulting executable under
+terms of your choice, provided that you also meet, for each linked
+independent module, the terms and conditions of the license of that
+module.  An independent module is a module which is not derived from
+or based on this library.  If you modify this library, you may extend
+this exception to your version of the library, but you are not
+obligated to do so.  If you do not wish to do so, delete this
+exception statement from your version. */
+//</editor-fold>
+
+package pl.edu.icm.visnow.lib.basic.mappers.Isosurface;
+
+import java.awt.BorderLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import pl.edu.icm.visnow.datasets.Field;
+import pl.edu.icm.visnow.datasets.RegularField;
+import pl.edu.icm.visnow.datasets.dataarrays.DataArray;
+import pl.edu.icm.visnow.lib.templates.visualization.guis.VariablePresentation;
+import pl.edu.icm.visnow.gui.events.BooleanChangeListener;
+import pl.edu.icm.visnow.gui.events.BooleanEvent;
+
+/**
+ *
+ * @author  Krzysztof S. Nowinski, University of Warsaw, ICM
+ */
+public class IsosurfaceGUI extends JPanel implements VariablePresentation
+{
+   private Field inField = null;
+   private IsosurfaceParams params = new IsosurfaceParams();
+   private float vMin = 0, vMax = 255;
+   private float physMin = 0, physMax = 255;
+   private boolean syncing = false;
+   private BooleanChangeListener presentationListener = new BooleanChangeListener()
+   {
+      @Override
+      public void booleanChanged(BooleanEvent e)
+      {
+         setPresentation(e.getState());
+      }
+      @Override
+      public void stateChanged(ChangeEvent e)
+      {
+      }
+   };
+
+   /** Creates new form IsosurfaceUI */
+   public IsosurfaceGUI()
+   {
+      initComponents();
+      cropUI.setDynamic(false);
+      isoComponentSelector.setTitle("threshold component");
+      thresholdsEditor.setMaxRangeCount(20);
+      thresholdsEditor.setStartSingle(true);
+      isoComponentSelector.addChangeListener(new ChangeListener()
+      {
+         @Override
+         public void stateChanged(ChangeEvent evt)
+         {
+            if (syncing) return;
+            syncing = true;
+            boolean oldActive = params.isActive();
+            params.setActive(false);
+            int k = isoComponentSelector.getComponent();
+            params.setIsoComponent(k);
+            if (k != -1)
+               setComponent(k);
+            params.setActive(oldActive);
+            syncing = false;
+         }
+      });
+
+      thresholdsEditor.addChangeListener(new ChangeListener()
+      {
+         @Override
+         public void stateChanged(ChangeEvent e)
+         {
+            params.setThresholds(thresholdsEditor.getThresholds());
+         }
+      });
+      cropUI.addChangeListener(new ChangeListener()
+      {
+         @Override
+         public void stateChanged(ChangeEvent e)
+         {
+            params.setActive(false);
+            params.setLow(cropUI.getLow());
+            params.setUp(cropUI.getUp());
+            params.setActive(true);
+         }
+      });
+      downsizeUI.addChangeListener(new ChangeListener()
+      {
+         @Override
+         public void stateChanged(ChangeEvent e)
+         {
+            params.setDownsize(downsizeUI.getDownsize());
+         }
+      });
+      
+   }
+
+   /** This method is called from within the constructor to
+    * initialize the form.
+    * WARNING: Do NOT modify this code. The content of this method is
+    * always regenerated by the Form Editor.
+    */
+   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+   private void initComponents()
+   {
+      java.awt.GridBagConstraints gridBagConstraints;
+
+      jTabbedPane1 = new javax.swing.JTabbedPane();
+      thresholdsPanel = new javax.swing.JPanel();
+      mainControlPanel = new javax.swing.JPanel();
+      waitToggle = new javax.swing.JToggleButton();
+      isoComponentSelector = new pl.edu.icm.visnow.lib.gui.DataComponentSelector();
+      timeSlider = new pl.edu.icm.visnow.gui.widgets.FloatSlider();
+      thresholdsEditor = new pl.edu.icm.visnow.lib.gui.FloatArrayEditor();
+      separateSetsBox = new javax.swing.JCheckBox();
+      jPanel3 = new javax.swing.JPanel();
+      downsizeUI = new pl.edu.icm.visnow.lib.gui.DownsizeUI();
+      autoSmoothPanel = new javax.swing.JPanel();
+      smoothBox = new javax.swing.JCheckBox();
+      smoothSpinner = new javax.swing.JSpinner();
+      uncertaintyBox = new javax.swing.JCheckBox();
+      filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+      cropPanel = new javax.swing.JPanel();
+      cropUI = new pl.edu.icm.visnow.lib.gui.CropUI();
+      jPanel6 = new javax.swing.JPanel();
+
+      setRequestFocusEnabled(false);
+      setLayout(new java.awt.BorderLayout());
+
+      jTabbedPane1.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
+      jTabbedPane1.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+
+      thresholdsPanel.setLayout(new java.awt.BorderLayout());
+
+      mainControlPanel.setLayout(new java.awt.GridBagLayout());
+
+      waitToggle.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      waitToggle.setText("wait");
+      waitToggle.setFocusable(false);
+      waitToggle.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            waitToggleActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+      gridBagConstraints.weightx = 1.0;
+      gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 1);
+      mainControlPanel.add(waitToggle, gridBagConstraints);
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+      gridBagConstraints.weightx = 1.0;
+      mainControlPanel.add(isoComponentSelector, gridBagConstraints);
+
+      timeSlider.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "time", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10))); // NOI18N
+      timeSlider.addChangeListener(new javax.swing.event.ChangeListener()
+      {
+         public void stateChanged(javax.swing.event.ChangeEvent evt)
+         {
+            timeSliderStateChanged(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+      gridBagConstraints.weightx = 1.0;
+      mainControlPanel.add(timeSlider, gridBagConstraints);
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+      gridBagConstraints.weightx = 1.0;
+      mainControlPanel.add(thresholdsEditor, gridBagConstraints);
+
+      separateSetsBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      separateSetsBox.setText("isosurfaces as separate sets");
+      separateSetsBox.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            separateSetsBoxActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+      gridBagConstraints.weightx = 1.0;
+      mainControlPanel.add(separateSetsBox, gridBagConstraints);
+
+      jPanel3.setLayout(new java.awt.BorderLayout());
+      jPanel3.add(downsizeUI, java.awt.BorderLayout.CENTER);
+
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+      gridBagConstraints.weightx = 1.0;
+      mainControlPanel.add(jPanel3, gridBagConstraints);
+
+      autoSmoothPanel.setLayout(new java.awt.GridLayout(1, 0));
+
+      smoothBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      smoothBox.setText("auto smooth");
+      smoothBox.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            smoothBoxActionPerformed(evt);
+         }
+      });
+      autoSmoothPanel.add(smoothBox);
+
+      smoothSpinner.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      smoothSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, 6, 1));
+      smoothSpinner.addChangeListener(new javax.swing.event.ChangeListener()
+      {
+         public void stateChanged(javax.swing.event.ChangeEvent evt)
+         {
+            smoothSpinnerStateChanged(evt);
+         }
+      });
+      autoSmoothPanel.add(smoothSpinner);
+
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+      gridBagConstraints.weightx = 1.0;
+      mainControlPanel.add(autoSmoothPanel, gridBagConstraints);
+
+      uncertaintyBox.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+      uncertaintyBox.setText("show uncertainty");
+      uncertaintyBox.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(java.awt.event.ActionEvent evt)
+         {
+            uncertaintyBoxActionPerformed(evt);
+         }
+      });
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+      gridBagConstraints.weightx = 1.0;
+      mainControlPanel.add(uncertaintyBox, gridBagConstraints);
+      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints.gridx = 0;
+      gridBagConstraints.weighty = 1.0;
+      mainControlPanel.add(filler1, gridBagConstraints);
+
+      thresholdsPanel.add(mainControlPanel, java.awt.BorderLayout.CENTER);
+
+      jTabbedPane1.addTab("threshold", thresholdsPanel);
+
+      cropPanel.setLayout(new java.awt.GridBagLayout());
+
+        cropUI.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        cropPanel.add(cropUI, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weighty = 0.1;
+        cropPanel.add(jPanel6, gridBagConstraints);
+
+      jTabbedPane1.addTab("crop", cropPanel);
+
+      add(jTabbedPane1, java.awt.BorderLayout.NORTH);
+   }// </editor-fold>//GEN-END:initComponents
+
+   private void smoothSpinnerStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_smoothSpinnerStateChanged
+   {//GEN-HEADEREND:event_smoothSpinnerStateChanged
+      if (params != null)
+         params.setSmoothSteps((Integer)smoothSpinner.getValue());
+   }//GEN-LAST:event_smoothSpinnerStateChanged
+
+   private void smoothBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_smoothBoxActionPerformed
+   {//GEN-HEADEREND:event_smoothBoxActionPerformed
+      if (params != null)
+         params.setSmoothing(smoothBox.isSelected());
+   }//GEN-LAST:event_smoothBoxActionPerformed
+
+   private void uncertaintyBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_uncertaintyBoxActionPerformed
+   {//GEN-HEADEREND:event_uncertaintyBoxActionPerformed
+      if (params != null)
+         params.setUncertainty(uncertaintyBox.isSelected());
+   }//GEN-LAST:event_uncertaintyBoxActionPerformed
+
+   private void waitToggleActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_waitToggleActionPerformed
+   {//GEN-HEADEREND:event_waitToggleActionPerformed
+      if (params != null)
+          params.setActive(!waitToggle.isSelected());
+   }//GEN-LAST:event_waitToggleActionPerformed
+
+   private void timeSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_timeSliderStateChanged
+   {//GEN-HEADEREND:event_timeSliderStateChanged
+      if (params != null && !timeSlider.isAdjusting())
+         params.setTime(timeSlider.getVal());
+   }//GEN-LAST:event_timeSliderStateChanged
+
+   private void separateSetsBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_separateSetsBoxActionPerformed
+   {//GEN-HEADEREND:event_separateSetsBoxActionPerformed
+      if (params != null)
+          params.setSeparate(separateSetsBox.isSelected());
+   }//GEN-LAST:event_separateSetsBoxActionPerformed
+
+
+   @Override
+   public void setPresentation(boolean simple)
+   {
+        separateSetsBox.setVisible(!simple);
+        autoSmoothPanel.setVisible(!simple);
+        uncertaintyBox.setVisible(!simple);
+        jTabbedPane1.setVisible(!simple);
+        thresholdsEditor.setPresentation(simple);
+        downsizeUI.setPresentation(simple);
+        if (simple)
+            add(mainControlPanel, BorderLayout.CENTER);
+        else
+            thresholdsPanel.add(mainControlPanel, BorderLayout.CENTER);
+        revalidate();
+    }
+
+   /**
+    * Setter for property inField.
+    * @param inField New value of property inField.
+    */
+   public void setInField(Field inField)
+   {
+      params.setActive(false);
+      this.inField = inField;
+//      isoComponentSelector.setScalarComponentsOnly(inField instanceof IrregularField);
+      isoComponentSelector.setDataSchema(inField.getSchema());
+      if (inField instanceof RegularField)
+      {
+         jPanel3.setVisible(true);
+         int[] dims = ((RegularField) inField).getDims();
+         cropUI.setNewExtents(dims);
+         params.setLow(cropUI.getLow());
+         params.setUp(cropUI.getUp());
+         int[] downsizes = new int[3];
+         for (int i = 0; i < 3; i++)
+            downsizes[i] = (dims[i] + 127) / 128;
+         downsizeUI.setDownsize(downsizes);
+         params.setDownsize(downsizes);
+      } else
+      {
+         jPanel3.setVisible(false);
+      }
+      int k = -1;
+      for (int i = 0; i < inField.getNData(); i++)
+         if (inField.getData(i).isSimpleNumeric() && inField.getData(i).getVeclen() == 1)
+         {
+            k = i;
+            break;
+         }
+      setComponent(k);
+      params.setActive(true);
+   }
+
+   private void setComponent(int k)
+   {
+      DataArray da = inField.getData(k);
+      vMin = da.getMinv();
+      vMax = da.getMaxv();
+      physMin = da.getPhysMin();
+      physMax = da.getPhysMax();
+      thresholdsEditor.setMinMax(vMin, vMax, physMin, physMax);
+      if (da.isTimeDependant())
+      {
+         timeSlider.setMinMax(da.getStartTime(), da.getEndTime());
+         timeSlider.setValue(da.getCurrentTime(), true);
+      }
+      timeSlider.setVisible(da.isTimeDependant());
+   }
+
+   public void setParams(IsosurfaceParams params)
+   {
+      this.params = params;
+   }
+
+   @Override
+   public BooleanChangeListener getPresentationListener()
+   {
+      return presentationListener;
+   }
+
+
+   // Variables declaration - do not modify//GEN-BEGIN:variables
+   public javax.swing.JPanel autoSmoothPanel;
+   public javax.swing.JPanel cropPanel;
+   public pl.edu.icm.visnow.lib.gui.CropUI cropUI;
+   public pl.edu.icm.visnow.lib.gui.DownsizeUI downsizeUI;
+   public javax.swing.Box.Filler filler1;
+   public pl.edu.icm.visnow.lib.gui.DataComponentSelector isoComponentSelector;
+   public javax.swing.JPanel jPanel3;
+   public javax.swing.JPanel jPanel6;
+   public javax.swing.JTabbedPane jTabbedPane1;
+   public javax.swing.JPanel mainControlPanel;
+   public javax.swing.JCheckBox separateSetsBox;
+   public javax.swing.JCheckBox smoothBox;
+   public javax.swing.JSpinner smoothSpinner;
+   public pl.edu.icm.visnow.lib.gui.FloatArrayEditor thresholdsEditor;
+   public javax.swing.JPanel thresholdsPanel;
+   public pl.edu.icm.visnow.gui.widgets.FloatSlider timeSlider;
+   public javax.swing.JCheckBox uncertaintyBox;
+   public javax.swing.JToggleButton waitToggle;
+   // End of variables declaration//GEN-END:variables
+
+    public static void main(String[] args) {
+        JFrame f = new JFrame();
+        final IsosurfaceGUI p = new IsosurfaceGUI();
+        f.add(p);
+        f.pack();
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        f.addComponentListener(new ComponentAdapter() {
+            private boolean toggleSimple = true;
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                p.setPresentation(toggleSimple);
+                toggleSimple = !toggleSimple;
+            }
+        });
+        
+        f.setVisible(true);
+    }
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="fast multivolume segmentation" class="MultiVolumeSegmentation">
+   <inputs>
+       <input name="inField" type="pl.edu.icm.visnow.lib.types.VNRegularField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="NDIMS" value="3"/>
+            </acceptor>
+       </input>
+       <input name="startPoints" type="pl.edu.icm.visnow.lib.types.VNField" modifiers="NECESSARY:TRIGGERING">
+            <acceptor>
+                <param name="IRREGULAR" value="true"/>
+                <param name="NSPACE" value="3"/>
+            </acceptor>
+       </input>
+    </inputs>
+    <outputs>
+        <output name="outField" type="pl.edu.icm.visnow.lib.types.VNRegularField">
+            <schema>
+                <param name="NSPACE" value="3"/>
+            </schema>
+        </output>
+    </outputs>
+    <description value="extends cell set in the start points input field to the components selected from the input regular byte field by inteligent flooding algorithm"/>
+</module>
