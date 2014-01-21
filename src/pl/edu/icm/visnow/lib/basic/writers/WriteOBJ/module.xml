@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="write Wavefront OBJ" class="WriteOBJ">
-    <inputs>
-        <input name="inObject" type="pl.edu.icm.visnow.lib.types.VNGeometryObject" modifiers="NECESSARY:TRIGGERING">
-        </input>
-    </inputs>
-    <outputs>
-    </outputs>
-</module>

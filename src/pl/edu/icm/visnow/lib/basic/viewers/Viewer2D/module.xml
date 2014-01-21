@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<module name="viewer 2D" class="Viewer2D">
-    <inputs>
-        <input name="inObject" type="pl.edu.icm.visnow.lib.types.VNGeometryObject" modifiers="TRIGGERING" maxConnections="-1">
-            <description value="Input for visualized geometry object"/>
-        </input>
-    </inputs>
-</module>
